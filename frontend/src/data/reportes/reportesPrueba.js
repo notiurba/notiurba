@@ -1,0 +1,133 @@
+export const categoriasReporte = [
+  'Alumbrado publico',
+  'Malla vial',
+  'Basuras',
+  'Seguridad',
+  'Espacio publico',
+  'Movilidad',
+]
+
+export const estadosReporte = [
+  'Nuevo',
+  'En revision',
+  'Asignado',
+  'Resuelto',
+]
+
+// Puntos representativos interiores de la cobertura exclusiva de cada comuna POT.
+// No son centroides, ubicaciones verificadas de problemas ni coordenadas reales de ciudadanos.
+export const reportesPrueba = [
+  {
+    id: 'NTU-001',
+    categoria: 'Alumbrado publico',
+    descripcion: 'Luminaria apagada cerca del parque principal.',
+    latitud: 4.0725468993547125,
+    longitud: -76.1883620903414,
+    comunaEsperada: '01',
+    fechaCreacion: '2026-10-01',
+    estado: 'Nuevo',
+  },
+  {
+    id: 'NTU-002',
+    categoria: 'Malla vial',
+    descripcion: 'Hueco profundo sobre via barrial con alto flujo.',
+    latitud: 4.087103454039726,
+    longitud: -76.18310661852672,
+    comunaEsperada: '02',
+    fechaCreacion: '2026-10-02',
+    estado: 'En revision',
+  },
+  {
+    id: 'NTU-003',
+    categoria: 'Basuras',
+    descripcion: 'Acumulacion de residuos en esquina residencial.',
+    latitud: 4.09433846913491,
+    longitud: -76.17977506145986,
+    comunaEsperada: '03',
+    fechaCreacion: '2026-10-03',
+    estado: 'Asignado',
+  },
+  {
+    id: 'NTU-004',
+    categoria: 'Seguridad',
+    descripcion: 'Sector con baja iluminacion y reporte comunitario.',
+    latitud: 4.086947036670706,
+    longitud: -76.19832931626084,
+    comunaEsperada: '04',
+    fechaCreacion: '2026-10-05',
+    estado: 'Nuevo',
+  },
+  {
+    id: 'NTU-005',
+    categoria: 'Espacio publico',
+    descripcion: 'Anden obstruido por elementos abandonados.',
+    latitud: 4.070831579999258,
+    longitud: -76.20140160026219,
+    comunaEsperada: '05',
+    fechaCreacion: '2026-10-06',
+    estado: 'Resuelto',
+  },
+  {
+    id: 'NTU-006',
+    categoria: 'Movilidad',
+    descripcion: 'Senalizacion deteriorada en interseccion.',
+    latitud: 4.079682068628073,
+    longitud: -76.20808938935758,
+    comunaEsperada: '06',
+    fechaCreacion: '2026-10-07',
+    estado: 'Asignado',
+  },
+  {
+    id: 'NTU-007',
+    categoria: 'Basuras',
+    descripcion: 'Punto critico recurrente de disposicion inadecuada.',
+    latitud: 4.094062082877395,
+    longitud: -76.2142389394119,
+    comunaEsperada: '07',
+    fechaCreacion: '2026-10-08',
+    estado: 'En revision',
+  },
+  {
+    id: 'NTU-008',
+    categoria: 'Malla vial',
+    descripcion: 'Deterioro de capa asfaltica despues de lluvias.',
+    latitud: 4.100523222496509,
+    longitud: -76.20657838539428,
+    comunaEsperada: '08',
+    fechaCreacion: '2026-10-09',
+    estado: 'Nuevo',
+  },
+  {
+    id: 'NTU-009',
+    categoria: 'Alumbrado publico',
+    descripcion: 'Poste con intermitencia reportada por vecinos.',
+    latitud: 4.1010056564985655,
+    longitud: -76.20000920940825,
+    comunaEsperada: '09',
+    fechaCreacion: '2026-10-10',
+    estado: 'Asignado',
+  },
+  {
+    id: 'NTU-011',
+    categoria: 'Seguridad',
+    descripcion: 'Reporte ficticio de seguridad en un sector de Aguaclara.',
+    latitud: 4.109735156955706,
+    longitud: -76.19580270777875,
+    comunaEsperada: '10',
+    fechaCreacion: '2026-10-11',
+    estado: 'Nuevo',
+  },
+]
+
+// Caso intencional de cobertura incompleta: se conserva intacto, fuera de la demostracion.
+export const reportesFueraCobertura = [
+  {
+    id: 'NTU-010',
+    categoria: 'Seguridad',
+    descripcion: 'Reporte de prueba fuera del perimetro urbano cargado.',
+    latitud: 4.126,
+    longitud: -76.236,
+    fechaCreacion: '2026-10-11',
+    estado: 'Nuevo',
+  },
+]
