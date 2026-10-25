@@ -15,7 +15,7 @@ El prototipo permite visualizar las diez comunas urbanas, consultar reportes de 
 
 ## Requisitos previos
 
-- Node.js compatible con el proyecto y npm.
+- Node.js 20.19 o superior y pnpm (se activa con `corepack enable`).
 - Git para clonar el repositorio.
 
 ## Instalación
@@ -30,7 +30,7 @@ cd noti-urba/frontend
 ### 2. Instalar las dependencias
 
 ```powershell
-npm install
+pnpm install
 ```
 
 Las bibliotecas del mapa ya están declaradas en `package.json`, por lo que no es necesario instalarlas por separado.
@@ -38,7 +38,7 @@ Las bibliotecas del mapa ya están declaradas en `package.json`, por lo que no e
 ### 3. Ejecutar el proyecto
 
 ```powershell
-npm run dev
+pnpm dev
 ```
 
 Abre en el navegador la dirección que aparezca en la terminal, normalmente [http://localhost:5173/](http://localhost:5173/).
@@ -47,10 +47,10 @@ Abre en el navegador la dirección que aparezca en la terminal, normalmente [htt
 
 | Comando | Función |
 | --- | --- |
-| `npm install` | Instala las dependencias. |
-| `npm run dev` | Inicia el servidor de desarrollo. |
-| `npm run lint` | Revisa el código con ESLint. |
-| `npm run build` | Genera la versión de producción. |
+| `pnpm install` | Instala las dependencias. |
+| `pnpm dev` | Inicia el servidor de desarrollo. |
+| `pnpm lint` | Revisa el código con ESLint. |
+| `pnpm build` | Genera la versión de producción. |
 
 ## Nota
 
