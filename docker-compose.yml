@@ -1,0 +1,22 @@
+# Base de datos local de NotiUrba: PostgreSQL 16 + PostGIS 3.4
+# Uso: copiar .env.example a .env, ajustar la contraseña y ejecutar `docker compose up -d`
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: notiurba-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-notiurba}
+      POSTGRES_USER: ${POSTGRES_USER:-notiurba}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD en el archivo .env}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - notiurba-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  notiurba-db:
