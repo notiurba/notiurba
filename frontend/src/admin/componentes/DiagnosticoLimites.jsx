@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import L from 'leaflet'
 import { GeoJSON, Pane, Popup, useMap } from 'react-leaflet'
-import { diagnosticoLimites } from '../../data/geo/diagnosticoLimites'
+import { diagnosticoLimites } from '../datos/diagnosticoLimites'
 
 const incidencias = [...diagnosticoLimites.features].sort(
   (a, b) => b.properties.area_m2 - a.properties.area_m2,

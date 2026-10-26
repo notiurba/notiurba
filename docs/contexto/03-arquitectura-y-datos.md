@@ -6,11 +6,15 @@
 
 ## Componentes (visión actual)
 
-- **PWA (React + Vite)**: registro/sesión del ciudadano, creación de reporte (foto +
-  GPS), consulta de «Mis reportes», y el panel administrativo (mapa, filtros, mapa de
-  calor, gestión de estados).
-- **API (Spring Boot)**: autenticación JWT, reportes, asignación de comuna,
-  enrutamiento y envío de correo, registro de envíos.
+- **PWA (React + Vite)**: una sola aplicación con dos zonas por rol, ver ADR-0005.
+  `app/*` es la PWA ciudadana (registro/sesión, creación de reporte con foto + GPS,
+  «Mis reportes» — aún sin construir). `admin/*` es el panel administrativo (mapa,
+  filtros, mapa de calor, diagnóstico de límites, gestión de estados); hoy ya tiene el
+  mapa y los filtros, migrados del prototipo original. `compartido/` tiene el cliente
+  de API, la sesión/JWT y `RutaProtegida` por rol.
+- **API (Spring Boot)**: autenticación JWT (`POST /api/auth/login`, ya implementado),
+  reportes, asignación de comuna, enrutamiento y envío de correo, registro de envíos.
+  `/api/admin/**` exige `ROLE_ADMIN`.
 - **PostgreSQL + PostGIS**: usuarios, reportes (con geometría), comunas (polígonos),
   catálogo de categorías y entidades de destino, historial de estados, registro de envíos.
 - **Cloudinary**: almacenamiento de fotos (devuelve URL + id).
@@ -43,7 +47,10 @@ producción.
       historial de estados, registro de envíos de correo.
 - [ ] **Diagrama entidad-relación** que una lo anterior con las tablas de correo.
 - [ ] **Diseño de la API REST** (EDT 5.2): endpoints, métodos, entradas/salidas,
-      autenticación JWT, códigos de error.
+      códigos de error. Autenticación JWT ya implementada y verificada de punta a
+      punta (`POST /api/auth/login`, 401 sin token/vencido o con credenciales
+      incorrectas, 403 sin rol en `/api/admin/**`); falta el resto de endpoints
+      (reportes, comunas, estados).
 - [ ] **Flujo de estados del reporte** (EDT 5.3).
 - [ ] **Diseño de notificaciones** (EDT 5.5). Depende de ADR-0002 (mecanismo de correo).
 

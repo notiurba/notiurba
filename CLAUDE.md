@@ -50,5 +50,4 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
 - Mecanismo de envío de correo: cuenta del ciudadano (borrador) vs Resend. Decisión
   entre el final del Sprint 2 y el Sprint 3 (ADR-0002).
 - Categorías 8 (riesgo de desastres) y 9 (vivienda): por validar con la Alcaldía.
-- Framework/estructura del frontend más allá de React+Vite: sin definir.
 - Fuente cartográfica definitiva de las comunas: por validar con Planeación (ADR-0003).

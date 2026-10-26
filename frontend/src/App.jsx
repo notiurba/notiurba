@@ -1,30 +1,14 @@
-import { useEffect, useState } from 'react'
-import './App.css'
-import MapaTulua from './components/mapas/MapaTulua'
-import { obtenerReportesCiudadanos } from './services/reportesService'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import RutasApp from './app/rutas'
+import RutasAdmin from './admin/rutas'
 
 function App() {
-  const [reportes, setReportes] = useState([])
-  const [cargando, setCargando] = useState(true)
-
-  useEffect(() => {
-    obtenerReportesCiudadanos()
-      .then(setReportes)
-      .finally(() => setCargando(false))
-  }, [])
-
-  if (cargando) {
-    return (
-      <main className="app-loading">
-        <span>Cargando mapa ciudadano...</span>
-      </main>
-    )
-  }
-
   return (
-    <main>
-      <MapaTulua reportes={reportes} />
-    </main>
+    <Routes>
+      <Route path="/" element={<Navigate to="/app" replace />} />
+      <Route path="/app/*" element={<RutasApp />} />
+      <Route path="/admin/*" element={<RutasAdmin />} />
+    </Routes>
   )
 }
 

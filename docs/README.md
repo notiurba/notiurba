@@ -30,6 +30,7 @@ sus consecuencias. Ver [decisiones/README.md](decisiones/README.md).
 - [ADR-0002](decisiones/0002-mecanismo-de-correo.md) — Mecanismo de envío de correo (abierta).
 - [ADR-0003](decisiones/0003-fuente-cartografica-comunas.md) — Fuente cartográfica de las comunas.
 - [ADR-0004](decisiones/0004-hosting-gratuito.md) — Hosting en capas gratuitas.
+- [ADR-0005](decisiones/0005-estructura-frontend-app-admin.md) — Estructura del frontend `app/` / `admin/` / `compartido/`.
 
 ## Convenciones
 

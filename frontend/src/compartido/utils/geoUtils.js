@@ -1,4 +1,4 @@
-import { getComunaProperties } from '../data/geo/comunasTulua'
+import { getComunaProperties } from '../geo/comunasTulua'
 
 const EPSILON = 1e-10
 
