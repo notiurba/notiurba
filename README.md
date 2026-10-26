@@ -30,20 +30,29 @@ cd noti-urba/frontend
 ### 2. Instalar las dependencias
 
 ```powershell
+corepack enable
 pnpm install
 ```
 
-Las bibliotecas del mapa ya están declaradas en `package.json`, por lo que no es necesario instalarlas por separado.
+`corepack enable` activa la versión de pnpm declarada en `package.json`. Las bibliotecas del mapa ya están declaradas ahí, por lo que no es necesario instalarlas por separado.
 
 ### 3. Ejecutar el proyecto
 
+Este proyecto es el frontend de NOTIURBA, así que el comando `pnpm dev`
+siempre debe ejecutarse estando parado en la carpeta `frontend/` (donde está
+el `package.json` de este proyecto), no en la raíz del repositorio ni en
+`backend/`.
+
 ```powershell
+cd frontend
 pnpm dev
 ```
 
 Abre en el navegador la dirección que aparezca en la terminal, normalmente [http://localhost:5173/](http://localhost:5173/).
 
 ## Comandos útiles
+
+Todos estos comandos se ejecutan dentro de la carpeta `frontend/`.
 
 | Comando | Función |
 | --- | --- |
