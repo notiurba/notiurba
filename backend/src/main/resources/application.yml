@@ -12,6 +12,8 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+    placeholders:
+      adminPassword: ${ADMIN_DEV_PASSWORD}   # obligatoria: nunca en el repo (ver V4__usuario_admin_semilla.sql)
 
 server:
   port: 8080
@@ -19,3 +21,6 @@ server:
 notiurba:
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+  jwt:
+    secreto: ${JWT_SECRET}          # obligatoria: nunca en el repo
+    expiracion-minutos: 60

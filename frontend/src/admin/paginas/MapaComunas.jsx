@@ -10,17 +10,19 @@ import {
   TileLayer,
   useMap,
 } from 'react-leaflet'
-import { comunasTulua, getComunaProperties } from '../../data/geo/comunasTulua'
+import { comunasTulua, getComunaProperties } from '../../compartido/geo/comunasTulua'
 import {
   categoriasReporte,
   estadosReporte,
-} from '../../data/reportes/reportesPrueba'
-import { identificarComunaPorCoordenadas } from '../../utils/geoUtils'
-import { CapaDiagnostico, PanelDiagnostico } from './DiagnosticoLimites'
-import { diagnosticoLimites } from '../../data/geo/diagnosticoLimites'
+} from '../datos/reportesPrueba'
+import { identificarComunaPorCoordenadas } from '../../compartido/utils/geoUtils'
+import { CapaDiagnostico, PanelDiagnostico } from '../componentes/DiagnosticoLimites'
+import { diagnosticoLimites } from '../datos/diagnosticoLimites'
+import { obtenerReportesCiudadanos } from '../servicios/reportesService'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+import './MapaComunas.css'
 
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
@@ -183,7 +185,9 @@ function ReportePopup({ reporte, resultadoComuna }) {
   )
 }
 
-export default function MapaTulua({ reportes }) {
+export default function MapaComunas() {
+  const [reportes, setReportes] = useState([])
+  const [cargando, setCargando] = useState(true)
   const [mostrarComunas, setMostrarComunas] = useState(true)
   const [mostrarMarcadores, setMostrarMarcadores] = useState(true)
   const [mostrarCalor, setMostrarCalor] = useState(false)
@@ -201,6 +205,12 @@ export default function MapaTulua({ reportes }) {
     setIncidenciaSeleccionada(id)
     setRevisionSeleccion((value) => value + 1)
   }
+
+  useEffect(() => {
+    obtenerReportesCiudadanos()
+      .then(setReportes)
+      .finally(() => setCargando(false))
+  }, [])
 
   const reportesConComuna = useMemo(
     () =>
@@ -256,6 +266,14 @@ export default function MapaTulua({ reportes }) {
         event.target.setStyle(styleComuna(feature))
       },
     })
+  }
+
+  if (cargando) {
+    return (
+      <main className="app-loading">
+        <span>Cargando mapa de comunas...</span>
+      </main>
+    )
   }
 
   return (

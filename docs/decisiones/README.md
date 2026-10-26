@@ -19,3 +19,4 @@ Las decisiones abiertas se marcan como tales y no deben cerrarse sin el equipo.
 | 0002 | Mecanismo de envío de correo | Abierta |
 | 0003 | Fuente cartográfica de las comunas | Aceptada (provisional) |
 | 0004 | Hosting en capas gratuitas | Aceptada (propuesta por confirmar) |
+| 0005 | Estructura del frontend: `app/` / `admin/` / `compartido/` | Aceptada |

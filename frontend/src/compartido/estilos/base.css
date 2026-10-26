@@ -61,6 +61,13 @@ body {
   min-height: 100svh;
 }
 
+.app-loading {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  color: var(--text-h);
+}
+
 h1,
 h2 {
   font-family: var(--heading);

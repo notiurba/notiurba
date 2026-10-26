@@ -9,7 +9,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-notiurba}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD en el archivo .env}
     ports:
-      - "127.0.0.1:5432:5432"
+      # 5433 en el host, no 5432: evita choques con otro Postgres local.
+      # Si no tienes ese conflicto, puedes dejarlo en "5432:5432".
+      - "127.0.0.1:5433:5432"
     volumes:
       - notiurba-db:/var/lib/postgresql/data
     healthcheck:

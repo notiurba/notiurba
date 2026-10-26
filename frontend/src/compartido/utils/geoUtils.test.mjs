@@ -13,12 +13,12 @@ let obtenerReportes
 
 before(async () => {
   server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
-  identificar = (await server.ssrLoadModule('/src/utils/geoUtils.js')).identificarComunaPorCoordenadas
-  comunas = (await server.ssrLoadModule('/src/data/geo/comunasTulua.js')).comunasTulua
-  const datos = await server.ssrLoadModule('/src/data/reportes/reportesPrueba.js')
+  identificar = (await server.ssrLoadModule('/src/compartido/utils/geoUtils.js')).identificarComunaPorCoordenadas
+  comunas = (await server.ssrLoadModule('/src/compartido/geo/comunasTulua.js')).comunasTulua
+  const datos = await server.ssrLoadModule('/src/admin/datos/reportesPrueba.js')
   reportes = datos.reportesPrueba
   reportesFueraCobertura = datos.reportesFueraCobertura
-  obtenerReportes = (await server.ssrLoadModule('/src/services/reportesService.js')).obtenerReportesCiudadanos
+  obtenerReportes = (await server.ssrLoadModule('/src/admin/servicios/reportesService.js')).obtenerReportesCiudadanos
 })
 
 after(async () => { await server?.close() })
@@ -121,8 +121,8 @@ test('el solapamiento real POT entre comunas 03 y 10 requiere revision', () => {
 })
 
 test('el diagnostico corresponde al POT intacto y sus sumas coinciden con el resumen', async () => {
-  const { diagnosticoLimites: d } = await server.ssrLoadModule('/src/data/geo/diagnosticoLimites.js')
-  const original = readFileSync(new URL('../data/geo/comunas-tulua-POT2015-candidato.geojson', import.meta.url))
+  const { diagnosticoLimites: d } = await server.ssrLoadModule('/src/admin/datos/diagnosticoLimites.js')
+  const original = readFileSync(new URL('../geo/comunas-tulua-POT2015-candidato.geojson', import.meta.url))
   assert.equal(createHash('sha256').update(original).digest('hex'), d.metadata.source_sha256)
   assert.equal(d.metadata.geometry_crs, 'EPSG:4326')
   assert.equal(d.metadata.area_crs, 'EPSG:3115')

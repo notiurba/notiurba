@@ -1,0 +1,22 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+
+# Frontend
+frontend/node_modules
+frontend/dist
+
+# Backend
+backend/target
+
+# Documentación y archivos del equipo, no hacen falta en la imagen
+docs
+*.md
+README.md
+
+# Editor / OS
+.vscode
+.idea
+.DS_Store
