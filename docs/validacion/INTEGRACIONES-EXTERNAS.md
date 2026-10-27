@@ -1,3 +1,27 @@
+# Neon de pruebas ya creado: instrucciones vigentes
+
+La autorizacion ya se ejecuto. **No crear otro proyecto ni volver a aplicar V1-V4 sobre esta base.** Proyecto NotiUrba-EDT51-isolated (small-bonus-50024456), rama edt51-isolated, base notiurba_edt51, PostgreSQL18.6/PostGIS3.6.4. Organizacion Free conservada y compute0.25CU. No se toco production ni se copio su informacion.
+
+Usuario para validacion: **edt51_validation_reader**. Se verificaron login por conector, transaction_read_only=on, SELECT sobre todas las tablas y ausencia de permisos para DML, DDL, TEMP, bases/roles, replication y bypassRLS. No usar edt51_owner para las pruebas de lectura. El rol API provisional edt51_reader fue eliminado porque la API le asignaba privilegios elevados; no recrearlo por esa via.
+
+Esquema V1-V4 aplicado por SQL transaccional, NO por Flyway. No existe flyway_schema_history ni se fabrico. Los archivos originales se conservan y sus huellas estan registradas. Mantener perfil validation, Flyway disabled, Hibernate validate y read-only. No habilitar Flyway sobre esta base inicializada sin un procedimiento independiente revisado.
+
+## Paso que desbloquea N02/N03
+
+1. En Neon Console abrir exclusivamente NotiUrba-EDT51-isolated > Connect y seleccionar notiurba_edt51 y edt51_validation_reader. Si la consola no permite recuperar la contrasena del rol SQL, restablecer SOLO la de este lector de pruebas desde las opciones de roles de esta rama. No copiarla al chat.
+2. En GitHub Settings > Environments > edt51-external-validation, restringido a feature/edt-5.1-technical-validation, guardar TEST_DB_URL, TEST_DB_USER, TEST_DB_PASSWORD y JWT_SECRET. JWT aleatorio de al menos32 bytes. Tambien se pueden inyectar solo en el proceso de PowerShell7 de una maquina autorizada.
+3. TEST_DB_URL debe ser JDBC sin credenciales embebidas, con sslmode=verify-full y sslfactory=org.postgresql.ssl.DefaultJavaSSLFactory; obtener host/base del proyecto nuevo. TEST_DB_USER debe ser edt51_validation_reader.
+4. Usar el runner existente Invoke-Edt51External.ps1 con Provider Neon, tras confirmar esas variables y EDT51_EXTERNAL_ALLOWED=true. Ejecuta el perfil spatial-tests verify. Conservar reportes saneados y codigo de salida. No publicar reportes crudos o cadenas con credenciales.
+5. Alternativamente, un administrador autenticado puede intentar el dispatch del workflow398226456, ref feature/edt-5.1-technical-validation, input neon=true. No modificar main/default branch. Desde aqui faltan autenticacion CLI y capacidad de configurar Secrets/dispatch; no se afirma que el Environment este vacio.
+
+El entorno local actual no puede completar este paso: Maven falla al descargar el parent SpringBoot3.3.5 por Permission denied: getsockopt y Java TCP al endpoint tambien esta denegado. No se solicitan elevaciones ni cambios de seguridad. Las consultas SQL por conector ya funcionan con el lector, pero no son JDBC/JPA/Hibernate; N02/N03 siguen PENDIENTES.
+
+CI40538495198 sobre3580726 esta confirmado:25 unitarias/MVC y2 integraciones de migracion aprobadas. El backend/SDK/migraciones no se modificaron para eludir el bloqueo. Estos resultados no acreditan Neon Java.
+
+La documentacion anterior queda conservada a continuacion como historial; su propuesta de crear NotiUrba-EDT51-isolated ya esta realizada y no debe ejecutarse nuevamente.
+
+---
+
 # EDT 5.1: ejecucion externa con recursos de prueba
 
 Corte: 2026-10-27 UTC. Rama unica: feature/edt-5.1-technical-validation. No crear PR, fusionar, desplegar produccion ni modificar V1-V4.

@@ -1,3 +1,33 @@
+# Neon aislado autorizado: corte posterior a 3580726
+
+Proyecto creado: **NotiUrba-EDT51-isolated** (small-bonus-50024456), rama de base edt51-isolated (br-little-mouse-b5tlorl9), base notiurba_edt51. PostgreSQL18.6 (fd34222), PostGIS3.6.4, AWS us-east-2, compute0.25CU. Organizacion Free comprobada antes y despues. Sin contratacion, cambio de plan, metodos de pago ni cambios en production.
+
+La consulta previa confirmo0 tablas de usuario y0 extensiones de aplicacion. Se aplicaron los SQL originales V1-V4 en una sola transaccion mediante el conector Neon, con sustitucion privada del placeholder de semilla. V3 contiene sus catalogos de referencia originales; V4 creo un administrador ficticio. No se copiaron datos de production. Hay0 reportes y0 fotografias ciudadanas. Huellas SHA256 y resultados: logs/neon-isolated/provisioning-and-reader.json.
+
+**No se ejecutaron estas migraciones mediante Flyway:** Maven esta bloqueado por permisos/red. No se fabrico flyway_schema_history; permanece ausente. La aplicacion SQL del esquema no se presenta como una nueva ejecucion Flyway. N04 conserva su evidencia real de Testcontainers/CI. No repetir el aprovisionamiento sobre esta base ya inicializada.
+
+| Componente | Resultado real |
+| --- | --- |
+| Proyecto vacio y esquema aislado | Preparados/verificados; produccion intacta |
+| Lector edt51_validation_reader | Conexion real por conector, transaction_read_only=on; SELECT permitido; sin DML, CREATE, TEMP, roles/bases, replication o bypassRLS |
+| SQL espacial con lector | contains_inside=true, contains_border=false, covers_border=true; GeoJSON Point correcto; Point/MultiPolygon SRID4326;10 comunas |
+| N02 SpringBoot/JDBC/JPA | PENDIENTE: no arranco Java/Spring; Maven no descarga parent3.3.5 por Permission denied: getsockopt |
+| N03 Hibernate Spatial | PENDIENTE: SQL no sustituye mapeo Hibernate; el perfil spatial-tests no llego a ejecutarse |
+| TLS JDBC | No certificado: el conector SQL reporta backend_tls=false; no se usa como evidencia de JDBC verify-full. La configuracion Java segura permanece intacta |
+| Publicacion3580726 y CI40538495198 | CONFIRMADOS:25 unitarias/MVC y2 pruebas de migracion aprobadas; jobs externos SKIPPED |
+
+La prueba TCP de Java al endpoint aislado fallo a2026-10-27T16:26:04.685587400Z con SocketException: Permission denied: getsockopt. Se resolvio el permiso de escritura Maven usando un cache dentro del workspace, pero persiste la restriccion de red. No se eludieron controles del entorno y no se desactivo TLS. Logs: maven-and-transport.log.
+
+Correcciones durante el aprovisionamiento: Neon rechazo el timeout personalizado (HTTP412); se omitio esa opcion y se mantuvo la politica Free predeterminada. El conector rechazo scripts con multiples comandos preparados: se separaron por sentencias respetando funciones dollar-quoted y se repitio la transaccion atomica. La API de roles crea privilegios elevados por defecto; se creo un lector SQL minimo y se elimino el rol API no utilizado. La comprobacion posterior confirma solo el lector previsto, sin membresias privilegiadas.
+
+El usuario autorizo retener este proyecto de pruebas para continuar N02/N03. No se crearon filas geometricas temporales: las consultas usan constantes. El unico rol provisional fue eliminado. Las contrasenas generadas no se imprimieron, no se almacenaron en Git y se descartaron de memoria de orquestacion al concluir el uso.
+
+Accion pendiente concreta: ejecutar el runner seguro desde una maquina autorizada con Maven y red, usando este lector y TEST_DB_URL/USER/PASSWORD/JWT_SECRET mediante variables o Environment Secrets. Ver la actualizacion inicial de INTEGRACIONES-EXTERNAS.md. No falta otra autorizacion para crear este mismo proyecto: ya existe y no debe duplicarse.
+
+Las evidencias y estados historicos se conservan debajo; este corte actualiza el bloqueo de Neon: el entorno ya esta preparado, lo que falta es la ejecucion Java autorizada.
+
+---
+
 # Cierre tecnico parcial de las integraciones externas
 
 Se verificaron los logs reales de Actions40518412910, commit f38ad7c, rama feature/edt-5.1-technical-validation:25 unitarias/MVC y2 pruebas de migracion aprobadas. Incluyen arranque validation HTTP200, Flyway disabled/readOnly true sin DB_PASSWORD/ADMIN_DEV_PASSWORD. Los jobs Neon y Cloudinary fueron SKIPPED; no se aprueban por el CI verde.

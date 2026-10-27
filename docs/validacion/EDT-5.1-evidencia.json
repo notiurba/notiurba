@@ -526,5 +526,220 @@
       "new_ci_executed": false,
       "error": "Credential Manager/sh/bash 0xC0000022; could not read Username"
     }
+  },
+  "neon_isolated_authorized_execution": {
+    "recorded_utc": "2026-10-27T16:33:21.1440466Z",
+    "authorization": "Explicit user authorization for empty NotiUrba-EDT51-isolated project on existing Free plan",
+    "provisioning": {
+      "project": {
+        "name": "NotiUrba-EDT51-isolated",
+        "id": "small-bonus-50024456",
+        "org_plan_before": "free",
+        "org_plan_after": "free",
+        "pg_version": 18,
+        "region": "aws-us-east-2",
+        "created_at": "2026-10-27T16:19:06Z",
+        "compute_min_cu": 0.25,
+        "compute_max_cu": 0.25,
+        "no_parent_project_or_restore_requested": true,
+        "production_modified": false
+      },
+      "branch": {
+        "id": "br-little-mouse-b5tlorl9",
+        "name": "edt51-isolated",
+        "root_branch": true
+      },
+      "database": "notiurba_edt51",
+      "initial_check": {
+        "user_tables": 0,
+        "app_extensions": 0,
+        "postgres": "18.6 (fd34222)"
+      },
+      "provisioning": {
+        "transport": "authorized Neon SQL connector",
+        "atomic": true,
+        "original_scripts": [
+          {
+            "name": "V1__esquema.sql",
+            "sha256": "D100A7F374241DD6D3689772127C2CEAF4CED5C71E76722C8D84D4EFF6DA6032"
+          },
+          {
+            "name": "V2__reglas_y_vistas.sql",
+            "sha256": "4855998F3A3530610C9671FA497A06F4640F604F69CA5EE759253CB9CD7187B5"
+          },
+          {
+            "name": "V3__catalogos_iniciales.sql",
+            "sha256": "EDE28EC56DD36CB64B719960D28BEBC633AF0BE5938CB3B6F4D3D163FE937F6E"
+          },
+          {
+            "name": "V4__usuario_admin_semilla.sql",
+            "sha256": "53139BCCB445F41DC7B38A1BD8A229CD173CA5195C1A8EC63620D9FCBFE0C934"
+          }
+        ],
+        "statements": [
+          {
+            "name": "V1__esquema.sql",
+            "statements": 47
+          },
+          {
+            "name": "V2__reglas_y_vistas.sql",
+            "statements": 24
+          },
+          {
+            "name": "V3__catalogos_iniciales.sql",
+            "statements": 30
+          },
+          {
+            "name": "V4__usuario_admin_semilla.sql",
+            "statements": 3
+          }
+        ],
+        "runtime_placeholder_generated": true,
+        "secret_values_recorded": false,
+        "flyway_runtime_used": false,
+        "flyway_history_created": false,
+        "public_tables": 25,
+        "synthetic_seed_users": 1,
+        "reference_catalogs": "Original V3, no production copying",
+        "reports": 0,
+        "citizen_photos": 0
+      },
+      "reader": {
+        "name": "edt51_validation_reader",
+        "login_tested_via_connector": true,
+        "read_only": "on",
+        "superuser": false,
+        "create_db": false,
+        "create_role": false,
+        "replication": false,
+        "bypass_rls": false,
+        "inherit": false,
+        "memberships": [],
+        "can_read_all_tables": true,
+        "can_modify_any_table": false,
+        "schema_create": false,
+        "database_temp": false,
+        "initial_api_privileged_role_deleted": true
+      },
+      "spatial_sql": {
+        "contains_inside": true,
+        "contains_border": false,
+        "covers_border": true,
+        "geojson": {
+          "type": "Point",
+          "coordinates": [
+            -76.195,
+            4.085
+          ]
+        },
+        "multipolygon_type": "ST_MultiPolygon",
+        "srid": 4326,
+        "backend_tls_reported_by_sql_connector": false,
+        "tls_jdbc_not_certified": true,
+        "final_read": [
+          {
+            "executed_at_utc": "2026-10-27T16:30:25.225Z",
+            "role": "edt51_validation_reader",
+            "read_only": "on",
+            "point_type": "ST_Point",
+            "point_srid": 4326,
+            "multipolygon_type": "ST_MultiPolygon",
+            "multipolygon_srid": 4326,
+            "reports": "0",
+            "citizen_photos": "0"
+          }
+        ]
+      },
+      "errors_and_corrections": [
+        {
+          "error": "HTTP412 modifying suspend interval not permitted",
+          "correction": "Omitted optional interval setting; kept Free policy unchanged; no plan change"
+        },
+        {
+          "error": "Multiple SQL commands in prepared statement",
+          "correction": "Split original scripts lexically preserving dollar-quoted functions; transaction rollback then atomic retry"
+        },
+        {
+          "error": "API-created role has elevated default permissions; owner cannot revoke protected membership",
+          "correction": "Created SQL role with minimum privileges; removed unused API role via management API"
+        },
+        {
+          "error": "Maven cache permission denied",
+          "correction": "Used writable cache inside authorized workspace"
+        },
+        {
+          "error": "Maven HTTPS and Java TCP Permission denied: getsockopt",
+          "correction": "No security bypass; Java integration remains pending"
+        }
+      ],
+      "java_execution": {
+        "maven_test_compile_exit": 1,
+        "dependency_parent_unresolved": true,
+        "tcp_probe_utc": "2026-10-27T16:26:04.685587400Z",
+        "tcp_probe_exit": 1,
+        "exception": "SocketException: Permission denied: getsockopt",
+        "spring_boot_started": false,
+        "hibernate_spatial_executed": false,
+        "spatial_tests_run": 0,
+        "N02": "PENDIENTE",
+        "N03": "PENDIENTE"
+      }
+    },
+    "verified_ci": {
+      "recorded_for": "Neon isolated authorization",
+      "run": {
+        "id": 40538495198,
+        "sha": "3580726a9b5941995cd3ab311e4b72315b9c8e5a",
+        "branch": "feature/edt-5.1-technical-validation",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/notiurba/notiurba/actions/runs/40538495198"
+      },
+      "jobs": [
+        {
+          "job_id": 122310144487,
+          "lines": [
+            "2026-10-27T16:12:05.1344751Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.243 s -- in com.notiurba.DiagnosticsDisabledTest",
+            "2026-10-27T16:12:05.8113819Z [INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.730 s -- in com.notiurba.DiagnosticsSecurityTest",
+            "2026-10-27T16:12:06.8442743Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.032 s -- in com.notiurba.foto.JpegValidatorTest",
+            "2026-10-27T16:12:06.8516507Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.notiurba.foto.CloudinarySignatureTest",
+            "2026-10-27T16:12:07.1956140Z [INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.340 s -- in com.notiurba.foto.CloudinaryPhotoStoreTest",
+            "2026-10-27T16:12:07.2346514Z [INFO] Tests run: 25, Failures: 0, Errors: 0, Skipped: 0",
+            "2026-10-27T16:12:07.2372094Z [INFO] BUILD SUCCESS",
+            "2026-10-27T16:12:14.7562788Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.149 s -- in com.notiurba.DiagnosticsDisabledTest",
+            "2026-10-27T16:12:15.4462835Z [INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.742 s -- in com.notiurba.DiagnosticsSecurityTest",
+            "2026-10-27T16:12:15.8283243Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.375 s -- in com.notiurba.foto.JpegValidatorTest",
+            "2026-10-27T16:12:15.8410471Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.notiurba.foto.CloudinarySignatureTest",
+            "2026-10-27T16:12:16.2632721Z [INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.438 s -- in com.notiurba.foto.CloudinaryPhotoStoreTest",
+            "2026-10-27T16:12:16.3193575Z [INFO] Tests run: 25, Failures: 0, Errors: 0, Skipped: 0",
+            "2026-10-27T16:12:16.9772416Z [INFO] BUILD SUCCESS"
+          ]
+        },
+        {
+          "job_id": 122310144943,
+          "lines": [
+            "2026-10-27T16:12:11.6582285Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.776 s -- in com.notiurba.DiagnosticsDisabledTest",
+            "2026-10-27T16:12:14.3246693Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.700 s -- in com.notiurba.foto.JpegValidatorTest",
+            "2026-10-27T16:12:14.3540773Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.notiurba.foto.CloudinarySignatureTest",
+            "2026-10-27T16:12:14.8606507Z [INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.509 s -- in com.notiurba.foto.CloudinaryPhotoStoreTest",
+            "2026-10-27T16:12:15.5101214Z [INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.653 s -- in com.notiurba.DiagnosticsSecurityTest",
+            "2026-10-27T16:12:15.5594249Z [INFO] Tests run: 25, Failures: 0, Errors: 0, Skipped: 0",
+            "2026-10-27T16:12:35.0607955Z UTC=2026-10-27T16:12:35.036564652Z PostgreSQL=18.6 (Debian 18.6-1.pgdg13+2) PostGIS=POSTGIS=\"3.6.4 94d984b\" [EXTENSION] PGSQL=\"180\" GEOS=\"3.14.1-CAPI-1.20.5\" (compiled against GEOS 3.13.1) PROJ=\"9.8.1 NETWORK_ENABLED=OFF URL_ENDPOINT=https://cdn.proj.org USER_WRITABLE_DIRECTORY=/var/lib/postgresql/.local/share/proj DATABASE_PATH=/usr/share/proj/proj.db\" (compiled against PROJ 9.6.0) LIBXML=\"2.9.14\" LIBJSON=\"0.18\" LIBPROTOBUF=\"1.5.1\" WAGYU=\"0.5.0 (Internal)\" TOPOLOGY image=postgis/postgis:18-3.6 Flyway V1-V4; Hibernate validate OK",
+            "2026-10-27T16:12:36.5044244Z UTC=2026-10-27T16:12:36.478318380Z validation profile startup HTTP=200 Flyway=disabled readOnly=true DB_PASSWORD=absent ADMIN_DEV_PASSWORD=absent",
+            "2026-10-27T16:12:36.9126265Z [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 19.85 s -- in com.notiurba.MigrationIntegrationTest",
+            "2026-10-27T16:12:37.2911567Z [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0",
+            "2026-10-27T16:12:37.8126498Z [INFO] BUILD SUCCESS"
+          ]
+        }
+      ],
+      "external_jobs": {
+        "neon": "skipped",
+        "cloudinary": "skipped"
+      }
+    },
+    "N02": "PENDIENTE",
+    "N03": "PENDIENTE",
+    "further_project_creation_needed": false
   }
 }
