@@ -1,0 +1,51 @@
+name: EDT 5.1 backend validation
+"on":
+  push:
+    branches: ["codex/edt-5-1-validaciones"]
+  pull_request:
+    paths: ["backend/**", "render.yaml", ".github/workflows/edt51-validation.yml"]
+permissions:
+  contents: read
+jobs:
+  backend-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      - name: Unit and MVC tests (no provider credentials)
+        run: mvn -B -f backend/pom.xml clean test
+      - name: Package
+        run: mvn -B -f backend/pom.xml package
+      - name: Surefire reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: edt51-surefire
+          path: backend/target/surefire-reports/
+          if-no-files-found: warn
+  migration-postgres18:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      - name: Disposable PostGIS migration and Hibernate schema validation
+        run: mvn -B -f backend/pom.xml -Pmigration-tests verify
+      - name: Migration reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: edt51-migration-failsafe
+          path: |
+            backend/target/failsafe-reports/
+            backend/target/surefire-reports/
+          if-no-files-found: warn

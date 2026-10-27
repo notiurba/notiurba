@@ -5,3 +5,9 @@
 .vscode/
 *.iml
 .DS_Store
+# EDT 5.1 local verification artifacts
+maven-cache/
+verification-classes/
+baseline-maven.log
+edt51-latency.json
+!**/.env.validation.example

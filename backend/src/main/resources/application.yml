@@ -2,9 +2,17 @@ spring:
   application:
     name: notiurba-backend
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/notiurba}
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/notiurba}
     username: ${DB_USER:notiurba}
     password: ${DB_PASSWORD}          # obligatoria: variable de entorno (ver .env.example)
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX:3}
+      minimum-idle: 0
+      connection-timeout: 15000
+  servlet:
+    multipart:
+      max-file-size: 1000000B
+      max-request-size: 1100000B
   jpa:
     open-in-view: false
     hibernate:
@@ -16,9 +24,12 @@ spring:
       adminPassword: ${ADMIN_DEV_PASSWORD}   # obligatoria: nunca en el repo (ver V4__usuario_admin_semilla.sql)
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 notiurba:
+  diagnostics:
+    enabled: ${DIAGNOSTICS_ENABLED:false}
+    photos-enabled: ${PHOTO_DIAGNOSTICS_ENABLED:false}
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
   jwt:

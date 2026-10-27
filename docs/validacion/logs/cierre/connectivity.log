@@ -1,0 +1,14 @@
+UTC=2026-10-27T06:28:18.9884273Z
+DNS github.com FAILED (no addresses)
+DNS repo.maven.apache.org FAILED (no addresses)
+DNS api.cloudinary.com FAILED (no addresses)
+ENV HTTP_PROXY present=False
+ENV HTTPS_PROXY present=False
+ENV ALL_PROXY present=False
+ENV TEST_DB_URL present=False
+ENV TEST_DB_USER present=False
+ENV TEST_DB_PASSWORD present=False
+ENV CLOUDINARY_CLOUD_NAME present=False
+ENV CLOUDINARY_API_KEY present=False
+ENV CLOUDINARY_API_SECRET present=False
+Maven user settings present=False

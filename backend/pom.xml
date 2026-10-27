@@ -42,6 +42,13 @@
       <artifactId>spring-boot-starter-mail</artifactId>
     </dependency>
 
+    <!-- Official SDK owns upload/destroy routing, serialization and signatures. -->
+    <dependency>
+      <groupId>com.cloudinary</groupId>
+      <artifactId>cloudinary-http5</artifactId>
+      <version>2.3.1</version>
+    </dependency>
+
     <!-- PostGIS: tipos geométricos en JPA -->
     <dependency>
       <groupId>org.hibernate.orm</groupId>
@@ -92,6 +99,18 @@
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- Disposable PostgreSQL/PostGIS migration tests; no external credentials. -->
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -100,6 +119,61 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes><exclude>**/*IntegrationTest.java</exclude></excludes>
+          <failIfNoTests>true</failIfNoTests>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>spatial-tests</id>
+      <build><plugins><plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <includes><include>**/SpatialIntegrationTest.java</include></includes>
+          <failIfNoTests>true</failIfNoTests>
+          <failIfNoSpecifiedTests>true</failIfNoSpecifiedTests>
+        </configuration>
+        <executions><execution><goals>
+          <goal>integration-test</goal><goal>verify</goal>
+        </goals></execution></executions>
+      </plugin></plugins></build>
+    </profile>
+    <profile>
+      <id>cloudinary-tests</id>
+      <build><plugins><plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <includes><include>**/CloudinaryIntegrationTest.java</include></includes>
+          <failIfNoTests>true</failIfNoTests>
+          <failIfNoSpecifiedTests>true</failIfNoSpecifiedTests>
+        </configuration>
+        <executions><execution><goals>
+          <goal>integration-test</goal><goal>verify</goal>
+        </goals></execution></executions>
+      </plugin></plugins></build>
+    </profile>
+    <profile>
+      <id>migration-tests</id>
+      <build><plugins><plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <includes><include>**/MigrationIntegrationTest.java</include></includes>
+          <failIfNoTests>true</failIfNoTests>
+          <failIfNoSpecifiedTests>true</failIfNoSpecifiedTests>
+        </configuration>
+        <executions><execution><goals>
+          <goal>integration-test</goal><goal>verify</goal>
+        </goals></execution></executions>
+      </plugin></plugins></build>
+    </profile>
+  </profiles>
 </project>
