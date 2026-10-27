@@ -1,0 +1,10 @@
+UTC=2026-10-27T14:05:43.2050957Z
+Code commit=3f00fd7
+Authorized branch=feature/edt-5.1-technical-validation
+Actual publisher preflight=PASS
+Push target=HEAD:refs/heads/feature/edt-5.1-technical-validation
+Push exit=1
+Git Credential Manager/sh/bash failed with NtCreateDirectoryObject 0xC0000022; could not read Username for https://github.com.
+No successful publication. No Actions run for this rename confirmed.
+main=2d6ceca3804ceebe1df95e838ef90bab911bcd9b
+Historical evidence and fb3812a preserved. No PR, merge, force push, main/develop writes or infrastructure changes.

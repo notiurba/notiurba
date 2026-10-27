@@ -21,3 +21,5 @@ Si la autenticacion bloquea publicar, ejecutar desde PowerShell normal de Window
 ```
 
 El script comprueba rama exacta/arbol limpio, descarga referencias, rechaza avances remotos no incorporados y solo publica HEAD:refs/heads/feature/edt-5.1-technical-validation. No escribe main/develop ni fuerza, fusiona o crea PR.
+
+Cierre 2026-10-27T14:05:43.2050957Z : commit de codigo 3f00fd7, preflight real APROBADO; push fallo por Credential Manager/sh/bash 0xC0000022 y ausencia de Username. Ver logs/branch-rename/publication.log. La publicacion y ejecucion real del workflow siguen pendientes. El comando Windows anterior utiliza exclusivamente la rama nueva.
