@@ -340,3 +340,6 @@ Comando para publicar desde una terminal normal de Windows, fuera del entorno re
 
 Despues del push, consultar https://github.com/notiurba/notiurba/actions?query=branch%3Acodex%2Fedt-5-1-validaciones y exigir logs/reportes reales antes de cambiar estados. La publicacion por si sola no acredita compilacion ni integraciones.
 La ejecucion real del preflight detecto un falso rechazo de SHA256: -match de PowerShell ignora mayusculas y tambien reconocia SHA256 como sha256. Se corrigio con -cmatch/-cnotmatch. El intento fallido se conserva en logs/publicacion-validaciones/windows-publisher-preflight.log. La comprobacion se repite despues de guardar la correccion; esto no ejecuta push ni pruebas Java.
+
+Cierre 2026-10-27T12:24:37.6737447Z : preflight repetido APROBADO (logs/publicacion-validaciones/windows-publisher-preflight-retry.log). Comprueba publicacion segura; no ejecuta Maven ni Actions. La publicacion completa y los jobs continuan pendientes por los bloqueos documentados.
+
