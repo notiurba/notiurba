@@ -432,6 +432,14 @@
     "configuration_checks_passed": 27,
     "new_validation_startup_test_executed": false,
     "render_deployed": false,
-    "report": "INTEGRACIONES-EXTERNAS.md"
+    "report": "INTEGRACIONES-EXTERNAS.md",
+    "publication": {
+      "local_code_commit": "673e33f",
+      "pushed": false,
+      "git_push_exit": 1,
+      "connector_write_status": 403,
+      "new_ci_run": false,
+      "main_unchanged": "2d6ceca3804ceebe1df95e838ef90bab911bcd9b"
+    }
   }
 }

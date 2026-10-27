@@ -39,3 +39,15 @@ La ejecucion real del preflight detecto un falso rechazo de SHA256: -match de Po
 Cierre 2026-10-27T12:24:37.6737447Z : preflight repetido APROBADO (logs/publicacion-validaciones/windows-publisher-preflight-retry.log). Comprueba publicacion segura; no ejecuta Maven ni Actions. La publicacion completa y los jobs continuan pendientes por los bloqueos documentados.
 
 Corte externo 2026-10-27T13:16:11.9393681Z : baseline a599593 y Actions40507497490 verificados; configuracion manual y controles locales preparados. Ver INTEGRACIONES-EXTERNAS.md. Ninguna integracion externa se declara aprobada.
+
+### Cierre de publicacion de este corte
+
+Los cambios de integraciones externas quedaron guardados localmente en 673e33f. El push exclusivo de validaciones fallo: Credential Manager/sh NtCreateDirectoryObject 0xC0000022 y unable to get password from user. La alternativa del conector devolvio HTTP403 Resource not accessible by integration. Ver logs/external-config/publication.log. NO estan publicados estos cambios; NO hay nueva ejecucion CI que acredite la prueba de arranque validation anadida. G01 queda pendiente para esta actualizacion, conservando la publicacion/CI previa de a599593.
+
+Desde PowerShell normal de Windows, publicar con el script existente; este verifica arbol limpio, main incluido y ausencia de avances remotos concurrentes, y no fusiona ni crea PR:
+
+```powershell
+& "C:\Users\Usuario\.codex\.chatgpt-projects\g-p-6aacbd0a1a688191b438845119074d96\edt51-work\notiurba-edt51-publicacion\tools\Publish-Edt51Branch.ps1"
+```
+
+Despues de publicar, comprobar los jobs normales del nuevo push; no atribuirles integraciones externas. Para estas, configurar el Environment/secretos y comprobar el dispatch o utilizar el runner local como explica INTEGRACIONES-EXTERNAS.md. main conserva 2d6ceca3804ceebe1df95e838ef90bab911bcd9b. No se hicieron PR, fusiones ni despliegues.

@@ -157,7 +157,7 @@ No atribuir HTTP200 a la CLI sin conservar tambien evidencia del transporte. Par
 
 render.yaml ahora fija tambien branch: codex/edt-5-1-validaciones. Se conservan rootDir: backend, dockerfilePath: ./Dockerfile, dockerContext: ., plan free y autodeploy off. La guia monorepo de Render especifica estas rutas relativas a rootDir. No se ha desplegado.
 
-Con motor Docker disponible: docker build -f backend/Dockerfile -t notiurba-edt51:validation backend. Para arrancar, usar un archivo privado fuera del repo con variables de validation (TEST_DB_*, JWT_SECRET, DIAGNOSTICS_ENABLED=true si se valida ADMIN, PHOTO_DIAGNOSTICS_ENABLED=false), y docker run --rm --name notiurba-edt51-validation --env-file <archivo-privado> -p 8080:8080 notiurba-edt51:validation. Consultar /api/health y el diagnostico espacial ADMIN; detener solamente ese contenedor nuevo.
+Con motor Docker disponible: docker build -f backend/Dockerfile -t notiurba-edt51:validation backend. Para arrancar, usar un archivo privado fuera del repo con variables de validation (SPRING_PROFILES_ACTIVE=validation, TEST_DB_*, JWT_SECRET, DIAGNOSTICS_ENABLED=true si se valida ADMIN, PHOTO_DIAGNOSTICS_ENABLED=false), y docker run --rm --name notiurba-edt51-validation --env-file <archivo-privado> -p 8080:8080 notiurba-edt51:validation. Consultar /api/health y el diagnostico espacial ADMIN; detener solamente ese contenedor nuevo.
 
 Antes de Render: el responsable debe confirmar URL/ID de servicio aislado, plan free sin extras, rama autorizada, Neon aislado, variables y aprobacion de exposicion publica. No se despliega sin esa informacion. La prueba nueva de validation verificara si se requieren DB_PASSWORD/ADMIN_DEV_PASSWORD; no se inventan valores de respaldo en Render.
 
@@ -171,3 +171,15 @@ R03: ejecutar tools/Measure-Edt51Latency.ps1 contra la URL aprobada, cinco BEFOR
 - https://render.com/docs/monorepo-support
 
 Los comandos de infraestructura son instrucciones para recursos aislados autorizados; no se ejecutaron ni acreditan integraciones por estar documentados.
+
+### Cierre de publicacion de este corte
+
+Los cambios de integraciones externas quedaron guardados localmente en 673e33f. El push exclusivo de validaciones fallo: Credential Manager/sh NtCreateDirectoryObject 0xC0000022 y unable to get password from user. La alternativa del conector devolvio HTTP403 Resource not accessible by integration. Ver logs/external-config/publication.log. NO estan publicados estos cambios; NO hay nueva ejecucion CI que acredite la prueba de arranque validation anadida. G01 queda pendiente para esta actualizacion, conservando la publicacion/CI previa de a599593.
+
+Desde PowerShell normal de Windows, publicar con el script existente; este verifica arbol limpio, main incluido y ausencia de avances remotos concurrentes, y no fusiona ni crea PR:
+
+```powershell
+& "C:\Users\Usuario\.codex\.chatgpt-projects\g-p-6aacbd0a1a688191b438845119074d96\edt51-work\notiurba-edt51-publicacion\tools\Publish-Edt51Branch.ps1"
+```
+
+Despues de publicar, comprobar los jobs normales del nuevo push; no atribuirles integraciones externas. Para estas, configurar el Environment/secretos y comprobar el dispatch o utilizar el runner local como explica INTEGRACIONES-EXTERNAS.md. main conserva 2d6ceca3804ceebe1df95e838ef90bab911bcd9b. No se hicieron PR, fusiones ni despliegues.

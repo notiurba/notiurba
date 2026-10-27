@@ -1,0 +1,9 @@
+UTC=2026-10-27T13:19:06.6403992Z
+Local code/config commit=673e33f
+Branch=codex/edt-5-1-validaciones
+Command=git -c credential.interactive=never push origin HEAD:refs/heads/codex/edt-5-1-validaciones
+Exit=1
+Git Credential Manager helper failed: sh NtCreateDirectoryObject 0xC0000022; unable to get password from user.
+Alternative GitHub connector create_blob: HTTP403 Resource not accessible by integration.
+Publication=false. No new Actions run for these edits. Prior Actions40507497490 remains confirmed success.
+No branch other than validation was targeted. No PR, merge, force push or deployment.
