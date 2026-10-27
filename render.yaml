@@ -2,7 +2,7 @@
 services:
   - type: web
     name: notiurba-backend-validation
-    branch: codex/edt-5-1-validaciones
+    branch: feature/edt-5.1-technical-validation
     runtime: docker
     plan: free
     rootDir: backend

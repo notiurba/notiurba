@@ -7,11 +7,11 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $Repository = (Resolve-Path -LiteralPath $Repository).Path
-$branch = 'codex/edt-5-1-validaciones'
+$branch = 'feature/edt-5.1-technical-validation'
 function Assert-Branch {
     $active = & git -C $Repository branch --show-current
     if ($LASTEXITCODE -ne 0 -or $active -ne $branch) {
-        throw 'Operacion bloqueada: la rama debe ser codex/edt-5-1-validaciones.'
+        throw 'Operacion bloqueada: la rama debe ser feature/edt-5.1-technical-validation.'
     }
 }
 function Git-Checked([string[]]$Arguments) {
@@ -48,4 +48,4 @@ Write-Host 'Preflight correcto. Solo se publicara la rama de validaciones; sin P
 if ($CheckOnly) { return }
 Git-Checked @('push','origin',"HEAD:refs/heads/$branch")
 Write-Host 'Push terminado. Consultar Actions para verificar resultados reales; esto no aprueba las integraciones externas.'
-Write-Host 'https://github.com/notiurba/notiurba/actions?query=branch%3Acodex%2Fedt-5-1-validaciones'
+Write-Host 'https://github.com/notiurba/notiurba/actions?query=branch%3Afeature%2Fedt-5.1-technical-validation'

@@ -21,7 +21,7 @@ try {
     $env:TEST_DB_URL='jdbc:postgresql://ep-synthetic.us-east-2.aws.neon.tech/test?sslmode=require'
     $env:TEST_DB_USER='synthetic'; $env:TEST_DB_PASSWORD='synthetic-not-a-secret'; $env:JWT_SECRET='synthetic-test-key-at-least-32-characters'
     Expect-Rejection Neon '*JDBC must verify hostname*'; $checks++
-    $env:GITHUB_ACTIONS='true'; $env:GITHUB_EVENT_NAME='push'; $env:GITHUB_REF='refs/heads/codex/edt-5-1-validaciones'
+    $env:GITHUB_ACTIONS='true'; $env:GITHUB_EVENT_NAME='push'; $env:GITHUB_REF='refs/heads/feature/edt-5.1-technical-validation'
     Expect-Rejection Cloudinary '*explicit dispatch*'; $checks++
     $env:GITHUB_EVENT_NAME='workflow_dispatch'; $env:GITHUB_SHA='0000000000000000000000000000000000000000'
     Expect-Rejection Cloudinary '*Unexpected checkout*'; $checks++

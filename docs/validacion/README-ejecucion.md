@@ -9,7 +9,7 @@ Base revisada: 2d6ceca3804ceebe1df95e838ef90bab911bcd9b. Si main cambió, revisa
 
 ```powershell
 git fetch origin main
-git switch -c codex/edt-5-1-validaciones origin/main
+git switch -c feature/edt-5.1-technical-validation origin/main
 git apply --check C:/ruta/NotiUrba-EDT51.patch
 git apply C:/ruta/NotiUrba-EDT51.patch
 ```
@@ -90,7 +90,7 @@ Después de ejecutar y revisar en un entorno con permisos:
 ```powershell
 git add backend .github render.yaml tools docs/validacion .gitignore
 git commit -m "Preparar validaciones técnicas EDT 5.1 y evidencia verificable"
-git push -u origin codex/edt-5-1-validaciones
+git push -u origin feature/edt-5.1-technical-validation
 # No crear PR ni fusionar hacia main en esta tarea.
 ```
 
@@ -99,7 +99,7 @@ La publicación quedó bloqueada aquí por HTTP 403 al crear la rama. No hay PR 
 ## Continuación del 27/10/2026
 
 La rama remota ya existe. Solo render.yaml fue publicado, en 9bd1627. El resto está en el paquete de continuación y el parche completo NotiUrba-EDT51-v2.patch.
-Los comandos iniciales git switch -c deben adaptarse si la rama ya existe: en un clon auténtico, hacer fetch, guardar cambios, cambiar a codex/edt-5-1-validaciones y comparar con origin/main. No crear otra rama con el mismo nombre ni forzar push.
+Los comandos iniciales git switch -c deben adaptarse si la rama ya existe: en un clon auténtico, hacer fetch, guardar cambios, cambiar a feature/edt-5.1-technical-validation y comparar con origin/main. No crear otra rama con el mismo nombre ni forzar push.
 
 Para aplicar el parche completo sobre una rama que ya tiene render.yaml, primero revisar ese archivo: su versión remota ya coincide con la nueva. Puede comprobarse el resto con git apply --check --exclude=render.yaml y luego aplicar con la misma exclusión. No aplicar ningún parche si la comprobación falla.
 
@@ -129,4 +129,4 @@ Guardar el ZIP actualizado y su parche completo v3 juntos; extraer el ZIP sin re
 ./tools/Complete-Edt51.ps1 -Repository C:/proyectos/notiurba -Patch ../NotiUrba-EDT51-v3.patch -Migration -Spatial -Cloudinary -Publish
 ```
 
-No ejecutar -Spatial sobre una base compartida. -Publish publica exclusivamente codex/edt-5-1-validaciones; no crea PR, no fusiona y no despliega. Revisar los logs y Surefire/Failsafe antes de marcar integraciones; los estados del informe no se actualizan automaticamente. Si la aplicacion del parche falla, se detiene sin sobrescribir archivos: comparar el parche con las nuevas versiones de los companeros y resolver manualmente. Las integraciones externas son explicitas y no deben activarse con secretos en PR no confiables. Revisar Actions con gh run list --repo notiurba/notiurba y gh run view ID --log-failed.
+No ejecutar -Spatial sobre una base compartida. -Publish publica exclusivamente feature/edt-5.1-technical-validation; no crea PR, no fusiona y no despliega. Revisar los logs y Surefire/Failsafe antes de marcar integraciones; los estados del informe no se actualizan automaticamente. Si la aplicacion del parche falla, se detiene sin sobrescribir archivos: comparar el parche con las nuevas versiones de los companeros y resolver manualmente. Las integraciones externas son explicitas y no deben activarse con secretos en PR no confiables. Revisar Actions con gh run list --repo notiurba/notiurba y gh run view ID --log-failed.

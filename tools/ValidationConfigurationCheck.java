@@ -42,12 +42,12 @@ public final class ValidationConfigurationCheck {
         var jobs=map(workflow.get("jobs"));
         require(jobs.containsKey("backend-unit") && jobs.containsKey("migration-postgres18"),"separate jobs");
         require(((List<?>)map(map(workflow.get("on")).get("push")).get("branches"))
-            .equals(List.of("codex/edt-5-1-validaciones")),"push branch is exact");
-        require("codex/edt-5-1-validaciones".equals(service.get("branch")),"Render branch is exact");
+            .equals(List.of("feature/edt-5.1-technical-validation")),"push branch is exact");
+        require("feature/edt-5.1-technical-validation".equals(service.get("branch")),"Render branch is exact");
         for (String name : List.of("neon-external","cloudinary-external")) {
             var external=map(jobs.get(name));
             String condition=external.get("if").toString();
-            require(condition.contains("workflow_dispatch") && condition.contains("refs/heads/codex/edt-5-1-validaciones"),"external event and branch guard");
+            require(condition.contains("workflow_dispatch") && condition.contains("refs/heads/feature/edt-5.1-technical-validation"),"external event and branch guard");
             require("edt51-external-validation".equals(external.get("environment")),"dedicated external environment");
         }
         for (Object job : jobs.values()) {

@@ -10,12 +10,12 @@ $repo = Split-Path $PSScriptRoot -Parent
 Push-Location $repo
 try {
     if ($env:GITHUB_ACTIONS -eq 'true') {
-        if ($env:GITHUB_EVENT_NAME -ne 'workflow_dispatch' -or $env:GITHUB_REF -ne 'refs/heads/codex/edt-5-1-validaciones') {
+        if ($env:GITHUB_EVENT_NAME -ne 'workflow_dispatch' -or $env:GITHUB_REF -ne 'refs/heads/feature/edt-5.1-technical-validation') {
             throw 'External jobs require explicit dispatch on the validation branch.'
         }
         # actions/checkout uses detached HEAD; validate the actual checked-out SHA.
         if ([string]::IsNullOrWhiteSpace($env:GITHUB_SHA) -or (& git rev-parse HEAD) -cne $env:GITHUB_SHA) { throw 'Unexpected checkout; no provider calls allowed.' }
-    } elseif ((& git branch --show-current) -ne 'codex/edt-5-1-validaciones') {
+    } elseif ((& git branch --show-current) -ne 'feature/edt-5.1-technical-validation') {
         throw 'Wrong branch; no provider calls allowed.'
     }
     if ($env:EDT51_EXTERNAL_ALLOWED -cne 'true') { throw 'Test-only resource approval missing: EDT51_EXTERNAL_ALLOWED must be true.' }

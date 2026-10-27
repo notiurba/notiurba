@@ -12,7 +12,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $Patch = (Resolve-Path -LiteralPath $Patch).Path
 $Repository = [IO.Path]::GetFullPath($Repository)
-$branch = 'codex/edt-5-1-validaciones'
+$branch = 'feature/edt-5.1-technical-validation'
 function Git-Required([string[]]$Arguments) {
     if ($Arguments[0] -in @("apply","add","commit","push")) {
         if ((& git branch --show-current) -ne $branch) { throw "Wrong branch: mutation blocked." }
@@ -40,7 +40,7 @@ try {
     Git-Required @('fetch','origin','--prune') | Out-Host
     # Refuse to write from any other branch; never switch to main/develop.
     if (([string](Git-Required @('branch','--show-current'))).Trim() -ne $branch) {
-        throw 'Only codex/edt-5-1-validaciones is allowed; no files changed.'
+        throw 'Only feature/edt-5.1-technical-validation is allowed; no files changed.'
     }
     & git merge-base HEAD origin/main > $null
     if ($LASTEXITCODE -ne 0) { throw 'Unrelated local history; use an authentic clone.' }

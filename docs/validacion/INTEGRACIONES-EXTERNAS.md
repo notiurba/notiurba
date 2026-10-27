@@ -1,6 +1,6 @@
 # EDT 5.1: ejecucion externa con recursos de prueba
 
-Corte: 2026-10-27 UTC. Rama unica: codex/edt-5-1-validaciones. No crear PR, fusionar, desplegar produccion ni modificar V1-V4.
+Corte: 2026-10-27 UTC. Rama unica: feature/edt-5.1-technical-validation. No crear PR, fusionar, desplegar produccion ni modificar V1-V4.
 
 ## Evidencia que ya esta aprobada
 
@@ -17,7 +17,7 @@ La ejecucion https://github.com/notiurba/notiurba/actions/runs/40507497490 del c
 
 ## GitHub Environment y secretos (sin valores en el chat)
 
-Un administrador autorizado debe abrir Settings > Environments y preparar edt51-external-validation. Configurar Deployment branches: Selected branches, solo codex/edt-5-1-validaciones. Agregar revisores requeridos si el plan/repositorio lo admite. No cambiar el plan ni comprar funciones. Este Environment protege jobs, no implica un despliegue de Render.
+Un administrador autorizado debe abrir Settings > Environments y preparar edt51-external-validation. Configurar Deployment branches: Selected branches, solo feature/edt-5.1-technical-validation. Agregar revisores requeridos si el plan/repositorio lo admite. No cambiar el plan ni comprar funciones. Este Environment protege jobs, no implica un despliegue de Render.
 
 Agregar estos Environment Secrets EXCLUSIVAMENTE de prueba:
 
@@ -62,7 +62,7 @@ El administrador de la base aislada debe aplicar V1-V4 originales una sola vez, 
 Procedimiento separado para provisionar, SOLO con la conexion owner de la base aislada recien creada, nunca con production. Despues de mvn package, variables TEST_DB_* y JWT_SECRET se inyectan por el almacen autorizado. TEST_SCHEMA_ADMIN_PASSWORD se pide de forma segura. Los argumentos contienen referencias literales a variables, no sus valores:
 
 ```powershell
-if ((git branch --show-current) -ne 'codex/edt-5-1-validaciones') { throw 'Rama incorrecta' }
+if ((git branch --show-current) -ne 'feature/edt-5.1-technical-validation') { throw 'Rama incorrecta' }
 # Confirmar manualmente host/base aislada y vacia antes de continuar.
 $secure = Read-Host 'Semilla ADMIN sintetica de la base aislada' -AsSecureString
 $env:TEST_SCHEMA_ADMIN_PASSWORD = [Net.NetworkCredential]::new('', $secure).Password
@@ -89,11 +89,11 @@ IMPORTANTE: GitHub documenta que workflow_dispatch necesita el workflow en la ra
 
 ```powershell
 gh workflow run edt51-validation.yml --repo notiurba/notiurba `
-  --ref codex/edt-5-1-validaciones -f neon=true -f cloudinary=false
+  --ref feature/edt-5.1-technical-validation -f neon=true -f cloudinary=false
 # Ejecutar Cloudinary por separado despues de configurar sus secretos:
 gh workflow run edt51-validation.yml --repo notiurba/notiurba `
-  --ref codex/edt-5-1-validaciones -f neon=false -f cloudinary=true
-gh run list --repo notiurba/notiurba --branch codex/edt-5-1-validaciones
+  --ref feature/edt-5.1-technical-validation -f neon=false -f cloudinary=true
+gh run list --repo notiurba/notiurba --branch feature/edt-5.1-technical-validation
 # Consultar run view ID --log-failed; no publicar logs crudos externos.
 ```
 
@@ -155,7 +155,7 @@ No atribuir HTTP200 a la CLI sin conservar tambien evidencia del transporte. Par
 
 ## Docker, Render y latencia
 
-render.yaml ahora fija tambien branch: codex/edt-5-1-validaciones. Se conservan rootDir: backend, dockerfilePath: ./Dockerfile, dockerContext: ., plan free y autodeploy off. La guia monorepo de Render especifica estas rutas relativas a rootDir. No se ha desplegado.
+render.yaml ahora fija tambien branch: feature/edt-5.1-technical-validation. Se conservan rootDir: backend, dockerfilePath: ./Dockerfile, dockerContext: ., plan free y autodeploy off. La guia monorepo de Render especifica estas rutas relativas a rootDir. No se ha desplegado.
 
 Con motor Docker disponible: docker build -f backend/Dockerfile -t notiurba-edt51:validation backend. Para arrancar, usar un archivo privado fuera del repo con variables de validation (SPRING_PROFILES_ACTIVE=validation, TEST_DB_*, JWT_SECRET, DIAGNOSTICS_ENABLED=true si se valida ADMIN, PHOTO_DIAGNOSTICS_ENABLED=false), y docker run --rm --name notiurba-edt51-validation --env-file <archivo-privado> -p 8080:8080 notiurba-edt51:validation. Consultar /api/health y el diagnostico espacial ADMIN; detener solamente ese contenedor nuevo.
 
