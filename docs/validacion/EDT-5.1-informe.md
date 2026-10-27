@@ -410,3 +410,5 @@ Desde PowerShell normal de Windows, publicar con el script existente; este verif
 ```
 
 Despues de publicar, comprobar los jobs normales del nuevo push; no atribuirles integraciones externas. Para estas, configurar el Environment/secretos y comprobar el dispatch o utilizar el runner local como explica INTEGRACIONES-EXTERNAS.md. main conserva 2d6ceca3804ceebe1df95e838ef90bab911bcd9b. No se hicieron PR, fusiones ni despliegues.
+
+Cierre de publicacion 2026-10-27T16:10:18.3914534Z : commit de codigo98a1a40 conservado; preflight aprobado, push fallo por Credential Manager/sh/bash 0xC0000022 y ausencia de Username. Esta actualizacion no esta publicada ni tiene un nuevo CI. Ver logs/cierre-externo/publication.log. Publicar desde PowerShell normal con tools/Publish-Edt51Branch.ps1, que apunta exclusivamente a la rama feature autorizada. main/develop siguen en2d6ceca; sin PR ni fusiones.

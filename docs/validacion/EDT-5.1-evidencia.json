@@ -443,7 +443,7 @@
     }
   },
   "latest_external_review": {
-    "recorded_utc": "2026-10-27T16:04:32.7612860Z",
+    "recorded_utc": "2026-10-27T16:04:32.761286Z",
     "base_commit": "f38ad7cdf5417fb421a7d7e23f0ed0f22b93c451",
     "branch": "feature/edt-5.1-technical-validation",
     "baseline_run": 40518412910,
@@ -516,6 +516,15 @@
       "checks_passed": 12,
       "provider_calls": 0,
       "correction": "executed test failures become FALLIDO; absent or skipped execution remains PENDIENTE"
+    },
+    "publication": {
+      "utc": "2026-10-27T16:10:18.3914534Z",
+      "local_code_commit": "98a1a40",
+      "preflight": "PASS",
+      "push_exit": 1,
+      "pushed": false,
+      "new_ci_executed": false,
+      "error": "Credential Manager/sh/bash 0xC0000022; could not read Username"
     }
   }
 }
