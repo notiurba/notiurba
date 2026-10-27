@@ -40,7 +40,7 @@ foreach ($file in @('backend/src/main/java/com/notiurba/foto/CloudinaryPhotoStor
     'backend/src/test/java/com/notiurba/CloudinaryIntegrationTest.java',
     'backend/src/test/java/com/notiurba/foto/CloudinaryPhotoStoreTest.java')) {
     $source = [IO.File]::ReadAllText((Join-Path $Repository $file))
-    if ($source -notmatch '"signature_algorithm",\s*"SHA256"' -or $source -match '"signature_algorithm",\s*"sha256"') {
+    if ($source -cnotmatch '"signature_algorithm",\s*"SHA256"' -or $source -cmatch '"signature_algorithm",\s*"sha256"') {
         throw "Configuracion SHA256 incorrecta en $file"
     }
 }
