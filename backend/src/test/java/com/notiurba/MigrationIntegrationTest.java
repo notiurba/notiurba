@@ -35,6 +35,40 @@ class MigrationIntegrationTest {
         props.add("spring.flyway.placeholders.adminPassword", () -> TEST_ADMIN_PASSWORD);
         props.add("notiurba.jwt.secreto", () -> UUID.randomUUID().toString()+UUID.randomUUID());
     }
+    @Test void validationProfileStartsWithoutGeneralDatabaseOrSeedPasswords() throws Exception {
+        // A second, real Boot context on the disposable database: validation must
+        // override application.yml without DB_PASSWORD or ADMIN_DEV_PASSWORD.
+        assertThat(System.getenv("DB_PASSWORD")).isNull();
+        assertThat(System.getenv("ADMIN_DEV_PASSWORD")).isNull();
+        var application = new org.springframework.boot.SpringApplication(NotiUrbaApplication.class);
+        application.setAdditionalProfiles("validation");
+        application.addInitializers(context -> context.getEnvironment().getPropertySources().addFirst(
+            new org.springframework.core.env.MapPropertySource("isolated-validation-test", java.util.Map.of(
+                "TEST_DB_URL", postgres.getJdbcUrl(),
+                "TEST_DB_USER", postgres.getUsername(),
+                "TEST_DB_PASSWORD", postgres.getPassword(),
+                "JWT_SECRET", UUID.randomUUID().toString()+UUID.randomUUID(),
+                "server.port", "0",
+                "spring.autoconfigure.exclude", "org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration"))));
+        // Ensure schema exists independent of JUnit method order. Container only.
+        Flyway.configure().dataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword())
+            .placeholders(java.util.Map.of("adminPassword", TEST_ADMIN_PASSWORD)).load().migrate();
+        try (var validation = application.run()) {
+            var environment = validation.getEnvironment();
+            assertThat(environment.getProperty("spring.flyway.enabled", Boolean.class)).isFalse();
+            assertThat(validation.getBeansOfType(Flyway.class)).isEmpty();
+            assertThat(environment.getProperty("spring.jpa.hibernate.ddl-auto")).isEqualTo("validate");
+            assertThat(validation.getBean(com.zaxxer.hikari.HikariDataSource.class).isReadOnly()).isTrue();
+            var template = validation.getBean(JdbcTemplate.class);
+            assertThat(template.queryForObject("SHOW transaction_read_only", String.class)).isEqualTo("on");
+            int port = ((org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext)validation).getWebServer().getPort();
+            var response = java.net.http.HttpClient.newHttpClient().send(
+                java.net.http.HttpRequest.newBuilder(java.net.URI.create("http://localhost:"+port+"/api/health"))
+                    .timeout(java.time.Duration.ofSeconds(10)).GET().build(), java.net.http.HttpResponse.BodyHandlers.ofString());
+            assertThat(response.statusCode()).isEqualTo(200);
+            System.out.println("UTC="+java.time.Instant.now()+" validation profile startup HTTP=200 Flyway=disabled readOnly=true DB_PASSWORD=absent ADMIN_DEV_PASSWORD=absent");
+        }
+    }
     @Autowired Flyway flyway;
     @Autowired JdbcTemplate jdbc;
     @Test void migratesV1ToV4AndHibernateValidatesOnPostgres18() {

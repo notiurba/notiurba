@@ -7,6 +7,7 @@ spring:
     password: ${TEST_DB_PASSWORD}
     hikari:
       read-only: true
+      connection-init-sql: SET default_transaction_read_only=on
   flyway:
     enabled: false
     placeholders:

@@ -38,8 +38,18 @@ public final class ValidationConfigurationCheck {
         require(Boolean.TRUE.equals(map(map(validation.get("datasource")).get("hikari")).get("read-only")),"read-only pool");
         var workflow=load(".github/workflows/edt51-validation.yml");
         require(map(workflow.get("on")).containsKey("pull_request"),"pull request trigger");
+        require(map(workflow.get("on")).containsKey("workflow_dispatch"),"manual external trigger");
         var jobs=map(workflow.get("jobs"));
         require(jobs.containsKey("backend-unit") && jobs.containsKey("migration-postgres18"),"separate jobs");
+        require(((List<?>)map(map(workflow.get("on")).get("push")).get("branches"))
+            .equals(List.of("codex/edt-5-1-validaciones")),"push branch is exact");
+        require("codex/edt-5-1-validaciones".equals(service.get("branch")),"Render branch is exact");
+        for (String name : List.of("neon-external","cloudinary-external")) {
+            var external=map(jobs.get(name));
+            String condition=external.get("if").toString();
+            require(condition.contains("workflow_dispatch") && condition.contains("refs/heads/codex/edt-5-1-validaciones"),"external event and branch guard");
+            require("edt51-external-validation".equals(external.get("environment")),"dedicated external environment");
+        }
         for (Object job : jobs.values()) {
             var steps=(List<?>)map(job).get("steps");
             boolean java21=false, reports=false;

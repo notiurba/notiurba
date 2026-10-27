@@ -1,5 +1,15 @@
 name: EDT 5.1 backend validation
 "on":
+  workflow_dispatch:
+    inputs:
+      neon:
+        description: Read-only integration against approved isolated Neon
+        type: boolean
+        default: false
+      cloudinary:
+        description: Synthetic authenticated Cloudinary lifecycle with cleanup
+        type: boolean
+        default: false
   push:
     branches: ["codex/edt-5-1-validaciones"]
   pull_request:
@@ -48,4 +58,74 @@ jobs:
           path: |
             backend/target/failsafe-reports/
             backend/target/surefire-reports/
+          if-no-files-found: warn
+
+  neon-external:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/edt-5-1-validaciones' && inputs.neon
+    environment: edt51-external-validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: edt51-neon-external
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      - name: Read-only isolated Neon integration
+        shell: pwsh
+        env:
+          EDT51_EXTERNAL_ALLOWED: ${{ vars.EDT51_EXTERNAL_ALLOWED }}
+          TEST_DB_URL: ${{ secrets.TEST_DB_URL }}
+          TEST_DB_USER: ${{ secrets.TEST_DB_USER }}
+          TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: ./tools/Invoke-Edt51External.ps1 -Provider Neon
+      - name: Sanitized Failsafe reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: edt51-neon-sanitized
+          path: external-results/neon/
+          retention-days: 7
+          if-no-files-found: warn
+  cloudinary-external:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/edt-5-1-validaciones' && inputs.cloudinary
+    environment: edt51-external-validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: edt51-cloudinary-external
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      - name: Synthetic authenticated Cloudinary integration
+        shell: pwsh
+        env:
+          EDT51_EXTERNAL_ALLOWED: ${{ vars.EDT51_EXTERNAL_ALLOWED }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+        run: ./tools/Invoke-Edt51External.ps1 -Provider Cloudinary
+      - name: Sanitized Failsafe reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: edt51-cloudinary-sanitized
+          path: external-results/cloudinary/
+          retention-days: 7
           if-no-files-found: warn

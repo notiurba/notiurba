@@ -1,0 +1,12 @@
+UTC=2026-10-27T13:16:11.9393681Z (registro del corte; consulta inicial y comandos durante esta sesion)
+Repository branch=codex/edt-5-1-validaciones HEAD before edits=a5995934455e5f6685cc2687b56dee27b377a2c7 clean=true
+origin/main=2d6ceca3804ceebe1df95e838ef90bab911bcd9b
+GitHub run40507497490: backend-unit=success migration-postgres18=success; logs retrieved via GitHub connector
+Neon authorized connector list: project NotiUrba, only production branch (primary/default); no isolated branch. No database queries/connection string extraction performed.
+Provider env presence: TEST_DB_URL=false TEST_DB_USER=false TEST_DB_PASSWORD=false JWT_SECRET=false CLOUDINARY_CLOUD_NAME=false CLOUDINARY_API_KEY=false CLOUDINARY_API_SECRET=false
+R2 S3 credentials=false; Render API key/service URL=false
+Docker info: dockerDesktopLinuxEngine pipe not found
+gh auth status: not logged into any GitHub hosts; Environment Secrets existence not verifiable
+Local mvn -B -o -f backend/pom.xml test-compile: exit1 non-resolvable parent Boot3.3.5 absent in offline cache. No tests run. Does not supersede successful CI baseline.
+External profiles not invoked with incomplete credentials. Preflight rejected before Maven/provider.
+No new provider assets/buckets/branches/services created. No signed URLs acquired or logged.

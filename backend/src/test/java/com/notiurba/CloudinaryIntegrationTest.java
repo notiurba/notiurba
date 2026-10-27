@@ -87,8 +87,8 @@ class CloudinaryIntegrationTest {
         } finally {
             mvc.perform(delete("/api/admin/diagnostics/photos/"+id).header("Authorization",token))
                 .andExpect(status().isNoContent());
+            verifyRemoved(sdk, id);
         }
-        verifyRemoved(sdk, id);
         if (recovery != null) assertDenied(download(recovery).statusCode());
         System.out.println("UTC=" + java.time.Instant.now() + " Cloudinary synthetic lifecycle completed");
     }

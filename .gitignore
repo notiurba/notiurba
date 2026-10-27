@@ -11,3 +11,6 @@ verification-classes/
 baseline-maven.log
 edt51-latency.json
 !**/.env.validation.example
+
+# External raw reports must stay local; only sanitized exports may be shared.
+external-results/

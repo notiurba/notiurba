@@ -1,3 +1,28 @@
+## Corte vigente: integraciones externas, 2026-10-27 UTC
+
+Se consultaron los logs reales de [Actions40507497490](https://github.com/notiurba/notiurba/actions/runs/40507497490), commit a599593: backend-unit y migration-postgres18 SUCCESS. Se preservan B01/B02/N04 aprobados:25 pruebas unitarias/MVC,0 fallos/errores/skipped; JAR generado;1 MigrationIntegrationTest exitosa. PostgreSQL18.6 Debian/PostGIS3.6.4 del contenedor, distinto de acreditar Neon. SDK Cloudinary2.3.2 y SHA256 conservados. Evidencia filtrada: logs/external-config/confirmed-actions.json.
+
+| Validaciones | Estado vigente y alcance |
+| --- | --- |
+| B01/B02, S02/C04 | APROBADO en a599593: Maven y seguridad MVC; no proveedores |
+| N04 | APROBADO en a599593: migracion real en contenedor; nueva prueba de perfil validation aun pendiente |
+| N02/N03 | PENDIENTE: Neon solo tiene production; falta base/branch aislada, usuario lector y secretos autorizados |
+| C02/C03 | PENDIENTE: no credenciales de proceso; no llamadas Cloudinary ni navegador |
+| O02/O03 | NO CONCLUYENTE historico conservado; sin credenciales S3/canal binario no se repiten recursos |
+| R01/R02/R03 | PENDIENTE: motor Docker inactivo, servicio aislado/URL/permiso Render no disponibles |
+| H01-H03, N01/C01/O01/O04 | Se conservan las evidencias historicas y su alcance original |
+| Configuracion local |27 comprobaciones YAML/rutas y8 controles de seguridad de runner/reportes aprobados; cero llamadas a proveedores |
+
+Configuracion nueva: workflow_dispatch con seleccion de proveedor, jobs externos independientes limitados a ref autorizada, Environment edt51-external-validation y permisos contents:read. Ningun push/PR llama a proveedores. Los jobs existentes se conservan. Reportes externos exportados con lista blanca, sin properties/stdout/stderr/trazas ni enlaces firmados. El runner contempla detached HEAD de Actions, rechaza credenciales incompletas y TLS inseguro antes de Maven. La prueba espacial ahora arranca SpringBoot completo, exige TLS y transaccion de solo lectura. Hikari fija tambien default_transaction_read_only=on. Cloudinary comprueba ausencia del recurso en finally. Render fija la rama de validaciones, sin despliegue.
+
+No se ejecutaron los perfiles externos con credenciales incompletas. test-compile offline local fallo porque no existe el parent Boot3.3.5 en cache; no sustituye el CI aprobado ni acredita los nuevos cambios. Docker info fallo por pipe linuxEngine ausente. Logs y fechas: logs/external-config/environment.log, offline-guards.log, configuration-checks.log.
+
+Limitacion verificada en documentacion oficial: workflow_dispatch requiere archivo en rama predeterminada; este workflow no existe en origin/main. Se prepara la configuracion solicitada pero no se modifica main para activarla. Si GitHub rechaza el dispatch por ese requisito, usar el runner local seguro. Los secretos de Environment no pudieron listarse porque gh no esta autenticado; no se afirma que no existan en GitHub.
+
+Procedimientos exactos, configuracion segura de Secrets, esquema Neon separado, Windows, R2 binario y condiciones de Render: [INTEGRACIONES-EXTERNAS.md](INTEGRACIONES-EXTERNAS.md). No se crearon recursos externos ni se extrajeron contrasenas de production. Las nuevas pruebas Java no quedan aprobadas hasta recibir ejecucion verificable.
+
+---
+
 # NotiUrba — Validaciones técnicas EDT 5.1
 
 **Corte:** 27 de octubre de 2026, UTC. **Base revisada:** `notiurba/notiurba`, commit `2d6ceca3804ceebe1df95e838ef90bab911bcd9b` de main.
