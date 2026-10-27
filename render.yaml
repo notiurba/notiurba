@@ -1,0 +1,28 @@
+# Prepared only: import manually into Render after team review.
+services:
+  - type: web
+    name: notiurba-backend-validation
+    runtime: docker
+    plan: free
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeployTrigger: "off"
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: validation
+      - key: TEST_DB_URL
+        sync: false
+      - key: TEST_DB_USER
+        sync: false
+      - key: TEST_DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: DIAGNOSTICS_ENABLED
+        value: "false"
+      - key: PHOTO_DIAGNOSTICS_ENABLED
+        value: "false"
