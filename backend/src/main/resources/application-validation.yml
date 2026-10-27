@@ -1,0 +1,19 @@
+# Isolated validation only. Explicitly opt in to this profile.
+# Do not run provisioning/migrations against a shared database.
+spring:
+  datasource:
+    url: ${TEST_DB_URL}
+    username: ${TEST_DB_USER}
+    password: ${TEST_DB_PASSWORD}
+    hikari:
+      read-only: true
+  flyway:
+    enabled: false
+    placeholders:
+      adminPassword: unused-validation-only
+  jpa:
+    hibernate:
+      ddl-auto: validate
+notiurba:
+  jwt:
+    secreto: ${JWT_SECRET}
