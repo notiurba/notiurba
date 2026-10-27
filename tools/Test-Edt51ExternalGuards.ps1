@@ -29,6 +29,15 @@ try {
     $file=Join-Path $temp 'raw.xml'
     '<testsuite name="com.notiurba.CloudinaryIntegrationTest"><properties><property name="secret" value="DO_NOT_EXPORT_SECRET"/></properties><testcase name="actualUploadRecoverDelete"><failure message="https://example.invalid/?signature=DO_NOT_EXPORT_SECRET">DO_NOT_EXPORT_SECRET</failure><system-out>DO_NOT_EXPORT_SECRET</system-out></testcase><system-err>DO_NOT_EXPORT_SECRET</system-err></testsuite>' | Set-Content $file
     . "$PSScriptRoot/Edt51SafeReports.ps1"
+    foreach ($case in @(
+        @{ Exit=0; Totals=@{Tests=1;Failures=0;Errors=0;Skipped=0}; Expected='APROBADO' },
+        @{ Exit=1; Totals=@{Tests=1;Failures=1;Errors=0;Skipped=0}; Expected='FALLIDO' },
+        @{ Exit=1; Totals=@{Tests=0;Failures=0;Errors=0;Skipped=0}; Expected='PENDIENTE' },
+        @{ Exit=0; Totals=@{Tests=1;Failures=0;Errors=0;Skipped=1}; Expected='PENDIENTE' }
+    )) {
+        if ((Get-Edt51ExternalState -MavenExit $case.Exit -Totals $case.Totals) -cne $case.Expected) { throw 'Incorrect external execution state.' }
+        $checks++
+    }
     $result=Export-Edt51SafeReports -Files @((Get-Item $file)) -Destination $temp -ExpectedClass com.notiurba.CloudinaryIntegrationTest
     $export=[IO.File]::ReadAllText((Join-Path $temp 'TEST-com.notiurba.CloudinaryIntegrationTest.xml'))
     if($export.Contains('DO_NOT_EXPORT_SECRET') -or $export.Contains('https://') -or $result.Tests -ne 1 -or $result.Failures -ne 1) { throw 'Sensitive report data exported.' }; $checks++

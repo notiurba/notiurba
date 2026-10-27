@@ -37,3 +37,11 @@ function Export-Edt51SafeReports {
     }
     return $totals
 }
+
+# Distinguish failed executed tests from missing/incomplete execution.
+function Get-Edt51ExternalState {
+    param([int]$MavenExit, [hashtable]$Totals)
+    if ($Totals.Tests -gt 0 -and ($Totals.Failures -gt 0 -or $Totals.Errors -gt 0)) { return 'FALLIDO' }
+    if ($MavenExit -eq 0 -and $Totals.Tests -gt 0 -and $Totals.Skipped -eq 0) { return 'APROBADO' }
+    return 'PENDIENTE'
+}

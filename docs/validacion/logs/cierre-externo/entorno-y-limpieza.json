@@ -1,0 +1,76 @@
+{
+  "recorded_utc": "2026-10-27T16:04:32.7612860Z",
+  "base_commit": "f38ad7cdf5417fb421a7d7e23f0ed0f22b93c451",
+  "branch": "feature/edt-5.1-technical-validation",
+  "baseline_run": 40518412910,
+  "baseline_units": 25,
+  "baseline_migration_tests": 2,
+  "baseline_validation_startup_http": 200,
+  "external_jobs": "skipped (not approved)",
+  "neon": {
+    "plan": "free",
+    "project_count": 1,
+    "existing_branches": [
+      "production"
+    ],
+    "isolated_environment_available": false,
+    "production_credentials_accessed": false,
+    "new_resource_authorization_required": true,
+    "proposed_new_empty_project": "NotiUrba-EDT51-isolated",
+    "new_resources_created": 0
+  },
+  "cloudinary": {
+    "process_credentials_present": false,
+    "cleanup_query": "search_assets public_id:notiurba/edt51/*",
+    "search_count": 0,
+    "assets_created_this_session": 0,
+    "signed_links_generated": 0,
+    "java_integration_executed": false,
+    "browser_executed": false
+  },
+  "r2": {
+    "checked_utc": "2026-10-27T14:19:54.259Z",
+    "list_http": 200,
+    "previous_temporary_bucket_absent": true,
+    "remaining_test_bucket": "notiurba-edt51-jpg-test-20261026",
+    "r2_dev_enabled": false,
+    "custom_domains_checked_utc": "2026-10-27T14:21:29.927Z",
+    "custom_domain_count": 0,
+    "aws_cli_available": false,
+    "s3_process_credentials_present": false,
+    "new_resources_created": 0,
+    "binary_integrity_executed_this_session": false,
+    "anonymous_download_executed_this_session": false
+  },
+  "docker": {
+    "desktop_installed": true,
+    "normal_start_requested": true,
+    "wsl_status": "E_ACCESSDENIED",
+    "daemon_pipe_available": false,
+    "build_attempted": true,
+    "build_exit": 1,
+    "build_error": "Access denied to C:\\Users\\Usuario\\.docker\\buildx\\.lock",
+    "container_started": false
+  },
+  "render": {
+    "connector_available": false,
+    "authorized_service_url_available": false,
+    "api_key_available": false,
+    "service_created": false,
+    "deployed": false,
+    "latency_samples": 0
+  },
+  "github": {
+    "cli_authenticated": false,
+    "environment_secrets_existence_verified": false,
+    "workflow_dispatch_runtime_verified": false,
+    "workflow_api_metadata_read": "connector rejected endpoint (400), no state changes",
+    "main": "2d6ceca3804ceebe1df95e838ef90bab911bcd9b",
+    "develop": "2d6ceca3804ceebe1df95e838ef90bab911bcd9b"
+  },
+  "runner_regression": {
+    "checks_passed": 12,
+    "provider_calls": 0,
+    "correction": "executed test failures become FALLIDO; absent or skipped execution remains PENDIENTE"
+  }
+}

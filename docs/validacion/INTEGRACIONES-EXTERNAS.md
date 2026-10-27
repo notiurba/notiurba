@@ -183,3 +183,28 @@ Desde PowerShell normal de Windows, publicar con el script existente; este verif
 ```
 
 Despues de publicar, comprobar los jobs normales del nuevo push; no atribuirles integraciones externas. Para estas, configurar el Environment/secretos y comprobar el dispatch o utilizar el runner local como explica INTEGRACIONES-EXTERNAS.md. main conserva 2d6ceca3804ceebe1df95e838ef90bab911bcd9b. No se hicieron PR, fusiones ni despliegues.
+
+## Desbloqueos concretos de este corte (base f38ad7c)
+
+No se crearon recursos externos. Este apartado actualiza los bloqueos anteriores; las evidencias originales se conservan.
+
+| Plataforma / opcion | Intervencion y permisos | Credenciales seguras / prueba posterior |
+| --- | --- | --- |
+| Neon Console, organizacion NotiUrba, New Project | Autorizar proyecto VACIO NotiUrba-EDT51-isolated, PostgreSQL18, AWS us-east-2, dentro del plan Free actual. Sin copiar production, sin upgrade/tarjeta/pago. V1-V4 solo en ese proyecto; lector con CONNECT/USAGE/SELECT y sin DDL/escritura | TEST_DB_URL/USER/PASSWORD y JWT_SECRET en Environment de GitHub o proceso del runner autorizado. N02/N03 mediante spatial-tests |
+| Cloudinary Console, Settings, API Keys | Cuenta/product environment de pruebas autorizada para JPEG sintetico authenticated y borrado/consulta de metadatos. No usar una cuenta productiva compartida | Tres CLOUDINARY_* en Environment Secrets o proceso; ejecutar cloudinary-tests. Si pasa, C03 en navegador sin sesion con enlace temporal, sin registrar URL |
+| Cloudflare Dashboard, R2, Manage R2 API Tokens | Bucket temporal vacio autorizado; token S3 Object Read & Write limitado a ese bucket y cliente AWS CLI binario. O03 requiere autorizacion explicita adicional para r2.dev temporal y poder desactivarlo | AWS_ACCESS_KEY_ID/SECRET_ACCESS_KEY por almacen seguro; nunca chat/Git. O02 SHA256/MIME/JPEG; O03 cliente HTTPS sin Authorization y limpieza finally |
+| Windows, Docker Desktop | Motor Linux accesible desde PowerShell normal. Aqui arranque normal intentado, WSL E_ACCESSDENIED y buildx .lock acceso denegado. No alterar ACL/seguridad para eludirlo | docker info y build existente en terminal autorizada. Base local desechable o Neon aislado, nunca production |
+| Render Dashboard, servicio aislado | Proporcionar ID/URL y confirmar plan Free sin extras, rama nueva, autodeploy off, Neon de pruebas. Autorizar expresamente crear/exponer servicio si no existe | Variables por Environment del servicio, fotografias desactivadas y ADMIN protegido. R01/R02; luego R03 con 16min de inactividad verificable |
+| GitHub Settings, Environments, edt51-external-validation | Administrador autorizado: restringir a feature/edt-5.1-technical-validation, secretos SOLO de prueba y seleccion explicita de jobs. No pudimos listar secretos desde aqui | Usar configuracion segura descrita arriba, o runner local. gh no autenticado en esta sesion; no se afirma que los secretos no existan en GitHub |
+
+Neon: se verificaron plan Free y1 proyecto en la organizacion. La pagina actual https://neon.com/pricing incluye100 proyectos Free. Hay una alternativa sin contratar capacidad, pero crear el proyecto sigue pendiente de tu autorizacion expresa (requisito4.1 de la tarea). Detenerse si la API exige pago/cambio de plan. Usar un proyecto vacio evita copiar usuarios/reportes/fotos de production. La conexion Java necesita ademas un ejecutor Maven autorizado con red y variables seguras.
+
+Cloudinary: busqueda de limpieza notiurba/edt51/ con0 resultados; esto no acredita el ciclo Java. R2: bucket temporal anterior ausente, bucket test conservado con r2.dev apagado y0 dominios personalizados. Sin objetos/buckets/fotos nuevos que limpiar en este corte; no se modificaron recursos compartidos.
+
+Actions: logs reales de40518412910 confirman25 unitarias y2 pruebas de migracion, incluidos validation/HTTP200/Flyway disabled/readOnly sin DB_PASSWORD/ADMIN_DEV_PASSWORD. Jobs externos SKIPPED. No equivalen a integraciones aprobadas.
+
+Aclaracion sobre dispatch: la referencia oficial https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_dispatch contempla API/CLI contra una ref cuando el workflow ya se ejecuto. Por tanto, la disponibilidad no se declara imposible solo por faltar en main. Aqui sigue NO CONCLUYENTE: CLI sin autenticacion y endpoint no soportado por el conector; no se emitio dispatch con credenciales incompletas. Un administrador puede utilizar el workflow registrado398226456 y la rama nueva, siguiendo los comandos anteriores. No cambiar main ni default branch.
+
+Correccion de estados: el runner ahora devuelve FALLIDO cuando se ejecutan tests con fallos/errores, PENDIENTE cuando no hay ejecucion completa y APROBADO solo con Maven0 y pruebas reales sin fallos ni omitidas. Doce controles locales pasaron,0 llamadas a proveedores. Evidencia: logs/cierre-externo/runner-regression.log.
+
+Fuentes para las opciones de credenciales: https://cloudinary.com/documentation/developer_onboarding_faq_find_credentials y https://developers.cloudflare.com/r2/api/tokens/ . No se solicita compartir valores en el chat.

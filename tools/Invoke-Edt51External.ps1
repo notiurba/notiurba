@@ -51,7 +51,7 @@ try {
         $exit = $LASTEXITCODE
         $reports = @(Get-ChildItem backend/target/failsafe-reports/TEST-*.xml -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTimeUtc -ge $started })
         $totals = Export-Edt51SafeReports -Files $reports -Destination $resultPath -ExpectedClass $expected
-        $state = if ($exit -eq 0 -and $totals.Tests -gt 0 -and $totals.Failures -eq 0 -and $totals.Errors -eq 0 -and $totals.Skipped -eq 0) { 'APROBADO' } else { 'PENDIENTE' }
+        $state = Get-Edt51ExternalState -MavenExit $exit -Totals $totals
         [ordered]@{ provider=$Provider; utc_start=$started.ToString('o'); utc_end=[DateTime]::UtcNow.ToString('o'); command="mvn -B -f backend/pom.xml -P$profile verify"; maven_exit=$exit; tests=$totals.Tests; failures=$totals.Failures; errors=$totals.Errors; skipped=$totals.Skipped; state=$state; evidence_scope='Java integration only; browser and Render not tested' } | ConvertTo-Json | Set-Content (Join-Path $resultPath 'result.json')
         Write-Host "UTC=$([DateTime]::UtcNow.ToString('o')) provider=$Provider MavenExit=$exit tests=$($totals.Tests) failures=$($totals.Failures) errors=$($totals.Errors) skipped=$($totals.Skipped) state=$state"
         if ($state -ne 'APROBADO') { throw 'Integration did not pass; inspect sanitized reports. Raw details retained only in the local Maven reports, never publish them.' }

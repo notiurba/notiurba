@@ -1,3 +1,34 @@
+# Cierre tecnico parcial de las integraciones externas
+
+Se verificaron los logs reales de Actions40518412910, commit f38ad7c, rama feature/edt-5.1-technical-validation:25 unitarias/MVC y2 pruebas de migracion aprobadas. Incluyen arranque validation HTTP200, Flyway disabled/readOnly true sin DB_PASSWORD/ADMIN_DEV_PASSWORD. Los jobs Neon y Cloudinary fueron SKIPPED; no se aprueban por el CI verde.
+
+| Validacion | Estado actual |
+| --- | --- |
+| B01/B02/N04/S02/C04 | APROBADO en f38ad7c; ver logs/cierre-externo/ci-verificado.json |
+| N02/N03 | PENDIENTE: solo existe production en Neon; falta entorno aislado autorizado y credenciales lector |
+| C02/C03 | PENDIENTE: faltan credenciales de prueba; no se genero enlace ni prueba de navegador |
+| O02/O03 | NO CONCLUYENTE historico: falta cliente S3 binario y permisos/autorizacion temporal |
+| R01/R02/R03 | PENDIENTE: Docker/WSL bloqueados; sin servicio Render aislado/URL ni mediciones |
+| G01 | Publicacion previa f38ad7c aprobada; esta actualizacion pendiente de publicar |
+
+Evidencias nuevas en logs/cierre-externo/: CSV previo conservado intacto, ci-verificado.json, entorno-y-limpieza.json, docker-build.log y runner-regression.log. El CSV vigente incluye fecha UTC, comando realmente ejecutado, ambiente, resultado, problema, solucion y pendientes por ID. Los logs y secciones historicos no se reescriben.
+
+Neon: organizacion Free y1 proyecto verificados. Solo rama production; no se consultaron sus datos ni credenciales. La pagina oficial neon.com/pricing incluye100 proyectos Free. Propuesta pendiente de autorizacion: proyecto VACIO NotiUrba-EDT51-isolated, PostgreSQL18, AWS us-east-2, sin copiar production y sin upgrade/pago. No se creo el recurso. V1-V4 se aprovisionarian solo alli y despues se usaria un lector con CONNECT/USAGE/SELECT.
+
+Cloudinary: busqueda del prefijo notiurba/edt51/ encontro0 recursos. No se crearon fotografias ni enlaces nuevos. R2: GET buckets HTTP200 confirma ausente el temporal anterior; el bucket test conservado tiene r2.dev desactivado y0 dominios personalizados. No se altero ese bucket ni se afirma un inventario exhaustivo de otros recursos.
+
+Docker Desktop instalado: arranque normal solicitado. WSL devolvio E_ACCESSDENIED; docker build devolvio1 por acceso denegado a buildx .lock. No llego a construirse ni arrancar la imagen. No se cambiaron permisos para eludirlo. Render: sin conector/API/URL de servicio aislado,0 solicitudes y0 muestras de latencia.
+
+Correccion del runner: pruebas ejecutadas con fallos/errores se clasifican FALLIDO; ejecucion ausente/omitida sigue PENDIENTE. Doce controles locales pasaron, sin llamadas a proveedores. Esto no acredita las integraciones externas ni demuestra defectos del backend.
+
+Disponibilidad manual de Actions NO CONCLUYENTE: gh no tiene autenticacion y el conector no permite el endpoint de workflows/dispatch/Secrets. La documentacion oficial contempla despacho por API/CLI de un workflow ya ejecutado; no se declara imposible solo porque no esta en main. No se modifico main/default branch. Usar el runner local autorizado si no hay dispatch disponible.
+
+Fuentes oficiales: https://neon.com/pricing y https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_dispatch .
+
+Las secciones anteriores quedan conservadas debajo como historial; este corte las actualiza. No se declara EDT5.1 terminada.
+
+---
+
 ## Corte vigente: integraciones externas, 2026-10-27 UTC
 
 Se consultaron los logs reales de [Actions40507497490](https://github.com/notiurba/notiurba/actions/runs/40507497490), commit a599593: backend-unit y migration-postgres18 SUCCESS. Se preservan B01/B02/N04 aprobados:25 pruebas unitarias/MVC,0 fallos/errores/skipped; JAR generado;1 MigrationIntegrationTest exitosa. PostgreSQL18.6 Debian/PostGIS3.6.4 del contenedor, distinto de acreditar Neon. SDK Cloudinary2.3.2 y SHA256 conservados. Evidencia filtrada: logs/external-config/confirmed-actions.json.
