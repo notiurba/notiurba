@@ -1,5 +1,5 @@
 -- =====================================================================
--- NotiUrba · v5 · PRUEBAS del esquema (requiere V1+V2+V3 y datos_ejemplo.sql)
+-- NotiUrba · PRUEBAS del esquema (requiere V1 a V7 y datos_ejemplo.sql)
 -- Termina con error (ON_ERROR_STOP) si alguna regla falla.
 -- =====================================================================
 \set ON_ERROR_STOP on
@@ -31,8 +31,8 @@ SELECT pg_temp.debe_fallar('comuna 11', $q$INSERT INTO comuna(id_comuna) VALUES 
 SELECT pg_temp.debe_fallar('descripción de 5 caracteres', $q$INSERT INTO reporte(id_usuario,id_categoria,descripcion,autorizacion_envio_en,vigente_hasta) VALUES (1,6,'corta',now(),now())$q$);
 SELECT pg_temp.debe_fallar('descripción de 501 caracteres', format($q$INSERT INTO reporte(id_usuario,id_categoria,descripcion,autorizacion_envio_en,vigente_hasta) VALUES (1,6,%L,now(),now())$q$, repeat('x',501)));
 SELECT pg_temp.debe_fallar('dependencia padre de sí misma', $q$UPDATE dependencia SET id_dependencia_padre=id_dependencia WHERE id_dependencia=9$q$);
-SELECT pg_temp.debe_fallar('mismo documento dos veces', $q$INSERT INTO usuario(primer_nombre,primer_apellido,id_tipo_documento,numero_documento,id_barrio,direccion_correspondencia,correo,password_hash,id_rol,id_aviso_privacidad,acepto_privacidad_en) VALUES ('A','B',1,'1118456789',1,'d','nuevo@x.com','h',1,1,now())$q$);
-SELECT pg_temp.debe_fallar('correo repetido con otras mayúsculas', $q$INSERT INTO usuario(primer_nombre,primer_apellido,id_tipo_documento,numero_documento,id_barrio,direccion_correspondencia,correo,password_hash,id_rol,id_aviso_privacidad,acepto_privacidad_en) VALUES ('A','B',1,'777','1','d','MARIA.GOMEZ@ejemplo.com','h',1,1,now())$q$);
+SELECT pg_temp.debe_fallar('mismo documento dos veces', $q$INSERT INTO usuario(nombres,apellidos,id_tipo_documento,numero_documento,id_barrio,direccion_correspondencia,correo,password_hash,id_rol,id_aviso_privacidad,acepto_privacidad_en) VALUES ('A','B',1,'1118456789',1,'d','nuevo@x.com','h',1,1,now())$q$);
+SELECT pg_temp.debe_fallar('correo repetido con otras mayúsculas', $q$INSERT INTO usuario(nombres,apellidos,id_tipo_documento,numero_documento,id_barrio,direccion_correspondencia,correo,password_hash,id_rol,id_aviso_privacidad,acepto_privacidad_en) VALUES ('A','B',1,'777','1','d','MARIA.GOMEZ@ejemplo.com','h',1,1,now())$q$);
 SELECT pg_temp.debe_fallar('vigencia_dias no numérica', $q$UPDATE configuracion SET valor='treinta' WHERE clave='vigencia_dias'$q$);
 SELECT pg_temp.debe_fallar('verificación de correo anterior al registro', $q$UPDATE usuario SET correo_verificado_en = creado_en - interval '1 day' WHERE id_usuario=1$q$);
 
@@ -106,6 +106,76 @@ SELECT pg_temp.debe_ser('Al borrar al admin la auditoría queda en NULL y los re
   (SELECT count(*) FROM historial_estado WHERE id_usuario_cambia IS NULL) = 9
   AND (SELECT count(*) FROM reporte) = 5);
 ROLLBACK;
+
+\echo '== F. Login con Google (V5 · B13) =='
+-- B13 es un trigger diferido: dentro de una transacción, SET CONSTRAINTS ALL IMMEDIATE
+-- hace que se evalúe al final de cada sentencia y no solo al confirmar.
+BEGIN;
+SET CONSTRAINTS ALL IMMEDIATE;
+SELECT pg_temp.debe_fallar('B13 usuario sin contraseña ni identidad externa', $q$INSERT INTO usuario(nombres,apellidos,id_tipo_documento,numero_documento,id_barrio,direccion_correspondencia,correo,id_rol,id_aviso_privacidad,acepto_privacidad_en) VALUES ('Ana','Sin Credencial',1,'900001',1,'d','ana@ejemplo.com',1,1,now())$q$);
+ROLLBACK;
+
+-- Flujo real del backend: usuario + identidad en una transacción; B13 se revisa al confirmar
+BEGIN;
+INSERT INTO usuario(id_usuario,nombres,apellidos,id_tipo_documento,numero_documento,id_barrio,direccion_correspondencia,correo,id_rol,id_aviso_privacidad,acepto_privacidad_en)
+VALUES (50,'Ana','Google',1,'900002',1,'d','ana.google@ejemplo.com',1,1,now());
+INSERT INTO identidad_externa(id_usuario,id_proveedor_identidad,identificador_externo) VALUES (50,1,'google-sub-0001');
+COMMIT;
+SELECT pg_temp.debe_ser('B13 usuario sin contraseña con identidad GOOGLE',
+  (SELECT password_hash IS NULL FROM usuario WHERE id_usuario=50)
+  AND (SELECT count(*) FROM identidad_externa WHERE id_usuario=50) = 1);
+SELECT pg_temp.debe_fallar('mismo sub de Google dos veces', $q$INSERT INTO identidad_externa(id_usuario,id_proveedor_identidad,identificador_externo) VALUES (1,1,'google-sub-0001')$q$);
+SELECT pg_temp.debe_fallar('dos identidades GOOGLE para el mismo usuario', $q$INSERT INTO identidad_externa(id_usuario,id_proveedor_identidad,identificador_externo) VALUES (50,1,'google-sub-0002')$q$);
+BEGIN;
+SET CONSTRAINTS ALL IMMEDIATE;
+SELECT pg_temp.debe_fallar('B13 borrar la única identidad de un usuario sin contraseña', $q$DELETE FROM identidad_externa WHERE id_usuario=50$q$);
+ROLLBACK;
+DELETE FROM usuario WHERE id_usuario = 50;
+SELECT pg_temp.debe_ser('Borrar el usuario borra sus identidades (habeas data)',
+  (SELECT count(*) FROM identidad_externa WHERE id_usuario=50) = 0);
+
+\echo '== G. Nombres y apellidos (V6) =='
+SELECT pg_temp.debe_fallar('nombres en blanco', $q$INSERT INTO usuario(nombres,apellidos,id_tipo_documento,numero_documento,id_barrio,direccion_correspondencia,correo,password_hash,id_rol,id_aviso_privacidad,acepto_privacidad_en) VALUES ('  ','B',1,'900003',1,'d','blanco@x.com','h',1,1,now())$q$);
+SELECT pg_temp.debe_fallar('apellidos NULL', $q$INSERT INTO usuario(nombres,apellidos,id_tipo_documento,numero_documento,id_barrio,direccion_correspondencia,correo,password_hash,id_rol,id_aviso_privacidad,acepto_privacidad_en) VALUES ('A',NULL,1,'900004',1,'d','nulo@x.com','h',1,1,now())$q$);
+SELECT pg_temp.debe_ser('Las 4 columnas de nombre fragmentado ya no existen',
+  (SELECT count(*) FROM information_schema.columns WHERE table_name='usuario'
+     AND column_name ~ '^(primer|segundo)_(nombre|apellido)$') = 0);
+SELECT pg_temp.debe_ser('tipo_documento es solo CC, CE, PPT y PAS (sin TI)',
+  (SELECT string_agg(codigo, ',' ORDER BY id_tipo_documento) FROM tipo_documento) = 'CC,CE,PPT,PAS');
+SELECT pg_temp.debe_ser('El admin de V4 sigue y quedó como Admin / NotiUrba',
+  (SELECT nombres='Admin' AND apellidos='NotiUrba' AND password_hash IS NOT NULL
+     FROM usuario WHERE numero_documento='ADMIN-DEV-0001'));
+
+\echo '== H. Ajustes del modelo v8 (V7) =='
+BEGIN;
+INSERT INTO reporte(id_usuario,id_categoria,id_barrio,descripcion,autorizacion_envio_en)
+VALUES (1,1,3,'Hueco reportado solo con el barrio',now());
+INSERT INTO reporte(id_usuario,id_categoria,descripcion,ubicacion,autorizacion_envio_en)
+VALUES (1,1,'Hueco reportado solo con el GPS',ST_SetSRID(ST_MakePoint(-76.1953,4.0847),4326),now());
+SELECT pg_temp.debe_ser('B3 categoría que exige ubicación: solo barrio o solo GPS pasan',
+  (SELECT count(*) FROM reporte WHERE descripcion LIKE 'Hueco reportado solo con%') = 2);
+ROLLBACK;
+SELECT pg_temp.debe_fallar('B3 categoría que exige ubicación, ni GPS ni barrio', $q$INSERT INTO reporte(id_usuario,id_categoria,descripcion,autorizacion_envio_en) VALUES (1,1,'Sin GPS y sin barrio aunque la exige',now())$q$);
+BEGIN;
+UPDATE reporte SET radicado_oficial = 'RAD-2026-000123' WHERE id_reporte = 1;
+SELECT pg_temp.debe_ser('radicado_oficial acepta NULL y texto',
+  (SELECT radicado_oficial = 'RAD-2026-000123' FROM reporte WHERE id_reporte=1)
+  AND (SELECT radicado_oficial IS NULL FROM reporte WHERE id_reporte=2));
+ROLLBACK;
+SELECT pg_temp.debe_ser('reporte.ubicacion existe y reporte.punto no',
+  (SELECT count(*) FROM information_schema.columns WHERE table_name='reporte' AND column_name='ubicacion') = 1
+  AND (SELECT count(*) FROM information_schema.columns WHERE table_name='reporte' AND column_name='punto') = 0);
+-- Comparar con los textos de V7 detecta un UPDATE que no encontró su categoría (0 filas)
+SELECT pg_temp.debe_ser('Las 15 categorías tienen su ejemplo de V7 en descripcion',
+  (SELECT count(*) FROM categoria WHERE btrim(coalesce(descripcion,'')) <> '') = 15
+  AND (SELECT count(*) FROM categoria WHERE descripcion IN (
+    'Huecos, grietas, andenes rotos','Bombillo apagado, ruido, riñas','Basura acumulada, quema, tala',
+    'Semáforo dañado, señal caída','Fuga de agua, sin agua, caño tapado','Apagón, cable caído, transformador',
+    'Olor a gas, sin servicio de gas','Camión no pasó, basura sin recoger','Derrumbe, inundación, árbol por caer',
+    'Casa en mal estado, riesgo de colapso','Plagas, aguas estancadas, alimentos','Construcción sin licencia, invasión',
+    'Problema en un colegio o escuela','Una pregunta o trámite en la Alcaldía','Un evento o caso que no encaja')) = 15);
+SELECT pg_temp.debe_ser('Existe el tipo de token «Recuperación de contraseña»',
+  EXISTS (SELECT 1 FROM tipo_token WHERE nombre = 'Recuperación de contraseña'));
 
 \o
 \echo '== TODAS LAS PRUEBAS PASARON =='
