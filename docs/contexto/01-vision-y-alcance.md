@@ -60,6 +60,9 @@ por comuna y hacerlo llegar a la entidad correspondiente.**
 - Acceso de la Alcaldía/empresas al panel: el MVP tiene un solo administrador.
 - Mapa público de reportes: expondría ubicaciones y fotos (Ley 1581 de 2012).
 - Reportes anónimos: quien no quiera identificarse usa el PQRSDF anónimo de la Alcaldía.
+- Menores de edad: el MVP es solo para personas adultas que autorizan el uso de sus datos.
+  Reportes anónimos o de menores requieren un acuerdo con las empresas de servicios
+  públicos y la Alcaldía (Ley 1581 de 2012, art. 7).
 
 ## Restricciones y supuestos
 
