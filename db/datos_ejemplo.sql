@@ -1,6 +1,6 @@
 -- =====================================================================
 -- NotiUrba · v5 · DATOS DE EJEMPLO (solo desarrollo y pruebas; NO es migración)
--- Requiere V1 a V7. Equivale a los ejemplos de la hoja "v5" del Google Sheet.
+-- Requiere V1 a V8. Equivale a los ejemplos de la hoja "v5" del Google Sheet.
 -- Correos @ejemplo.com y hashes son marcadores ficticios.
 -- =====================================================================
 

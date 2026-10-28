@@ -75,11 +75,9 @@ Rama `feat/login-google`: migraciones V5 (Google), V6 (nombres/apellidos) y V7 (
   desarrollo). Falta la implementación con JavaMailSender + Resend.
 - **Ruta del frontend «Nueva contraseña»**: el enlace apunta a `RECUPERACION_ENLACE`
   (por defecto `http://localhost:5173/app/nueva-contrasena?token=...`); la página no existe aún.
-- **Categoría 10 en conflicto entre ramas**: `develop` la llama «Otro / eventos comunitarios»
-  y la rama `docs/correciones-documentacion` (commit `741c2b3`) la renombra a «Otro / no
-  clasificado» **editando V3**. Al unirlas: Flyway falla por checksum en bases que ya
-  aplicaron V3, y el `UPDATE` de V7 para esa categoría deja de encontrarla. Hacer el
-  renombre en una migración nueva.
+- **Categoría 10 y canal SEDAMA (resuelto)**: el commit `741c2b3` los cambiaba editando V3,
+  lo que rompe el checksum de Flyway. Se revirtió y el cambio pasó a
+  `V8__categoria_10_y_sedama.sql`. Regla: una migración aplicada no se edita; se corrige con otra.
 - **`db/probar.sh` estaba roto en `develop`** desde V4 (barrio 1 y usuario 1 repetidos con
   `datos_ejemplo.sql`). Arreglado en `datos_ejemplo.sql`: conserva el barrio 1 de V4 y corre
   al admin de V4 al id 1000.

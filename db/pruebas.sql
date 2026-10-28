@@ -1,5 +1,5 @@
 -- =====================================================================
--- NotiUrba · PRUEBAS del esquema (requiere V1 a V7 y datos_ejemplo.sql)
+-- NotiUrba · PRUEBAS del esquema (requiere V1 a V8 y datos_ejemplo.sql)
 -- Termina con error (ON_ERROR_STOP) si alguna regla falla.
 -- =====================================================================
 \set ON_ERROR_STOP on
@@ -176,6 +176,13 @@ SELECT pg_temp.debe_ser('Las 15 categorías tienen su ejemplo de V7 en descripci
     'Problema en un colegio o escuela','Una pregunta o trámite en la Alcaldía','Un evento o caso que no encaja')) = 15);
 SELECT pg_temp.debe_ser('Existe el tipo de token «Recuperación de contraseña»',
   EXISTS (SELECT 1 FROM tipo_token WHERE nombre = 'Recuperación de contraseña'));
+
+\echo '== I. Categoría 10 y canal SEDAMA (V8) =='
+SELECT pg_temp.debe_ser('La categoría 10 se llama «Otro / no clasificado» y conserva su ejemplo de V7',
+  (SELECT nombre = 'Otro / no clasificado' AND descripcion = 'Un evento o caso que no encaja'
+     FROM categoria WHERE id_categoria = 10));
+SELECT pg_temp.debe_ser('El canal de SEDAMA está activo y sin la nota «sin confirmar»',
+  (SELECT activo AND detalle IS NULL FROM canal_atencion WHERE id_canal_atencion = 11));
 
 \o
 \echo '== TODAS LAS PRUEBAS PASARON =='
