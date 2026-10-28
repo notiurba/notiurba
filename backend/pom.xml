@@ -63,6 +63,12 @@
       <artifactId>flyway-database-postgresql</artifactId>
     </dependency>
 
+    <!-- Verificación del ID token de «Continuar con Google» (firma con las JWK públicas de Google) -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-oauth2-jose</artifactId>
+    </dependency>
+
     <!-- JWT: login y autorización por rol -->
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
