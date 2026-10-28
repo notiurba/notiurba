@@ -5,6 +5,9 @@ spring:
     url: ${DB_URL:jdbc:postgresql://localhost:5433/notiurba}
     username: ${DB_USER:notiurba}
     password: ${DB_PASSWORD}          # obligatoria: variable de entorno (ver .env.example)
+  mvc:
+    problemdetails:
+      enabled: true                   # los errores (400/401/409) llevan su mensaje en «detail»
   jpa:
     open-in-view: false
     hibernate:
@@ -24,3 +27,10 @@ notiurba:
   jwt:
     secreto: ${JWT_SECRET}          # obligatoria: nunca en el repo
     expiracion-minutos: 60
+  google:
+    client-id: ${GOOGLE_CLIENT_ID}  # obligatoria: ID de cliente OAuth de Google Cloud (aud del ID token)
+  recuperacion:
+    # Página del frontend «Nueva contraseña»; el backend agrega ?token=...
+    enlace: ${RECUPERACION_ENLACE:http://localhost:5173/app/nueva-contrasena}
+    # Solo desarrollo: escribe el enlace en el log mientras no haya envío de correo real
+    mostrar-enlace-en-log: ${RECUPERACION_MOSTRAR_ENLACE:false}

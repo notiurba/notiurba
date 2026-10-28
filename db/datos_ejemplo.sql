@@ -1,20 +1,26 @@
 -- =====================================================================
 -- NotiUrba · v5 · DATOS DE EJEMPLO (solo desarrollo y pruebas; NO es migración)
--- Requiere V1, V2 y V3. Equivale a los ejemplos de la hoja "v5" del Google Sheet.
+-- Requiere V1 a V7. Equivale a los ejemplos de la hoja "v5" del Google Sheet.
 -- Correos @ejemplo.com y hashes son marcadores ficticios.
 -- =====================================================================
 
+-- V4 ya sembró el barrio 1 («Administración NotiUrba», comuna 1) y el admin de desarrollo con id 1.
+-- El barrio 1 se conserva (también es de la comuna 1) y el admin se corre al id 1000 para que
+-- los ejemplos mantengan sus ids fijos (las pruebas los usan).
 INSERT INTO barrio (id_barrio, id_comuna, nombre)
-SELECT g, g, 'Barrio ejemplo ' || g FROM generate_series(1,10) g;
+SELECT g, g, 'Barrio ejemplo ' || g FROM generate_series(1,10) g
+ON CONFLICT (id_barrio) DO NOTHING;
 SELECT setval(pg_get_serial_sequence('barrio','id_barrio'), 10);
 
-INSERT INTO usuario (id_usuario, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, id_tipo_documento,
+UPDATE usuario SET id_usuario = 1000 WHERE numero_documento = 'ADMIN-DEV-0001';
+
+INSERT INTO usuario (id_usuario, nombres, apellidos, id_tipo_documento,
   numero_documento, id_barrio, direccion_correspondencia, correo, correo_verificado_en, telefono, password_hash,
   id_rol, id_aviso_privacidad, acepto_privacidad_en, creado_en) VALUES
- (1,'María','Fernanda','Gómez','Ruiz',1,'1118456789',1,'Cra 25 # 20-15, Tuluá','maria.gomez@ejemplo.com','2026-09-01 10:20:00-05','3101234567','$2b$10$EJEMPLOhashMariaGomez',1,1,'2026-09-01 10:05:00-05','2026-09-01 10:05:00-05'),
- (2,'Carlos',NULL,'Pérez','Londoño',1,'94512345',4,'Calle 30 # 15-40, Tuluá','carlos.perez@ejemplo.com','2026-09-10 15:45:00-05','3207654321','$2b$10$EJEMPLOhashCarlosPerez',1,1,'2026-09-10 15:30:00-05','2026-09-10 15:30:00-05'),
- (3,'Jhoan','Andrés','Rodríguez',NULL,3,'5678901',6,'Av. Cali # 40-22, Tuluá','jhoan.rodriguez@ejemplo.com','2026-10-02 08:30:00-05',NULL,'$2b$10$EJEMPLOhashJhoanRodriguez',1,1,'2026-10-02 08:12:00-05','2026-10-02 08:12:00-05'),
- (4,'Laura',NULL,'Administradora','Municipal',1,'66123456',7,'Carrera 24 # 28-30, Tuluá','admin@ejemplo.com','2026-08-15 09:10:00-05','3150000000','$2b$10$EJEMPLOhashAdmin',2,1,'2026-08-15 09:00:00-05','2026-08-15 09:00:00-05');
+ (1,'María Fernanda','Gómez Ruiz',1,'1118456789',1,'Cra 25 # 20-15, Tuluá','maria.gomez@ejemplo.com','2026-09-01 10:20:00-05','3101234567','$2b$10$EJEMPLOhashMariaGomez',1,1,'2026-09-01 10:05:00-05','2026-09-01 10:05:00-05'),
+ (2,'Carlos','Pérez Londoño',1,'94512345',4,'Calle 30 # 15-40, Tuluá','carlos.perez@ejemplo.com','2026-09-10 15:45:00-05','3207654321','$2b$10$EJEMPLOhashCarlosPerez',1,1,'2026-09-10 15:30:00-05','2026-09-10 15:30:00-05'),
+ (3,'Jhoan Andrés','Rodríguez',3,'5678901',6,'Av. Cali # 40-22, Tuluá','jhoan.rodriguez@ejemplo.com','2026-10-02 08:30:00-05',NULL,'$2b$10$EJEMPLOhashJhoanRodriguez',1,1,'2026-10-02 08:12:00-05','2026-10-02 08:12:00-05'),
+ (4,'Laura','Administradora Municipal',1,'66123456',7,'Carrera 24 # 28-30, Tuluá','admin@ejemplo.com','2026-08-15 09:10:00-05','3150000000','$2b$10$EJEMPLOhashAdmin',2,1,'2026-08-15 09:00:00-05','2026-08-15 09:00:00-05');
 SELECT setval(pg_get_serial_sequence('usuario','id_usuario'), 4);
 
 INSERT INTO token_verificacion (id_usuario, id_tipo_token, token_hash, expira_en, usado_en, creado_en) VALUES

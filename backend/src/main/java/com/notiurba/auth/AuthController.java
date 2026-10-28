@@ -33,6 +33,8 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest peticion) {
         var usuario = usuarioRepository.findByCorreoIgnoreCase(peticion.correo())
+                // Una cuenta solo-Google (sin contraseña) recibe la misma respuesta que unas credenciales malas
+                .filter(u -> u.getPasswordHash() != null)
                 .filter(u -> passwordEncoder.matches(peticion.password(), u.getPasswordHash()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas"));
 
