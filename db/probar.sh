@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Crea una base DESECHABLE en el contenedor, aplica las migraciones V1-V7, carga los datos de
+# Crea una base DESECHABLE en el contenedor, aplica las migraciones V1-V8, carga los datos de
 # ejemplo y corre las pruebas. No toca la base "notiurba". Requiere `docker compose up -d`.
 set -euo pipefail
 cd "$(dirname "$0")/.."

@@ -2,7 +2,7 @@ spring:
   application:
     name: notiurba-backend
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/notiurba}
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/notiurba}
     username: ${DB_USER:notiurba}
     password: ${DB_PASSWORD}          # obligatoria: variable de entorno (ver .env.example)
   mvc:
@@ -19,7 +19,7 @@ spring:
       adminPassword: ${ADMIN_DEV_PASSWORD}   # obligatoria: nunca en el repo (ver V4__usuario_admin_semilla.sql)
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 notiurba:
   cors:

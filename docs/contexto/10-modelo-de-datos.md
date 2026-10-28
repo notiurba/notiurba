@@ -70,7 +70,7 @@ B1 dependencia hija de la misma entidad y sin ciclos · B2 solo reportante o apo
 ## 8. Datos pendientes o por verificar
 - Barrios y polígonos de comunas: sin cargar. Hasta que haya barrios nadie puede registrarse (`usuario.id_barrio` es obligatorio).
 - Texto oficial del aviso de privacidad: hoy es un marcador.
-- Correos «sin confirmar» (Gases de Occidente, Celsia, Veolia) y el de SEDAMA: canales inactivos.
+- Correos «sin confirmar» (Gases de Occidente, Celsia, Veolia): canales inactivos. El de SEDAMA (sedama@tulua.gov.co) quedó confirmado el 26/10/2026; es solo de referencia (el envío va al CAIC). Falta marcarlo activo en V3.
 - Nombre del estado 2: el modelo usa «Enviado»; Linear dice «Enviado a Secretaría».
 
 ## 9. Mapa de campos de formularios → columnas (borrador, verificar contra el Figma)
