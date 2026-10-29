@@ -1,6 +1,6 @@
 import { obtenerToken } from '../auth/sesion'
 
-const URL_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
+export const URL_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
 
 export async function peticion(ruta, opciones = {}) {
   const token = obtenerToken()
