@@ -35,7 +35,14 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
 - **Frontend:** React + Vite + vite-plugin-pwa. Gestor de paquetes: **pnpm** (no usar npm; no subir `package-lock.json`).
 - **Mapas:** Leaflet 1.9 + OpenStreetMap + Leaflet.heat.
 - **Fotos:** Cloudinary (plan Free) — propuesta.
-- **Hosting:** Vercel (frontend) + Render (backend) + Neon (PostgreSQL/PostGIS) — propuesta.
+- **Hosting:** Netlify (frontend) + Render (backend) + Neon (PostgreSQL/PostGIS).
+  - Netlify despliega desde la rama `develop` con base `frontend` y publish `dist`.
+    La redirección SPA vive en `frontend/public/_redirects` (`/*  /index.html  200`);
+    sin ella, las rutas directas (p. ej. `/app/nueva-contrasena`) dan 404 al recargar.
+  - Variables de entorno, **sin valores en el repo**:
+    - Netlify: `VITE_API_URL`.
+    - Render: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `ADMIN_DEV_PASSWORD`,
+      `GOOGLE_CLIENT_ID`, `CORS_ORIGINS`, `RECUPERACION_ENLACE`.
 - **Correo:** JavaMailSender + Resend. Mecanismo de envío **pendiente** (ver ADR-0002).
 
 ## Equipo
