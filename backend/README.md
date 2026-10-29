@@ -8,7 +8,7 @@ Java 21 · Spring Boot 3.3 · Maven · PostgreSQL 16 + PostGIS 3.4 · Flyway.
 2. Abrir la carpeta `backend/` en IntelliJ IDEA (se importa como proyecto Maven).
 3. Definir las variables `DB_PASSWORD` (y, si cambian, `DB_URL`, `DB_USER`, `CORS_ORIGINS`) en la configuración de ejecución.
 4. Ejecutar `NotiUrbaApplication`. Flyway crea las tablas de `src/main/resources/db/migration`.
-5. Probar: `GET http://localhost:8080/api/health` → `{"estado":"ok"}`.
+5. Probar: `GET http://localhost:8080/api/health` → `{"estado":"ok","baseDeDatos":"ok"}` (503 con `"baseDeDatos":"error"` si la base no responde).
 
 ## Base de datos
 
