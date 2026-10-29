@@ -1,0 +1,289 @@
+{
+  "info": {
+    "_postman_id": "63bc1128-12ec-4afb-9837-e1fad1593e23",
+    "name": "NotiUrba API",
+    "description": "Endpoints del backend de NotiUrba. Elegir el entorno «local» o «render»; baseUrl también existe como variable de colección (por defecto, local). Hacer login primero: el script de test guarda el token en la variable «token».",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "health"
+          ]
+        },
+        "description": "Público. 200 {estado, baseDeDatos} tras un SELECT 1; 503 con baseDeDatos=error si la base falla. En Render Free la primera llamada puede tardar ~50 s."
+      },
+      "response": []
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"ciudadano@example.com\",\n  \"password\": \"TU_CONTRASENA\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "Público. 200 {token, rol}; 401 si las credenciales son inválidas. Guarda el token en la variable de colección «token»."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Login correcto (200)', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "if (pm.response.code === 200) {",
+              "    const cuerpo = pm.response.json();",
+              "    pm.collectionVariables.set('token', cuerpo.token);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Login con Google",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/google",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "google"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"credential\": \"ID_TOKEN_DE_GOOGLE\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "Público. 200 {token, rol} si ya hay cuenta, o {estado: PERFIL_INCOMPLETO, tokenRegistro, ...} si falta completar el perfil."
+      },
+      "response": []
+    },
+    {
+      "name": "Completar perfil de Google",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/google/completar",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "google",
+            "completar"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tokenRegistro\": \"TOKEN_DE_REGISTRO_DEVUELTO_POR_/api/auth/google\",\n  \"nombres\": \"Nombre de ejemplo\",\n  \"apellidos\": \"Apellido de ejemplo\",\n  \"idTipoDocumento\": 1,\n  \"numeroDocumento\": \"0000000000\",\n  \"idBarrio\": 1,\n  \"direccionCorrespondencia\": \"Calle 0 # 0-00\",\n  \"telefono\": \"3000000000\",\n  \"aceptaPrivacidad\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "Público. El tokenRegistro dura 15 min. 200 {token, rol}."
+      },
+      "response": []
+    },
+    {
+      "name": "Recuperar contraseña",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/recuperar",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "recuperar"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"ciudadano@example.com\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "Público. Siempre 200 con el mismo mensaje, exista o no la cuenta."
+      },
+      "response": []
+    },
+    {
+      "name": "Restablecer contraseña",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/restablecer",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "restablecer"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"token\": \"TOKEN_DEL_ENLACE_DE_RECUPERACION\",\n  \"nuevaContrasena\": \"NUEVA_CONTRASENA\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "Público. 204 sin cuerpo si el token es válido."
+      },
+      "response": []
+    },
+    {
+      "name": "Categorías",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/categorias",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "categorias"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "description": "Exige sesión (cualquier rol). Usa Bearer {{token}}."
+      },
+      "response": []
+    },
+    {
+      "name": "Admin ping",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/ping",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "ping"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "description": "Exige rol ADMIN: 401 sin token, 403 con rol ciudadano."
+      },
+      "response": []
+    }
+  ]
+}
