@@ -21,4 +21,4 @@ Las decisiones abiertas se marcan como tales y no deben cerrarse sin el equipo.
 | 0004 | Hosting en capas gratuitas | Aceptada (desplegada 28/10/2026, Netlify en vez de Vercel) |
 | 0005 | Estructura del frontend: `app/` / `admin/` / `compartido/` | Aceptada |
 | 0006 | Almacenamiento de fotos: Cloudinary | Aceptada (29/10/2026) |
-| 0007 | Dominio propio para el correo de Resend | Abierta (propuesta 30/10/2026) |
+| 0007 | Dominio propio para el correo de Resend | Aceptada (31/10/2026, `notiurba.com`) |

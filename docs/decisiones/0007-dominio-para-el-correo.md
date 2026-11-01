@@ -1,6 +1,15 @@
 # ADR-0007 — Dominio propio para el correo de Resend
 
-**Estado:** Abierta (propuesta del 30/10/2026). Falta comprar el dominio. Plazo: antes del 8 de noviembre.
+**Estado:** Aceptada (31/10/2026). Dominio `notiurba.com` comprado; subdominio de envío `reportes.notiurba.com` verificado en Resend.
+
+## Estado (31/10/2026)
+
+- El dominio `notiurba.com` ya está comprado. Lo compró Andrés Mauricio Peña López, **a su nombre**: él es el dueño y quien paga la renovación.
+- El subdominio de envío es `reportes.notiurba.com` y está verificado en Resend (dato dado por Andrés).
+- Pendiente: probar un envío real desde Render con la API HTTP de Resend. El `MailService` aún no está implementado.
+- El plazo del 8 de noviembre se cumplió en lo que toca a la compra y la verificación.
+
+Lo que sigue (Contexto, Propuesta y Pasos) es el análisis original del 30/10/2026 y se deja como historia.
 
 ## Contexto
 

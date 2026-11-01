@@ -43,7 +43,7 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
     - Netlify: `VITE_API_URL`.
     - Render: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `ADMIN_DEV_PASSWORD`,
       `GOOGLE_CLIENT_ID`, `CORS_ORIGINS`, `RECUPERACION_ENLACE`.
-- **Correo:** Resend (decidido el 29/10/2026, ADR-0002). Requiere dominio verificado; plan gratuito 100 correos/día. Se descartó el borrador que el ciudadano enviaba.
+- **Correo:** Resend (decidido el 29/10/2026, ADR-0002). Requiere dominio verificado; plan gratuito 100 correos/día. Se descartó el borrador que el ciudadano enviaba. Dominio `notiurba.com` comprado el 31/10/2026 (a nombre de Andrés Mauricio Peña López, ADR-0007); se envía desde el subdominio `reportes.notiurba.com`, verificado en Resend. Falta probar un envío real desde Render con la API HTTP de Resend.
 
 ## Equipo
 
@@ -54,6 +54,5 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
 
 ## Decisiones abiertas (no cerrar sin el equipo)
 
-- Dominio verificado para Resend (el mecanismo ya está decidido: Resend, ADR-0002). Antes del 8 de noviembre.
 - Categorías 8 (riesgo de desastres) y 9 (vivienda): por validar con la Alcaldía.
 - Fuente cartográfica definitiva de las comunas: por validar con Planeación (ADR-0003).
