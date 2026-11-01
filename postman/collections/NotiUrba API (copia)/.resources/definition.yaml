@@ -1,0 +1,5 @@
+$kind: collection
+description: "Pruebas contra Render. Orden: Health, Login (pon tu correo y contraseña de admin), Categorías, Admin ping."
+variables:
+  baseUrl: https://notiurba-api.onrender.com
+  token: ""

@@ -1,0 +1,5 @@
+$kind: collection
+description: "Endpoints del backend de NotiUrba. Elegir el entorno «local» o «render»; baseUrl también existe como variable de colección (por defecto, local). Hacer login primero: el script de test guarda el token en la variable «token»."
+variables:
+  baseUrl: http://localhost:8080
+  token: ""

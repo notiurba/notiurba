@@ -1,0 +1,4 @@
+name: NotiUrba - Render
+values:
+  - key: baseUrl
+    value: 'https://notiurba-api.onrender.com'
