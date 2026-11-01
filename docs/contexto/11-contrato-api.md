@@ -115,8 +115,8 @@ JWT, solo el autor del reporte. `multipart/form-data`, parte `foto`:
 Salida: 201 `{ codigoSeguimiento, foto: { orden, url } }`. La foto vive en Cloudinary y la base guarda solo la URL.
 Errores: 400 VALIDACION, 401, 404, 409 FOTOS_MAXIMO, 413, 415, 502.
 
-### 3.6 Consultar un reporte — `GET /api/reportes/{codigo}` — FALTA
-JWT, solo reportes propios. `codigo` con formato `NU-` + 6 o más dígitos (mal formado: 400 VALIDACION, campo `codigo`).
+### 3.6 Consultar un reporte — `GET /api/reportes/{codigo}` — EXISTE
+JWT, solo reportes propios. `codigo` con formato `NU-` + 6 o más dígitos (mal formado: 400 VALIDACION, campo `codigo`). Se aceptan minúsculas y espacios alrededor.
 
 Salida 200:
 - `codigoSeguimiento`, `estado` (Recibido, Enviado, En trámite o Resuelto).
@@ -126,9 +126,9 @@ Salida 200:
 - `fotos [ { orden, url } ]` (arreglo vacío si no tiene).
 - `creadoEn`, `vigenteHasta`.
 - `historial [ { estado, observacion, cambiadoEn } ]`.
-- `envio { estado, motivo }`: estado del correo a la entidad (PENDIENTE, ENVIADO o FALLIDO) y, si falló, el motivo; null si aún no se ha enviado (RF-16).
+- `envio { estado, motivo }`: estado del último envío del correo a la entidad (PENDIENTE, ENVIADO o FALLIDO); null si aún no se ha enviado (RF-16). Si falló, `motivo` es un texto fijo para el ciudadano («No pudimos entregar el correo a la entidad.»): el detalle técnico de la base nunca sale por la API.
 
-Errores: 400 VALIDACION, 401, 404 NO_ENCONTRADO (no existe o no es suyo).
+Errores: 400 VALIDACION, 401, 404 NO_ENCONTRADO. Un reporte que no existe y uno de otra persona dan exactamente la misma respuesta, para no revelar qué códigos existen. `comuna` hoy sale del barrio (los polígonos aún no están cargados) y es null si el reporte no tiene ni barrio ni GPS dentro de una comuna.
 
 ## 4. Endpoints complementarios (todos *propuestos*)
 

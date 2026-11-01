@@ -25,6 +25,9 @@ public class ReporteRepositorio {
             String direccionIncidente, String matriculaCuentaServicio, String radicadoOficial) {
     }
 
+    /** Texto para el ciudadano: el detalle técnico de registro_envio_correo.error no sale de la API. */
+    static final String MOTIVO_ENVIO_FALLIDO = "No pudimos entregar el correo a la entidad.";
+
     private final NamedParameterJdbcTemplate jdbc;
 
     public ReporteRepositorio(NamedParameterJdbcTemplate jdbc) {
@@ -75,5 +78,74 @@ public class ReporteRepositorio {
                         rs.getString("codigo_seguimiento"), rs.getString("estado"),
                         rs.getObject("creado_en", OffsetDateTime.class),
                         rs.getObject("vigente_hasta", OffsetDateTime.class)));
+    }
+
+    /**
+     * El reporte de ese código SOLO si es de ese usuario: si no existe o es de otra persona el resultado
+     * es el mismo (vacío), para no revelar qué códigos existen. La comuna sale de v_reporte_comuna
+     * (polígono, o barrio si no hay polígono).
+     */
+    public Optional<ReporteDetalleResponse> buscarPropio(long idUsuario, String codigo) {
+        var parametros = new MapSqlParameterSource().addValue("usuario", idUsuario).addValue("codigo", codigo);
+        List<ReporteDetalleResponse> filas = jdbc.query("""
+                SELECT r.id_reporte, r.codigo_seguimiento, est.nombre AS estado,
+                       c.id_categoria, c.nombre AS categoria, r.descripcion,
+                       ST_Y(r.ubicacion) AS latitud, ST_X(r.ubicacion) AS longitud,
+                       vc.id_comuna, b.id_barrio, b.nombre AS barrio,
+                       r.direccion_incidente, r.matricula_cuenta_servicio, r.radicado_oficial,
+                       r.creado_en, r.vigente_hasta
+                  FROM reporte r
+                  JOIN categoria c ON c.id_categoria = r.id_categoria
+                  JOIN estado_reporte est ON est.id_estado_reporte = r.id_estado_reporte
+                  LEFT JOIN barrio b ON b.id_barrio = r.id_barrio
+                  LEFT JOIN v_reporte_comuna vc ON vc.id_reporte = r.id_reporte
+                 WHERE r.codigo_seguimiento = :codigo AND r.id_usuario = :usuario""",
+                parametros, (rs, i) -> {
+                    long idReporte = rs.getLong("id_reporte");
+                    Integer idBarrio = (Integer) rs.getObject("id_barrio");
+                    return new ReporteDetalleResponse(
+                            rs.getString("codigo_seguimiento"), rs.getString("estado"),
+                            new ReporteDetalleResponse.Categoria(rs.getInt("id_categoria"), rs.getString("categoria")),
+                            rs.getString("descripcion"),
+                            (Double) rs.getObject("latitud"), (Double) rs.getObject("longitud"),
+                            (Integer) rs.getObject("id_comuna"),
+                            idBarrio == null ? null : new ReporteDetalleResponse.Barrio(idBarrio, rs.getString("barrio")),
+                            rs.getString("direccion_incidente"), rs.getString("matricula_cuenta_servicio"),
+                            rs.getString("radicado_oficial"),
+                            fotos(idReporte),
+                            rs.getObject("creado_en", OffsetDateTime.class),
+                            rs.getObject("vigente_hasta", OffsetDateTime.class),
+                            historial(idReporte), envio(idReporte));
+                });
+        return filas.stream().findFirst();
+    }
+
+    private List<ReporteDetalleResponse.Foto> fotos(long idReporte) {
+        return jdbc.query("SELECT orden, url FROM evidencia_reporte WHERE id_reporte = :id ORDER BY orden",
+                new MapSqlParameterSource("id", idReporte),
+                (rs, i) -> new ReporteDetalleResponse.Foto(rs.getInt("orden"), rs.getString("url")));
+    }
+
+    private List<ReporteDetalleResponse.CambioDeEstado> historial(long idReporte) {
+        return jdbc.query("""
+                SELECT e.nombre AS estado, h.observacion, h.cambiado_en
+                  FROM historial_estado h JOIN estado_reporte e ON e.id_estado_reporte = h.id_estado_reporte
+                 WHERE h.id_reporte = :id ORDER BY h.cambiado_en, h.id_historial_estado""",
+                new MapSqlParameterSource("id", idReporte),
+                (rs, i) -> new ReporteDetalleResponse.CambioDeEstado(rs.getString("estado"),
+                        rs.getString("observacion"), rs.getObject("cambiado_en", OffsetDateTime.class)));
+    }
+
+    /** El último envío del reporte; null si todavía no hay ninguno. */
+    private ReporteDetalleResponse.Envio envio(long idReporte) {
+        return jdbc.query("""
+                SELECT s.nombre AS estado
+                  FROM registro_envio_correo e JOIN estado_envio s ON s.id_estado_envio = e.id_estado_envio
+                 WHERE e.id_reporte = :id ORDER BY e.creado_en DESC, e.id_registro_envio DESC LIMIT 1""",
+                new MapSqlParameterSource("id", idReporte),
+                (rs, i) -> {
+                    String estado = rs.getString("estado");
+                    return new ReporteDetalleResponse.Envio(estado, "FALLIDO".equals(estado) ? MOTIVO_ENVIO_FALLIDO : null);
+                }).stream().findFirst().orElse(null);
     }
 }

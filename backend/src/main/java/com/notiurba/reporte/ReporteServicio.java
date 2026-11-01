@@ -1,5 +1,7 @@
 package com.notiurba.reporte;
 
+import java.util.regex.Pattern;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,10 @@ import com.notiurba.web.error.Codigos;
  */
 @Service
 public class ReporteServicio {
+
+    /** NU- más 6 o más dígitos (el trigger amplía el relleno si pasa de 6). */
+    static final Pattern FORMATO_CODIGO = Pattern.compile("NU-\\d{6,}");
+    static final String NO_ENCONTRADO = "No encontramos un reporte tuyo con ese código.";
 
     static final int DESCRIPCION_MINIMA = 10;
     static final int DESCRIPCION_MAXIMA = 500;
@@ -66,6 +72,21 @@ public class ReporteServicio {
         return repositorio.insertar(new ReporteRepositorio.NuevoReporte(
                 idUsuario, p.idCategoria(), p.idBarrio(), descripcion, p.latitud(), p.longitud(),
                 vacioANulo(p.direccionIncidente()), matricula, vacioANulo(p.radicadoOficial())));
+    }
+
+    /** Un reporte propio por código. No existe y «es de otra persona» dan exactamente la misma respuesta. */
+    @Transactional(readOnly = true)
+    public ReporteDetalleResponse consultar(String correoUsuario, String codigo) {
+        String normalizado = codigo == null ? "" : codigo.trim().toUpperCase();
+        if (!FORMATO_CODIGO.matcher(normalizado).matches()) {
+            throw error("El código tiene el formato NU-000123", "codigo");
+        }
+        long idUsuario = usuarios.findByCorreoIgnoreCase(correoUsuario)
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, Codigos.NO_AUTENTICADO,
+                        Codigos.MSG_NO_AUTENTICADO))
+                .getIdUsuario();
+        return repositorio.buscarPropio(idUsuario, normalizado)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, Codigos.NO_ENCONTRADO, NO_ENCONTRADO));
     }
 
     private static ApiException error(String mensaje, String campo) {
