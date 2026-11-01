@@ -59,7 +59,7 @@ Cualquier otro error HTTP sin código propio se convierte así: 404 en NO_ENCONT
 
 ## 3. Los 6 endpoints del MVP
 
-### 3.1 Registro — `POST /api/auth/registro` — FALTA
+### 3.1 Registro — `POST /api/auth/registro` — EXISTE
 Público. Crea siempre rol CIUDADANO.
 
 Entrada (en este orden):
@@ -139,10 +139,10 @@ Fuera de los 6, pero necesarios para que ninguna pantalla del Figma quede sin da
 - `POST /api/reportes/{codigo}/enviar` — el frontend lo llama después de subir las fotos (si subió). Responde 202; el envío con Resend (API HTTP) corre en segundo plano (RNF-04) y es idempotente. Así el correo (RF-14) puede llevar el enlace a la foto. Sale un solo correo, a la entidad, con el correo del ciudadano en Reply-To y sin copia para él.
 - `GET /api/catalogos/barrios` (`{ idBarrio, idComuna, nombre }`) y `GET /api/catalogos/tipos-documento` — públicos. Al implementarlos hay que agregar `/api/catalogos/**` a las rutas públicas de `SecurityConfig`.
 
-Verificación de correo (todos FALTA, *propuestos* en los detalles; la decisión es firme):
-- `POST /api/auth/verificar` — público. Entrada `{ token }`, el del enlace del correo (usa el tipo de token «Verificación de correo» que ya existe en la base; vence en 24 h, *propuesto*). Salida 200 `{ token, rol }`: confirma el correo e inicia sesión. Error 400 ENLACE_INVALIDO.
-- `POST /api/auth/reenviar-verificacion` — público. Entrada `{ correo }`. Siempre 200 `{ mensaje }`, exista o no la cuenta. Con límite de un reenvío por minuto por cuenta (*propuesto*) para cuidar la cuota de Resend.
-- Las cuentas con Google ya llegan verificadas. Las cuentas que ya existen (como el administrador sembrado) deben quedar verificadas con una migración, o no podrían ingresar.
+Verificación de correo (EXISTEN):
+- `POST /api/auth/verificar` — público. Entrada `{ token }`, el del enlace del correo (usa el tipo de token «Verificación de correo»; el enlace vence en 24 h y se guarda solo su hash). Salida 200 `{ token, rol }`: confirma el correo e inicia sesión. Error 400 ENLACE_INVALIDO.
+- `POST /api/auth/reenviar-verificacion` — público. Entrada `{ correo }`. Siempre 200 `{ mensaje }`, exista o no la cuenta. Con límite de un reenvío por minuto por cuenta, para cuidar la cuota de Resend. Solo envía si la cuenta tiene contraseña y no está verificada.
+- Las cuentas con Google ya llegan verificadas. Las cuentas que ya existen (el administrador sembrado en V4) ya nacieron con el correo verificado, así que siguen ingresando sin cambios. El enlace del correo apunta a una página del frontend (`VERIFICACION_ENLACE`, por defecto `/app/verificar-correo`) que aún no existe.
 
 Aviso de rebotes:
 - `POST /api/webhooks/resend` — FALTA, público (sin JWT) pero protegido: se valida la firma del evento con un secreto (`RESEND_WEBHOOK_SECRET`) y se rechaza lo que no esté firmado. Si Resend avisa de un rebote o de una queja, el envío pasa a FALLIDO con su motivo y se avisa al ciudadano (decisión 3). Los nombres exactos de los eventos se confirman en la documentación de Resend al implementar. Requiere guardar el identificador que Resend da a cada envío: hoy `registro_envio_correo` no tiene columna para eso (migración nueva).
@@ -196,7 +196,7 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 
 ### Pendientes
 - **Estado «Enviado» y rebotes**: falta implementar el webhook, la columna del identificador de envío y la notificación al ciudadano (decisión 3). Confirmar con el equipo que RF-16 y los webhooks pasan a ser necesarios en el MVP.
-- **Verificación de correo**: falta implementarla junto con el registro (decisión 1).
+- **Verificación de correo**: el backend está hecho; falta la página del frontend `/app/verificar-correo` y la de «reenviar enlace».
 - **Endpoint `enviar`**: pendiente (decisión 2).
 - **Aviso de privacidad**: el texto legal en Figma y en la base (V3 tiene un marcador) sigue pendiente; incluir la frase de mayoría de edad.
 - **Paso 4 del Figma**: si muestra dos casillas de autorización, debe quedar una sola (`autorizaEnvio`). Avisar a Amelia (diseño).
@@ -208,8 +208,7 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 
 ## 8. Cambios al modelo de datos (para actualizar el diagrama ER)
 
-Este contrato pide cambios mínimos a la base. Se harían en una migración nueva (la V10; las
-migraciones ya aplicadas no se editan). Ya hecho: la V9 quitó el modo de envío BORRADOR (solo borró una fila del catálogo `modo_envio`, sin cambios de columnas).
+Este contrato pide cambios mínimos a la base. Las migraciones ya aplicadas no se editan. Ya hechos: la V9 quitó el modo de envío BORRADOR (solo borró una fila del catálogo `modo_envio`) y la V10 agregó las dos columnas de `registro_envio_correo` de la tabla de abajo (falta solo la propuesta de `evidencia_reporte`).
 
 Columnas nuevas:
 
