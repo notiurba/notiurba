@@ -17,6 +17,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.notiurba.foto.AlmacenFotosNoDisponibleException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import jakarta.validation.ConstraintViolation;
@@ -49,6 +51,14 @@ public class ManejadorErrores extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ResponseStatusException.class)
     ResponseEntity<ErrorApi> estado(ResponseStatusException e) {
         return respuesta(e.getStatusCode(), porEstado(e.getStatusCode(), e.getReason()));
+    }
+
+    /** 502: el problema es de un tercero (Cloudinary), no del ciudadano ni de la API. */
+    @ExceptionHandler(AlmacenFotosNoDisponibleException.class)
+    ResponseEntity<ErrorApi> almacenFotos(AlmacenFotosNoDisponibleException e) {
+        LOG.error("El almacén de fotos no respondió: {}", e.getMessage());
+        return respuesta(HttpStatus.BAD_GATEWAY, new ErrorApi(Codigos.ALMACEN_FOTOS_NO_DISPONIBLE,
+                "No pudimos guardar la foto en este momento. Intenta de nuevo en un momento.", "foto"));
     }
 
     @ExceptionHandler(Exception.class)

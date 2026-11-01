@@ -28,6 +28,13 @@ notiurba:
       url: https://api.resend.com
       api-key: ${RESEND_API_KEY:}      # secreta: solo variable de entorno (Render y .env local)
       remitente: ${RESEND_REMITENTE:}  # solo la dirección, del dominio verificado (reportes.notiurba.com)
+  fotos:
+    cloudinary:
+      url: https://api.cloudinary.com
+      cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+      api-key: ${CLOUDINARY_API_KEY:}
+      api-secret: ${CLOUDINARY_API_SECRET:}   # secreta: solo variable de entorno (Render y .env local)
+      carpeta: notiurba/reportes
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
   jwt:
