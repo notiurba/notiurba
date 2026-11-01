@@ -106,13 +106,13 @@ La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02).
 Detalle técnico: la base exige `autorizacion_envio_en <= creado_en`, así que el servidor debe fijar ambas fechas con el mismo instante.
 Errores: 400 VALIDACION, 401, 422 FUERA_DE_COBERTURA (el 422 aún no se aplica: depende de cargar `comuna.geom` y los barrios, NOT-31 / NOT-54).
 
-### 3.5 Subir foto — `POST /api/reportes/{codigo}/fotos` — FALTA
+### 3.5 Subir foto — `POST /api/reportes/{codigo}/fotos` — EXISTE
 JWT, solo el autor del reporte. `multipart/form-data`, parte `foto`:
-- Obligatoria, JPG o PNG (se valida el tipo real del archivo, no solo la extensión).
+- Obligatoria, JPG o PNG. El tipo se decide por los primeros bytes del archivo, no por su extensión ni por el Content-Type que declare quien sube. Sin archivo o vacío: 400.
 - Máximo 1 MB (1 048 576 bytes). El límite ya está configurado en el servidor y responde 413 con este formato.
-- Hasta 3 fotos por reporte (la base permite `orden` de 1 a 3).
+- Hasta 3 fotos por reporte (la base permite `orden` de 1 a 3). Se usa el menor orden libre, así que si se borra una foto su lugar se reutiliza.
 
-Salida: 201 `{ codigoSeguimiento, foto: { orden, url } }`. La foto vive en Cloudinary y la base guarda solo la URL.
+Salida: 201 `{ codigoSeguimiento, foto: { orden, url } }`. La foto vive en Cloudinary. La base guarda la URL y el identificador de la foto en Cloudinary (`id_publico_proveedor`, V11), que se usa para borrarla y no sale por la API. Mientras sube, la fila del reporte queda bloqueada: dos subidas a la vez no pueden pasar de 3 fotos. Si la foto sube pero no se alcanza a registrar, se borra de Cloudinary para no dejarla huérfana.
 Errores: 400 VALIDACION, 401, 404, 409 FOTOS_MAXIMO, 413, 415, 502.
 
 ### 3.6 Consultar un reporte — `GET /api/reportes/{codigo}` — EXISTE
@@ -202,14 +202,14 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 - **Aviso de privacidad**: el texto legal en Figma y en la base (V3 tiene un marcador) sigue pendiente; incluir la frase de mayoría de edad.
 - **Paso 4 del Figma**: si muestra dos casillas de autorización, debe quedar una sola (`autorizaEnvio`). Avisar a Amelia (diseño).
 - **`comuna.geom` es NULL y los barrios reales no están cargados** (solo hay un barrio administrativo de V4): `FUERA_DE_COBERTURA` no se puede verificar y nadie puede completar el perfil hasta NOT-31 / NOT-54. Depende de la carga de barrios y polígonos (Amelia).
-- **Código sin escribir**: el endpoint de subir foto (NOT-52), el endpoint `enviar` y conectar `EnviadorCorreo` a la recuperación de contraseña. El almacén de fotos (`AlmacenFotos`, Cloudinary) ya está hecho y probado con una subida real (NOT-51); faltan las variables `CLOUDINARY_*` en Render.
+- **Código sin escribir**: el endpoint `enviar`, conectar `EnviadorCorreo` a la recuperación de contraseña y el borrado de fotos y datos a pedido del ciudadano (la columna del identificador ya lo permite). El almacén de fotos (NOT-51) y el endpoint de subida (NOT-52) están hechos; el almacén se probó con una subida real a Cloudinary y el endpoint con el almacén simulado, así que la cadena completa solo se verá en producción.
 - **Prueba de Resend desde Render**: el 01/11/2026 se probó la API HTTP desde la máquina de Andrés (respuesta 200 con el subdominio verificado, enviando a una dirección de pruebas de Resend). El 01/11/2026 también se envió un correo real con `EnviadorCorreoResend` a una bandeja de Andrés. Falta probarlo desde Render: hay que desplegar y poner `RESEND_API_KEY` y `RESEND_REMITENTE` en sus variables. El SMTP por 2587 no se usa.
 - **Rutas del frontend**: `RutaProtegida` aún no envuelve `/admin/*`; el panel sigue abierto con datos de prueba.
 - **Linear**: NOT-69 («Generar el código único, guardarlo con restricción de unicidad y devolverlo al crear el reporte») ya lo hace el trigger `fn_reporte_antes_insertar` más `uq_reporte_codigo`: queda solo devolverlo en el 201. NOT-89 («consultar un reporte propio por código, con URL de foto nula si no tiene y 404 si no es suyo») habla de una sola foto: ahora son hasta 3, así que debe decir «lista de fotos vacía si no tiene».
 
 ## 8. Cambios al modelo de datos (para actualizar el diagrama ER)
 
-Este contrato pide cambios mínimos a la base. Las migraciones ya aplicadas no se editan. Ya hechos: la V9 quitó el modo de envío BORRADOR (solo borró una fila del catálogo `modo_envio`) y la V10 agregó las dos columnas de `registro_envio_correo` de la tabla de abajo (falta solo la propuesta de `evidencia_reporte`).
+Este contrato pide cambios mínimos a la base. Las migraciones ya aplicadas no se editan. Ya hechos: la V9 quitó el modo de envío BORRADOR (solo borró una fila del catálogo `modo_envio`) y la V10 agregó las dos columnas de `registro_envio_correo` de la tabla de abajo y la V11 agregó `evidencia_reporte.id_publico_proveedor`.
 
 Columnas nuevas:
 
@@ -217,7 +217,7 @@ Columnas nuevas:
 | --- | --- | --- | --- |
 | `registro_envio_correo` | `id_envio_proveedor` | VARCHAR(100), nulo, índice único | Guarda el identificador que Resend da a cada envío. El webhook lo usa para saber a qué envío pertenece un rebote |
 | `registro_envio_correo` | `aviso_fallo_en` | TIMESTAMPTZ, nula | Fecha en que se avisó al ciudadano del fallo. Evita avisar dos veces si Resend repite el evento |
-| `evidencia_reporte` | `id_publico_proveedor` | VARCHAR(255), nulo | *Propuesta, por decidir.* Identificador de la foto en Cloudinary, para poder borrarla si el ciudadano pide suprimir sus datos. El ADR-0006 dice que se guarda «la URL y el identificador», pero hoy la tabla solo tiene `url` |
+| `evidencia_reporte` | `id_publico_proveedor` | VARCHAR(255), nulo | **Hecho en la V11.** Identificador de la foto en Cloudinary, para poder borrarla si el ciudadano pide suprimir sus datos (el ADR-0006 dice que se guarda «la URL y el identificador») |
 
 Sin columnas nuevas (ya existen y alcanzan):
 - Verificación de correo: `usuario.correo_verificado_en` y la tabla `token_verificacion` con el tipo «Verificación de correo». El límite de un reenvío por minuto se calcula con `token_verificacion.creado_en`.

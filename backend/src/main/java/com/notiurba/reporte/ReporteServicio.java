@@ -77,16 +77,22 @@ public class ReporteServicio {
     /** Un reporte propio por código. No existe y «es de otra persona» dan exactamente la misma respuesta. */
     @Transactional(readOnly = true)
     public ReporteDetalleResponse consultar(String correoUsuario, String codigo) {
-        String normalizado = codigo == null ? "" : codigo.trim().toUpperCase();
-        if (!FORMATO_CODIGO.matcher(normalizado).matches()) {
-            throw error("El código tiene el formato NU-000123", "codigo");
-        }
+        String normalizado = normalizarCodigo(codigo);
         long idUsuario = usuarios.findByCorreoIgnoreCase(correoUsuario)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, Codigos.NO_AUTENTICADO,
                         Codigos.MSG_NO_AUTENTICADO))
                 .getIdUsuario();
         return repositorio.buscarPropio(idUsuario, normalizado)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, Codigos.NO_ENCONTRADO, NO_ENCONTRADO));
+    }
+
+    /** Quita espacios, pasa a mayúsculas y exige el formato NU-000123 (400 con campo «codigo» si no cumple). */
+    static String normalizarCodigo(String codigo) {
+        String normalizado = codigo == null ? "" : codigo.trim().toUpperCase();
+        if (!FORMATO_CODIGO.matcher(normalizado).matches()) {
+            throw error("El código tiene el formato NU-000123", "codigo");
+        }
+        return normalizado;
     }
 
     private static ApiException error(String mensaje, String campo) {

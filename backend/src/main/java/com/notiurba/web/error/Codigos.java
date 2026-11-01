@@ -13,6 +13,7 @@ public final class Codigos {
     public static final String DOCUMENTO_YA_REGISTRADO = "DOCUMENTO_YA_REGISTRADO";
     public static final String CUENTA_GOOGLE_YA_REGISTRADA = "CUENTA_GOOGLE_YA_REGISTRADA";
     public static final String CONFLICTO = "CONFLICTO";
+    public static final String FOTOS_MAXIMO = "FOTOS_MAXIMO";
     public static final String ENLACE_INVALIDO = "ENLACE_INVALIDO";
     public static final String ARCHIVO_MUY_GRANDE = "ARCHIVO_MUY_GRANDE";
     public static final String FORMATO_NO_SOPORTADO = "FORMATO_NO_SOPORTADO";

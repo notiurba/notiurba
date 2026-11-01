@@ -120,6 +120,31 @@ public class ReporteRepositorio {
         return filas.stream().findFirst();
     }
 
+    /**
+     * Bloquea (FOR UPDATE) la fila del reporte si es de ese usuario, hasta que termine la transacción.
+     * Vacío si no existe o es de otra persona.
+     */
+    public Optional<Long> bloquearReportePropio(long idUsuario, String codigo) {
+        List<Long> ids = jdbc.query(
+                "SELECT id_reporte FROM reporte WHERE codigo_seguimiento = :codigo AND id_usuario = :usuario FOR UPDATE",
+                new MapSqlParameterSource().addValue("usuario", idUsuario).addValue("codigo", codigo),
+                (rs, i) -> rs.getLong("id_reporte"));
+        return ids.stream().findFirst();
+    }
+
+    public List<Integer> ordenesDeFotos(long idReporte) {
+        return jdbc.query("SELECT orden FROM evidencia_reporte WHERE id_reporte = :id ORDER BY orden",
+                new MapSqlParameterSource("id", idReporte), (rs, i) -> rs.getInt("orden"));
+    }
+
+    public void insertarFoto(long idReporte, long idUsuario, String url, String idPublico, int orden) {
+        jdbc.update("""
+                INSERT INTO evidencia_reporte (id_reporte, id_usuario, url, id_publico_proveedor, orden)
+                VALUES (:reporte, :usuario, :url, :idPublico, :orden)""",
+                new MapSqlParameterSource().addValue("reporte", idReporte).addValue("usuario", idUsuario)
+                        .addValue("url", url).addValue("idPublico", idPublico).addValue("orden", orden));
+    }
+
     private List<ReporteDetalleResponse.Foto> fotos(long idReporte) {
         return jdbc.query("SELECT orden, url FROM evidencia_reporte WHERE id_reporte = :id ORDER BY orden",
                 new MapSqlParameterSource("id", idReporte),
