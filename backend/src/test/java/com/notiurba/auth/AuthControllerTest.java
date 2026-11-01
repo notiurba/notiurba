@@ -51,6 +51,6 @@ class AuthControllerTest {
         String soloGoogle = login("google@x.com", "Cualquiera123");
         String claveMala = login("clave@x.com", "Incorrecta123");
 
-        assertThat(soloGoogle).isEqualTo(claveMala).contains("Credenciales inválidas");
+        assertThat(soloGoogle).isEqualTo(claveMala).contains("Correo o contraseña incorrectos.");
     }
 }

@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.notiurba.seguridad.JwtProveedor;
 import com.notiurba.usuario.UsuarioRepository;
+import com.notiurba.web.error.ApiException;
+import com.notiurba.web.error.Codigos;
 
 import jakarta.validation.Valid;
 
@@ -36,7 +37,7 @@ public class AuthController {
                 // Una cuenta solo-Google (sin contraseña) recibe la misma respuesta que unas credenciales malas
                 .filter(u -> u.getPasswordHash() != null)
                 .filter(u -> passwordEncoder.matches(peticion.password(), u.getPasswordHash()))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas"));
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, Codigos.CREDENCIALES_INVALIDAS, Codigos.MSG_CREDENCIALES));
 
         String rol = usuario.getRol().getNombre();
         String token = jwtProveedor.generar(usuario.getCorreo(), rol);

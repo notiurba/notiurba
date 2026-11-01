@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,18 +19,21 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.notiurba.seguridad.JwtFiltro;
+import com.notiurba.web.error.ManejadorSeguridad;
 
 /**
  * API sin estado con JWT: /api/health y /api/auth/** son públicos, /api/admin/**
  * exige rol ADMIN, el resto exige solo estar autenticado. 401 sin token o vencido,
- * 403 con rol sin permiso.
+ * 403 con rol sin permiso; ambos con el cuerpo {codigo, mensaje, campo}.
  */
 @Configuration
 @EnableWebSecurity
+@Import(ManejadorSeguridad.class)
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, JwtFiltro jwtFiltro) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, JwtFiltro jwtFiltro, ManejadorSeguridad manejador)
+            throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .cors(Customizer.withDefaults())
@@ -39,10 +43,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated())
             .exceptionHandling(e -> e
-                .authenticationEntryPoint((request, response, excepcion) ->
-                    response.sendError(401, "No autenticado"))
-                .accessDeniedHandler((request, response, excepcion) ->
-                    response.sendError(403, "Sin permiso para este recurso")))
+                .authenticationEntryPoint(manejador)
+                .accessDeniedHandler(manejador))
             .addFilterBefore(jwtFiltro, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -59,6 +61,8 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(origenes));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        // Sin esto el navegador (Netlify → Render) no deja leer Location en el 201 de crear reporte
+        config.setExposedHeaders(List.of("Location"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", config);
         return source;
