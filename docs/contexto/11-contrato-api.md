@@ -1,0 +1,192 @@
+# Contrato de la API REST (NOT-43)
+
+Copia de trabajo del diseño de la API para la pestaña «Diseño técnico (arquitectura y
+modelo de datos)» del Google Doc. Está escrita sin depender del repositorio.
+
+Estado de cada endpoint:
+- **EXISTE**: implementado y verificado en el código (rama `feature/contrato-api`, parte de `develop`).
+- **FALTA**: por implementar.
+- *propuesto*: no es una decisión cerrada; falta el visto bueno del equipo.
+
+## 1. Convenciones
+
+- Producción: `https://notiurba-api.onrender.com` (Render Free, el primer arranque en frío tarda ~2 min). Local: `http://localhost:8080`.
+- JSON en UTF-8, nombres en camelCase, fechas en ISO-8601 con zona (`2026-10-31T14:05:00-05:00`).
+- Autenticación: encabezado `Authorization: Bearer <JWT>`. El JWT vence a los 60 minutos y lleva el correo (`sub`) y el `rol` (CIUDADANO o ADMIN).
+- Rutas: públicas `/api/health` y `/api/auth/**` (y `/api/catalogos/**` cuando exista); ciudadano `/api/...` (exige sesión, cualquier rol); panel `/api/admin/...` (exige rol ADMIN, Sprint 3).
+- Todo endpoint protegido responde 401 sin token, con token inválido o vencido (RNF-03), y 403 si el rol no alcanza.
+- CORS: solo el origen configurado (`CORS_ORIGINS`). El encabezado `Location` está expuesto para que el navegador lo pueda leer.
+
+## 2. Formato de error único (EXISTE)
+
+Toda respuesta de error tiene el mismo cuerpo:
+
+    { "codigo": "VALIDACION", "mensaje": "Completa el campo «Correo».", "campo": "correo" }
+
+- `codigo`: texto estable que usa el frontend para decidir qué hacer. No cambia.
+- `mensaje`: en español, listo para mostrar al ciudadano. Nunca trae detalles internos.
+- `campo`: nombre del campo con el problema, o `null`.
+- Si fallan varios campos se devuelve el primero en el orden del formulario (el orden de los campos de la petición).
+
+| HTTP | codigo | campo | Cuándo |
+| --- | --- | --- | --- |
+| 400 | VALIDACION | el campo | Dato faltante, mal formado o fuera de regla; también cuerpo que no es JSON (campo null) |
+| 400 | ENLACE_INVALIDO | token | Enlace de recuperación no válido o vencido |
+| 401 | NO_AUTENTICADO | null | Sin token, inválido o vencido; también token de Google o de registro con Google inválido |
+| 401 | CREDENCIALES_INVALIDAS | null | Login fallido. No dice cuál dato falló |
+| 403 | SIN_PERMISO | null | El rol no alcanza |
+| 404 | NO_ENCONTRADO | null | No existe o no es suyo (mismo mensaje en ambos casos) |
+| 409 | CORREO_YA_REGISTRADO | correo | Correo repetido (sin distinguir mayúsculas) |
+| 409 | DOCUMENTO_YA_REGISTRADO | numeroDocumento | Tipo y número de documento repetidos |
+| 409 | CUENTA_GOOGLE_YA_REGISTRADA | null | Esa cuenta de Google ya tiene usuario |
+| 409 | CONFLICTO | null | Otro choque (por ejemplo, carrera al crear la cuenta) |
+| 409 | FOTOS_MAXIMO | foto | El reporte ya tiene 3 fotos |
+| 413 | ARCHIVO_MUY_GRANDE | foto | La foto pasa de 1 MB |
+| 415 | FORMATO_NO_SOPORTADO | foto | No es JPG ni PNG |
+| 422 | FUERA_DE_COBERTURA | latitud | El punto no cae en ninguna de las 10 comunas |
+| 502 | ALMACEN_FOTOS_NO_DISPONIBLE | null | Cloudinary no respondió |
+| 500 | ERROR_INTERNO | null | Error no previsto; sin detalles |
+
+Mensajes fijos:
+- NO_AUTENTICADO: «Tu sesión no es válida o venció. Inicia sesión de nuevo.»
+- SIN_PERMISO: «No tienes permiso para esta acción.»
+- CREDENCIALES_INVALIDAS: «Correo o contraseña incorrectos.»
+
+Solo existen en el frontend (no los manda el servidor): `SIN_CONEXION` (no hubo red) y
+`RESPUESTA_INESPERADA` (respuesta que no sigue este formato, por ejemplo Render despertando).
+Cualquier otro error HTTP sin código propio se convierte así: 404 en NO_ENCONTRADO, otros 4xx en VALIDACION, 5xx en ERROR_INTERNO.
+
+## 3. Los 6 endpoints del MVP
+
+### 3.1 Registro — `POST /api/auth/registro` — FALTA
+Público. Crea siempre rol CIUDADANO.
+
+Entrada (en este orden):
+- `nombres`, `apellidos`: obligatorios, 1–255, no solo espacios.
+- `idTipoDocumento`: obligatorio, existente (1 CC, 2 CE, 3 PPT, 4 PAS).
+- `numeroDocumento`: obligatorio, máx. 30; único junto con el tipo.
+- `idBarrio`: obligatorio, existente.
+- `direccionCorrespondencia`: obligatoria, máx. 300.
+- `correo`: obligatorio, formato de correo, máx. 254, único sin distinguir mayúsculas.
+- `telefono`: opcional, máx. 30.
+- `password`: obligatoria, mínimo 8 caracteres con al menos una letra y un número, máx. 72 bytes UTF-8 (regla real en `ReglaContrasena`). Mensaje: «La contraseña debe tener al menos 8 caracteres, con letras y números».
+- `aceptaPrivacidad`: obligatorio, `true`. El servidor guarda el aviso vigente y la fecha-hora, igual que `POST /api/auth/google/completar`.
+- `declaraMayorEdad`: obligatorio, `true`. *Propuesto*, pendiente en el Doc.
+- «Confirmar contraseña» se valida solo en el frontend.
+
+Salida: 201 `{ token, rol }` (*propuesto*: sin verificación de correo en el MVP; si el equipo decide verificar, el registro respondería 201 sin token y se sumarían los endpoints verificar y reenviar).
+Errores: 400 VALIDACION, 409 CORREO_YA_REGISTRADO, 409 DOCUMENTO_YA_REGISTRADO.
+
+### 3.2 Login — `POST /api/auth/login` — EXISTE
+Público. Entrada: `correo`, `password` (obligatorios).
+Salida: 200 `{ token, rol }` con rol CIUDADANO o ADMIN.
+Errores: 400 VALIDACION; 401 CREDENCIALES_INVALIDAS (también para cuentas creadas solo con Google, que no tienen contraseña).
+
+### 3.3 Lista de categorías — `GET /api/categorias` — EXISTE
+JWT de cualquier rol (*propuesto*: mantenerlo con sesión).
+Salida: 200, arreglo de las categorías activas (hoy 15): `{ idCategoria, nombre, descripcion, requiereUbicacion, requiereEvidencia }`.
+Error: 401.
+
+### 3.4 Crear reporte — `POST /api/reportes` — FALTA
+JWT. Sigue los 4 pasos del Figma (1 Categoría, 2 Ubicación, 3 Detalles, 4 Confirmación). Las categorías sin ubicación saltan del paso 1 al 3.
+
+Entrada:
+- `idCategoria`: obligatoria, existente y activa.
+- `latitud`, `longitud`: ambas o ninguna; −90..90 y −180..180. Si la categoría `requiereUbicacion`, se exige GPS o barrio (regla B3 de la migración V7).
+- `idBarrio`: opcional; obligatorio si no hay GPS y la categoría exige ubicación; existente.
+- `descripcion`: obligatoria, 10–500 caracteres tras recortar espacios.
+- `direccionIncidente`: opcional, máx. 300.
+- `matriculaCuentaServicio`: opcional, máx. 50; solo categorías de empresas de servicios públicos (trigger B6).
+- `radicadoOficial`: opcional, máx. 50.
+- `autorizaEnvio` y `autorizaCopia`: obligatorios, `true`. La base solo guarda `autorizacion_envio_en` (ver sección 7).
+
+Salida: 201 con `Location: /api/reportes/NU-000123` y el reporte completo (como en 3.6) en estado «Recibido».
+La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02).
+Detalle técnico: la base exige `autorizacion_envio_en <= creado_en`, así que el servidor debe fijar ambas fechas con el mismo instante.
+Errores: 400 VALIDACION, 401, 422 FUERA_DE_COBERTURA.
+
+### 3.5 Subir foto — `POST /api/reportes/{codigo}/fotos` — FALTA
+JWT, solo el autor del reporte. `multipart/form-data`, parte `foto`:
+- Obligatoria, JPG o PNG (se valida el tipo real del archivo, no solo la extensión).
+- Máximo 1 MB (1 048 576 bytes). El límite ya está configurado en el servidor y responde 413 con este formato.
+- Hasta 3 fotos por reporte (la base permite `orden` de 1 a 3).
+
+Salida: 201 `{ codigoSeguimiento, foto: { orden, url } }`. La foto vive en Cloudinary y la base guarda solo la URL.
+Errores: 400 VALIDACION, 401, 404, 409 FOTOS_MAXIMO, 413, 415, 502.
+
+### 3.6 Consultar un reporte — `GET /api/reportes/{codigo}` — FALTA
+JWT, solo reportes propios. `codigo` con formato `NU-` + 6 o más dígitos (mal formado: 400 VALIDACION, campo `codigo`).
+
+Salida 200:
+- `codigoSeguimiento`, `estado` (Recibido, Enviado, En trámite o Resuelto).
+- `categoria { idCategoria, nombre }`, `descripcion`.
+- `latitud`, `longitud` (null si no hay GPS), `comuna` (1–10 o null), `barrio { idBarrio, nombre }` o null.
+- `direccionIncidente`, `matriculaCuentaServicio`, `radicadoOficial`.
+- `fotos [ { orden, url } ]` (arreglo vacío si no tiene).
+- `creadoEn`, `vigenteHasta`.
+- `historial [ { estado, observacion, cambiadoEn } ]`.
+
+Errores: 400 VALIDACION, 401, 404 NO_ENCONTRADO (no existe o no es suyo).
+
+## 4. Endpoints complementarios (todos *propuestos*)
+
+Fuera de los 6, pero necesarios para que ninguna pantalla del Figma quede sin datos. Todos FALTA.
+
+- `GET /api/reportes` — «Mis reportes». Lista propia, más recientes primero, filtro opcional `estado`. Salida: `[ { codigoSeguimiento, estado, categoria, creadoEn, vigenteHasta } ]`.
+- `PATCH /api/reportes/{codigo}` — «Actualizar mi reporte». Solo cambia `radicadoOficial` (máx. 50). Devuelve el reporte.
+- `POST /api/reportes/{codigo}/enviar` — el frontend lo llama después de subir las fotos. Responde 202; el envío con Resend (API HTTP) corre en segundo plano (RNF-04) y es idempotente. Así el correo (RF-14) puede llevar el enlace a la foto.
+- `GET /api/catalogos/barrios` (`{ idBarrio, idComuna, nombre }`) y `GET /api/catalogos/tipos-documento` — públicos. Al implementarlos hay que agregar `/api/catalogos/**` a las rutas públicas de `SecurityConfig`.
+
+Ya implementados (EXISTEN):
+- `GET /api/health` — público. 200 `{ estado, baseDeDatos }` ambos «ok»; 503 con «error» si la base no responde (`SELECT 1`).
+- `POST /api/auth/google` — público. Entrada `{ credential }` (ID token de Google). Salida 200 `{ token, rol }` si ya hay cuenta (o si se vincula por correo, *propuesto*), o `{ estado: "PERFIL_INCOMPLETO", tokenRegistro, correo, nombres, apellidos }`. Error 401 NO_AUTENTICADO.
+- `POST /api/auth/google/completar` — público. Entrada: `tokenRegistro` (dura 15 min), `nombres`, `apellidos`, `idTipoDocumento`, `numeroDocumento`, `idBarrio`, `direccionCorrespondencia`, `telefono` (opcional), `aceptaPrivacidad` (true). Salida 200 `{ token, rol }`. Errores 400, 401, 409.
+- `POST /api/auth/recuperar` — público. Entrada `{ correo }`. Siempre 200 `{ mensaje }`, exista o no la cuenta.
+- `POST /api/auth/restablecer` — público. Entrada `{ token, nuevaContrasena }`. Salida 204. Errores 400 VALIDACION (campo `nuevaContrasena`) o ENLACE_INVALIDO (campo `token`).
+
+## 5. Panel administrativo (Sprint 3, solo reservados)
+
+Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
+- `GET /api/admin/ping` — EXISTE. Marcador que confirma que la ruta exige ADMIN (200; 401 sin token; 403 con rol ciudadano).
+- `GET /api/admin/reportes` — filtros comuna, categoría, estado y fecha (RF-19).
+- `GET /api/admin/reportes/{codigo}`.
+- `PATCH /api/admin/reportes/{codigo}/estado` — estado + observación (RF-20). El estado no retrocede (regla B11 de la base).
+- `GET` y `PUT /api/admin/configuracion/vigencia` (RF-21).
+- `GET /api/admin/mapa` y `GET /api/admin/mapa/calor` (RF-22, RF-23).
+- `GET /api/admin/estadisticas` (RF-24).
+- `PUT /api/admin/categorias/{id}/correo-destino` (RF-25).
+
+## 6. Decisiones propuestas (no cerradas)
+
+1. Verificación de correo: *propuesto* no hacerla en el MVP.
+2. Cómo se dispara el correo con fotos: *propuesto* el endpoint `enviar`.
+3. Cuándo pasa un reporte a «Enviado»: *propuesto* cuando Resend acepta el envío (respuesta exitosa de su API); el servidor registra el envío como ENVIADO y agrega el estado al historial. Ojo: que Resend acepte no garantiza que el correo llegue a la bandeja; los rebotes se verían con webhooks (deseable, R.05).
+4. Categorías con sesión: *propuesto* mantener `GET /api/categorias` con JWT.
+5. Catálogos como endpoints públicos; el aviso de privacidad es estático en el frontend y el servidor guarda el vigente.
+6. Segunda autorización (`autorizaCopia`) sin columna propia, o con una nueva: pendiente (sección 7).
+7. `declaraMayorEdad` en el registro.
+8. Evidencia obligatoria por categoría: pendiente (sección 7).
+
+## 7. Discrepancias y brechas
+
+### Resueltas en la rama `feature/contrato-api`
+- **Formato de error único**: no existía. Ahora `ManejadorErrores` (errores de negocio y de validación) y `ManejadorSeguridad` (401 y 403) devuelven `{ codigo, mensaje, campo }`. Se desactivó `problemdetails`.
+- **403 que salía como 401**: `sendError` redirigía internamente a `/error`, donde la petición ya no tenía sesión. Verificado con un servidor real: un ciudadano en `/api/admin/ping` recibía 401. Ahora recibe 403. Las pruebas con MockMvc no lo detectaban porque no hacen ese redespacho.
+- **`Location` y CORS**: el navegador no podía leerlo entre dominios. Ahora CORS lo expone.
+- **Límite de foto**: queda explícito en `application.yml` (1 MB por archivo, 2 MB por petición) y responde 413 ARCHIVO_MUY_GRANDE.
+- **`cliente.js`**: ahora lee el cuerpo del error y lanza `ErrorApi { estado, codigo, mensaje, campo }`; no fija `Content-Type` con `FormData`; con 401 NO_AUTENTICADO estando con sesión cierra la sesión y lleva a `/app/ingresar`.
+- **`RutaProtegida`** apuntaba a `/login`, que no existía. Ahora apunta a `/app/ingresar`, una pantalla mínima funcional (el diseño final es de Figma).
+- **`reportesPrueba.js`** usaba ids `NTU-001`, estados Nuevo/En revision/Asignado/Resuelto, 6 categorías y comuna `'01'`. Ahora usa `NU-000001`, los 4 estados reales, las 15 categorías y comuna numérica 1–10.
+- **Modo de envío BORRADOR**: sigue sembrado en V3. La migración V9 lo elimina (si ningún envío lo usa). Aplicar V9 en Neon al desplegar: Render redespliega solo con cada commit a la rama enlazada.
+- **Menciones desactualizadas**: «Vercel» en `03-arquitectura-y-datos.md` cambiado a Netlify; `docs/README.md` actualizado.
+
+### Pendientes
+- **Estado «Enviado»**: ver decisión 3 de la sección 6.
+- **`autorizaCopia`**: el paso 4 del Figma tendría dos autorizaciones, pero la base solo guarda `autorizacion_envio_en`. Falta decidir si basta validarla en la API, si se agrega una columna nueva o si se quita la segunda casilla.
+- **`requiere_evidencia`**: la columna existe en `categoria`, pero la migración V3 no la llena y las 15 categorías quedaron en `false`. Hoy ninguna categoría exige foto, y ninguna regla de la base ni de este contrato lo hace cumplir. Falta decidir qué categorías exigen foto y dónde se valida.
+- **`comuna.geom` es NULL y los barrios reales no están cargados** (solo hay un barrio administrativo de V4): `FUERA_DE_COBERTURA` no se puede verificar y nadie puede completar el perfil hasta NOT-31 / NOT-54. Depende de la carga de barrios y polígonos (Amelia).
+- **Código sin escribir**: no existe `MailService` (el `pom` ya trae `spring-boot-starter-mail`, pero el plan es la API HTTP de Resend) ni la subida a Cloudinary (falta la dependencia y las variables `CLOUDINARY_*`).
+- **Prueba de Resend desde Render**: el envío por el puerto 2587 (SMTP) y por la API HTTP siguen sin probar. Se necesita `RESEND_API_KEY` en Render.
+- **Rutas del frontend**: `RutaProtegida` aún no envuelve `/admin/*`; el panel sigue abierto con datos de prueba.
+- **Linear**: NOT-69 («Generar el código único, guardarlo con restricción de unicidad y devolverlo al crear el reporte») ya lo hace el trigger `fn_reporte_antes_insertar` más `uq_reporte_codigo`: queda solo devolverlo en el 201. NOT-89 («consultar un reporte propio por código, con URL de foto nula si no tiene y 404 si no es suyo») habla de una sola foto: ahora son hasta 3, así que debe decir «lista de fotos vacía si no tiene».
+- **Otras menciones**: `02-stack.md` y `08-pendientes.md` conservan el puerto 2587 de Resend porque sigue pendiente de probar.
