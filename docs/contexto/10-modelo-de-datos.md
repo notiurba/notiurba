@@ -40,7 +40,7 @@ Un ciudadano de Tuluá crea un reporte (categoría, descripción, foto y ubicaci
 - `evidencia_reporte`: fotos como **URL** (no archivos). Cada foto pertenece al usuario que la subió; máximo **3 por usuario y reporte**. Pueden subir quien reportó o quien apoyó.
 - `apoyo_reporte`: otros ciudadanos que respaldan un reporte (un apoyo por usuario).
 - `historial_estado`: cada cambio de estado, quién lo hizo y cuándo. Solo se inserta; el estado no retrocede (puede saltar etapas).
-- `registro_envio_correo`: cada intento de envío (canal usado, modo RESEND o BORRADOR, estado PENDIENTE/ENVIADO/FALLIDO, error).
+- `registro_envio_correo`: cada intento de envío (canal usado, modo RESEND (BORRADOR quedó descartado, ADR-0002), estado PENDIENTE/ENVIADO/FALLIDO, error).
 
 ## 4. Decisiones clave y su razón
 - **Un solo destino por reporte**: simplifica el envío y evita duplicados.

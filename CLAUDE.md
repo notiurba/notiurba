@@ -34,7 +34,7 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
 - **Seguridad:** Spring Security + JWT (jjwt).
 - **Frontend:** React + Vite + vite-plugin-pwa. Gestor de paquetes: **pnpm** (no usar npm; no subir `package-lock.json`).
 - **Mapas:** Leaflet 1.9 + OpenStreetMap + Leaflet.heat.
-- **Fotos:** Cloudinary (plan Free) — propuesta.
+- **Fotos:** Cloudinary (plan Free), decidido el 29/10/2026 (ADR-0006). Mega descartado.
 - **Hosting:** Netlify (frontend) + Render (backend) + Neon (PostgreSQL/PostGIS).
   - Netlify despliega desde la rama `develop` con base `frontend` y publish `dist`.
     La redirección SPA vive en `frontend/public/_redirects` (`/*  /index.html  200`);
@@ -43,7 +43,7 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
     - Netlify: `VITE_API_URL`.
     - Render: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `ADMIN_DEV_PASSWORD`,
       `GOOGLE_CLIENT_ID`, `CORS_ORIGINS`, `RECUPERACION_ENLACE`.
-- **Correo:** JavaMailSender + Resend. Mecanismo de envío **pendiente** (ver ADR-0002).
+- **Correo:** Resend (decidido el 29/10/2026, ADR-0002). Requiere dominio verificado; plan gratuito 100 correos/día. Se descartó el borrador que el ciudadano enviaba.
 
 ## Equipo
 
@@ -54,7 +54,6 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
 
 ## Decisiones abiertas (no cerrar sin el equipo)
 
-- Mecanismo de envío de correo: cuenta del ciudadano (borrador) vs Resend. Decisión
-  entre el final del Sprint 2 y el Sprint 3 (ADR-0002).
+- Dominio verificado para Resend (el mecanismo ya está decidido: Resend, ADR-0002). Antes del 8 de noviembre.
 - Categorías 8 (riesgo de desastres) y 9 (vivienda): por validar con la Alcaldía.
 - Fuente cartográfica definitiva de las comunas: por validar con Planeación (ADR-0003).
