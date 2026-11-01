@@ -7,6 +7,7 @@ public final class Codigos {
     public static final String NO_AUTENTICADO = "NO_AUTENTICADO";
     public static final String CREDENCIALES_INVALIDAS = "CREDENCIALES_INVALIDAS";
     public static final String SIN_PERMISO = "SIN_PERMISO";
+    public static final String CORREO_NO_VERIFICADO = "CORREO_NO_VERIFICADO";
     public static final String NO_ENCONTRADO = "NO_ENCONTRADO";
     public static final String CORREO_YA_REGISTRADO = "CORREO_YA_REGISTRADO";
     public static final String DOCUMENTO_YA_REGISTRADO = "DOCUMENTO_YA_REGISTRADO";
@@ -20,6 +21,8 @@ public final class Codigos {
     public static final String MSG_NO_AUTENTICADO = "Tu sesión no es válida o venció. Inicia sesión de nuevo.";
     public static final String MSG_SIN_PERMISO = "No tienes permiso para esta acción.";
     public static final String MSG_CREDENCIALES = "Correo o contraseña incorrectos.";
+    public static final String MSG_CORREO_NO_VERIFICADO =
+            "Confirma tu correo para ingresar. Revisa tu bandeja de entrada o pide un nuevo enlace.";
 
     private Codigos() {
     }

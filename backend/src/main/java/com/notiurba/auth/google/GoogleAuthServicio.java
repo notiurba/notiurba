@@ -14,6 +14,7 @@ import com.notiurba.usuario.IdentidadExterna;
 import com.notiurba.usuario.IdentidadExternaRepository;
 import com.notiurba.usuario.ProveedorIdentidad;
 import com.notiurba.usuario.ProveedorIdentidadRepository;
+import com.notiurba.usuario.ReglasPerfil;
 import com.notiurba.usuario.Rol;
 import com.notiurba.usuario.RolRepository;
 import com.notiurba.usuario.Usuario;
@@ -30,8 +31,6 @@ import io.jsonwebtoken.Claims;
  */
 @Service
 public class GoogleAuthServicio {
-
-    static final int MAX_LONGITUD_NOMBRE = 255;
 
     private final GoogleTokenVerificador verificador;
     private final JwtProveedor jwtProveedor;
@@ -122,8 +121,8 @@ public class GoogleAuthServicio {
             throw new ApiException(HttpStatus.BAD_REQUEST, Codigos.VALIDACION,
                     "Debes aceptar el aviso de privacidad", "aceptaPrivacidad");
         }
-        String nombres = limpiarNombre(peticion.nombres(), "Los nombres", "nombres");
-        String apellidos = limpiarNombre(peticion.apellidos(), "Los apellidos", "apellidos");
+        String nombres = ReglasPerfil.limpiarNombre(peticion.nombres(), "Los nombres", "nombres");
+        String apellidos = ReglasPerfil.limpiarNombre(peticion.apellidos(), "Los apellidos", "apellidos");
         if (!catalogos.existeTipoDocumento(peticion.idTipoDocumento())) {
             throw new ApiException(HttpStatus.BAD_REQUEST, Codigos.VALIDACION,
                     "El tipo de documento no existe", "idTipoDocumento");
@@ -193,18 +192,6 @@ public class GoogleAuthServicio {
     private ResultadoGoogle.Sesion sesion(Usuario usuario) {
         String rol = usuario.getRol().getNombre();
         return new ResultadoGoogle.Sesion(jwtProveedor.generar(usuario.getCorreo(), rol), rol);
-    }
-
-    private static String limpiarNombre(String valor, String etiqueta, String campo) {
-        String limpio = valor == null ? "" : valor.trim();
-        if (limpio.isEmpty()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, Codigos.VALIDACION, etiqueta + " son obligatorios", campo);
-        }
-        if (limpio.length() > MAX_LONGITUD_NOMBRE) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, Codigos.VALIDACION,
-                    etiqueta + " no pueden pasar de " + MAX_LONGITUD_NOMBRE + " caracteres", campo);
-        }
-        return limpio;
     }
 
     private static boolean tieneTexto(String valor) {

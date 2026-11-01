@@ -39,6 +39,11 @@ public class AuthController {
                 .filter(u -> passwordEncoder.matches(peticion.password(), u.getPasswordHash()))
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, Codigos.CREDENCIALES_INVALIDAS, Codigos.MSG_CREDENCIALES));
 
+        // Solo se dice después de acertar la contraseña, para no revelar qué cuentas existen
+        if (usuario.getCorreoVerificadoEn() == null) {
+            throw new ApiException(HttpStatus.FORBIDDEN, Codigos.CORREO_NO_VERIFICADO, Codigos.MSG_CORREO_NO_VERIFICADO);
+        }
+
         String rol = usuario.getRol().getNombre();
         String token = jwtProveedor.generar(usuario.getCorreo(), rol);
         return new LoginResponse(token, rol);
