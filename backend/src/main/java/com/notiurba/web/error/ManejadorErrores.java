@@ -14,9 +14,12 @@ import org.springframework.lang.Nullable;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.notiurba.foto.AlmacenFotosNoDisponibleException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import jakarta.validation.ConstraintViolation;
@@ -51,6 +54,14 @@ public class ManejadorErrores extends ResponseEntityExceptionHandler {
         return respuesta(e.getStatusCode(), porEstado(e.getStatusCode(), e.getReason()));
     }
 
+    /** 502: el problema es de un tercero (Cloudinary), no del ciudadano ni de la API. */
+    @ExceptionHandler(AlmacenFotosNoDisponibleException.class)
+    ResponseEntity<ErrorApi> almacenFotos(AlmacenFotosNoDisponibleException e) {
+        LOG.error("El almacén de fotos no respondió: {}", e.getMessage());
+        return respuesta(HttpStatus.BAD_GATEWAY, new ErrorApi(Codigos.ALMACEN_FOTOS_NO_DISPONIBLE,
+                "No pudimos guardar la foto en este momento. Intenta de nuevo en un momento.", "foto"));
+    }
+
     @ExceptionHandler(Exception.class)
     ResponseEntity<ErrorApi> inesperado(Exception e) {
         LOG.error("Error no controlado", e);
@@ -68,6 +79,16 @@ public class ManejadorErrores extends ResponseEntityExceptionHandler {
                 ? new ErrorApi(Codigos.VALIDACION, "Revisa los datos del formulario.", null)
                 : new ErrorApi(Codigos.VALIDACION, mensaje(primero), primero.getField());
         return new ResponseEntity<>(error, headers, HttpStatus.BAD_REQUEST);
+    }
+
+    /** Falta la parte multipart (p. ej. «foto»): 400 con el nombre de la parte como campo. */
+    @Override
+    protected ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException e,
+            HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        String campo = e.getRequestPartName();
+        return new ResponseEntity<>(new ErrorApi(Codigos.VALIDACION,
+                "foto".equals(campo) ? "Elige una foto" : "Falta el campo «" + campo + "»", campo),
+                headers, HttpStatus.BAD_REQUEST);
     }
 
     /** Cuerpo ilegible, ruta inexistente, método o tipo no soportado, etc. */

@@ -2,16 +2,11 @@ package com.notiurba.reporte;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,55 +32,30 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * NOT-69 contra PostgreSQL + PostGIS reales (el contenedor del proyecto: docker compose up -d).
- * Crea una base desechable, aplica las migraciones V1..V10 con Flyway y la borra al terminar.
- * Se omite sola si no están DB_URL, DB_USER y DB_PASSWORD o si no se puede conectar.
+ * Usa la base desechable de {@link BaseDeDatosTemporal} (se omite sola sin Docker).
  */
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:pruebas.properties")
 class ReporteCodigoIntegracionTest {
 
-    private static final String NOMBRE_BD = "notiurba_it_" + Long.toHexString(System.nanoTime());
-    private static String urlServidor;
-    private static String usuarioBd;
-    private static String claveBd;
-    private static boolean creada;
+    private static BaseDeDatosTemporal bd;
 
     @BeforeAll
     static void crearBaseDesechable() {
-        String url = System.getenv("DB_URL");
-        usuarioBd = System.getenv("DB_USER");
-        claveBd = System.getenv("DB_PASSWORD");
-        assumeTrue(url != null && !url.isBlank() && usuarioBd != null && claveBd != null,
-                "Faltan DB_URL, DB_USER y DB_PASSWORD: se omiten las pruebas con PostGIS");
-        urlServidor = url.substring(0, url.lastIndexOf('/'));
-        try (Connection c = DriverManager.getConnection(urlServidor + "/postgres", usuarioBd, claveBd);
-                Statement s = c.createStatement()) {
-            s.execute("CREATE DATABASE " + NOMBRE_BD);
-            creada = true;
-        } catch (SQLException e) {
-            assumeTrue(false, "No hay PostgreSQL disponible en " + urlServidor + ": se omiten las pruebas con PostGIS");
-        }
+        bd = BaseDeDatosTemporal.crearOOmitir();
     }
 
     @AfterAll
     static void borrarBaseDesechable() throws SQLException {
-        if (!creada) {
-            return;
-        }
-        try (Connection c = DriverManager.getConnection(urlServidor + "/postgres", usuarioBd, claveBd);
-                Statement s = c.createStatement()) {
-            s.execute("DROP DATABASE IF EXISTS " + NOMBRE_BD + " WITH (FORCE)");
+        if (bd != null) {
+            bd.borrar();
         }
     }
 
     @DynamicPropertySource
     static void propiedades(DynamicPropertyRegistry registro) {
-        registro.add("spring.datasource.url", () -> urlServidor + "/" + NOMBRE_BD);
-        registro.add("spring.datasource.username", () -> usuarioBd);
-        registro.add("spring.datasource.password", () -> claveBd);
-        // Valor ficticio: V4 siembra el administrador con esta contraseña, solo en la base desechable
-        registro.add("spring.flyway.placeholders.adminPassword", () -> "ClaveDePrueba-" + UUID.randomUUID());
+        bd.registrar(registro);
     }
 
     @Autowired private MockMvc mvc;

@@ -34,7 +34,7 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
 - **Seguridad:** Spring Security + JWT (jjwt).
 - **Frontend:** React + Vite + vite-plugin-pwa. Gestor de paquetes: **pnpm** (no usar npm; no subir `package-lock.json`).
 - **Mapas:** Leaflet 1.9 + OpenStreetMap + Leaflet.heat.
-- **Fotos:** Cloudinary (plan Free), decidido el 29/10/2026 (ADR-0006). Mega descartado.
+- **Fotos:** Cloudinary (plan Free), decidido el 29/10/2026 (ADR-0006). Mega descartado. Integrado por su API HTTP detrás de la interfaz `AlmacenFotos` (paquete `foto/`); probado con una subida real el 01/11/2026.
 - **Hosting:** Netlify (frontend) + Render (backend) + Neon (PostgreSQL/PostGIS).
   - Netlify despliega desde la rama `develop` con base `frontend` y publish `dist`.
     La redirección SPA vive en `frontend/public/_redirects` (`/*  /index.html  200`);
@@ -43,7 +43,8 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
     - Netlify: `VITE_API_URL`.
     - Render: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `ADMIN_DEV_PASSWORD`,
       `GOOGLE_CLIENT_ID`, `CORS_ORIGINS`, `RECUPERACION_ENLACE`, `RESEND_API_KEY`,
-      `RESEND_REMITENTE`, `VERIFICACION_ENLACE` (solo la dirección, p. ej. del subdominio `reportes.notiurba.com`).
+      `RESEND_REMITENTE`, `VERIFICACION_ENLACE`, `CLOUDINARY_CLOUD_NAME`,
+      `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (solo la dirección, p. ej. del subdominio `reportes.notiurba.com`).
 - **Correo:** Resend (decidido el 29/10/2026, ADR-0002). Requiere dominio verificado; plan gratuito 100 correos/día. Se descartó el borrador que el ciudadano enviaba. Dominio `notiurba.com` comprado el 31/10/2026 (a nombre de Andrés Mauricio Peña López, ADR-0007); se envía desde el subdominio `reportes.notiurba.com`, verificado en Resend. El envío está implementado con la API HTTP de Resend (`EnviadorCorreo` / `EnviadorCorreoResend`) y se probó con un correo real el 01/11/2026 desde local; falta probarlo desde Render.
 
 ## Equipo

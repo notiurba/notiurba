@@ -102,4 +102,33 @@ class ReporteServicioTest {
         assertThatThrownBy(() -> servicio.crear("fantasma@x.com", peticion(6, null, null, null, "Hay un problema que necesita atención", null)))
                 .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.getCodigo()).isEqualTo(Codigos.NO_AUTENTICADO));
     }
+
+    @Test
+    void consultarNormalizaElCodigoYSoloBuscaEntreLosReportesDelUsuario() {
+        var detalle = mock(ReporteDetalleResponse.class);
+        when(repositorio.buscarPropio(7L, "NU-000123")).thenReturn(Optional.of(detalle));
+
+        assertThat(servicio.consultar("ana@x.com", "  nu-000123 ")).isSameAs(detalle);
+    }
+
+    @Test
+    void consultarConCodigoMalFormadoDa400EnElCampoCodigo() {
+        for (String malo : new String[] { null, "", "123", "NU-12", "NU-ABCDEF", "XX-000001" }) {
+            assertThatThrownBy(() -> servicio.consultar("ana@x.com", malo)).isInstanceOfSatisfying(ApiException.class, e -> {
+                assertThat(e.getCodigo()).isEqualTo(Codigos.VALIDACION);
+                assertThat(e.getCampo()).isEqualTo("codigo");
+            });
+        }
+        verify(repositorio, never()).buscarPropio(org.mockito.ArgumentMatchers.anyLong(), any());
+    }
+
+    @Test
+    void consultarSinReporteVisibleDa404SinCampo() {
+        when(repositorio.buscarPropio(7L, "NU-000999")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> servicio.consultar("ana@x.com", "NU-000999")).isInstanceOfSatisfying(ApiException.class, e -> {
+            assertThat(e.getCodigo()).isEqualTo(Codigos.NO_ENCONTRADO);
+            assertThat(e.getCampo()).isNull();
+        });
+    }
 }

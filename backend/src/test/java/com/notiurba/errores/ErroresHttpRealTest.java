@@ -56,6 +56,11 @@ class ErroresHttpRealTest {
     /** Sustituto de la subida real de fotos (aún no existe): sirve para probar el límite multipart. */
     @RestController
     static class FotoDePrueba {
+        @PostMapping("/api/prueba/almacen")
+        String almacenCaido() {
+            throw new com.notiurba.foto.AlmacenFotosNoDisponibleException("Cloudinary rechazó la petición (HTTP 500)");
+        }
+
         @PostMapping("/api/prueba/foto")
         String subir(@RequestPart("foto") MultipartFile foto) {
             return "ok";
@@ -130,5 +135,13 @@ class ErroresHttpRealTest {
                 .header("Content-Type", "multipart/form-data; boundary=" + limite)
                 .POST(HttpRequest.BodyPublishers.ofByteArray(cuerpo)), jwt.generar("a@x.com", "CIUDADANO"));
         esperar(r, 413, "ARCHIVO_MUY_GRANDE", "foto");
+    }
+
+    @Test
+    void almacenDeFotosCaidoDa502SinDetallesInternos() throws Exception {
+        var r = enviar(HttpRequest.newBuilder(URI.create("http://localhost:" + puerto + "/api/prueba/almacen"))
+                .POST(HttpRequest.BodyPublishers.noBody()), jwt.generar("a@x.com", "CIUDADANO"));
+        esperar(r, 502, "ALMACEN_FOTOS_NO_DISPONIBLE", "foto");
+        assertThat(r.body()).doesNotContain("Cloudinary").doesNotContain("HTTP 500");
     }
 }

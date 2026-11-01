@@ -84,7 +84,7 @@ Render: `RESEND_API_KEY` y `RESEND_REMITENTE`. Resend también acepta SMTP por 2
 
 ## Pendientes del stack
 
-- Hosting desplegado y fotos decididas (Cloudinary); falta integrar la subida y agregar las variables `CLOUDINARY_*` en Render.
+- Hosting desplegado y fotos con Cloudinary: el almacén (`AlmacenFotos`) ya está integrado y probado con una subida real; falta agregar las variables `CLOUDINARY_*` en Render y el endpoint de subida (NOT-52).
 - Probar desde Render el envío con la API HTTP de Resend (ya probado desde local; PostGIS en Neon ya verificado).
 - Ejecutar la prueba mínima del mapa y probar Leaflet.heat con Leaflet 1.9.4 (Linear NOT-9).
 - Confirmar si se usa react-leaflet y su compatibilidad con React 18.
