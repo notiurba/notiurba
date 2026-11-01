@@ -5,12 +5,12 @@ hosting eran «por definir» y quedan como propuesta.
 
 | Área | Tecnología |
 | --- | --- |
-| Backend | Java 21 + Spring Boot 3.3 (web, data-jpa, security, mail, validation) |
+| Backend | Java 21 + Spring Boot 3.3 (web, data-jpa, security, validation) |
 | Geolocalización | PostgreSQL 16 + PostGIS 3.4 (índice GiST), Hibernate Spatial |
 | Seguridad | Spring Security + JWT (jjwt) |
 | Frontend | React 18 + Vite + vite-plugin-pwa |
 | Mapas | Leaflet 1.9 + OpenStreetMap + Leaflet.heat |
-| Correo | Resend (decidido 29/10/2026; plan gratuito 3.000/mes y 100/día). Canal propuesto: API HTTP por HTTPS; SMTP por 2465/2587 como alternativa; ver abajo |
+| Correo | Resend (decidido 29/10/2026; plan gratuito 3.000/mes y 100/día). Se envía por la API HTTP de Resend (HTTPS), implementada en `EnviadorCorreoResend`; ver abajo |
 | Contenedores | Docker (postgis/postgis) para desarrollo local |
 | Fotos | Cloudinary, plan Free (decidido 29/10/2026, ADR-0006) |
 | Hosting | **Desplegado (28/10/2026):** Netlify (frontend) + Render (backend) + Neon (PostgreSQL/PostGIS). Ver «Despliegue actual» |
@@ -75,15 +75,17 @@ Tres piezas: frontend estático (PWA), backend Spring Boot (Docker) y PostgreSQL
 
 ### Bloqueo de puertos de correo en Render
 
-Render Free **bloquea los puertos salientes 25, 465 y 587**. Resend también acepta
-SMTP por **2465 (SSL)** y **2587 (STARTTLS)**, que no están bloqueados: JavaMailSender
-debe usar uno de ellos. **No está probado**: verificar con un envío real al desplegar.
-Propuesta: usar la API HTTP de Resend (`POST https://api.resend.com/emails`), que sale por HTTPS y evita el bloqueo.
+Render Free **bloquea los puertos salientes 25, 465 y 587**. Por eso el envío no usa SMTP:
+`EnviadorCorreoResend` llama a la API HTTP de Resend (`POST https://api.resend.com/emails`),
+que sale por HTTPS y evita el bloqueo. Se quitó `spring-boot-starter-mail`. Probado con un
+envío real desde local el 01/11/2026 (200); **falta probarlo desde Render**. Variables en
+Render: `RESEND_API_KEY` y `RESEND_REMITENTE`. Resend también acepta SMTP por 2465 y 2587
+(no bloqueados), pero no se usa.
 
 ## Pendientes del stack
 
 - Hosting desplegado y fotos decididas (Cloudinary); falta integrar la subida y agregar las variables `CLOUDINARY_*` en Render.
-- Verificar el envío real de Resend por el puerto 2587 desde Render (PostGIS en Neon ya verificado).
+- Probar desde Render el envío con la API HTTP de Resend (ya probado desde local; PostGIS en Neon ya verificado).
 - Ejecutar la prueba mínima del mapa y probar Leaflet.heat con Leaflet 1.9.4 (Linear NOT-9).
 - Confirmar si se usa react-leaflet y su compatibilidad con React 18.
 

@@ -2,7 +2,7 @@ package com.notiurba.auth.recuperacion;
 
 /**
  * Envía el enlace de «Recuperar contraseña». Hoy solo existe la implementación de log:
- * el envío real (JavaMailSender + Resend) llega cuando el sistema tenga servidor de correo.
+ * el envío real usará {@link com.notiurba.correo.EnviadorCorreo} (Resend) y llega con su propia historia.
  */
 public interface EnviadorEnlaceRecuperacion {
 

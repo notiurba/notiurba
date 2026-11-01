@@ -23,6 +23,11 @@ server:
   port: ${PORT:8080}
 
 notiurba:
+  correo:
+    resend:
+      url: https://api.resend.com
+      api-key: ${RESEND_API_KEY:}      # secreta: solo variable de entorno (Render y .env local)
+      remitente: ${RESEND_REMITENTE:}  # solo la dirección, del dominio verificado (reportes.notiurba.com)
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
   jwt:

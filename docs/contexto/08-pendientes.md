@@ -71,7 +71,7 @@ Rama `feat/login-google`: migraciones V5 (Google), V6 (nombres/apellidos) y V7 (
   `nombres`/`apellidos` y la regla de `auth/ReglaContrasena` (8+ caracteres, letras y números).
 - **Envío real del correo de recuperación**: hoy queda detrás de `EnviadorEnlaceRecuperacion`
   con una implementación que solo escribe en el log (`RECUPERACION_MOSTRAR_ENLACE=true` en
-  desarrollo). Falta la implementación con JavaMailSender + Resend.
+  desarrollo). Falta conectarlo a `EnviadorCorreo` (Resend, ya implementado).
 - **Ruta del frontend «Nueva contraseña»**: el enlace apunta a `RECUPERACION_ENLACE`
   (por defecto `http://localhost:5173/app/nueva-contrasena?token=...`); la página no existe aún.
 - **Categoría 10 y canal SEDAMA (resuelto)**: el commit `741c2b3` los cambiaba editando V3,
@@ -104,7 +104,7 @@ Queda por hacer:
 ## Verificaciones técnicas
 
 - Prueba mínima del mapa: OSM + marcadores + GeoJSON de comunas + Leaflet.heat (NOT-9).
-- Envío de Resend por el puerto 2587 (o 2465) desde Render (Render Free bloquea 25/465/587).
+- Probar desde Render el envío con la API HTTP de Resend (probado desde local el 01/11/2026; Render Free bloquea SMTP 25/465/587, por eso no se usa).
 - ~~PostGIS en Neon en el plan Free~~: verificado el 28/10/2026 (V1 corrió en Neon).
 
 ## Reglas de negocio por definir
