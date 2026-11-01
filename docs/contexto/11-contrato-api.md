@@ -170,7 +170,7 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 
 1. **Decidido (01/11/2026):** verificación de correo en el MVP. Quien se registra con correo y contraseña recibe un enlace de confirmación y no ingresa hasta usarlo. Evita que alguien envíe reportes con los datos de otra persona. Cuesta un correo por registro (comparte los 100 diarios con reportes y recuperaciones). Con Google no hace falta: Google ya garantiza el correo.
 2. **Decidido (01/11/2026):** el envío del reporte es un paso aparte, `POST /api/reportes/{codigo}/enviar`, después de las fotos. **Queda pendiente de implementar**: depende de que exista crear reporte (`POST /api/reportes`).
-3. **Decidido (01/11/2026):** el reporte pasa a «Enviado» cuando Resend acepta el envío (lo pone en cola). Eso no garantiza que el correo llegue: si después rebota (el buzón no existe o bloquea mensajes), Resend avisa por webhook, el envío queda FALLIDO y se notifica al ciudadano. El estado del reporte no retrocede (regla B11): el fallo se ve en `envio.estado = FALLIDO` de `GET /api/reportes/{codigo}`. La notificación es, primero, en la app; un correo al ciudadano avisando el fallo es *propuesto* (gasta un correo). Esto vuelve necesario RF-16 (hoy «Condicional») y los webhooks (hoy «deseables», R.05). Qué puede hacer el ciudadano ante un fallo queda por definir.
+3. **Decidido (01/11/2026):** el reporte pasa a «Enviado» cuando Resend acepta el envío (lo pone en cola). Eso no garantiza que el correo llegue: si después rebota (el buzón no existe o bloquea mensajes), Resend avisa por webhook, el envío queda FALLIDO y se notifica al ciudadano. El estado del reporte no retrocede (regla B11): el fallo se ve en `envio.estado = FALLIDO` de `GET /api/reportes/{codigo}`. El ciudadano se entera de dos formas: en la app y por un correo que le avisa del fallo (decidido el 01/11/2026; gasta un correo de la cuota y no importa). Esto vuelve necesario RF-16 (hoy «Condicional») y los webhooks (hoy «deseables», R.05). Qué puede hacer el ciudadano ante un fallo queda por definir.
 4. Categorías con sesión: *propuesto* mantener `GET /api/categorias` con JWT.
 5. Catálogos como endpoints públicos; el aviso de privacidad es estático en el frontend y el servidor guarda el vigente.
 6. **Decidido (01/11/2026):** una sola autorización (`autorizaEnvio`) y el correo no se copia al ciudadano. Sale 1 correo por reporte (el límite de 100 al día alcanza para ~100 reportes). Los reportes anónimos siguen fuera del MVP.
@@ -205,3 +205,24 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 - **Prueba de Resend desde Render**: el 01/11/2026 se probó la API HTTP desde la máquina de Andrés (respuesta 200 con el subdominio verificado, enviando a una dirección de pruebas de Resend). El 01/11/2026 también se envió un correo real con `EnviadorCorreoResend` a una bandeja de Andrés. Falta probarlo desde Render: hay que desplegar y poner `RESEND_API_KEY` y `RESEND_REMITENTE` en sus variables. El SMTP por 2587 no se usa.
 - **Rutas del frontend**: `RutaProtegida` aún no envuelve `/admin/*`; el panel sigue abierto con datos de prueba.
 - **Linear**: NOT-69 («Generar el código único, guardarlo con restricción de unicidad y devolverlo al crear el reporte») ya lo hace el trigger `fn_reporte_antes_insertar` más `uq_reporte_codigo`: queda solo devolverlo en el 201. NOT-89 («consultar un reporte propio por código, con URL de foto nula si no tiene y 404 si no es suyo») habla de una sola foto: ahora son hasta 3, así que debe decir «lista de fotos vacía si no tiene».
+
+## 8. Cambios al modelo de datos (para actualizar el diagrama ER)
+
+Este contrato pide cambios mínimos a la base. Se harían en una migración nueva (la V10; las
+migraciones ya aplicadas no se editan). Ya hecho: la V9 quitó el modo de envío BORRADOR (solo borró una fila del catálogo `modo_envio`, sin cambios de columnas).
+
+Columnas nuevas:
+
+| Tabla | Columna | Tipo | Para qué |
+| --- | --- | --- | --- |
+| `registro_envio_correo` | `id_envio_proveedor` | VARCHAR(100), nulo, índice único | Guarda el identificador que Resend da a cada envío. El webhook lo usa para saber a qué envío pertenece un rebote |
+| `registro_envio_correo` | `aviso_fallo_en` | TIMESTAMPTZ, nula | Fecha en que se avisó al ciudadano del fallo. Evita avisar dos veces si Resend repite el evento |
+| `evidencia_reporte` | `id_publico_proveedor` | VARCHAR(255), nulo | *Propuesta, por decidir.* Identificador de la foto en Cloudinary, para poder borrarla si el ciudadano pide suprimir sus datos. El ADR-0006 dice que se guarda «la URL y el identificador», pero hoy la tabla solo tiene `url` |
+
+Sin columnas nuevas (ya existen y alcanzan):
+- Verificación de correo: `usuario.correo_verificado_en` y la tabla `token_verificacion` con el tipo «Verificación de correo». El límite de un reenvío por minuto se calcula con `token_verificacion.creado_en`.
+- Estado del correo a la entidad: `estado_envio` ya tiene PENDIENTE, ENVIADO y FALLIDO, y las reglas B5 y B10 de `registro_envio_correo`. Un envío ENVIADO que luego rebota pasa a FALLIDO guardando el motivo en `error`.
+- Autorización de envío: `reporte.autorizacion_envio_en` (hay una sola autorización).
+- Foto opcional: `categoria.requiere_evidencia` queda en `false` en todas.
+
+Datos (no columnas) de la misma migración: marcar `correo_verificado_en` en las cuentas que ya existen (como el administrador sembrado), para que puedan seguir ingresando cuando el login exija correo verificado.
