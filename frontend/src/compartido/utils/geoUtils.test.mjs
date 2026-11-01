@@ -11,6 +11,9 @@ let reportes
 let reportesFueraCobertura
 let obtenerReportes
 
+// La capa GeoJSON del POT codifica la comuna como texto de dos dígitos ('01'); los reportes, como número
+const codigoComuna = (numero) => String(numero).padStart(2, '0')
+
 before(async () => {
   server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
   identificar = (await server.ssrLoadModule('/src/compartido/utils/geoUtils.js')).identificarComunaPorCoordenadas
@@ -80,23 +83,23 @@ test('demostracion: diez reportes, uno exclusivamente dentro de cada comuna POT'
   for (const reporte of reportes) {
     const result = identificar(reporte, comunas)
     assert.equal(result.status, 'dentro', reporte.id)
-    assert.equal(result.comuna.id, reporte.comunaEsperada, reporte.id)
+    assert.equal(result.comuna.id, codigoComuna(reporte.comunaEsperada), reporte.id)
     const matches = comunas.features.filter((feature) =>
       identificar(reporte, collection(feature)).status !== 'sin_determinar')
     assert.equal(matches.length, 1, reporte.id)
-    assert.equal(matches[0].properties.COD_LOC_COM, reporte.comunaEsperada)
+    assert.equal(matches[0].properties.COD_LOC_COM, codigoComuna(reporte.comunaEsperada))
     asignadas.push(result.comuna.id)
   }
   assert.deepEqual(asignadas.sort(), Array.from({ length: 10 }, (_, i) => String(i + 1).padStart(2, '0')))
 })
 
-test('NTU-010 exterior intencional se conserva intacto y sin comuna asignada', () => {
+test('NU-000010 exterior intencional se conserva intacto y sin comuna asignada', () => {
   assert.equal(reportesFueraCobertura.length, 1)
   const exterior = reportesFueraCobertura[0]
   assert.deepEqual(exterior, {
-    id: 'NTU-010', categoria: 'Seguridad',
+    id: 'NU-000010', categoria: 'Alumbrado, espacio público, convivencia y seguridad',
     descripcion: 'Reporte de prueba fuera del perimetro urbano cargado.',
-    latitud: 4.126, longitud: -76.236, fechaCreacion: '2026-10-11', estado: 'Nuevo',
+    latitud: 4.126, longitud: -76.236, fechaCreacion: '2026-10-11', estado: 'Recibido',
   })
   const result = identificar(exterior, comunas)
   assert.equal(result.status, 'sin_determinar')
