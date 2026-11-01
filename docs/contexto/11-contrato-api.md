@@ -35,6 +35,7 @@ Toda respuesta de error tiene el mismo cuerpo:
 | 401 | NO_AUTENTICADO | null | Sin token, inválido o vencido; también token de Google o de registro con Google inválido |
 | 401 | CREDENCIALES_INVALIDAS | null | Login fallido. No dice cuál dato falló |
 | 403 | SIN_PERMISO | null | El rol no alcanza |
+| 403 | CORREO_NO_VERIFICADO | null | Login con contraseña correcta, pero el correo aún no se confirmó |
 | 404 | NO_ENCONTRADO | null | No existe o no es suyo (mismo mensaje en ambos casos) |
 | 409 | CORREO_YA_REGISTRADO | correo | Correo repetido (sin distinguir mayúsculas) |
 | 409 | DOCUMENTO_YA_REGISTRADO | numeroDocumento | Tipo y número de documento repetidos |
@@ -71,16 +72,15 @@ Entrada (en este orden):
 - `telefono`: opcional, máx. 30.
 - `password`: obligatoria, mínimo 8 caracteres con al menos una letra y un número, máx. 72 bytes UTF-8 (regla real en `ReglaContrasena`). Mensaje: «La contraseña debe tener al menos 8 caracteres, con letras y números».
 - `aceptaPrivacidad`: obligatorio, `true`. El servidor guarda el aviso vigente y la fecha-hora, igual que `POST /api/auth/google/completar`.
-- `declaraMayorEdad`: obligatorio, `true`. *Propuesto*, pendiente en el Doc.
 - «Confirmar contraseña» se valida solo en el frontend.
 
-Salida: 201 `{ token, rol }` (*propuesto*: sin verificación de correo en el MVP; si el equipo decide verificar, el registro respondería 201 sin token y se sumarían los endpoints verificar y reenviar).
+Salida: 201 `{ correo, mensaje }` **sin token**: la cuenta se crea, se envía un correo con el enlace de confirmación y el ciudadano no puede ingresar hasta confirmarlo (decisión 1, sección 6). No hay casilla de mayoría de edad (decisión 7).
 Errores: 400 VALIDACION, 409 CORREO_YA_REGISTRADO, 409 DOCUMENTO_YA_REGISTRADO.
 
 ### 3.2 Login — `POST /api/auth/login` — EXISTE
 Público. Entrada: `correo`, `password` (obligatorios).
 Salida: 200 `{ token, rol }` con rol CIUDADANO o ADMIN.
-Errores: 400 VALIDACION; 401 CREDENCIALES_INVALIDAS (también para cuentas creadas solo con Google, que no tienen contraseña).
+Errores: 400 VALIDACION; 401 CREDENCIALES_INVALIDAS (también para cuentas creadas solo con Google, que no tienen contraseña); 403 CORREO_NO_VERIFICADO (solo se dice después de acertar la contraseña, para no revelar qué cuentas existen).
 
 ### 3.3 Lista de categorías — `GET /api/categorias` — EXISTE
 JWT de cualquier rol (*propuesto*: mantenerlo con sesión).
@@ -126,6 +126,7 @@ Salida 200:
 - `fotos [ { orden, url } ]` (arreglo vacío si no tiene).
 - `creadoEn`, `vigenteHasta`.
 - `historial [ { estado, observacion, cambiadoEn } ]`.
+- `envio { estado, motivo }`: estado del correo a la entidad (PENDIENTE, ENVIADO o FALLIDO) y, si falló, el motivo; null si aún no se ha enviado (RF-16).
 
 Errores: 400 VALIDACION, 401, 404 NO_ENCONTRADO (no existe o no es suyo).
 
@@ -137,6 +138,14 @@ Fuera de los 6, pero necesarios para que ninguna pantalla del Figma quede sin da
 - `PATCH /api/reportes/{codigo}` — «Actualizar mi reporte». Solo cambia `radicadoOficial` (máx. 50). Devuelve el reporte.
 - `POST /api/reportes/{codigo}/enviar` — el frontend lo llama después de subir las fotos (si subió). Responde 202; el envío con Resend (API HTTP) corre en segundo plano (RNF-04) y es idempotente. Así el correo (RF-14) puede llevar el enlace a la foto. Sale un solo correo, a la entidad, con el correo del ciudadano en Reply-To y sin copia para él.
 - `GET /api/catalogos/barrios` (`{ idBarrio, idComuna, nombre }`) y `GET /api/catalogos/tipos-documento` — públicos. Al implementarlos hay que agregar `/api/catalogos/**` a las rutas públicas de `SecurityConfig`.
+
+Verificación de correo (todos FALTA, *propuestos* en los detalles; la decisión es firme):
+- `POST /api/auth/verificar` — público. Entrada `{ token }`, el del enlace del correo (usa el tipo de token «Verificación de correo» que ya existe en la base; vence en 24 h, *propuesto*). Salida 200 `{ token, rol }`: confirma el correo e inicia sesión. Error 400 ENLACE_INVALIDO.
+- `POST /api/auth/reenviar-verificacion` — público. Entrada `{ correo }`. Siempre 200 `{ mensaje }`, exista o no la cuenta. Con límite de un reenvío por minuto por cuenta (*propuesto*) para cuidar la cuota de Resend.
+- Las cuentas con Google ya llegan verificadas. Las cuentas que ya existen (como el administrador sembrado) deben quedar verificadas con una migración, o no podrían ingresar.
+
+Aviso de rebotes:
+- `POST /api/webhooks/resend` — FALTA, público (sin JWT) pero protegido: se valida la firma del evento con un secreto (`RESEND_WEBHOOK_SECRET`) y se rechaza lo que no esté firmado. Si Resend avisa de un rebote o de una queja, el envío pasa a FALLIDO con su motivo y se avisa al ciudadano (decisión 3). Los nombres exactos de los eventos se confirman en la documentación de Resend al implementar. Requiere guardar el identificador que Resend da a cada envío: hoy `registro_envio_correo` no tiene columna para eso (migración nueva).
 
 Ya implementados (EXISTEN):
 - `GET /api/health` — público. 200 `{ estado, baseDeDatos }` ambos «ok»; 503 con «error» si la base no responde (`SELECT 1`).
@@ -159,13 +168,13 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 
 ## 6. Decisiones propuestas (no cerradas)
 
-1. Verificación de correo: *propuesto* no hacerla en el MVP.
-2. Cómo se dispara el correo con fotos: *propuesto* el endpoint `enviar`.
-3. Cuándo pasa un reporte a «Enviado»: *propuesto* cuando Resend acepta el envío (respuesta exitosa de su API); el servidor registra el envío como ENVIADO y agrega el estado al historial. Ojo: que Resend acepte no garantiza que el correo llegue a la bandeja; los rebotes se verían con webhooks (deseable, R.05).
+1. **Decidido (01/11/2026):** verificación de correo en el MVP. Quien se registra con correo y contraseña recibe un enlace de confirmación y no ingresa hasta usarlo. Evita que alguien envíe reportes con los datos de otra persona. Cuesta un correo por registro (comparte los 100 diarios con reportes y recuperaciones). Con Google no hace falta: Google ya garantiza el correo.
+2. **Decidido (01/11/2026):** el envío del reporte es un paso aparte, `POST /api/reportes/{codigo}/enviar`, después de las fotos. **Queda pendiente de implementar**: depende de que exista crear reporte (`POST /api/reportes`).
+3. **Decidido (01/11/2026):** el reporte pasa a «Enviado» cuando Resend acepta el envío (lo pone en cola). Eso no garantiza que el correo llegue: si después rebota (el buzón no existe o bloquea mensajes), Resend avisa por webhook, el envío queda FALLIDO y se notifica al ciudadano. El estado del reporte no retrocede (regla B11): el fallo se ve en `envio.estado = FALLIDO` de `GET /api/reportes/{codigo}`. La notificación es, primero, en la app; un correo al ciudadano avisando el fallo es *propuesto* (gasta un correo). Esto vuelve necesario RF-16 (hoy «Condicional») y los webhooks (hoy «deseables», R.05). Qué puede hacer el ciudadano ante un fallo queda por definir.
 4. Categorías con sesión: *propuesto* mantener `GET /api/categorias` con JWT.
 5. Catálogos como endpoints públicos; el aviso de privacidad es estático en el frontend y el servidor guarda el vigente.
 6. **Decidido (01/11/2026):** una sola autorización (`autorizaEnvio`) y el correo no se copia al ciudadano. Sale 1 correo por reporte (el límite de 100 al día alcanza para ~100 reportes). Los reportes anónimos siguen fuera del MVP.
-7. `declaraMayorEdad` en el registro.
+7. **Decidido (01/11/2026):** no hay casilla `declaraMayorEdad`. La base no acepta tarjeta de identidad, y con cédula de ciudadanía el usuario es mayor de edad. Para pasaporte, PPT y cédula de extranjería (que podrían ser de menores) basta una frase en el aviso de privacidad, cuyo texto legal se corrige en Figma (pendiente).
 8. **Decidido (01/11/2026):** la foto es siempre opcional; ninguna categoría la exige (`requiere_evidencia` queda en `false`). La app la ofrece para mejorar el reporte; la decisión es del ciudadano, porque los canales oficiales no la exigen.
 9. **Decidido (01/11/2026):** el correo se envía tras una interfaz propia (`EnviadorCorreo`) con una implementación que llama a la API HTTP de Resend, igual que `EnviadorEnlaceRecuperacion`. Evita el bloqueo de puertos de Render y no suma complejidad al ciudadano. Lo mismo para las fotos: una interfaz y una implementación con Cloudinary. **Implementado el 01/11/2026** (`EnviadorCorreo`, `EnviadorCorreoResend`); se quitó `spring-boot-starter-mail`. Falta conectarlo a la recuperación de contraseña y al endpoint `enviar`.
 
@@ -186,7 +195,10 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 - **`requiere_evidencia`**: decisión 8: la foto es siempre opcional; no hay cambio en la base.
 
 ### Pendientes
-- **Estado «Enviado»**: ver decisión 3 de la sección 6.
+- **Estado «Enviado» y rebotes**: falta implementar el webhook, la columna del identificador de envío y la notificación al ciudadano (decisión 3). Confirmar con el equipo que RF-16 y los webhooks pasan a ser necesarios en el MVP.
+- **Verificación de correo**: falta implementarla junto con el registro (decisión 1).
+- **Endpoint `enviar`**: pendiente (decisión 2).
+- **Aviso de privacidad**: el texto legal en Figma y en la base (V3 tiene un marcador) sigue pendiente; incluir la frase de mayoría de edad.
 - **Paso 4 del Figma**: si muestra dos casillas de autorización, debe quedar una sola (`autorizaEnvio`). Avisar a Amelia (diseño).
 - **`comuna.geom` es NULL y los barrios reales no están cargados** (solo hay un barrio administrativo de V4): `FUERA_DE_COBERTURA` no se puede verificar y nadie puede completar el perfil hasta NOT-31 / NOT-54. Depende de la carga de barrios y polígonos (Amelia).
 - **Código sin escribir**: la subida a Cloudinary (falta la interfaz, la dependencia y las variables `CLOUDINARY_*`), el endpoint `enviar` y conectar `EnviadorCorreo` a la recuperación de contraseña.
