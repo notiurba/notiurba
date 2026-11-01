@@ -16,7 +16,9 @@ Las decisiones abiertas se marcan como tales y no deben cerrarse sin el equipo.
 | ADR | Título | Estado |
 | --- | --- | --- |
 | 0001 | Comunas, no cuadrantes | Aceptada |
-| 0002 | Mecanismo de envío de correo | Abierta |
+| 0002 | Mecanismo de envío de correo | Aceptada (Resend, 29/10/2026) |
 | 0003 | Fuente cartográfica de las comunas | Aceptada (provisional) |
-| 0004 | Hosting en capas gratuitas | Aceptada (propuesta por confirmar) |
+| 0004 | Hosting en capas gratuitas | Aceptada (desplegada 28/10/2026, Netlify en vez de Vercel) |
 | 0005 | Estructura del frontend: `app/` / `admin/` / `compartido/` | Aceptada |
+| 0006 | Almacenamiento de fotos: Cloudinary | Aceptada (29/10/2026) |
+| 0007 | Dominio propio para el correo de Resend | Abierta (propuesta 30/10/2026) |
