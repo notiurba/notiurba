@@ -88,7 +88,7 @@ Salida: 200, arreglo de las categorías activas (hoy 15): `{ idCategoria, nombre
 `requiereEvidencia` es `false` en todas: la foto es siempre opcional (decidido el 01/11/2026).
 Error: 401.
 
-### 3.4 Crear reporte — `POST /api/reportes` — FALTA
+### 3.4 Crear reporte — `POST /api/reportes` — EXISTE (versión mínima)
 JWT. Sigue los 4 pasos del Figma (1 Categoría, 2 Ubicación, 3 Detalles, 4 Confirmación). Las categorías sin ubicación saltan del paso 1 al 3.
 
 Entrada:
@@ -101,10 +101,10 @@ Entrada:
 - `radicadoOficial`: opcional, máx. 50.
 - `autorizaEnvio`: obligatorio, `true`. Autoriza enviar el reporte a la entidad a nombre del ciudadano y con sus datos (RN-07). El servidor guarda la fecha-hora en `autorizacion_envio_en`. No hay segunda autorización: el correo no se copia al ciudadano (decidido el 01/11/2026).
 
-Salida: 201 con `Location: /api/reportes/NU-000123` y el reporte completo (como en 3.6) en estado «Recibido».
+Salida: 201 con `Location: /api/reportes/NU-000123` y un cuerpo mínimo `{ codigoSeguimiento, estado, creadoEn, vigenteHasta }` leído de la base tras guardar, en estado «Recibido». El código lo asigna el trigger de la base, no Java. El reporte completo se obtiene con 3.6 (NOT-89).
 La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02).
 Detalle técnico: la base exige `autorizacion_envio_en <= creado_en`, así que el servidor debe fijar ambas fechas con el mismo instante.
-Errores: 400 VALIDACION, 401, 422 FUERA_DE_COBERTURA.
+Errores: 400 VALIDACION, 401, 422 FUERA_DE_COBERTURA (el 422 aún no se aplica: depende de cargar `comuna.geom` y los barrios, NOT-31 / NOT-54).
 
 ### 3.5 Subir foto — `POST /api/reportes/{codigo}/fotos` — FALTA
 JWT, solo el autor del reporte. `multipart/form-data`, parte `foto`:
@@ -195,6 +195,7 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 - **`requiere_evidencia`**: decisión 8: la foto es siempre opcional; no hay cambio en la base.
 
 ### Pendientes
+- **Código de seguimiento (NOT-69)**: la tarea hablaba de máximo 10 caracteres, pero la columna es `VARCHAR(20)`. El código mide 9 hasta el reporte 999 999 y 10 hasta el 9 999 999. Lo asigna el trigger `fn_reporte_antes_insertar` y `uq_reporte_codigo` lo hace único; ambos están probados contra PostGIS.
 - **Estado «Enviado» y rebotes**: falta implementar el webhook, la columna del identificador de envío y la notificación al ciudadano (decisión 3). Confirmar con el equipo que RF-16 y los webhooks pasan a ser necesarios en el MVP.
 - **Verificación de correo**: el backend está hecho; falta la página del frontend `/app/verificar-correo` y la de «reenviar enlace».
 - **Endpoint `enviar`**: pendiente (decisión 2).

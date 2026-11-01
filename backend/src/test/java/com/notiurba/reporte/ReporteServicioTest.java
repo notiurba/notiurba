@@ -1,0 +1,105 @@
+package com.notiurba.reporte;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.OffsetDateTime;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
+import com.notiurba.reporte.ReporteRepositorio.DatosCategoria;
+import com.notiurba.reporte.ReporteRepositorio.NuevoReporte;
+import com.notiurba.usuario.CatalogosRegistro;
+import com.notiurba.usuario.Rol;
+import com.notiurba.usuario.Usuario;
+import com.notiurba.usuario.UsuarioRepository;
+import com.notiurba.usuario.UsuariosDePrueba;
+import com.notiurba.web.error.ApiException;
+import com.notiurba.web.error.Codigos;
+
+class ReporteServicioTest {
+
+    private final ReporteRepositorio repositorio = mock(ReporteRepositorio.class);
+    private final UsuarioRepository usuarios = mock(UsuarioRepository.class);
+    private final CatalogosRegistro catalogos = mock(CatalogosRegistro.class);
+    private ReporteServicio servicio;
+
+    @BeforeEach
+    void preparar() {
+        Usuario ana = mock(Usuario.class);
+        when(ana.getIdUsuario()).thenReturn(7L);
+        when(usuarios.findByCorreoIgnoreCase("ana@x.com")).thenReturn(Optional.of(ana));
+        when(repositorio.categoriaActiva(1)).thenReturn(Optional.of(new DatosCategoria(true, false)));   // exige ubicación
+        when(repositorio.categoriaActiva(6)).thenReturn(Optional.of(new DatosCategoria(false, false)));
+        when(repositorio.categoriaActiva(13)).thenReturn(Optional.of(new DatosCategoria(true, true)));   // empresa
+        when(repositorio.insertar(any())).thenReturn(
+                new ReporteCreadoResponse("NU-000001", "Recibido", OffsetDateTime.now(), OffsetDateTime.now().plusDays(30)));
+        when(catalogos.existeBarrio(1)).thenReturn(true);
+        servicio = new ReporteServicio(repositorio, usuarios, catalogos);
+    }
+
+    private static CrearReporteRequest peticion(int categoria, Double lat, Double lon, Integer barrio,
+            String descripcion, String matricula) {
+        return new CrearReporteRequest(categoria, lat, lon, barrio, descripcion, "  ", matricula, null, true);
+    }
+
+    private void esperarError(CrearReporteRequest p, String campo) {
+        assertThatThrownBy(() -> servicio.crear("ana@x.com", p)).isInstanceOfSatisfying(ApiException.class, e -> {
+            assertThat(e.getCodigo()).isEqualTo(Codigos.VALIDACION);
+            assertThat(e.getCampo()).isEqualTo(campo);
+        });
+        verify(repositorio, never()).insertar(any());
+    }
+
+    @Test
+    void devuelveLoQueLaBaseCalculoYGuardaLosDatosLimpios() {
+        var respuesta = servicio.crear("ana@x.com", peticion(1, 4.08, -76.19, null, "  Hay un hueco enorme en la vía  ", null));
+
+        assertThat(respuesta.codigoSeguimiento()).isEqualTo("NU-000001");
+        var guardado = ArgumentCaptor.forClass(NuevoReporte.class);
+        verify(repositorio).insertar(guardado.capture());
+        assertThat(guardado.getValue().idUsuario()).isEqualTo(7L);
+        assertThat(guardado.getValue().descripcion()).isEqualTo("Hay un hueco enorme en la vía");
+        assertThat(guardado.getValue().direccionIncidente()).isNull();      // vacío pasa a nulo
+    }
+
+    @Test
+    void categoriaConUbicacionExigeGpsOBarrio() {
+        esperarError(peticion(1, null, null, null, "Hay un hueco enorme en la vía", null), "idBarrio");
+        servicio.crear("ana@x.com", peticion(1, null, null, 1, "Hay un hueco enorme en la vía", null));   // con barrio sí
+    }
+
+    @Test
+    void gpsATantasMediasYBarrioInexistente() {
+        esperarError(peticion(6, 4.08, null, null, "Hay un problema que necesita atención", null), "longitud");
+        esperarError(peticion(6, null, -76.1, null, "Hay un problema que necesita atención", null), "latitud");
+        esperarError(peticion(6, null, null, 99, "Hay un problema que necesita atención", null), "idBarrio");
+    }
+
+    @Test
+    void categoriaInexistenteODescripcionFueraDeRango() {
+        esperarError(peticion(999, null, null, null, "Hay un problema que necesita atención", null), "idCategoria");
+        esperarError(peticion(6, null, null, null, "   corta   ", null), "descripcion");
+        esperarError(peticion(6, null, null, null, "x".repeat(501), null), "descripcion");
+    }
+
+    @Test
+    void laMatriculaSoloAplicaAEmpresasDeServiciosPublicos() {
+        esperarError(peticion(6, null, null, null, "Hay un problema que necesita atención", "123"), "matriculaCuentaServicio");
+        servicio.crear("ana@x.com", peticion(13, 4.08, -76.1, null, "Hay un problema que necesita atención", "123"));
+    }
+
+    @Test
+    void sinUsuarioEnLaBaseEsNoAutenticado() {
+        assertThatThrownBy(() -> servicio.crear("fantasma@x.com", peticion(6, null, null, null, "Hay un problema que necesita atención", null)))
+                .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.getCodigo()).isEqualTo(Codigos.NO_AUTENTICADO));
+    }
+}
