@@ -85,6 +85,7 @@ Errores: 400 VALIDACION; 401 CREDENCIALES_INVALIDAS (también para cuentas cread
 ### 3.3 Lista de categorías — `GET /api/categorias` — EXISTE
 JWT de cualquier rol (*propuesto*: mantenerlo con sesión).
 Salida: 200, arreglo de las categorías activas (hoy 15): `{ idCategoria, nombre, descripcion, requiereUbicacion, requiereEvidencia }`.
+`requiereEvidencia` es `false` en todas: la foto es siempre opcional (decidido el 01/11/2026).
 Error: 401.
 
 ### 3.4 Crear reporte — `POST /api/reportes` — FALTA
@@ -98,7 +99,7 @@ Entrada:
 - `direccionIncidente`: opcional, máx. 300.
 - `matriculaCuentaServicio`: opcional, máx. 50; solo categorías de empresas de servicios públicos (trigger B6).
 - `radicadoOficial`: opcional, máx. 50.
-- `autorizaEnvio` y `autorizaCopia`: obligatorios, `true`. La base solo guarda `autorizacion_envio_en` (ver sección 7).
+- `autorizaEnvio`: obligatorio, `true`. Autoriza enviar el reporte a la entidad a nombre del ciudadano y con sus datos (RN-07). El servidor guarda la fecha-hora en `autorizacion_envio_en`. No hay segunda autorización: el correo no se copia al ciudadano (decidido el 01/11/2026).
 
 Salida: 201 con `Location: /api/reportes/NU-000123` y el reporte completo (como en 3.6) en estado «Recibido».
 La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02).
@@ -134,7 +135,7 @@ Fuera de los 6, pero necesarios para que ninguna pantalla del Figma quede sin da
 
 - `GET /api/reportes` — «Mis reportes». Lista propia, más recientes primero, filtro opcional `estado`. Salida: `[ { codigoSeguimiento, estado, categoria, creadoEn, vigenteHasta } ]`.
 - `PATCH /api/reportes/{codigo}` — «Actualizar mi reporte». Solo cambia `radicadoOficial` (máx. 50). Devuelve el reporte.
-- `POST /api/reportes/{codigo}/enviar` — el frontend lo llama después de subir las fotos. Responde 202; el envío con Resend (API HTTP) corre en segundo plano (RNF-04) y es idempotente. Así el correo (RF-14) puede llevar el enlace a la foto.
+- `POST /api/reportes/{codigo}/enviar` — el frontend lo llama después de subir las fotos (si subió). Responde 202; el envío con Resend (API HTTP) corre en segundo plano (RNF-04) y es idempotente. Así el correo (RF-14) puede llevar el enlace a la foto. Sale un solo correo, a la entidad, con el correo del ciudadano en Reply-To y sin copia para él.
 - `GET /api/catalogos/barrios` (`{ idBarrio, idComuna, nombre }`) y `GET /api/catalogos/tipos-documento` — públicos. Al implementarlos hay que agregar `/api/catalogos/**` a las rutas públicas de `SecurityConfig`.
 
 Ya implementados (EXISTEN):
@@ -163,9 +164,10 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 3. Cuándo pasa un reporte a «Enviado»: *propuesto* cuando Resend acepta el envío (respuesta exitosa de su API); el servidor registra el envío como ENVIADO y agrega el estado al historial. Ojo: que Resend acepte no garantiza que el correo llegue a la bandeja; los rebotes se verían con webhooks (deseable, R.05).
 4. Categorías con sesión: *propuesto* mantener `GET /api/categorias` con JWT.
 5. Catálogos como endpoints públicos; el aviso de privacidad es estático en el frontend y el servidor guarda el vigente.
-6. Segunda autorización (`autorizaCopia`) sin columna propia, o con una nueva: pendiente (sección 7).
+6. **Decidido (01/11/2026):** una sola autorización (`autorizaEnvio`) y el correo no se copia al ciudadano. Sale 1 correo por reporte (el límite de 100 al día alcanza para ~100 reportes). Los reportes anónimos siguen fuera del MVP.
 7. `declaraMayorEdad` en el registro.
-8. Evidencia obligatoria por categoría: pendiente (sección 7).
+8. **Decidido (01/11/2026):** la foto es siempre opcional; ninguna categoría la exige (`requiere_evidencia` queda en `false`). La app la ofrece para mejorar el reporte; la decisión es del ciudadano, porque los canales oficiales no la exigen.
+9. **Decidido (01/11/2026):** el correo se envía tras una interfaz propia (`EnviadorCorreo`) con una implementación que llama a la API HTTP de Resend, igual que `EnviadorEnlaceRecuperacion`. Evita el bloqueo de puertos de Render y no suma complejidad al ciudadano. Lo mismo para las fotos: una interfaz y una implementación con Cloudinary. Al implementar se puede quitar `spring-boot-starter-mail`.
 
 ## 7. Discrepancias y brechas
 
@@ -180,13 +182,15 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 - **Modo de envío BORRADOR**: sigue sembrado en V3. La migración V9 lo elimina (si ningún envío lo usa). Aplicar V9 en Neon al desplegar: Render redespliega solo con cada commit a la rama enlazada.
 - **Menciones desactualizadas**: «Vercel» en `03-arquitectura-y-datos.md` cambiado a Netlify; `docs/README.md` actualizado.
 
+- **`autorizaCopia`**: se elimina (decisión 6): una sola autorización y sin copia al ciudadano.
+- **`requiere_evidencia`**: decisión 8: la foto es siempre opcional; no hay cambio en la base.
+
 ### Pendientes
 - **Estado «Enviado»**: ver decisión 3 de la sección 6.
-- **`autorizaCopia`**: el paso 4 del Figma tendría dos autorizaciones, pero la base solo guarda `autorizacion_envio_en`. Falta decidir si basta validarla en la API, si se agrega una columna nueva o si se quita la segunda casilla.
-- **`requiere_evidencia`**: la columna existe en `categoria`, pero la migración V3 no la llena y las 15 categorías quedaron en `false`. Hoy ninguna categoría exige foto, y ninguna regla de la base ni de este contrato lo hace cumplir. Falta decidir qué categorías exigen foto y dónde se valida.
+- **Paso 4 del Figma**: si muestra dos casillas de autorización, debe quedar una sola (`autorizaEnvio`). Avisar a Amelia (diseño).
 - **`comuna.geom` es NULL y los barrios reales no están cargados** (solo hay un barrio administrativo de V4): `FUERA_DE_COBERTURA` no se puede verificar y nadie puede completar el perfil hasta NOT-31 / NOT-54. Depende de la carga de barrios y polígonos (Amelia).
 - **Código sin escribir**: no existe `MailService` (el `pom` ya trae `spring-boot-starter-mail`, pero el plan es la API HTTP de Resend) ni la subida a Cloudinary (falta la dependencia y las variables `CLOUDINARY_*`).
-- **Prueba de Resend desde Render**: el envío por el puerto 2587 (SMTP) y por la API HTTP siguen sin probar. Se necesita `RESEND_API_KEY` en Render.
+- **Prueba de Resend desde Render**: el 01/11/2026 se probó la API HTTP desde la máquina de Andrés (respuesta 200 con el subdominio verificado, enviando a una dirección de pruebas de Resend). Falta probarla desde Render, que requiere el `MailService` desplegado y `RESEND_API_KEY` en las variables de Render. El SMTP por 2587 ya no es necesario con la API HTTP.
 - **Rutas del frontend**: `RutaProtegida` aún no envuelve `/admin/*`; el panel sigue abierto con datos de prueba.
 - **Linear**: NOT-69 («Generar el código único, guardarlo con restricción de unicidad y devolverlo al crear el reporte») ya lo hace el trigger `fn_reporte_antes_insertar` más `uq_reporte_codigo`: queda solo devolverlo en el 201. NOT-89 («consultar un reporte propio por código, con URL de foto nula si no tiene y 404 si no es suyo») habla de una sola foto: ahora son hasta 3, así que debe decir «lista de fotos vacía si no tiene».
 - **Otras menciones**: `02-stack.md` y `08-pendientes.md` conservan el puerto 2587 de Resend porque sigue pendiente de probar.
