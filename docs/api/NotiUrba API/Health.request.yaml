@@ -1,0 +1,5 @@
+$kind: http-request
+description: Público. 200 {estado, baseDeDatos} tras un SELECT 1; 503 con baseDeDatos=error si la base falla. En Render Free la primera llamada puede tardar ~50 s.
+url: "{{baseUrl}}/api/health"
+method: GET
+order: 1000

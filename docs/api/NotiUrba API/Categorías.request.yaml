@@ -1,0 +1,9 @@
+$kind: http-request
+description: Exige sesión (cualquier rol). Usa Bearer {{token}}.
+url: "{{baseUrl}}/api/categorias"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+order: 7000

@@ -98,6 +98,21 @@ public class Usuario {
         return usuario;
     }
 
+    /**
+     * Ciudadano que se registra con correo y contraseña: el correo queda SIN verificar
+     * (correo_verificado_en NULL) hasta que use el enlace que se le envía.
+     */
+    public static Usuario nuevoConContrasena(
+            String nombres, String apellidos, Short idTipoDocumento, String numeroDocumento,
+            Integer idBarrio, String direccionCorrespondencia, String correo, String telefono,
+            String passwordHash, Rol rol, Short idAvisoPrivacidad, OffsetDateTime ahora) {
+        Usuario usuario = nuevoConGoogle(nombres, apellidos, idTipoDocumento, numeroDocumento, idBarrio,
+                direccionCorrespondencia, correo, telefono, rol, idAvisoPrivacidad, ahora);
+        usuario.correoVerificadoEn = null;
+        usuario.passwordHash = passwordHash;
+        return usuario;
+    }
+
     /** B8: el correo queda verificado (al usar el token o al entrar con Google). */
     public void marcarCorreoVerificado(OffsetDateTime ahora) {
         if (correoVerificadoEn == null) {

@@ -5,9 +5,10 @@ spring:
     url: ${DB_URL:jdbc:postgresql://localhost:5433/notiurba}
     username: ${DB_USER:notiurba}
     password: ${DB_PASSWORD}          # obligatoria: variable de entorno (ver .env.example)
-  mvc:
-    problemdetails:
-      enabled: true                   # los errores (400/401/409) llevan su mensaje en «detail»
+  servlet:
+    multipart:                        # fotos: 1 MB por archivo (ya era el valor por defecto; se deja explícito)
+      max-file-size: 1MB
+      max-request-size: 2MB
   jpa:
     open-in-view: false
     hibernate:
@@ -22,6 +23,11 @@ server:
   port: ${PORT:8080}
 
 notiurba:
+  correo:
+    resend:
+      url: https://api.resend.com
+      api-key: ${RESEND_API_KEY:}      # secreta: solo variable de entorno (Render y .env local)
+      remitente: ${RESEND_REMITENTE:}  # solo la dirección, del dominio verificado (reportes.notiurba.com)
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
   jwt:
@@ -29,6 +35,9 @@ notiurba:
     expiracion-minutos: 60
   google:
     client-id: ${GOOGLE_CLIENT_ID}  # obligatoria: ID de cliente OAuth de Google Cloud (aud del ID token)
+  verificacion:
+    # Página del frontend «Confirmar correo»; el backend agrega ?token=...
+    enlace: ${VERIFICACION_ENLACE:http://localhost:5173/app/verificar-correo}
   recuperacion:
     # Página del frontend «Nueva contraseña»; el backend agrega ?token=...
     enlace: ${RECUPERACION_ENLACE:http://localhost:5173/app/nueva-contrasena}

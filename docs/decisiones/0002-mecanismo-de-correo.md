@@ -1,32 +1,46 @@
 # ADR-0002 — Mecanismo de envío de correo
 
-**Estado:** Abierta. Decisión entre el final del Sprint 2 y el Sprint 3.
+**Estado:** Aceptada (29/10/2026). NotiUrba envía el correo con **Resend**. Se descarta el borrador que el ciudadano envía.
 
 ## Contexto
 
 El reporte se canaliza por correo a la entidad competente. El correo debe salir con la
-identidad del ciudadano (su nombre en el remitente, su correo en copia/Reply-To) y
-dejar trazabilidad (RN-07, RNF-07). Hay dos caminos y una restricción fuerte:
+identidad del ciudadano (su nombre en el remitente, su correo en Reply-To) y dejar
+trazabilidad (RN-07, RNF-07). Se evaluaron dos caminos:
 
-- **Resend** requiere un **dominio verificado**; sin él, solo envía al dueño de la cuenta.
-- **Render Free bloquea los puertos SMTP 25, 465 y 587**. Resend acepta 2465 (SSL) y
-  2587 (STARTTLS), que sí pasan, pero **no está probado** (ver `02-stack.md`).
+1. **Resend**: la API envía el correo y la Secretaría responde directo al ciudadano por Reply-To.
+2. **Borrador en el cliente del ciudadano** (`mailto:`): la app solo prellena y el ciudadano envía.
+
+Un docente de Aplicaciones móviles señaló que prellenar el correo para que el usuario lo
+envíe es una complejidad innecesaria: es mejor que la app lo envíe y que el ciudadano
+quede como Reply-To para recibir la respuesta.
 
 ## Decisión
 
-**Pendiente.** Las dos opciones sobre la mesa:
+**Usar Resend como servicio de correo.** El borrador (RF-13) queda descartado.
 
-1. **Resend** (RF-12): con dominio verificado, NotiUrba envía el correo. Mejor
-   experiencia, pero depende del dominio y de que el puerto 2587 funcione en Render.
-2. **Borrador en el cliente del ciudadano** (RF-13): sin dominio, NotiUrba abre un
-   borrador con destinatario, asunto y cuerpo completos y el ciudadano lo envía.
+- Remitente: dominio propio verificado de NotiUrba.
+- Reply-To: correo del ciudadano. La Secretaría responde y la respuesta llega a él.
+- Cada envío se registra (RF-15) en `registro_envio_correo`.
 
-El MVP puede empezar con la opción 2 y pasar a la 1 si se verifica el dominio.
+## Límites del plan gratuito (verificados el 29/10/2026 en la documentación de Resend)
+
+- 3.000 correos al mes y **100 al día** (día UTC, se reinicia a medianoche UTC).
+- Cada destinatario cuenta aparte: un correo con copia al ciudadano **gasta 2**.
+- 10 peticiones por segundo; hasta 3 dominios verificados.
+- Los correos de recuperación de contraseña comparten la misma cuota.
 
 ## Consecuencias
 
-- RN-18 queda abierta hasta esta decisión.
-- El diseño de notificaciones (EDT 5.5) depende de este ADR.
-- Decisión sobre el dominio antes del 8 de noviembre.
-- Mientras tanto, no cerrar el código a una sola opción: aislar el envío detrás de una
-  interfaz para poder cambiar de mecanismo.
+- **Riesgo crítico: el dominio.** Resend exige un dominio verificado para enviar. Según
+  la documentación del propio proyecto, sin dominio solo envía al dueño de la cuenta. Si
+  no se consigue, el envío a las Secretarías no funciona. Decisión del dominio antes del 8 de noviembre.
+- **Render Free bloquea los puertos SMTP 25, 465 y 587.** Propuesta técnica (sin probar):
+  usar la API HTTP de Resend (`POST https://api.resend.com/emails`, por HTTPS), que evita
+  el bloqueo. SMTP por 2465 o 2587 con JavaMailSender queda como alternativa.
+- Con 100 correos diarios, el tope es ~100 reportes al día (menos si se copia al ciudadano o se envían recuperaciones).
+- **Privacidad (Ley 1581):** el Reply-To expone el correo del ciudadano a la Secretaría.
+  La app debe avisar y pedir consentimiento antes de enviar.
+- RN-18 y RF-13 se actualizan. El diseño de notificaciones (EDT 5.5) ya puede avanzar.
+- Se mantiene el envío detrás de una interfaz (como `EnviadorEnlaceRecuperacion`) para poder cambiar de proveedor.
+- Variables nuevas en Render: `RESEND_API_KEY` y el remitente. No van en el repo.

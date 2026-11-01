@@ -40,13 +40,13 @@ producción.
 
 - [ ] **Diagrama de arquitectura de componentes** (PWA, API, PostGIS, Cloudinary,
       correo, OSM) — EDT 5.1.
-- [ ] **Diagrama de despliegue** (Vercel, Render, Neon).
+- [ ] **Diagrama de despliegue** (Netlify, Render, Neon).
 - [ ] **Modelo de datos completo**. Tablas aún sin definir:
       `usuario`, `reporte` (coordenadas PostGIS, foto_url, categoria, estado,
       fecha_creacion, vigencia, codigo_seguimiento), `comuna` (id, nombre, geometría),
       historial de estados, registro de envíos de correo.
 - [ ] **Diagrama entidad-relación** que una lo anterior con las tablas de correo.
-- [ ] **Diseño de la API REST** (EDT 5.2): endpoints, métodos, entradas/salidas,
+- [ ] **Diseño de la API REST** (EDT 5.2; borrador en `11-contrato-api.md`): endpoints, métodos, entradas/salidas,
       códigos de error. Autenticación JWT ya implementada y verificada de punta a
       punta (`POST /api/auth/login`, 401 sin token/vencido o con credenciales
       incorrectas, 403 sin rol en `/api/admin/**`); falta el resto de endpoints

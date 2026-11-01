@@ -62,4 +62,4 @@ INSERT INTO registro_envio_correo (id_reporte, id_canal_atencion, id_modo_envio,
  (1,1,1,2,NULL,'2026-10-01 10:00:00-05','2026-10-01 09:59:00-05'),
  (2,12,1,3,'Buzón no disponible (rebote)',NULL,'2026-10-05 14:59:00-05'),
  (2,12,1,2,NULL,'2026-10-05 15:00:00-05','2026-10-05 14:59:30-05'),
- (3,1,2,1,NULL,NULL,'2026-10-13 19:41:00-05');
+ (3,1,1,1,NULL,NULL,'2026-10-13 19:41:00-05');

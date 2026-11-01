@@ -49,9 +49,9 @@ regla cambia, se actualiza aquí y en su pestaña de origen.
   la línea 164.
 - **RN-17**: el asunto sigue el formato «Reporte ciudadano – [categoría] – [barrio y
   comuna] – NotiUrba #[ID]» (*formato propuesto*).
-- **RN-18**: NotiUrba no envía correos sin intervención del ciudadano. El mecanismo de
-  envío (cuenta del ciudadano o Resend) está **pendiente** y se decide entre el final
-  del Sprint 2 y el Sprint 3. Ver ADR-0002.
+- **RN-18**: NotiUrba envía el correo con Resend cuando el ciudadano confirma el reporte;
+  el ciudadano queda en Reply-To. Ya no se prellena un borrador para que él lo envíe
+  (decidido el 29/10/2026, ADR-0002). Límite gratuito: 100 correos al día.
 
 ## Estados y vigencia
 

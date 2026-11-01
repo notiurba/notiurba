@@ -3,6 +3,7 @@ package com.notiurba.auth;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
@@ -51,6 +52,24 @@ class AuthControllerTest {
         String soloGoogle = login("google@x.com", "Cualquiera123");
         String claveMala = login("clave@x.com", "Incorrecta123");
 
-        assertThat(soloGoogle).isEqualTo(claveMala).contains("Credenciales inválidas");
+        assertThat(soloGoogle).isEqualTo(claveMala).contains("Correo o contraseña incorrectos.");
+    }
+
+    @Test
+    void conContrasenaCorrectaPeroCorreoSinVerificarDa403() throws Exception {
+        Usuario pendiente = Usuario.nuevoConContrasena("Ana", "Gómez", (short) 1, "123", 1, "Cra 1", "p@x.com", null,
+                passwordEncoder.encode("Correcta123"), UsuariosDePrueba.rol(Rol.CIUDADANO), (short) 1,
+                java.time.OffsetDateTime.now().minusDays(1));
+        when(usuarioRepository.findByCorreoIgnoreCase("p@x.com")).thenReturn(Optional.of(pendiente));
+
+        mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"correo\":\"p@x.com\",\"password\":\"Correcta123\"}"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.codigo").value("CORREO_NO_VERIFICADO"));
+
+        // con la contraseña mala sigue siendo 401: no se revela que la cuenta existe
+        mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"correo\":\"p@x.com\",\"password\":\"Mala12345\"}"))
+                .andExpect(status().isUnauthorized());
     }
 }

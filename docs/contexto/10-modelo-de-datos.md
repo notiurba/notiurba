@@ -40,7 +40,7 @@ Un ciudadano de Tuluá crea un reporte (categoría, descripción, foto y ubicaci
 - `evidencia_reporte`: fotos como **URL** (no archivos). Cada foto pertenece al usuario que la subió; máximo **3 por usuario y reporte**. Pueden subir quien reportó o quien apoyó.
 - `apoyo_reporte`: otros ciudadanos que respaldan un reporte (un apoyo por usuario).
 - `historial_estado`: cada cambio de estado, quién lo hizo y cuándo. Solo se inserta; el estado no retrocede (puede saltar etapas).
-- `registro_envio_correo`: cada intento de envío (canal usado, modo RESEND o BORRADOR, estado PENDIENTE/ENVIADO/FALLIDO, error).
+- `registro_envio_correo`: cada intento de envío (canal usado, modo RESEND (BORRADOR quedó descartado, ADR-0002), estado PENDIENTE/ENVIADO/FALLIDO, error).
 
 ## 4. Decisiones clave y su razón
 - **Un solo destino por reporte**: simplifica el envío y evita duplicados.
@@ -72,6 +72,7 @@ B1 dependencia hija de la misma entidad y sin ciclos · B2 solo reportante o apo
 - Texto oficial del aviso de privacidad: hoy es un marcador.
 - Correos «sin confirmar» (Gases de Occidente, Celsia, Veolia): canales inactivos. El de SEDAMA (sedama@tulua.gov.co) quedó confirmado el 26/10/2026; es solo de referencia (el envío va al CAIC). Falta marcarlo activo en V3.
 - Nombre del estado 2: el modelo usa «Enviado»; Linear dice «Enviado a Secretaría».
+- Columnas nuevas pendientes (rebotes de Resend, verificación de correo): ver la sección 8 de `11-contrato-api.md` (`registro_envio_correo.id_envio_proveedor` y `aviso_fallo_en`, y la propuesta `evidencia_reporte.id_publico_proveedor`).
 
 ## 9. Mapa de campos de formularios → columnas (borrador, verificar contra el Figma)
 **Registro**: nombres → `usuario.nombres` · apellidos → `usuario.apellidos` · tipo y número de documento → `id_tipo_documento`, `numero_documento` · barrio → `id_barrio` · dirección → `direccion_correspondencia` · correo → `correo` · teléfono (opcional) → `telefono` · contraseña → `password_hash` · aceptación del aviso → `id_aviso_privacidad` + `acepto_privacidad_en`.
