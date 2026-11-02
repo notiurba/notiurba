@@ -42,7 +42,7 @@ Asunto `Reporte ciudadano – [categoría] – [barrio y comuna] – NotiUrba #[
 (*propuesto*); entidad de destino; ciudadano (nombres, documento, dirección, correo,
 teléfono); descripción y razones; ubicación (dirección/barrio, comuna, coordenadas,
 enlace al mapa); fecha, hora e ID; evidencia (foto como enlace seguro); constancia de
-que el ciudadano autorizó el envío (su correo en copia o Reply-To).
+que el ciudadano autorizó el envío (su correo va en Reply-To y en el cuerpo; no se le envía copia).
 
 ## Pendientes
 

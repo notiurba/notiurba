@@ -64,7 +64,7 @@ Rama `feat/login-google`: migraciones V5 (Google), V6 (nombres/apellidos) y V7 (
   branch de respaldo en Neon antes de desplegar.
 - **Reportes anónimos y de menores de edad**: fuera del MVP; requieren acuerdo con las
   empresas de servicios públicos y la Alcaldía (Ley 1581 de 2012, art. 7).
-- **Validación jurídica del aviso de privacidad**: el texto de V3 sigue siendo un marcador.
+- **Validación jurídica del aviso de privacidad**: la versión 3 ya es la vigente (V12, 01/11/2026), pero su texto legal sigue sin validar con el docente o un asesor jurídico (puntos en ADR-0008).
 - **Barrios reales y polígonos de comunas (NOT-54)**: sin barrios nadie completa el perfil, y
   sin polígonos un reporte con solo GPS (B3) no deriva comuna ni barrio.
 - **Registro con correo y contraseña**: aún no existe en el backend. Cuando se haga, usa

@@ -15,7 +15,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
  * proyecto (docker compose up -d), Flyway le aplica V1..V10 al arrancar Spring y se borra al final.
  * Si no están DB_URL, DB_USER y DB_PASSWORD, o no hay servidor, las pruebas se omiten solas.
  */
-final class BaseDeDatosTemporal {
+public final class BaseDeDatosTemporal {
 
     private final String nombre = "notiurba_it_" + Long.toHexString(System.nanoTime());
     private final String urlServidor;
@@ -28,7 +28,7 @@ final class BaseDeDatosTemporal {
         this.clave = clave;
     }
 
-    static BaseDeDatosTemporal crearOOmitir() {
+    public static BaseDeDatosTemporal crearOOmitir() {
         String url = System.getenv("DB_URL");
         String usuario = System.getenv("DB_USER");
         String clave = System.getenv("DB_PASSWORD");
@@ -44,7 +44,7 @@ final class BaseDeDatosTemporal {
         return base;
     }
 
-    void registrar(DynamicPropertyRegistry registro) {
+    public void registrar(DynamicPropertyRegistry registro) {
         registro.add("spring.datasource.url", () -> urlServidor + "/" + nombre);
         registro.add("spring.datasource.username", () -> usuario);
         registro.add("spring.datasource.password", () -> clave);
@@ -52,7 +52,7 @@ final class BaseDeDatosTemporal {
         registro.add("spring.flyway.placeholders.adminPassword", () -> "ClaveDePrueba-" + UUID.randomUUID());
     }
 
-    void borrar() throws SQLException {
+    public void borrar() throws SQLException {
         try (Connection c = DriverManager.getConnection(urlServidor + "/postgres", usuario, clave);
                 Statement s = c.createStatement()) {
             s.execute("DROP DATABASE IF EXISTS " + nombre + " WITH (FORCE)");

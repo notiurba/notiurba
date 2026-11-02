@@ -35,6 +35,7 @@ sus consecuencias. Ver [decisiones/README.md](decisiones/README.md).
 - [ADR-0005](decisiones/0005-estructura-frontend-app-admin.md) — Estructura del frontend `app/` / `admin/` / `compartido/`.
 - [ADR-0006](decisiones/0006-almacenamiento-de-fotos-cloudinary.md) — Almacenamiento de fotos: Cloudinary.
 - [ADR-0007](decisiones/0007-dominio-para-el-correo.md) — Dominio `notiurba.com` para el correo de Resend (aceptada).
+- [ADR-0008](decisiones/0008-privacidad-autorizacion-unica-y-verificacion-de-correo.md) — Privacidad: aviso v3, autorización única, mayores de 18 y verificación de correo.
 
 ## Convenciones
 

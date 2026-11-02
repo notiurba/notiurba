@@ -18,8 +18,8 @@ confirmarse con el equipo.
   contraseña; impedir crear reportes sin sesión. Con credenciales inválidas, niega el
   acceso sin decir cuál dato falló.
 - **RF-03** (Esencial, Puede cambiar — texto legal, Ley 1581 | EDT 6.1): exigir la
-  aceptación del aviso de privacidad antes de completar el registro y guardar fecha y
-  hora de la aceptación.
+  aceptación del aviso de privacidad y la declaración de ser mayor de 18 años (una sola
+  casilla) antes de completar el registro, y guardar fecha y hora de la aceptación.
 - **RF-04** (Esencial, Estable | EDT 6.1, 7.6): incluir en cada correo a la entidad el
   nombre, documento y dirección del ciudadano que reporta.
 
@@ -47,7 +47,7 @@ confirmarse con el equipo.
   una tabla categoría → correo de destino y usarla para dirigir cada reporte.
 - **RF-12** (Esencial, Puede cambiar — depende del dominio | EDT 7.6): enviar con Resend
   desde un dominio verificado (nombre del ciudadano en el remitente, su correo en
-  Reply-To). Decidido el 29/10/2026 (ADR-0002). Si Resend rechaza, registra el fallo (RF-15).
+  Reply-To; no se le envía copia). Decidido el 29/10/2026 (ADR-0002). Si Resend rechaza, registra el fallo (RF-15).
 - **RF-13** (**Descartado el 29/10/2026**, ADR-0002): el borrador que el ciudadano enviaba
   desde su correo se reemplaza por el envío con Resend (RF-12).
 - **RF-14** (Esencial, Estable | EDT 7.6): el correo incluye comuna, categoría,

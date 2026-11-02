@@ -184,5 +184,13 @@ SELECT pg_temp.debe_ser('La categoría 10 se llama «Otro / no clasificado» y c
 SELECT pg_temp.debe_ser('El canal de SEDAMA está activo y sin la nota «sin confirmar»',
   (SELECT activo AND detalle IS NULL FROM canal_atencion WHERE id_canal_atencion = 11));
 
+\echo '== J. Aviso de privacidad versión 3 (V12) =='
+SELECT pg_temp.debe_ser('Hay dos versiones del aviso: la 1.0 de V3 (no se editó) y la 3',
+  (SELECT count(*) = 2 AND bool_or(version = '1.0') AND bool_or(version = '3') FROM aviso_privacidad));
+SELECT pg_temp.debe_ser('La vigente (la que se guarda al registrarse) es la versión 3',
+  (SELECT version = '3' FROM aviso_privacidad WHERE vigente_desde <= now() ORDER BY vigente_desde DESC LIMIT 1));
+SELECT pg_temp.debe_ser('La versión 3 trae el texto real y no el marcador',
+  (SELECT texto LIKE 'Ley 1581 de 2012 · Versión 3%' AND texto NOT LIKE '%PENDIENTE%' FROM aviso_privacidad WHERE version = '3'));
+
 \o
 \echo '== TODAS LAS PRUEBAS PASARON =='
