@@ -58,3 +58,4 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
 
 - Categorías 8 (riesgo de desastres) y 9 (vivienda): por validar con la Alcaldía.
 - Fuente cartográfica definitiva de las comunas: por validar con Planeación (ADR-0003).
+- Validación jurídica del aviso de privacidad v3 (ya es el vigente; puntos por validar en ADR-0008).
