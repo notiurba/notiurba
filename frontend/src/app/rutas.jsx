@@ -1,10 +1,5 @@
-import { Route, Routes } from 'react-router-dom'
-import Proximamente from './paginas/Proximamente'
+import PrototipoCiudadano from './evaluacion/PrototipoCiudadano'
 
 export default function RutasApp() {
-  return (
-    <Routes>
-      <Route index element={<Proximamente />} />
-    </Routes>
-  )
+  return <PrototipoCiudadano />
 }

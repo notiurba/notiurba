@@ -1,0 +1,9 @@
+{
+  "folders": [{"path": "."}],
+  "settings": {"files.exclude": {"**/node_modules": true,"frontend/.qa": true}},
+  "extensions": {"recommendations": ["openai.chatgpt", "figma.figma-vscode-extension"]},
+  "tasks": {"version": "2.0.0", "tasks": [
+    {"label": "NotiUrba: iniciar prototipo", "type": "shell", "command": "node", "args": ["node_modules/vite/bin/vite.js", "--host", "127.0.0.1", "--port", "5187"], "options": {"cwd": "${workspaceFolder}/frontend"}, "isBackground": true, "problemMatcher": []},
+    {"label": "NotiUrba: compilar", "type": "shell", "command": "node", "args": ["node_modules/vite/bin/vite.js", "build"], "options": {"cwd": "${workspaceFolder}/frontend"}, "problemMatcher": []}
+  ]}
+}
