@@ -37,4 +37,4 @@ preferencia sin tarjeta, enlace público estable y sin depender del disco del se
 - **Privacidad (Ley 1581):** la URL es pública. Las fotos pueden mostrar personas; el aviso
   de privacidad debe cubrirlas. Consulta al docente aún pendiente.
 - Aislar la subida detrás de una interfaz para poder pasar a R2 sin tocar el resto.
-- **Hecho (01/11/2026):** interfaz `AlmacenFotos` y su implementación con la API HTTP de Cloudinary (subida firmada, sin SDK), probada subiendo y borrando una imagen real. Cloudinary asigna un identificador aleatorio a cada foto, así que el enlace no se puede adivinar.
+- **Hecho (01/11/2026):** interfaz `AlmacenFotos` y su implementación con la API HTTP de Cloudinary (subida firmada, sin SDK), probada subiendo y borrando una imagen real. Cloudinary asigna un identificador aleatorio a cada foto, así que el enlace no se puede adivinar. Probado también en producción (Render) el 01/11/2026: la foto subida por la API desplegada se abre sin sesión.
