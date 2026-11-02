@@ -3,3 +3,4 @@ description: "Pruebas contra Render. Orden: Health, Login (pon tu correo y contr
 variables:
   baseUrl: https://notiurba-api.onrender.com
   token: ""
+  codigoReporte: ""

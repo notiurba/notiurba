@@ -65,9 +65,35 @@ pm.test('Formato de error del contrato', function () {
 });
 ```
 
+## Rutas de los archivos: cada persona debe reseleccionarlos
+Postman guarda en cada solicitud la ruta **absoluta** del archivo, y las que están en el repositorio apuntan a la
+carpeta de quien las creó (`/Users/andy/...`). En otro computador esa ruta no existe, así que cada persona debe
+**volver a elegir el archivo** en la pestaña Body de estas solicitudes:
+- «Subir foto» y «Subir archivo que no es imagen (415)»: reseleccionar los archivos de `docs/api/archivos-de-prueba/`.
+- «Subir foto de más de 1 MB (413)»: apunta a una foto de la carpeta Descargas de Andrés. **Cada quien debe elegir una
+  foto propia que pese más de 1 MB.**
+- «Subir sin archivo (400)» no lleva archivo y no necesita nada.
+
+No se convirtieron a rutas relativas porque no está confirmado que Postman las resuelva desde la carpeta del repositorio;
+si lo hiciera, el cambio se haría con una prueba en otro computador.
+
 ## Ejecutar todo
 Clic derecho en la colección → **Run**, o ejecuta una por una en este orden: Login → Crear reporte →
 Consultar reporte → (casos de subida) → los casos 404, 400 y 401 de consulta. Todas las pruebas deben salir en verde.
 La de «otra persona» se omite sola si no defines la variable `tokenOtraPersona`.
 
 Cada ejecución de «Crear reporte» y de «Subir foto» deja datos de prueba en la base y en Cloudinary.
+
+## Resultados registrados (2026-11-01, entorno «NotiUrba - Render»)
+Ejecutados por Andrés en Postman contra la API desplegada:
+
+| Solicitud | Resultado | Pruebas |
+| --- | --- | --- |
+| Subir foto | 201 | 3 de 3 |
+| Subir archivo que no es imagen (415) | 415 | 2 de 2 |
+| Subir sin archivo (400) | 400 | 2 de 2 |
+| Subir foto de más de 1 MB (413) | 413 | 2 de 2 |
+| Consultar reporte de otra persona (404) | SKIPPED | se omite hasta tener la variable `tokenOtraPersona` |
+
+Los casos de consulta (200, 404, 400 y 401) se comprobaron el mismo día con un ejecutor local que corre los mismos
+scripts contra la API con PostGIS (28 comprobaciones sin fallos). Falta anotar aquí su ejecución en Postman.
