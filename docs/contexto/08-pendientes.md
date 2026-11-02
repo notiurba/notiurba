@@ -95,7 +95,7 @@ Queda por hacer:
   Quedó expuesta en capturas de pantalla durante las pruebas.
 - **Frontend**: no existen aún las pantallas de registro, login, recuperación, crear reporte ni mapa.
 - **`GET /api/categorias` exige JWT**: decidir si debe ser pública (la pantalla de crear reporte la necesita).
-- **Correo real** (NOT-15, 39, 40) y almacenamiento de fotos (NOT-28): correo (Resend) y fotos (Cloudinary, ADR-0006) integrados detrás de interfaces (`EnviadorCorreo`, `AlmacenFotos`) y probados con envíos reales el 01/11/2026; falta conectarlos a los endpoints y poner sus variables en Render.
+- **Correo real** (NOT-15, 39, 40) y almacenamiento de fotos (NOT-28): correo (Resend) y fotos (Cloudinary, ADR-0006) integrados detrás de interfaces (`EnviadorCorreo`, `AlmacenFotos`). Fotos: conectadas al endpoint de subida y probadas en Render el 01/11/2026. Correo: conectado al registro (verificación); falta conectarlo a la recuperación de contraseña y al endpoint `enviar`.
 - **Colección Postman** (`docs/api/`): Postman convirtió los `.json` a YAML; revisar que no haya
   secretos antes de hacer commit de `.postman/`, `postman/` y los YAML.
 - Auto-Deploy de Render está activo: cada commit a la rama enlazada redespliega.

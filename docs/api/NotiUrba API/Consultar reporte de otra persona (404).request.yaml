@@ -1,0 +1,25 @@
+$kind: http-request
+description: "NOT-89. Un reporte de otro ciudadano responde 404 igual que uno inexistente. Para probarlo: iniciar sesión con OTRA cuenta ciudadana, copiar su token a la variable de colección «tokenOtraPersona», y ejecutar «Crear reporte» y «Consultar reporte» con la primera cuenta antes. Sin esa variable el caso se omite."
+url: "{{baseUrl}}/api/reportes/{{codigoReporte}}"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{tokenOtraPersona}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      if (!pm.collectionVariables.get('tokenOtraPersona')) {
+          pm.test.skip('Falta la variable tokenOtraPersona (token de otra cuenta ciudadana)');
+      } else {
+          pm.test('404 aunque el reporte exista', function () {
+              pm.response.to.have.status(404);
+          });
+          pm.test('Mismo error que un código inexistente', function () {
+              const r = pm.response.json();
+              pm.expect(r.codigo).to.eql('NO_ENCONTRADO');
+              pm.expect(r.campo).to.eql(null);
+          });
+      }
+    language: text/javascript
+order: 10400
