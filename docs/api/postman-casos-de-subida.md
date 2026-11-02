@@ -1,9 +1,9 @@
 # Casos de Postman para subir fotos (NOT-52 / NOT-20)
 
-La colección «NotiUrba API» (carpeta `docs/api/NotiUrba API`) ya trae los casos de **crear** y
-**consultar** reportes. Faltan los de **subir foto**: llevan un cuerpo `form-data` con un archivo,
-y ese formato lo tiene que generar la propia aplicación de Postman. Se crean una vez a mano y al
-guardar quedan como archivos `.request.yaml` en la misma carpeta.
+La colección oficial «NotiUrba API» (carpeta `docs/api/NotiUrba API`, ver [README.md](README.md)) ya trae los casos de
+**crear**, **consultar** y **subir foto**. Esta guía explica cómo se crearon los de subida y cómo rehacerlos: llevan un
+cuerpo `form-data` con un archivo, y ese formato lo tiene que generar la propia aplicación de Postman. Se crean desde la
+aplicación y al guardar quedan como archivos `.request.yaml` en la carpeta de la colección.
 
 Archivos de prueba (en `docs/api/archivos-de-prueba/`):
 - `foto-valida.png` — un PNG de 6 KB. Sirve para el caso feliz.

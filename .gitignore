@@ -5,3 +5,6 @@
 .vscode/
 *.iml
 .DS_Store
+
+# Notas de trabajo de sesiones de Claude (no son parte del proyecto)
+Claude outputs/

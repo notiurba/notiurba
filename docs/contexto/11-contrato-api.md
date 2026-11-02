@@ -195,7 +195,7 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 - **`requiere_evidencia`**: decisión 8: la foto es siempre opcional; no hay cambio en la base.
 
 ### Pendientes
-- **Postman**: la colección cubre login, categorías, crear reporte y consultar reporte (NOT-89: caso feliz con y sin foto, 404, 400, 401 y reporte de otra persona). Faltan los casos de subir foto (NOT-52 / NOT-20): requieren un cuerpo `form-data` con archivo, que hay que crear una vez desde la propia aplicación de Postman.
+- **Postman**: la colección oficial (`docs/api/NotiUrba API`, ver `docs/api/README.md`) cubre login, categorías, crear y consultar reporte (NOT-89) y subir foto (NOT-52). Falta anotar la ejecución en Postman de los casos de consulta (200, 404, 400 y 401); el caso de «otra persona» queda omitido hasta tener `tokenOtraPersona`.
 - **Código de seguimiento (NOT-69)**: la tarea hablaba de máximo 10 caracteres, pero la columna es `VARCHAR(20)`. El código mide 9 hasta el reporte 999 999 y 10 hasta el 9 999 999. Lo asigna el trigger `fn_reporte_antes_insertar` y `uq_reporte_codigo` lo hace único; ambos están probados contra PostGIS.
 - **Estado «Enviado» y rebotes**: falta implementar el webhook, la columna del identificador de envío y la notificación al ciudadano (decisión 3). Confirmar con el equipo que RF-16 y los webhooks pasan a ser necesarios en el MVP.
 - **Verificación de correo**: el backend está hecho; falta la página del frontend `/app/verificar-correo` y la de «reenviar enlace».
