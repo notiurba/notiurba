@@ -4,7 +4,6 @@ workspace:
 
 localResources:
   collections:
-    - ../docs/api/notiurba.postman_collection.json
     - ../docs/api/NotiUrba API
   environments:
     - ../docs/api/NotiUrba - local.environment.yaml
@@ -15,4 +14,3 @@ localResources:
 cloudResources:
   collections:
     ../docs/api/NotiUrba API: 63bc1128-12ec-4afb-9837-e1fad1593e23
-    ../postman/collections/NotiUrba API (copia): 7418456f-4532-45a0-a893-bae28dde6bf4

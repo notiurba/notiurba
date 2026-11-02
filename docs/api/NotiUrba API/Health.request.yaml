@@ -2,4 +2,14 @@ $kind: http-request
 description: Público. 200 {estado, baseDeDatos} tras un SELECT 1; 503 con baseDeDatos=error si la base falla. En Render Free la primera llamada puede tardar ~50 s.
 url: "{{baseUrl}}/api/health"
 method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('200 OK', function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test('La base de datos responde', function () {
+          pm.expect(pm.response.json().baseDeDatos).to.eql('ok');
+      });
+    language: text/javascript
 order: 1000
