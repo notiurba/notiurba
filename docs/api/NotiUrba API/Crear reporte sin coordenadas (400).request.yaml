@@ -1,0 +1,32 @@
+$kind: http-request
+description: "NOT-79. La categoría 1 exige GPS o barrio: sin latitud, longitud ni idBarrio responde 400 VALIDACION con campo idBarrio (contrato 3.4, regla B3)."
+url: "{{baseUrl}}/api/reportes"
+method: POST
+headers:
+  Content-Type: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+body:
+  type: json
+  content: |-
+    {
+      "idCategoria": 1,
+      "descripcion": "Prueba de Postman: hueco grande frente a mi casa",
+      "autorizaEnvio": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('400 de validación', function () {
+          pm.response.to.have.status(400);
+      });
+      pm.test('Formato de error del contrato', function () {
+          const r = pm.response.json();
+          pm.expect(r.codigo).to.eql('VALIDACION');
+          pm.expect(r.campo).to.eql('idBarrio');
+          pm.expect(r.mensaje).to.be.a('string').and.not.empty;
+      });
+    language: text/javascript
+order: 9200
