@@ -27,7 +27,12 @@ trabaja solo con «NotiUrba API».
 | 5–6 | Recuperar contraseña, Restablecer contraseña | recuperación |
 | 7 | Categorías | 200 y las 15 categorías |
 | 8 | Admin ping | 200 con rol ADMIN |
-| 9 | Crear reporte | 201, `Location`, estado Recibido; guarda `codigoReporte` |
+| 9 | Crear reporte | 201, `Location`, estado Recibido, vigencia de 30 días; guarda `codigoReporte` |
+| 9.1 | Crear reporte sin categoría (400) | 400 `VALIDACION`, campo `idCategoria` |
+| 9.2 | Crear reporte sin coordenadas (400) | categoría 1 sin GPS ni barrio: 400 `VALIDACION`, campo `idBarrio` |
+| 9.3 | Crear reporte con descripción de 9 caracteres (400) | 400 `VALIDACION`, campo `descripcion` |
+| 9.4 | Crear reporte con descripción de 501 caracteres (400) | 400 `VALIDACION`, campo `descripcion` |
+| 9.5 | Crear reporte sin sesión (401) | 401 `NO_AUTENTICADO` (NOT-79) |
 | 10 | Consultar reporte, inexistente (404), código mal formado (400), sin sesión (401), de otra persona (404) | NOT-89 |
 | 11 | Subir foto, no es imagen (415), más de 1 MB (413), sin archivo (400) | NOT-52 |
 
@@ -40,4 +45,4 @@ Variables de colección: `baseUrl`, `token`, `codigoReporte`, `correoRegistro`, 
 2. Las solicitudes de subir foto guardan la ruta **absoluta** del archivo. Cada persona debe volver a elegir los archivos
    de `docs/api/archivos-de-prueba/`. Detalles y pasos en [postman-casos-de-subida.md](postman-casos-de-subida.md).
 3. Cada ejecución de «Registro» crea una cuenta de prueba (correo `delivered+…@resend.dev`, que Resend acepta sin entregar a nadie) y gasta 1 correo de los 100 diarios.
-4. Cada ejecución de «Crear reporte» y de «Subir foto» deja datos de prueba en la base y en Cloudinary.
+4. Cada ejecución de «Crear reporte» (el caso válido) y de «Subir foto» deja datos de prueba en la base y en Cloudinary.

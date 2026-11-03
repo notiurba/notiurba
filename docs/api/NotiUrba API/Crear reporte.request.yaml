@@ -34,6 +34,10 @@ scripts:
           pm.test('Nace en estado Recibido', function () {
               pm.expect(cuerpo.estado).to.eql('Recibido');
           });
+          pm.test('Vigencia de 30 días desde la creación', function () {
+              const dias = (new Date(cuerpo.vigenteHasta) - new Date(cuerpo.creadoEn)) / 86400000;
+              pm.expect(dias).to.be.within(29.99, 30.01);
+          });
           pm.collectionVariables.set('codigoReporte', cuerpo.codigoSeguimiento);
       }
     language: text/javascript
