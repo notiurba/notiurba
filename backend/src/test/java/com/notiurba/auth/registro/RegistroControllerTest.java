@@ -1,6 +1,8 @@
 package com.notiurba.auth.registro;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -31,7 +33,7 @@ class RegistroControllerTest {
     private static final String VALIDO = """
             {"nombres":"Ana","apellidos":"Gómez","idTipoDocumento":1,"numeroDocumento":"1118456789",
              "idBarrio":1,"direccionCorrespondencia":"Cra 1","correo":"ana@x.com","password":"Clave1234",
-             "aceptaPrivacidad":true}""";
+             "aceptaPrivacidad":true,"declaraMayorEdad":true}""";
 
     @Test
     void registroPublicoDa201SinTokenYConElMensaje() throws Exception {
@@ -49,6 +51,16 @@ class RegistroControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.codigo").value("VALIDACION"))
                 .andExpect(jsonPath("$.campo").value("aceptaPrivacidad"));
+    }
+
+    @Test
+    void sinDeclararMayorDeEdadDa400ConElCampo() throws Exception {
+        mvc.perform(post("/api/auth/registro").contentType(MediaType.APPLICATION_JSON)
+                        .content(VALIDO.replace("\"declaraMayorEdad\":true", "\"declaraMayorEdad\":false")))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.codigo").value("VALIDACION"))
+                .andExpect(jsonPath("$.campo").value("declaraMayorEdad"));
+        verify(registro, never()).registrar(any());
     }
 
     @Test

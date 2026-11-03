@@ -5,3 +5,6 @@ variables:
   token: ""
   codigoReporte: ""
   tokenOtraPersona: ""
+  correoRegistro: ""
+  documentoRegistro: ""
+  documentoOtro: ""

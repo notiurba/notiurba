@@ -38,6 +38,7 @@ public class ManejadorErrores extends ResponseEntityExceptionHandler {
             Map.entry("numeroDocumento", "Número de documento"), Map.entry("idBarrio", "Barrio"),
             Map.entry("direccionCorrespondencia", "Dirección"), Map.entry("telefono", "Teléfono"),
             Map.entry("token", "Enlace"), Map.entry("aceptaPrivacidad", "Aviso de privacidad"),
+            Map.entry("declaraMayorEdad", "Declaración de mayoría de edad"),
             Map.entry("descripcion", "Descripción"), Map.entry("idCategoria", "Categoría"),
             Map.entry("latitud", "Latitud"), Map.entry("longitud", "Longitud"),
             Map.entry("direccionIncidente", "Dirección del incidente"),
