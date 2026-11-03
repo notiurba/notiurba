@@ -15,5 +15,6 @@ public record CompletarPerfilRequest(
         @NotNull Integer idBarrio,
         @NotBlank @Size(max = 300) String direccionCorrespondencia,
         @Size(max = 30) String telefono,
-        @NotNull @AssertTrue Boolean aceptaPrivacidad) {
+        @NotNull @AssertTrue Boolean aceptaPrivacidad,
+        @NotNull @AssertTrue Boolean declaraMayorEdad) {
 }

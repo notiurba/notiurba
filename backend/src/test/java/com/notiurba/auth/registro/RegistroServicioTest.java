@@ -46,7 +46,7 @@ class RegistroServicioTest {
 
     private static RegistroRequest peticion(String correo, String password) {
         return new RegistroRequest(" Ana ", "Gómez", (short) 1, "1118456789", 1, "Cra 1 # 2-3", correo, null,
-                password, true);
+                password, true, true);
     }
 
     @Test

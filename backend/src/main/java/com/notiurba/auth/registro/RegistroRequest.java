@@ -17,5 +17,6 @@ public record RegistroRequest(
         @NotBlank @Email @Size(max = 254) String correo,
         @Size(max = 30) String telefono,
         @NotBlank String password,
-        @NotNull @AssertTrue Boolean aceptaPrivacidad) {
+        @NotNull @AssertTrue Boolean aceptaPrivacidad,
+        @NotNull @AssertTrue Boolean declaraMayorEdad) {
 }

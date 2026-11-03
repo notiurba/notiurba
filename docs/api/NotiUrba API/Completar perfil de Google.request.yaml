@@ -16,6 +16,7 @@ body:
       "idBarrio": 1,
       "direccionCorrespondencia": "Calle 0 # 0-00",
       "telefono": "3000000000",
-      "aceptaPrivacidad": true
+      "aceptaPrivacidad": true,
+      "declaraMayorEdad": true
     }
 order: 4000
