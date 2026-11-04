@@ -1,0 +1,31 @@
+.pasos__textos {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.pasos__numero {
+  font-weight: 800;
+  color: var(--nu-texto-principal);
+}
+
+.pasos__etiqueta {
+  color: var(--nu-texto-secundario);
+}
+
+.pasos__barras {
+  display: flex;
+  gap: 8px;
+}
+
+.pasos__barra {
+  flex: 1;
+  height: 5px;
+  border-radius: var(--nu-radio-xs);
+  background: var(--nu-borde-tarjeta);
+}
+
+.pasos__barra--hecha {
+  background: var(--nu-marca-primario);
+}

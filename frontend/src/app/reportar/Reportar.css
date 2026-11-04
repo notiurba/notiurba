@@ -1,0 +1,38 @@
+/* Estilos comunes de los pasos de «Nuevo reporte» */
+.reportar__titulo {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 28px;
+}
+
+.reportar__lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nu-esp-10);
+}
+
+.reportar__pie {
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--nu-texto-secundario);
+}
+
+.reportar__mensaje {
+  margin: 0;
+  font-size: 13px;
+  color: var(--nu-texto-secundario);
+}
+
+/* Botón con aspecto de enlace dentro de un aviso (por ejemplo «Reintentar») */
+.enlace-boton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}

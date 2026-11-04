@@ -1,0 +1,13 @@
+.campos-fila {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--nu-esp-12);
+}
+
+/* Etiqueta en una sola línea para que las dos casillas de la fila queden alineadas */
+.campos-fila .campo__cabecera label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

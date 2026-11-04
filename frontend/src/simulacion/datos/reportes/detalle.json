@@ -1,0 +1,19 @@
+{
+  "idReporte": 98,
+  "codigoSeguimiento": "NU-000098",
+  "categoria": "Alumbrado, espacio público, convivencia y seguridad",
+  "descripcion": "Tres luminarias apagadas en el parque, la zona queda muy oscura en la noche.",
+  "estado": "En trámite",
+  "barrio": "Franciscanos",
+  "idComuna": 2,
+  "latitud": 4.0861,
+  "longitud": -76.1972,
+  "fotos": [ "https://res.cloudinary.com/ejemplo/image/upload/notiurba/98-1.jpg" ],
+  "radicadoOficial": null,
+  "creadoEn": "2026-10-24T18:40:00-05:00",
+  "historial": [
+    { "estado": "Recibido", "observacion": null, "cambiadoEn": "2026-10-24T18:40:00-05:00" },
+    { "estado": "Enviado", "observacion": null, "cambiadoEn": "2026-10-24T18:41:00-05:00" },
+    { "estado": "En trámite", "observacion": "La Secretaría de Gobierno programó la revisión para esta semana.", "cambiadoEn": "2026-10-27T10:20:00-05:00" }
+  ]
+}

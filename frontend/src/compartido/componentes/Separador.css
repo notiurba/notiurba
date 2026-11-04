@@ -1,0 +1,14 @@
+.separador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--nu-fuente);
+  font-size: 14px;
+  color: var(--nu-texto-secundario);
+}
+
+.separador span {
+  flex: 1;
+  height: 1px;
+  background: var(--nu-borde-divisor);
+}

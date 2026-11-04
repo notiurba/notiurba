@@ -1,0 +1,69 @@
+import {
+  soloErrores,
+  validarConfirmacion,
+  validarCorreo,
+  validarObligatorio,
+  validarPasswordNueva,
+  validarTelefono,
+} from './campos.js'
+
+// Una sola casilla: declara ser mayor de 18 años y acepta el aviso de privacidad (contrato 3.1).
+export const MENSAJE_ACEPTAR = 'Debe confirmar que es mayor de 18 años y aceptar el tratamiento de sus datos.'
+
+// Campos del paso 1 (datos personales). Sirve para saber a qué paso volver si la API
+// rechaza uno de ellos.
+export const CAMPOS_PASO_DATOS = ['nombres', 'apellidos', 'idTipoDocumento', 'numeroDocumento', 'telefono']
+
+// Paso 1 de 2: datos personales.
+export function validarPasoDatos(d) {
+  return soloErrores({
+    nombres: validarObligatorio(d.nombres, 'Escriba sus nombres'),
+    apellidos: validarObligatorio(d.apellidos, 'Escriba sus apellidos'),
+    idTipoDocumento: validarObligatorio(d.idTipoDocumento, 'Elija el tipo de documento'),
+    numeroDocumento: validarObligatorio(d.numeroDocumento, 'Escriba su número de documento'),
+    telefono: validarTelefono(d.telefono),
+  })
+}
+
+// Dónde vive: barrio y dirección (registro paso 2, «Completa tu perfil» y «Editar mis datos»).
+export function validarResidencia(d) {
+  return soloErrores({
+    idBarrio: validarObligatorio(d.idBarrio, 'Seleccione su barrio'),
+    direccionCorrespondencia: validarObligatorio(d.direccionCorrespondencia, 'Escriba su dirección'),
+  })
+}
+
+// Pantallas de un solo paso con todos los datos personales (sin correo ni contraseña).
+export function validarPerfil(d) {
+  return { ...validarPasoDatos(d), ...validarResidencia(d) }
+}
+
+// Paso 2 de 2: ubicación y acceso.
+export function validarPasoAcceso(d) {
+  return soloErrores({
+    ...validarResidencia(d),
+    correo: validarCorreo(d.correo),
+    password: validarPasswordNueva(d.password),
+    confirmar: validarConfirmacion(d.password, d.confirmar),
+    aceptaPrivacidad: d.aceptaPrivacidad ? '' : MENSAJE_ACEPTAR,
+  })
+}
+
+// Convierte lo que está en el formulario en el cuerpo que espera la API (contrato en docs/contexto/11-contrato-api.md):
+// quita espacios sobrantes, pasa los ids a número, no manda la confirmación y omite el teléfono vacío.
+export function armarSolicitudRegistro(d) {
+  const solicitud = {
+    nombres: d.nombres.trim(),
+    apellidos: d.apellidos.trim(),
+    idTipoDocumento: Number(d.idTipoDocumento),
+    numeroDocumento: d.numeroDocumento.trim(),
+    idBarrio: Number(d.idBarrio),
+    direccionCorrespondencia: d.direccionCorrespondencia.trim(),
+    correo: d.correo.trim(),
+    password: d.password,
+    aceptaPrivacidad: d.aceptaPrivacidad,
+    declaraMayorEdad: d.aceptaPrivacidad, // es la misma casilla
+  }
+  if (d.telefono) solicitud.telefono = d.telefono
+  return solicitud
+}

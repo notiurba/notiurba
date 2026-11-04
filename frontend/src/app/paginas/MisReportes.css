@@ -1,0 +1,26 @@
+.mis-reportes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nu-esp-16);
+  padding: var(--nu-esp-16) 0 var(--nu-esp-24);
+}
+
+.mis-reportes__filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nu-esp-8);
+}
+
+.mis-reportes__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--nu-texto-secundario);
+}
+
+.mis-reportes__lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: var(--nu-esp-12);
+}

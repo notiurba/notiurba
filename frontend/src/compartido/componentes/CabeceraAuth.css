@@ -1,0 +1,63 @@
+/* Formulario de las pantallas de cuenta: columna con la separación del sistema de diseño */
+.formulario-auth {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--nu-esp-16);
+  padding-bottom: 28px;
+}
+
+.cabecera-auth__logo {
+  display: block;
+  height: 104px;
+  margin: 0 auto;
+  object-fit: contain;
+  mix-blend-mode: multiply; /* el fondo claro del PNG se funde con el blanco de la página */
+}
+
+.cabecera-auth__titulo {
+  text-align: center;
+  padding-bottom: var(--nu-esp-4);
+}
+
+.cabecera-auth__titulo h1 {
+  margin: 0;
+  font-family: var(--nu-fuente);
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: 800;
+  color: var(--nu-texto-principal);
+}
+
+.cabecera-auth__titulo p {
+  margin: var(--nu-esp-4) 0 0;
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--nu-texto-secundario);
+}
+
+.pie-auth {
+  margin: var(--nu-esp-4) 0 0;
+  text-align: center;
+  font-size: 15px;
+  color: var(--nu-texto-secundario);
+}
+
+.pie-auth a {
+  font-weight: 700;
+  color: var(--nu-marca-primario);
+  text-decoration: none;
+}
+
+/* Enlace pequeño verde junto a una etiqueta (por ejemplo «¿Olvidó su contraseña?») */
+.enlace-campo {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nu-marca-primario);
+  text-decoration: none;
+}
+
+/* Pegado al borde de abajo de la pantalla (recuperar y nueva contraseña) */
+.pie-auth--anclado {
+  margin-top: auto;
+}

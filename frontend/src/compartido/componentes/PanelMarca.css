@@ -1,0 +1,78 @@
+.panel-marca {
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 56px 64px;
+  color: #fff;
+  background: var(--nu-marca-primario);
+  font-family: var(--nu-fuente);
+}
+
+/* Círculos decorativos de la esquina inferior derecha */
+.panel-marca__circulo {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+.panel-marca__circulo--grande { right: -120px; bottom: -160px; width: 520px; height: 520px; }
+.panel-marca__circulo--mediano { right: -40px; bottom: -80px; width: 340px; height: 340px; }
+
+.panel-marca__logo {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.panel-marca__linea {
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: 600px;
+  height: 1px;
+  margin-right: -40px;
+  background: rgba(255, 255, 255, 0.45);
+}
+.panel-marca__logo img {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  padding: 6px;
+  border-radius: 16px;
+  background: #fff;
+  object-fit: contain;
+}
+
+.panel-marca__texto { position: relative; z-index: 1; max-width: 520px; }
+
+.panel-marca__sobretitulo {
+  margin: 0 0 16px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #dcfce7;
+}
+
+.panel-marca h2 {
+  margin: 0 0 16px;
+  font-family: var(--nu-fuente);
+  font-size: 72px;
+  line-height: 76px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.panel-marca__subtitulo { margin: 0 0 32px; font-size: 22px; line-height: 30px; color: #f0fdf4; }
+
+.panel-marca ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 10px; }
+.panel-marca li {
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 13px;
+  font-weight: 700;
+}

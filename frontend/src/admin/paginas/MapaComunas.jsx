@@ -11,10 +11,7 @@ import {
   useMap,
 } from 'react-leaflet'
 import { comunasTulua, getComunaProperties } from '../../compartido/geo/comunasTulua'
-import {
-  categoriasReporte,
-  estadosReporte,
-} from '../datos/reportesPrueba'
+import { estiloComuna } from '../../compartido/geo/estiloComunas'
 import { identificarComunaPorCoordenadas } from '../../compartido/utils/geoUtils'
 import { CapaDiagnostico, PanelDiagnostico } from '../componentes/DiagnosticoLimites'
 import { diagnosticoLimites } from '../datos/diagnosticoLimites'
@@ -32,19 +29,6 @@ L.Icon.Default.mergeOptions({
 })
 
 const TULUA_CENTER = [4.0847, -76.1954]
-
-const comunaColors = [
-  '#2f80ed',
-  '#27ae60',
-  '#f2994a',
-  '#9b51e0',
-  '#eb5757',
-  '#00a6a6',
-  '#f2c94c',
-  '#6fcf97',
-  '#bb6bd9',
-  '#d35478',
-]
 
 function VistaTulua({ geoJson }) {
   const map = useMap()
@@ -221,6 +205,10 @@ export default function MapaComunas() {
     [reportes],
   )
 
+  // Las opciones de los filtros salen de los reportes cargados (no de una lista fija).
+  const categoriasReporte = useMemo(() => [...new Set(reportes.map((r) => r.categoria))].sort(), [reportes])
+  const estadosReporte = useMemo(() => [...new Set(reportes.map((r) => r.estado))], [reportes])
+
   const reportesFiltrados = useMemo(
     () =>
       reportesConComuna.filter((reporte) => {
@@ -238,18 +226,7 @@ export default function MapaComunas() {
     (reporte) => reporte.resultadoComuna.status === 'pendiente_revision',
   ).length
 
-  const styleComuna = (feature) => {
-    const index = Number(feature.properties.COD_LOC_COM) - 1
-    const color = comunaColors[index % comunaColors.length]
-
-    return {
-      color,
-      fillColor: color,
-      fillOpacity: 0.18,
-      opacity: 0.95,
-      weight: 2,
-    }
-  }
+  const styleComuna = (feature) => estiloComuna(feature)
 
   const onEachComuna = (feature, layer) => {
     const comuna = getComunaProperties(feature)

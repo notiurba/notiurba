@@ -1,0 +1,5 @@
+{
+  "codigo": "DOCUMENTO_YA_REGISTRADO",
+  "mensaje": "Ya existe una cuenta con este documento.",
+  "campo": "numeroDocumento"
+}

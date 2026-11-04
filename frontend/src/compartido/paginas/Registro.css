@@ -1,0 +1,48 @@
+/* La zona de campos crece y la barra de acciones queda pegada abajo, como en el diseño */
+.registro {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.registro__campos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0 24px;
+}
+
+.registro__fila {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* Etiqueta en una sola línea para que las dos casillas de la fila queden alineadas */
+.registro__fila--documento {
+  align-items: start;
+}
+
+.registro__fila .campo__cabecera label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.registro__cargando {
+  margin: 0;
+  text-align: center;
+  color: var(--nu-texto-secundario);
+}
+
+.registro__acciones {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 0 16px;
+  background: var(--nu-superficie-base);
+  border-top: 1px solid var(--nu-borde-divisor);
+}

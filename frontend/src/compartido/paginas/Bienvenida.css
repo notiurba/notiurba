@@ -1,0 +1,178 @@
+.bienvenida {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  max-width: 430px;
+  min-height: 100svh;
+  margin: 0 auto;
+  background: var(--nu-superficie-base);
+  font-family: var(--nu-fuente);
+  color: var(--nu-texto-principal);
+}
+
+/* Parte de arriba: cielo azul con la ciudad dibujada y el logo en una tarjeta blanca */
+.bienvenida__cielo {
+  position: relative;
+  flex: 1;
+  min-height: 360px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #0a3a82 0%, #0b4ea2 60%, #1f6bc0 100%);
+}
+
+/* Las edificaciones se funden con el blanco de abajo */
+.bienvenida__cielo::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 100%);
+}
+
+.bienvenida__ciudad {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bienvenida__lugar {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 8px 18px;
+  border-radius: var(--nu-radio-pildora);
+  background: rgba(255, 255, 255, 0.22);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.bienvenida__tarjeta-logo {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 240px;
+  height: 236px;
+  border-radius: 40px;
+  background: var(--nu-superficie-base);
+  box-shadow: 0 14px 30px rgba(4, 32, 79, 0.28);
+}
+
+.bienvenida__tarjeta-logo img {
+  width: 210px;
+  height: 206px;
+  object-fit: contain;
+}
+
+/* Marcadores que "laten" alrededor del logo */
+.bienvenida__marcador {
+  position: absolute;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  animation: latido 2.6s ease-out infinite;
+}
+
+.bienvenida__marcador--rosa {
+  top: 22%;
+  left: 12%;
+  background: #f472b6;
+}
+
+.bienvenida__marcador--amarillo {
+  top: 38%;
+  right: 12%;
+  background: #facc15;
+  animation-delay: 1s;
+}
+
+@keyframes latido {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 26px rgba(255, 255, 255, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bienvenida__marcador {
+    animation: none;
+  }
+}
+
+/* Parte de abajo: mensaje y acciones */
+.bienvenida__contenido {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 4px 24px 28px;
+  background: var(--nu-superficie-base);
+}
+
+.bienvenida__marca {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nu-marca-primario);
+}
+
+.bienvenida h1 {
+  margin: 0;
+  font-family: var(--nu-fuente);
+  font-size: 32px;
+  line-height: 38px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--nu-texto-principal);
+}
+
+.bienvenida__descripcion {
+  margin: 0;
+  font-size: 17px;
+  line-height: 25px;
+  color: var(--nu-texto-secundario);
+}
+
+.bienvenida__etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 6px;
+  padding: 0;
+  list-style: none;
+}
+
+.bienvenida__etiquetas li {
+  padding: 5px 10px;
+  border: 1px solid var(--nu-exito-borde);
+  border-radius: var(--nu-radio-pildora);
+  background: var(--nu-exito-fondo);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--nu-marca-suave-texto);
+}
+
+.bienvenida__sesion {
+  margin: 0;
+  text-align: center;
+  font-size: 15px;
+  color: var(--nu-texto-secundario);
+}
+
+.bienvenida__sesion a {
+  font-weight: 800;
+  color: var(--nu-marca-primario);
+  text-decoration: none;
+}
+

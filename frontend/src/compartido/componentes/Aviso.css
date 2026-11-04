@@ -1,0 +1,62 @@
+.aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--nu-esp-12);
+  padding: var(--nu-esp-12) var(--nu-esp-14);
+  border: 1.5px solid;
+  border-radius: var(--nu-radio-md);
+  font-family: var(--nu-fuente);
+}
+
+.aviso__icono {
+  display: flex;
+  flex: none;
+  padding-top: 1px;
+}
+
+.aviso__titulo,
+.aviso__texto {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.aviso__titulo {
+  font-weight: 700;
+}
+
+.aviso--error {
+  background: var(--nu-peligro-fondo);
+  border-color: var(--nu-peligro-borde);
+  color: var(--nu-peligro-texto);
+}
+
+.aviso--alerta {
+  background: var(--nu-alerta-fondo);
+  border-color: var(--nu-alerta-borde);
+  color: var(--nu-alerta-texto);
+}
+
+.aviso--info {
+  background: var(--nu-info-fondo);
+  border-color: var(--nu-info-borde);
+  color: var(--nu-info-texto);
+}
+
+.aviso--exito {
+  background: var(--nu-exito-fondo);
+  border-color: var(--nu-exito-borde);
+  color: var(--nu-exito-texto);
+}
+
+/* Nota: escudo gris y texto secundario, sin caja (por ejemplo, la nota de privacidad) */
+.aviso--nota {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--nu-texto-secundario);
+}
+
+.aviso--nota .aviso__texto {
+  font-size: 13px;
+}

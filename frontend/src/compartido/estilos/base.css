@@ -33,23 +33,9 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #aab4c0;
-    --text-h: #f5f7fa;
-    --muted: #8d99a8;
-    --bg: #121817;
-    --panel-bg: #18211f;
-    --input-bg: #101716;
-    --border: #2c3936;
-    --code-bg: #1f2a28;
-    --accent: #5eead4;
-    --accent-bg: rgba(94, 234, 212, 0.12);
-    --accent-border: rgba(94, 234, 212, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.35) 0 18px 30px -18px,
-      rgba(0, 0, 0, 0.3) 0 4px 10px -6px;
-  }
+/* El diseño (Figma) solo existe en tema claro: no se adapta al modo oscuro del sistema. */
+:root {
+  color-scheme: light;
 }
 
 body {
@@ -110,4 +96,66 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+/* Texto «Cargando…» centrado, para las pantallas que esperan datos */
+.cargando-texto {
+  margin: 0;
+  text-align: center;
+  color: var(--nu-texto-secundario);
+}
+
+
+/* La app ciudadana es de celular: en pantallas grandes se ve como una columna blanca sobre fondo gris claro. */
+body:has(.marco-app, .auth--celular, .bienvenida) {
+  background: var(--nu-superficie-atenuada);
+}
+.marco-app,
+.auth--celular,
+.bienvenida {
+  box-shadow: 0 0 0 1px var(--nu-borde-encabezado);
+}
+
+/* ── Celular: un poco más compacto ─────────────────────────────────────────────
+   Baja la altura de botones, campos y tarjetas y las separaciones, sin tocar casi la letra.
+   Va con `body` delante para ganarle a los estilos de cada componente.
+   Para volver al tamaño anterior basta con borrar este bloque. */
+@media (max-width: 480px) {
+  body .boton {
+    height: 46px;
+    font-size: 15px;
+  }
+
+  body .campo__caja:not(.campo__caja--alta),
+  body .campo__caja input,
+  body .campo__caja select {
+    height: 44px;
+  }
+
+  body .campo__caja textarea {
+    min-height: 96px;
+  }
+
+  body .tarjeta-opcion {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  body .reportar__titulo {
+    font-size: 20px;
+    line-height: 26px;
+  }
+
+  body .reportar__lista {
+    gap: 8px;
+  }
+
+  body .formulario-pantalla__campos {
+    gap: 14px;
+    padding: 12px 0 16px;
+  }
+
+  body .formulario-pantalla__acciones .boton {
+    height: 46px;
+  }
 }

@@ -1,0 +1,6 @@
+[
+  { "idEstadoReporte": 1, "nombre": "Recibido", "orden": 1 },
+  { "idEstadoReporte": 2, "nombre": "Enviado", "orden": 2 },
+  { "idEstadoReporte": 3, "nombre": "En trámite", "orden": 3 },
+  { "idEstadoReporte": 4, "nombre": "Resuelto", "orden": 4 }
+]

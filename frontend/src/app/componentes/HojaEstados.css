@@ -1,0 +1,22 @@
+/* Lista de estados: chip a la izquierda y su significado a la derecha */
+.hoja-estados {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nu-esp-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hoja-estados li {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: center;
+  gap: var(--nu-esp-12);
+  font-size: 14px;
+  color: var(--nu-texto-secundario);
+}
+
+.hoja-estados .chip-estado {
+  justify-self: start;
+}

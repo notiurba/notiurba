@@ -1,0 +1,78 @@
+.boton {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nu-esp-10);
+  width: 100%;
+  height: 52px;
+  padding: 0 var(--nu-esp-20);
+  border: 2px solid transparent;
+  border-radius: var(--nu-radio-md);
+  font-family: var(--nu-fuente);
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.boton--primario {
+  background: var(--nu-marca-primario);
+  color: var(--nu-texto-inverso);
+  box-shadow: var(--nu-sombra-boton-primario);
+}
+
+.boton--primario:hover:not(:disabled) {
+  background: var(--nu-marca-primario-hover);
+}
+
+.boton--secundario {
+  background: var(--nu-superficie-base);
+  border-color: var(--nu-borde-boton-secundario);
+  color: var(--nu-texto-principal);
+  font-weight: 600;
+}
+
+.boton--peligro {
+  background: var(--nu-peligro-fondo);
+  border-color: var(--nu-peligro-borde);
+  color: var(--nu-peligro-texto);
+}
+
+/* Enlace: texto verde sin caja (acciones secundarias dentro de una hoja o un aviso) */
+.boton--enlace {
+  height: auto;
+  min-height: 44px;
+  background: transparent;
+  color: var(--nu-marca-primario);
+  font-size: 14px;
+}
+
+.boton--texto {
+  background: transparent;
+  color: var(--nu-texto-secundario);
+}
+
+.boton:focus-visible {
+  outline: 3px solid var(--nu-marca-primario);
+  outline-offset: 2px;
+}
+
+/* Deshabilitado: gris, sin sombra y sin depender solo del color */
+.boton:disabled {
+  background: var(--nu-superficie-atenuada);
+  border-color: var(--nu-borde-divisor);
+  color: var(--nu-texto-tenue);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.boton--enlace:disabled,
+.boton--texto:disabled {
+  background: transparent;
+  border-color: transparent;
+}
+
+.boton[aria-busy='true'] {
+  cursor: progress;
+}

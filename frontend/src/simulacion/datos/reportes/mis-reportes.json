@@ -1,0 +1,5 @@
+[
+  { "idReporte": 123, "codigoSeguimiento": "NU-000123", "categoria": "Vías, huecos y andenes", "estado": "Recibido", "barrio": "San Vicente", "idComuna": 2, "creadoEn": "2026-10-31T09:15:00-05:00" },
+  { "idReporte": 98, "codigoSeguimiento": "NU-000098", "categoria": "Alumbrado, espacio público, convivencia y seguridad", "estado": "En trámite", "barrio": "Franciscanos", "idComuna": 2, "creadoEn": "2026-10-24T18:40:00-05:00" },
+  { "idReporte": 61, "codigoSeguimiento": "NU-000061", "categoria": "Basuras, ambiente, árboles y contaminación", "estado": "Resuelto", "barrio": "Alvernia", "idComuna": 2, "creadoEn": "2026-10-05T07:55:00-05:00" }
+]
