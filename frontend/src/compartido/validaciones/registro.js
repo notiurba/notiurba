@@ -2,6 +2,9 @@ import {
   soloErrores,
   validarConfirmacion,
   validarCorreo,
+  validarDireccion,
+  validarNombre,
+  validarNumeroDocumento,
   validarObligatorio,
   validarPasswordNueva,
   validarTelefono,
@@ -17,10 +20,10 @@ export const CAMPOS_PASO_DATOS = ['nombres', 'apellidos', 'idTipoDocumento', 'nu
 // Paso 1 de 2: datos personales.
 export function validarPasoDatos(d) {
   return soloErrores({
-    nombres: validarObligatorio(d.nombres, 'Escriba sus nombres'),
-    apellidos: validarObligatorio(d.apellidos, 'Escriba sus apellidos'),
+    nombres: validarNombre(d.nombres, 'Escriba sus nombres'),
+    apellidos: validarNombre(d.apellidos, 'Escriba sus apellidos'),
     idTipoDocumento: validarObligatorio(d.idTipoDocumento, 'Elija el tipo de documento'),
-    numeroDocumento: validarObligatorio(d.numeroDocumento, 'Escriba su número de documento'),
+    numeroDocumento: d.idTipoDocumento ? validarNumeroDocumento(d.numeroDocumento, d.idTipoDocumento) : validarObligatorio(d.numeroDocumento, 'Escriba su número de documento'),
     telefono: validarTelefono(d.telefono),
   })
 }
@@ -29,7 +32,7 @@ export function validarPasoDatos(d) {
 export function validarResidencia(d) {
   return soloErrores({
     idBarrio: validarObligatorio(d.idBarrio, 'Seleccione su barrio'),
-    direccionCorrespondencia: validarObligatorio(d.direccionCorrespondencia, 'Escriba su dirección'),
+    direccionCorrespondencia: validarDireccion(d.direccionCorrespondencia),
   })
 }
 

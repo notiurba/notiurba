@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { LIMITES } from '../validaciones/campos'
 import Campo from './Campo'
 import { IconoCandado, IconoOjo } from './Iconos'
 
@@ -8,6 +9,7 @@ export default function CampoPassword(props) {
 
   return (
     <Campo
+      maxLength={LIMITES.password}
       {...props}
       type={visible ? 'text' : 'password'}
       icono={<IconoCandado />}

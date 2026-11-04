@@ -39,11 +39,16 @@ export function restablecerPassword(token, password) {
   })
 }
 
+// POST /api/auth/google: el botón de Google entrega un `credential` (ID token) y la API responde
+// { token, rol } si la cuenta ya existe, o { estado: 'PERFIL_INCOMPLETO', tokenRegistro, correo, nombres, apellidos }.
+export function iniciarSesionConGoogle(credential) {
+  return peticion('/api/auth/google', { method: 'POST', body: JSON.stringify({ credential }), publica: true })
+}
+
 // POST /api/auth/google/completar: completa el perfil de una cuenta creada con Google → { token, rol }.
-// OJO: la API real también pide `tokenRegistro` (lo entrega POST /api/auth/google, que usa el botón real de
-// Google; hoy el botón de la app es una maqueta) y `declaraMayorEdad`.
+// La API real pide `tokenRegistro` (lo entrega POST /api/auth/google; dura 15 min) y `declaraMayorEdad`.
 export function completarPerfilGoogle(datos) {
-  return peticion('/api/auth/google/completar', { method: 'POST', body: JSON.stringify(datos) })
+  return peticion('/api/auth/google/completar', { method: 'POST', body: JSON.stringify(datos), publica: true })
 }
 
 // POST /api/auth/verificar: confirma el correo con el token del enlace y devuelve la sesión → { token, rol }.

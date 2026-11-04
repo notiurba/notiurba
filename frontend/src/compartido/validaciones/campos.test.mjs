@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import {
+  limpiarNumeroDocumento,
   soloErrores,
+  validarDireccion,
+  validarNombre,
+  validarNumeroDocumento,
   validarConfirmacion,
   validarCorreo,
   validarObligatorio,
@@ -49,4 +53,51 @@ test('confirmación: debe coincidir', () => {
 test('soloErrores: descarta los campos sin error', () => {
   assert.deepEqual(soloErrores({ a: '', b: 'Mal', c: '' }), { b: 'Mal' })
   assert.deepEqual(soloErrores({ a: '' }), {})
+})
+
+test('documento CC: solo 6 a 10 dígitos', () => {
+  assert.equal(validarNumeroDocumento('1112345678', 1), '')
+  assert.equal(validarNumeroDocumento('123456', 1), '')
+  assert.notEqual(validarNumeroDocumento('12345', 1), '') // corto
+  assert.notEqual(validarNumeroDocumento('12345678901', 1), '') // 11 dígitos
+  assert.notEqual(validarNumeroDocumento('11123A5678', 1), '') // con letra
+  assert.notEqual(validarNumeroDocumento('', 1), '')
+})
+
+test('documento CE: dígitos de 6 a 10', () => {
+  assert.equal(validarNumeroDocumento('1234567', 2), '')
+  assert.notEqual(validarNumeroDocumento('AB12345', 2), '')
+})
+
+test('documento pasaporte: letras y números de 6 a 15', () => {
+  assert.equal(validarNumeroDocumento('AB1234567', 4), '')
+  assert.notEqual(validarNumeroDocumento('AB-12345', 4), '') // símbolo
+  assert.notEqual(validarNumeroDocumento('AB12', 4), '') // corto
+  assert.notEqual(validarNumeroDocumento('A'.repeat(16), 4), '') // largo
+})
+
+test('limpiar documento mientras se escribe', () => {
+  assert.equal(limpiarNumeroDocumento('1.112-345 abc678', 1), '1112345678')
+  assert.equal(limpiarNumeroDocumento('12345678901234', 2), '1234567890') // máximo 10
+  assert.equal(limpiarNumeroDocumento('ab-12 34', 4), 'AB1234') // pasaporte: mayúsculas, sin símbolos
+})
+
+test('nombre: letras con tildes y ñ; sin números ni exceso de largo', () => {
+  assert.equal(validarNombre('María Camila', 'Falta'), '')
+  assert.equal(validarNombre("D'Angelo-Muñoz", 'Falta'), '')
+  assert.equal(validarNombre('  ', 'Falta'), 'Falta')
+  assert.notEqual(validarNombre('Ana123', 'Falta'), '')
+  assert.notEqual(validarNombre('A'.repeat(61), 'Falta'), '')
+})
+
+test('dirección: de 5 a 150 caracteres', () => {
+  assert.equal(validarDireccion('Cra 26 #28-40'), '')
+  assert.notEqual(validarDireccion(''), '')
+  assert.notEqual(validarDireccion('Cra'), '')
+  assert.notEqual(validarDireccion('x'.repeat(151)), '')
+})
+
+test('correo y contraseña demasiado largos se rechazan', () => {
+  assert.notEqual(validarCorreo(`${'a'.repeat(250)}@correo.com`), '')
+  assert.notEqual(validarPasswordNueva(`Clave1${'x'.repeat(80)}`), '')
 })

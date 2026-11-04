@@ -31,7 +31,11 @@ const INICIAL = {
 export default function CompletarPerfil() {
   const navigate = useNavigate()
   const { state } = useLocation()
-  const { datos, errores, setErrores, cambiar } = useFormulario(INICIAL)
+  const { datos, errores, setErrores, cambiar } = useFormulario({
+    ...INICIAL,
+    nombres: state?.nombres ?? '',
+    apellidos: state?.apellidos ?? '',
+  })
   const tipos = useCargar(obtenerTiposDocumento)
   const barrios = useCargar(obtenerBarrios)
   const [errorGeneral, setErrorGeneral] = useState('')
@@ -50,6 +54,8 @@ export default function CompletarPerfil() {
     setEnviando(true)
     try {
       const { token, rol } = await completarPerfilGoogle({
+        // Lo entrega la API al entrar con Google; con la simulación no existe y no se envía.
+        ...(state?.tokenRegistro ? { tokenRegistro: state.tokenRegistro } : {}),
         nombres: datos.nombres.trim(),
         apellidos: datos.apellidos.trim(),
         idTipoDocumento: Number(datos.idTipoDocumento),

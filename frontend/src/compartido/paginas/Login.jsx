@@ -14,7 +14,7 @@ import LayoutAuth from '../componentes/LayoutAuth'
 import PieAuth from '../componentes/PieAuth'
 import Separador from '../componentes/Separador'
 import '../estilos/marca.css'
-import { soloErrores, validarCorreo, validarObligatorio } from '../validaciones/campos'
+import { LIMITES, soloErrores, validarCorreo, validarObligatorio } from '../validaciones/campos'
 
 // Cuando el servidor dice QUÉ campo falló, el mensaje va bajo esa casilla (decisión del equipo:
 // que el usuario sepa dónde está el error). Si no lo dice, se usa el mensaje general.
@@ -106,6 +106,7 @@ export default function Login() {
           icono={<IconoCorreo />}
           type="email"
           autoComplete="email"
+          maxLength={LIMITES.correo}
           placeholder="nombre@correo.com"
           value={correo}
           onChange={(e) => setCorreo(e.target.value)}

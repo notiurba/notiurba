@@ -9,7 +9,7 @@ import { IconoCorreo } from '../componentes/Iconos'
 import LayoutAuth from '../componentes/LayoutAuth'
 import PieAuth from '../componentes/PieAuth'
 import '../estilos/marca.css'
-import { validarCorreo } from '../validaciones/campos'
+import { LIMITES, validarCorreo } from '../validaciones/campos'
 
 // Pide el correo y la API manda un enlace. La respuesta es la misma exista o no la cuenta
 // (así nadie puede averiguar qué correos están registrados).
@@ -64,6 +64,7 @@ export default function RecuperarContrasena() {
           icono={<IconoCorreo />}
           type="email"
           autoComplete="email"
+          maxLength={LIMITES.correo}
           placeholder="nombre@correo.com"
           ayuda="Use el correo con el que creó su cuenta."
           value={correo}

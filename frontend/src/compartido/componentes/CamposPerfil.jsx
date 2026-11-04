@@ -1,3 +1,4 @@
+import { LIMITES, limpiarNumeroDocumento } from '../validaciones/campos'
 import Campo from './Campo'
 import { IconoCorreo, IconoTelefono } from './Iconos'
 import Selector from './Selector'
@@ -8,6 +9,16 @@ import './CamposPerfil.css'
 // `cambiar(campo)` de la pantalla que los contiene. Si se pasa `correo`, se muestra bloqueado
 // (en «Editar mis datos» el correo no se puede cambiar).
 export function CamposIdentidad({ datos, errores, cambiar, tiposDocumento, correo }) {
+  // El número solo admite lo que su tipo permite (CC y CE: dígitos; pasaporte: letras y números).
+  // Al cambiar el tipo se vuelve a limpiar lo que ya estaba escrito.
+  function escribirDocumento(evento) {
+    cambiar('numeroDocumento')({ target: { value: limpiarNumeroDocumento(evento.target.value, datos.idTipoDocumento) } })
+  }
+  function cambiarTipoDocumento(evento) {
+    cambiar('idTipoDocumento')(evento)
+    cambiar('numeroDocumento')({ target: { value: limpiarNumeroDocumento(datos.numeroDocumento, evento.target.value) } })
+  }
+
   return (
     <>
       <div className="campos-fila">
@@ -16,6 +27,7 @@ export function CamposIdentidad({ datos, errores, cambiar, tiposDocumento, corre
           etiqueta="Nombres"
           placeholder="Ej. María Camila"
           autoComplete="given-name"
+          maxLength={LIMITES.nombre}
           value={datos.nombres}
           onChange={cambiar('nombres')}
           error={errores.nombres}
@@ -25,6 +37,7 @@ export function CamposIdentidad({ datos, errores, cambiar, tiposDocumento, corre
           etiqueta="Apellidos"
           placeholder="Ej. Gómez Rojas"
           autoComplete="family-name"
+          maxLength={LIMITES.nombre}
           value={datos.apellidos}
           onChange={cambiar('apellidos')}
           error={errores.apellidos}
@@ -37,16 +50,18 @@ export function CamposIdentidad({ datos, errores, cambiar, tiposDocumento, corre
           etiqueta="Tipo de documento"
           opciones={tiposDocumento.map((t) => ({ valor: t.idTipoDocumento, texto: t.codigo }))}
           value={datos.idTipoDocumento}
-          onChange={cambiar('idTipoDocumento')}
+          onChange={cambiarTipoDocumento}
           error={errores.idTipoDocumento}
         />
         <Campo
           id="numeroDocumento"
           etiqueta="N.º de documento"
           placeholder="Ej. 1234567890"
-          inputMode="numeric"
+          inputMode={datos.idTipoDocumento === '3' || datos.idTipoDocumento === '4' ? 'text' : 'numeric'}
+          maxLength={LIMITES.documento}
+          autoComplete="off"
           value={datos.numeroDocumento}
-          onChange={cambiar('numeroDocumento')}
+          onChange={escribirDocumento}
           error={errores.numeroDocumento}
         />
       </div>
@@ -71,6 +86,7 @@ export function CamposIdentidad({ datos, errores, cambiar, tiposDocumento, corre
         type="tel"
         inputMode="numeric"
         autoComplete="tel"
+        maxLength={LIMITES.telefono}
         placeholder="Ej. 3001234567"
         value={datos.telefono}
         onChange={cambiar('telefono')}
@@ -98,6 +114,7 @@ export function CamposResidencia({ datos, errores, cambiar, barrios }) {
         etiqueta="Dirección de correspondencia"
         placeholder="Ej. Cra 26 #28-40"
         autoComplete="street-address"
+        maxLength={LIMITES.direccion}
         ayuda="Donde podría llegar correspondencia oficial."
         value={datos.direccionCorrespondencia}
         onChange={cambiar('direccionCorrespondencia')}

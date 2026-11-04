@@ -5,6 +5,7 @@ import CampoPassword from '../../componentes/CampoPassword'
 import Casilla from '../../componentes/Casilla'
 import { IconoCorreo } from '../../componentes/Iconos'
 import { EnlacePrivacidad } from '../../componentes/NotaPrivacidad'
+import { LIMITES } from '../../validaciones/campos'
 
 // Paso 2 de 2: dónde vive y con qué correo y contraseña entra.
 export default function PasoAcceso({ datos, errores, cambiar, barrios }) {
@@ -18,6 +19,7 @@ export default function PasoAcceso({ datos, errores, cambiar, barrios }) {
         icono={<IconoCorreo />}
         type="email"
         autoComplete="email"
+        maxLength={LIMITES.correo}
         placeholder="nombre@correo.com"
         value={datos.correo}
         onChange={cambiar('correo')}
