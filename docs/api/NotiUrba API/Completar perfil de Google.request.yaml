@@ -1,0 +1,22 @@
+$kind: http-request
+description: Público. El tokenRegistro dura 15 min. 200 {token, rol}.
+url: "{{baseUrl}}/api/auth/google/completar"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tokenRegistro": "TOKEN_DE_REGISTRO_DEVUELTO_POR_/api/auth/google",
+      "nombres": "Nombre de ejemplo",
+      "apellidos": "Apellido de ejemplo",
+      "idTipoDocumento": 1,
+      "numeroDocumento": "0000000000",
+      "idBarrio": 1,
+      "direccionCorrespondencia": "Calle 0 # 0-00",
+      "telefono": "3000000000",
+      "aceptaPrivacidad": true,
+      "declaraMayorEdad": true
+    }
+order: 4000

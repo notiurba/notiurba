@@ -17,10 +17,9 @@ Esta lista refleja la pestaña «Pendientes» del Google Doc. Prioridad de arrib
 
 ## Decisiones abiertas
 
-- Mecanismo de envío del correo: cuenta del ciudadano vs Resend (ADR-0002). Fin del
-  Sprint 2 o Sprint 3.
+- ~~Mecanismo de envío del correo~~: decidido el 29/10/2026, Resend (ADR-0002).
 - Categorías 8 y 9: confirmar con la Alcaldía.
-- Dominio para Resend antes del 8 de noviembre (si no, solo modo borrador, RF-13).
+- Dominio para Resend antes del 8 de noviembre (ADR-0007): comprar un `.com` (~US$10–12/año en Cloudflare o Porkbun), enviar desde un subdominio y dejar por escrito quién es el dueño. Sin él Resend no envía a las Secretarías; el borrador ya no es respaldo.
 
 ## Estructura del frontend y auth por rol (25/10/2026)
 
@@ -57,7 +56,7 @@ Queda por hacer:
 Rama `feat/login-google`: migraciones V5 (Google), V6 (nombres/apellidos) y V7 (ajustes v8),
 `POST /api/auth/google`, `/google/completar`, `/recuperar`, `/restablecer` y `GET /api/categorias`.
 
-- **Credenciales OAuth de Google Cloud**: crear el ID de cliente (origen del frontend en Vercel
+- **Credenciales OAuth de Google Cloud**: crear el ID de cliente (origen del frontend en Netlify
   y localhost) y ponerlo en `GOOGLE_CLIENT_ID` (Render y local). Sin él el backend no arranca.
 - **Vinculación automática por correo** (caso 2 de `/api/auth/google`): es una *propuesta*,
   por confirmar con Andrés. Está aislada en `GoogleAuthServicio.vincularPorCorreo`.
@@ -65,14 +64,14 @@ Rama `feat/login-google`: migraciones V5 (Google), V6 (nombres/apellidos) y V7 (
   branch de respaldo en Neon antes de desplegar.
 - **Reportes anónimos y de menores de edad**: fuera del MVP; requieren acuerdo con las
   empresas de servicios públicos y la Alcaldía (Ley 1581 de 2012, art. 7).
-- **Validación jurídica del aviso de privacidad**: el texto de V3 sigue siendo un marcador.
+- **Validación jurídica del aviso de privacidad**: la versión 3 ya es la vigente (V12, 01/11/2026), pero su texto legal sigue sin validar con el docente o un asesor jurídico (puntos en ADR-0008).
 - **Barrios reales y polígonos de comunas (NOT-54)**: sin barrios nadie completa el perfil, y
   sin polígonos un reporte con solo GPS (B3) no deriva comuna ni barrio.
 - **Registro con correo y contraseña**: aún no existe en el backend. Cuando se haga, usa
   `nombres`/`apellidos` y la regla de `auth/ReglaContrasena` (8+ caracteres, letras y números).
 - **Envío real del correo de recuperación**: hoy queda detrás de `EnviadorEnlaceRecuperacion`
   con una implementación que solo escribe en el log (`RECUPERACION_MOSTRAR_ENLACE=true` en
-  desarrollo). Falta la implementación con JavaMailSender + Resend.
+  desarrollo). Falta conectarlo a `EnviadorCorreo` (Resend, ya implementado).
 - **Ruta del frontend «Nueva contraseña»**: el enlace apunta a `RECUPERACION_ENLACE`
   (por defecto `http://localhost:5173/app/nueva-contrasena?token=...`); la página no existe aún.
 - **Categoría 10 y canal SEDAMA (resuelto)**: el commit `741c2b3` los cambiaba editando V3,
@@ -82,11 +81,31 @@ Rama `feat/login-google`: migraciones V5 (Google), V6 (nombres/apellidos) y V7 (
   `datos_ejemplo.sql`). Arreglado en `datos_ejemplo.sql`: conserva el barrio 1 de V4 y corre
   al admin de V4 al id 1000.
 
+## Despliegue en Netlify + Render + Neon (28/10/2026)
+
+Hecho y verificado: ver «Despliegue actual» en `02-stack.md` y ADR-0004. Health, login ADMIN,
+`/api/categorias` (15) y `/api/admin/ping` responden 200 contra Render.
+
+Queda por hacer:
+
+- **Login con Google en producción**: el cliente OAuth está en «Prueba» (3 usuarios de prueba).
+  Para abrirlo a cualquiera hay que completar la página de marca y publicar la app.
+- **Rotar la contraseña de admin** (`ADMIN_DEV_PASSWORD` en Render y el hash en Neon con
+  `UPDATE usuario SET password_hash = crypt('NUEVA', gen_salt('bf')) WHERE correo = 'admin.dev@notiurba.local';`).
+  Quedó expuesta en capturas de pantalla durante las pruebas.
+- **Frontend**: no existen aún las pantallas de registro, login, recuperación, crear reporte ni mapa.
+- **`GET /api/categorias` exige JWT**: decidir si debe ser pública (la pantalla de crear reporte la necesita).
+- **Correo real** (NOT-15, 39, 40) y almacenamiento de fotos (NOT-28): correo (Resend) y fotos (Cloudinary, ADR-0006) integrados detrás de interfaces (`EnviadorCorreo`, `AlmacenFotos`). Fotos: conectadas al endpoint de subida y probadas en Render el 01/11/2026. Correo: conectado al registro (verificación); falta conectarlo a la recuperación de contraseña y al endpoint `enviar`.
+- **Colección Postman** (`docs/api/`): Postman convirtió los `.json` a YAML; revisar que no haya
+  secretos antes de hacer commit de `.postman/`, `postman/` y los YAML.
+- Auto-Deploy de Render está activo: cada commit a la rama enlazada redespliega.
+- El netlify del proyecto está bajo el equipo `cafe-smart`; moverlo si hace falta.
+
 ## Verificaciones técnicas
 
 - Prueba mínima del mapa: OSM + marcadores + GeoJSON de comunas + Leaflet.heat (NOT-9).
-- Envío de Resend por el puerto 2587 (o 2465) desde Render (Render Free bloquea 25/465/587).
-- PostGIS en Neon en el plan Free (`CREATE EXTENSION postgis`).
+- Probar desde Render el envío con la API HTTP de Resend (probado desde local el 01/11/2026; Render Free bloquea SMTP 25/465/587, por eso no se usa).
+- ~~PostGIS en Neon en el plan Free~~: verificado el 28/10/2026 (V1 corrió en Neon).
 
 ## Reglas de negocio por definir
 

@@ -1,0 +1,42 @@
+$kind: http-request
+description: "NOT-75. Público. Crea la cuenta (sin token, el correo se confirma por enlace) y gasta 1 correo de Resend. Cada ejecución usa un correo y un documento nuevos, que guarda en las variables de colección «correoRegistro» y «documentoRegistro» para el caso del correo repetido."
+url: "{{baseUrl}}/api/auth/registro"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "nombres": "Ana",
+      "apellidos": "Prueba",
+      "idTipoDocumento": 1,
+      "numeroDocumento": "{{documentoRegistro}}",
+      "idBarrio": 1,
+      "direccionCorrespondencia": "Calle 0 # 0-00",
+      "correo": "{{correoRegistro}}",
+      "telefono": "3000000000",
+      "password": "Clave1234",
+      "aceptaPrivacidad": true,
+      "declaraMayorEdad": true
+    }
+scripts:
+  - type: beforeRequest
+    code: |-
+      const sufijo = Date.now();
+      pm.collectionVariables.set('correoRegistro', 'delivered+registro' + sufijo + '@resend.dev');
+      pm.collectionVariables.set('documentoRegistro', String(sufijo));
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('Usuario creado (201)', function () {
+          pm.response.to.have.status(201);
+      });
+      pm.test('Devuelve el correo y el mensaje, sin token', function () {
+          const r = pm.response.json();
+          pm.expect(r.correo).to.eql(pm.collectionVariables.get('correoRegistro'));
+          pm.expect(r.mensaje).to.be.a('string').and.not.empty;
+          pm.expect(r).to.not.have.property('token');
+      });
+    language: text/javascript
+order: 1100

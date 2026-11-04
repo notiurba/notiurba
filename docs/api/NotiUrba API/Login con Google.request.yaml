@@ -1,0 +1,13 @@
+$kind: http-request
+description: "Público. 200 {token, rol} si ya hay cuenta, o {estado: PERFIL_INCOMPLETO, tokenRegistro, ...} si falta completar el perfil."
+url: "{{baseUrl}}/api/auth/google"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "credential": "ID_TOKEN_DE_GOOGLE"
+    }
+order: 3000

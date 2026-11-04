@@ -1,0 +1,28 @@
+$kind: http-request
+description: "NOT-79. Sin token responde 401 NO_AUTENTICADO."
+url: "{{baseUrl}}/api/reportes"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "idCategoria": 1,
+      "idBarrio": 1,
+      "descripcion": "Prueba de Postman: hueco grande frente a mi casa",
+      "autorizaEnvio": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('401 sin sesión', function () {
+          pm.response.to.have.status(401);
+      });
+      pm.test('Formato de error del contrato', function () {
+          const r = pm.response.json();
+          pm.expect(r.codigo).to.eql('NO_AUTENTICADO');
+          pm.expect(r.campo).to.eql(null);
+      });
+    language: text/javascript
+order: 9500

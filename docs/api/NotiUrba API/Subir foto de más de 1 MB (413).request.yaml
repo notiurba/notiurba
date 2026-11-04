@@ -1,0 +1,31 @@
+$kind: http-request
+description: "Foto de más de 1 MB elegida por Andrés (Downloads). 413 ARCHIVO_MUY_GRANDE, campo foto."
+url: "{{baseUrl}}/api/reportes/{{codigoReporte}}/fotos"
+method: POST
+body:
+  type: formdata
+  content:
+    - type: file
+      key: foto
+      src:
+        - "/Users/andy/Downloads/NotiUrba_ Encuesta en el parque.png"
+      description: ""
+      disabled: false
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Rechazada (413)', function () {
+          pm.response.to.have.status(413);
+      });
+      pm.test('Formato de error del contrato', function () {
+          const r = pm.response.json();
+          pm.expect(r.codigo).to.eql('ARCHIVO_MUY_GRANDE');
+          pm.expect(r.campo).to.eql('foto');
+          pm.expect(r.mensaje).to.be.a('string').and.not.empty;
+      });
+    language: text/javascript
+order: 11600

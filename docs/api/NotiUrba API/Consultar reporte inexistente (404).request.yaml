@@ -1,0 +1,22 @@
+$kind: http-request
+description: "NOT-89. Un código que no existe responde 404 NO_ENCONTRADO con el formato {codigo, mensaje, campo}."
+url: "{{baseUrl}}/api/reportes/NU-999999"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('404 si no existe', function () {
+          pm.response.to.have.status(404);
+      });
+      pm.test('Formato de error del contrato', function () {
+          const r = pm.response.json();
+          pm.expect(r.codigo).to.eql('NO_ENCONTRADO');
+          pm.expect(r.mensaje).to.be.a('string').and.not.empty;
+          pm.expect(r.campo).to.eql(null);
+      });
+    language: text/javascript
+order: 10100

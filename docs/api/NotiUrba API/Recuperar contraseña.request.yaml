@@ -1,0 +1,13 @@
+$kind: http-request
+description: Público. Siempre 200 con el mismo mensaje, exista o no la cuenta.
+url: "{{baseUrl}}/api/auth/recuperar"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "correo": "ciudadano@example.com"
+    }
+order: 5000

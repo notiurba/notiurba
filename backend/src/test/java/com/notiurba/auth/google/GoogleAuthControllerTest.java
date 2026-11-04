@@ -60,7 +60,7 @@ class GoogleAuthControllerTest {
                         .content("""
                                 {"tokenRegistro":"t","nombres":"   ","apellidos":"Gómez","idTipoDocumento":1,
                                  "numeroDocumento":"123","idBarrio":1,"direccionCorrespondencia":"Cra 1",
-                                 "aceptaPrivacidad":true}"""))
+                                 "aceptaPrivacidad":true,"declaraMayorEdad":true}"""))
                 .andExpect(status().isBadRequest());
         verify(servicio, never()).completar(any());
     }
@@ -71,7 +71,7 @@ class GoogleAuthControllerTest {
                         .content("""
                                 {"tokenRegistro":"t","nombres":"Ana","apellidos":"Gómez","idTipoDocumento":1,
                                  "numeroDocumento":"123","idBarrio":1,"direccionCorrespondencia":"Cra 1",
-                                 "aceptaPrivacidad":false}"""))
+                                 "aceptaPrivacidad":true,"declaraMayorEdad":false}"""))
                 .andExpect(status().isBadRequest());
         verify(servicio, never()).completar(any());
     }

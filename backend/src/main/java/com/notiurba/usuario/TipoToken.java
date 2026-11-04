@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 public class TipoToken {
 
     public static final String RECUPERACION_CONTRASENA = "Recuperación de contraseña";
+    public static final String VERIFICACION_CORREO = "Verificación de correo";
 
     @Id
     @Column(name = "id_tipo_token")

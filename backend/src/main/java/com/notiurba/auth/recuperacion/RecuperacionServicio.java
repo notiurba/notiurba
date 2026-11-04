@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.notiurba.auth.ReglaContrasena;
 import com.notiurba.usuario.TipoToken;
@@ -25,6 +24,8 @@ import com.notiurba.usuario.TokenVerificacion;
 import com.notiurba.usuario.TokenVerificacionRepository;
 import com.notiurba.usuario.Usuario;
 import com.notiurba.usuario.UsuarioRepository;
+import com.notiurba.web.error.ApiException;
+import com.notiurba.web.error.Codigos;
 
 /**
  * «Recuperar contraseña» con token_verificacion (tipo «Recuperación de contraseña»).
@@ -92,11 +93,11 @@ public class RecuperacionServicio {
 
     @Transactional
     public void restablecer(String token, String nuevaContrasena) {
-        ReglaContrasena.validar(nuevaContrasena);
+        ReglaContrasena.validar(nuevaContrasena, "nuevaContrasena");
         OffsetDateTime ahora = OffsetDateTime.now();
         TokenVerificacion encontrado = tokenRepository.findByTokenHashAndTipoToken(hash(token), tipoRecuperacion())
                 .filter(t -> t.estaVigente(ahora))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, ENLACE_INVALIDO));
+                .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, Codigos.ENLACE_INVALIDO, ENLACE_INVALIDO, "token"));
         encontrado.marcarUsado(ahora);
         encontrado.getUsuario().cambiarPasswordHash(passwordEncoder.encode(nuevaContrasena));
     }

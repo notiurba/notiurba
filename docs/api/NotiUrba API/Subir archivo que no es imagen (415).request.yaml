@@ -1,0 +1,31 @@
+$kind: http-request
+description: "Un archivo cuyo contenido no es imagen (extensión .jpg) se rechaza con 415. Repetir con documento.pdf."
+url: "{{baseUrl}}/api/reportes/{{codigoReporte}}/fotos"
+method: POST
+body:
+  type: formdata
+  content:
+    - type: file
+      key: foto
+      src:
+        - /Users/andy/Desktop/universidad/gestion-proyectos/notiurba/docs/api/archivos-de-prueba/no-es-imagen.jpg
+      description: ""
+      disabled: false
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Rechazada (415)', function () {
+          pm.response.to.have.status(415);
+      });
+      pm.test('Formato de error del contrato', function () {
+          const r = pm.response.json();
+          pm.expect(r.codigo).to.eql('FORMATO_NO_SOPORTADO');
+          pm.expect(r.campo).to.eql('foto');
+          pm.expect(r.mensaje).to.be.a('string').and.not.empty;
+      });
+    language: text/javascript
+order: 11500

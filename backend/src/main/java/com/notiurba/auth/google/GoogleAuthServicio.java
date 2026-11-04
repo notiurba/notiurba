@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.notiurba.seguridad.JwtProveedor;
 import com.notiurba.usuario.CatalogosRegistro;
@@ -15,10 +14,14 @@ import com.notiurba.usuario.IdentidadExterna;
 import com.notiurba.usuario.IdentidadExternaRepository;
 import com.notiurba.usuario.ProveedorIdentidad;
 import com.notiurba.usuario.ProveedorIdentidadRepository;
+import com.notiurba.usuario.ReglasPerfil;
 import com.notiurba.usuario.Rol;
 import com.notiurba.usuario.RolRepository;
 import com.notiurba.usuario.Usuario;
 import com.notiurba.usuario.UsuarioRepository;
+
+import com.notiurba.web.error.ApiException;
+import com.notiurba.web.error.Codigos;
 
 import io.jsonwebtoken.Claims;
 
@@ -28,8 +31,6 @@ import io.jsonwebtoken.Claims;
  */
 @Service
 public class GoogleAuthServicio {
-
-    static final int MAX_LONGITUD_NOMBRE = 255;
 
     private final GoogleTokenVerificador verificador;
     private final JwtProveedor jwtProveedor;
@@ -85,7 +86,7 @@ public class GoogleAuthServicio {
      */
     private Usuario vincularPorCorreo(Usuario usuario, ProveedorIdentidad google, PerfilGoogle perfil) {
         if (identidadRepository.existsByUsuarioAndProveedor(usuario, google)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
+            throw new ApiException(HttpStatus.CONFLICT, Codigos.CONFLICTO,
                     "Esta cuenta ya está vinculada a otra cuenta de Google");
         }
         OffsetDateTime ahora = OffsetDateTime.now();
@@ -117,28 +118,32 @@ public class GoogleAuthServicio {
         String correo = registro.get("correo", String.class);
 
         if (!Boolean.TRUE.equals(peticion.aceptaPrivacidad())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debes aceptar el aviso de privacidad");
+            throw new ApiException(HttpStatus.BAD_REQUEST, Codigos.VALIDACION,
+                    "Debes aceptar el aviso de privacidad", "aceptaPrivacidad");
         }
-        String nombres = limpiarNombre(peticion.nombres(), "Los nombres");
-        String apellidos = limpiarNombre(peticion.apellidos(), "Los apellidos");
+        String nombres = ReglasPerfil.limpiarNombre(peticion.nombres(), "Los nombres", "nombres");
+        String apellidos = ReglasPerfil.limpiarNombre(peticion.apellidos(), "Los apellidos", "apellidos");
         if (!catalogos.existeTipoDocumento(peticion.idTipoDocumento())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El tipo de documento no existe");
+            throw new ApiException(HttpStatus.BAD_REQUEST, Codigos.VALIDACION,
+                    "El tipo de documento no existe", "idTipoDocumento");
         }
         if (!catalogos.existeBarrio(peticion.idBarrio())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El barrio no existe");
+            throw new ApiException(HttpStatus.BAD_REQUEST, Codigos.VALIDACION, "El barrio no existe", "idBarrio");
         }
 
         ProveedorIdentidad google = proveedorGoogle();
         String numeroDocumento = peticion.numeroDocumento().trim();
         if (identidadRepository.findByProveedorAndIdentificadorExterno(google, sub).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
+            throw new ApiException(HttpStatus.CONFLICT, Codigos.CUENTA_GOOGLE_YA_REGISTRADA,
                     "Esta cuenta de Google ya está registrada: inicia sesión con Google");
         }
         if (usuarioRepository.existsByCorreoIgnoreCase(correo)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una cuenta con este correo");
+            throw new ApiException(HttpStatus.CONFLICT, Codigos.CORREO_YA_REGISTRADO,
+                    "Ya existe una cuenta con este correo", "correo");
         }
         if (usuarioRepository.existsByIdTipoDocumentoAndNumeroDocumento(peticion.idTipoDocumento(), numeroDocumento)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una cuenta con este documento");
+            throw new ApiException(HttpStatus.CONFLICT, Codigos.DOCUMENTO_YA_REGISTRADO,
+                    "Ya existe una cuenta con este documento", "numeroDocumento");
         }
 
         Rol ciudadano = rolRepository.findByNombre(Rol.CIUDADANO)
@@ -155,7 +160,7 @@ public class GoogleAuthServicio {
             identidadRepository.saveAndFlush(new IdentidadExterna(usuario, google, sub, ahora));
         } catch (DataIntegrityViolationException carrera) {
             // Otra petición registró el mismo documento, correo o cuenta de Google entre la revisión y el INSERT
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
+            throw new ApiException(HttpStatus.CONFLICT, Codigos.CONFLICTO,
                     "No se pudo crear la cuenta: el documento, el correo o la cuenta de Google ya están registrados");
         }
         return sesion(usuario);
@@ -165,7 +170,8 @@ public class GoogleAuthServicio {
         try {
             return verificador.verificar(credential);
         } catch (JwtException invalido) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No se pudo verificar la cuenta de Google");
+            throw new ApiException(HttpStatus.UNAUTHORIZED, Codigos.NO_AUTENTICADO,
+                    "No se pudo verificar la cuenta de Google");
         }
     }
 
@@ -173,7 +179,7 @@ public class GoogleAuthServicio {
         try {
             return jwtProveedor.validarRegistroGoogle(tokenRegistro);
         } catch (io.jsonwebtoken.JwtException | IllegalArgumentException invalido) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+            throw new ApiException(HttpStatus.UNAUTHORIZED, Codigos.NO_AUTENTICADO,
                     "El registro con Google no es válido o venció: vuelve a intentarlo");
         }
     }
@@ -186,18 +192,6 @@ public class GoogleAuthServicio {
     private ResultadoGoogle.Sesion sesion(Usuario usuario) {
         String rol = usuario.getRol().getNombre();
         return new ResultadoGoogle.Sesion(jwtProveedor.generar(usuario.getCorreo(), rol), rol);
-    }
-
-    private static String limpiarNombre(String valor, String campo) {
-        String limpio = valor == null ? "" : valor.trim();
-        if (limpio.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, campo + " son obligatorios");
-        }
-        if (limpio.length() > MAX_LONGITUD_NOMBRE) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    campo + " no pueden pasar de " + MAX_LONGITUD_NOMBRE + " caracteres");
-        }
-        return limpio;
     }
 
     private static boolean tieneTexto(String valor) {

@@ -4,7 +4,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+
+import com.notiurba.web.error.ApiException;
+import com.notiurba.web.error.Codigos;
 
 /**
  * Regla de contraseña de NotiUrba: mínimo 8 caracteres, con letras y números.
@@ -31,10 +33,10 @@ public final class ReglaContrasena {
                 && NUMERO.matcher(contrasena).find();
     }
 
-    /** @throws ResponseStatusException 400 si no cumple */
-    public static void validar(String contrasena) {
+    /** @throws ApiException 400 VALIDACION (campo = {@code campo}) si no cumple */
+    public static void validar(String contrasena, String campo) {
         if (!cumple(contrasena)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MENSAJE);
+            throw new ApiException(HttpStatus.BAD_REQUEST, Codigos.VALIDACION, MENSAJE, campo);
         }
     }
 }

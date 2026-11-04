@@ -1,0 +1,16 @@
+# Use this workspace to collaborate
+workspace:
+  id: ad001719-0f56-4db4-8782-f75884e7fb6f
+
+localResources:
+  collections:
+    - ../docs/api/NotiUrba API
+  environments:
+    - ../docs/api/NotiUrba - local.environment.yaml
+    - ../docs/api/NotiUrba - Render.environment.yaml
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
+cloudResources:
+  collections:
+    ../docs/api/NotiUrba API: 63bc1128-12ec-4afb-9837-e1fad1593e23

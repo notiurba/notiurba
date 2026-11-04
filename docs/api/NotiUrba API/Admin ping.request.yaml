@@ -1,0 +1,16 @@
+$kind: http-request
+description: "Exige rol ADMIN: 401 sin token, 403 con rol ciudadano."
+url: "{{baseUrl}}/api/admin/ping"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('200 OK con rol ADMIN', function () {
+          pm.response.to.have.status(200);
+      });
+    language: text/javascript
+order: 8000

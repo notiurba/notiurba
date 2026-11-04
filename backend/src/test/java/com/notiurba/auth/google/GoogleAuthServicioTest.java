@@ -157,7 +157,7 @@ class GoogleAuthServicioTest {
 
     private CompletarPerfilRequest peticion(String tokenRegistro, String nombres, String apellidos) {
         return new CompletarPerfilRequest(tokenRegistro, nombres, apellidos, (short) 1, " 1118456789 ", 1,
-                " Cra 25 # 20-15 ", "  ", true);
+                " Cra 25 # 20-15 ", "  ", true, true);
     }
 
     private void catalogosValidos() {
