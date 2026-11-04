@@ -18,8 +18,8 @@ regla cambia, se actualiza aquí y en su pestaña de origen.
 
 - **RN-05**: solo un ciudadano con cuenta y sesión activa crea reportes; no hay
   reportes anónimos. Quien no quiera identificarse usa el PQRSDF anónimo de la Alcaldía.
-- **RN-06**: el registro exige aceptar el aviso de privacidad y guarda fecha y hora de
-  la aceptación.
+- **RN-06**: el registro exige aceptar el aviso de privacidad y declarar ser mayor de 18
+  años (una sola casilla), y guarda fecha y hora de la aceptación.
 - **RN-07**: cada correo identifica al ciudadano con los datos del artículo 16 de la
   Ley 1755 de 2015 y deja constancia de que autorizó el envío a su nombre.
 
@@ -49,9 +49,9 @@ regla cambia, se actualiza aquí y en su pestaña de origen.
   la línea 164.
 - **RN-17**: el asunto sigue el formato «Reporte ciudadano – [categoría] – [barrio y
   comuna] – NotiUrba #[ID]» (*formato propuesto*).
-- **RN-18**: NotiUrba no envía correos sin intervención del ciudadano. El mecanismo de
-  envío (cuenta del ciudadano o Resend) está **pendiente** y se decide entre el final
-  del Sprint 2 y el Sprint 3. Ver ADR-0002.
+- **RN-18**: NotiUrba envía el correo con Resend cuando el ciudadano confirma el reporte;
+  su correo va en Reply-To y en el cuerpo, y no se le envía copia. Ya no se prellena un borrador para que él lo envíe
+  (decidido el 29/10/2026, ADR-0002). Límite gratuito: 100 correos al día.
 
 ## Estados y vigencia
 

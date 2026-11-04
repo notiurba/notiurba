@@ -13,7 +13,7 @@ Los correos de dependencia son **de referencia**; el envío siempre es al CAIC.
 | --- | --- | --- | --- | --- |
 | 1 | Vías, huecos, andenes, infraestructura | Hábitat e Infraestructura | infraestructura@tulua.gov.co | Confirmado |
 | 2 | Alumbrado, espacio público, convivencia y seguridad | Gobierno, Convivencia y Seguridad | gobierno@tulua.gov.co | Confirmado |
-| 3 | Basuras, ambiente, árboles, contaminación | SEDAMA | sedama@tulua.gov.co | Confirmado por el equipo |
+| 3 | Basuras, ambiente, árboles, contaminación | SEDAMA | sedama@tulua.gov.co | Confirmado |
 | 4 | Señalización, semáforos, tránsito, movilidad | Movilidad y Seguridad Vial | movilidad@tulua.gov.co | Confirmado |
 | 5 | Riesgo sanitario o salud pública | Salud | salud@tulua.gov.co | Confirmado |
 | 6 | Uso del suelo, planeación, licencias urbanas | Planeación Municipal | planeacion@tulua.gov.co | Confirmado |
@@ -42,7 +42,7 @@ Asunto `Reporte ciudadano – [categoría] – [barrio y comuna] – NotiUrba #[
 (*propuesto*); entidad de destino; ciudadano (nombres, documento, dirección, correo,
 teléfono); descripción y razones; ubicación (dirección/barrio, comuna, coordenadas,
 enlace al mapa); fecha, hora e ID; evidencia (foto como enlace seguro); constancia de
-que el ciudadano autorizó el envío (su correo en copia o Reply-To).
+que el ciudadano autorizó el envío (su correo va en Reply-To y en el cuerpo; no se le envía copia).
 
 ## Pendientes
 

@@ -18,8 +18,8 @@ confirmarse con el equipo.
   contraseña; impedir crear reportes sin sesión. Con credenciales inválidas, niega el
   acceso sin decir cuál dato falló.
 - **RF-03** (Esencial, Puede cambiar — texto legal, Ley 1581 | EDT 6.1): exigir la
-  aceptación del aviso de privacidad antes de completar el registro y guardar fecha y
-  hora de la aceptación.
+  aceptación del aviso de privacidad y la declaración de ser mayor de 18 años (una sola
+  casilla) antes de completar el registro, y guardar fecha y hora de la aceptación.
 - **RF-04** (Esencial, Estable | EDT 6.1, 7.6): incluir en cada correo a la entidad el
   nombre, documento y dirección del ciudadano que reporta.
 
@@ -45,12 +45,11 @@ confirmarse con el equipo.
 
 - **RF-11** (Esencial, Puede cambiar — respuestas de empresas | EDT 7.6, 7.3): mantener
   una tabla categoría → correo de destino y usarla para dirigir cada reporte.
-- **RF-12** (Esencial, Puede cambiar — depende del dominio | EDT 7.6): con dominio
-  verificado, enviar con Resend (nombre del ciudadano en el remitente, su correo en
-  Reply-To y copia). Si Resend rechaza, registra el fallo (RF-15).
-- **RF-13** (Esencial, Puede cambiar — desaparece si se verifica el dominio | EDT 7.6):
-  sin dominio verificado, abrir en el correo del ciudadano un borrador con
-  destinatario, asunto y cuerpo completos.
+- **RF-12** (Esencial, Puede cambiar — depende del dominio | EDT 7.6): enviar con Resend
+  desde un dominio verificado (nombre del ciudadano en el remitente, su correo en
+  Reply-To; no se le envía copia). Decidido el 29/10/2026 (ADR-0002). Si Resend rechaza, registra el fallo (RF-15).
+- **RF-13** (**Descartado el 29/10/2026**, ADR-0002): el borrador que el ciudadano enviaba
+  desde su correo se reemplaza por el envío con Resend (RF-12).
 - **RF-14** (Esencial, Estable | EDT 7.6): el correo incluye comuna, categoría,
   descripción, coordenadas, enlace al mapa, enlace a la foto y código de seguimiento.
 - **RF-15** (Esencial, Estable | EDT 7.6, 7.2): enviar en segundo plano y registrar de
@@ -105,8 +104,9 @@ para rebotes (R.05).
 - **Categorías**: el Doc de Alcance trae 3, la planificación 4, y «Asignación de
   correos» 10 de la Alcaldía + 4 de empresas. Propuesta MVP: categorías 1–7 y 10 de la
   Alcaldía y las 4 de empresas. Las **categorías 8 y 9 siguen por validar**.
-- **Dominio**: sin dominio verificado, Resend solo envía al dueño de la cuenta; RF-12
-  no es posible y el MVP opera solo con el modo borrador (RF-13). Decisión antes del 8 de noviembre.
+- **Dominio**: sin dominio verificado, Resend solo envía al dueño de la cuenta, así que
+  RF-12 no es posible. El borrador ya no es respaldo (ADR-0002): conseguir el dominio es
+  requisito. Decisión antes del 8 de noviembre.
 - **Mapa público**: propuesta de no incluirlo en el MVP (expondría datos, Ley 1581).
 - **Verificación del correo**: decidir entre confirmar por enlace (gasta cuota) o
   aceptar el riesgo en el MVP.

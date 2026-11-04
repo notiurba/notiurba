@@ -1,5 +1,14 @@
 const CLAVE_TOKEN = 'notiurba.token'
 
+/** Pantalla de ingreso (correo y contraseña). RutaProtegida y el cliente de la API llevan aquí. */
+export const RUTA_LOGIN = '/app/ingresar'
+
+/** Página de inicio de cada rol después de ingresar. */
+export const RUTA_POR_ROL = {
+  CIUDADANO: '/app',
+  ADMIN: '/admin',
+}
+
 export function guardarToken(token) {
   localStorage.setItem(CLAVE_TOKEN, token)
 }

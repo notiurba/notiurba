@@ -1,0 +1,33 @@
+$kind: http-request
+description: "NOT-79. Descripción de 9 caracteres: 400 VALIDACION, campo descripcion."
+url: "{{baseUrl}}/api/reportes"
+method: POST
+headers:
+  Content-Type: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+body:
+  type: json
+  content: |-
+    {
+      "idCategoria": 1,
+      "idBarrio": 1,
+      "descripcion": "123456789",
+      "autorizaEnvio": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('400 de validación', function () {
+          pm.response.to.have.status(400);
+      });
+      pm.test('Formato de error del contrato', function () {
+          const r = pm.response.json();
+          pm.expect(r.codigo).to.eql('VALIDACION');
+          pm.expect(r.campo).to.eql('descripcion');
+          pm.expect(r.mensaje).to.be.a('string').and.not.empty;
+      });
+    language: text/javascript
+order: 9300

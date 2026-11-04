@@ -1,0 +1,14 @@
+$kind: http-request
+description: Público. 204 sin cuerpo si el token es válido.
+url: "{{baseUrl}}/api/auth/restablecer"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "token": "TOKEN_DEL_ENLACE_DE_RECUPERACION",
+      "nuevaContrasena": "NUEVA_CONTRASENA"
+    }
+order: 6000

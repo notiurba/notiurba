@@ -33,7 +33,8 @@ public class JwtFiltro extends OncePerRequestFilter {
         if (encabezado != null && encabezado.startsWith("Bearer ")) {
             String token = encabezado.substring("Bearer ".length());
             try {
-                var claims = jwtProveedor.validarYObtenerClaims(token);
+                // Solo tokens de acceso: un token de registro con Google no autentica peticiones
+                var claims = jwtProveedor.validarAcceso(token);
                 String correo = claims.getSubject();
                 String rol = claims.get("rol", String.class);
 

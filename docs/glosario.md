@@ -17,7 +17,7 @@
 - **GeoJSON**: formato de los polígonos de las comunas (un polígono por comuna, EPSG:4326).
 - **Punto-en-polígono**: operación que decide en qué comuna cae una coordenada.
 - **PostGIS**: extensión geoespacial de PostgreSQL; fuente de verdad de la geo en el backend.
-- **Resend**: servicio de envío de correo considerado para el envío automático.
+- **Resend**: servicio de envío de correo elegido (29/10/2026) para el envío automático; el ciudadano queda en Reply-To y no recibe copia.
 - **POT / EOT 2015**: instrumento de ordenamiento territorial de Tuluá; fuente de la capa
   provisional de comunas.
 - **Oficio S-43215 / S-44194**: comunicaciones de la Alcaldía (directorio de correos y

@@ -2,9 +2,13 @@ spring:
   application:
     name: notiurba-backend
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/notiurba}
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/notiurba}
     username: ${DB_USER:notiurba}
     password: ${DB_PASSWORD}          # obligatoria: variable de entorno (ver .env.example)
+  servlet:
+    multipart:                        # fotos: 1 MB por archivo (ya era el valor por defecto; se deja explícito)
+      max-file-size: 1MB
+      max-request-size: 2MB
   jpa:
     open-in-view: false
     hibernate:
@@ -16,11 +20,33 @@ spring:
       adminPassword: ${ADMIN_DEV_PASSWORD}   # obligatoria: nunca en el repo (ver V4__usuario_admin_semilla.sql)
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 notiurba:
+  correo:
+    resend:
+      url: https://api.resend.com
+      api-key: ${RESEND_API_KEY:}      # secreta: solo variable de entorno (Render y .env local)
+      remitente: ${RESEND_REMITENTE:}  # solo la dirección, del dominio verificado (reportes.notiurba.com)
+  fotos:
+    cloudinary:
+      url: https://api.cloudinary.com
+      cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+      api-key: ${CLOUDINARY_API_KEY:}
+      api-secret: ${CLOUDINARY_API_SECRET:}   # secreta: solo variable de entorno (Render y .env local)
+      carpeta: notiurba/reportes
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
   jwt:
     secreto: ${JWT_SECRET}          # obligatoria: nunca en el repo
     expiracion-minutos: 60
+  google:
+    client-id: ${GOOGLE_CLIENT_ID}  # obligatoria: ID de cliente OAuth de Google Cloud (aud del ID token)
+  verificacion:
+    # Página del frontend «Confirmar correo»; el backend agrega ?token=...
+    enlace: ${VERIFICACION_ENLACE:http://localhost:5173/app/verificar-correo}
+  recuperacion:
+    # Página del frontend «Nueva contraseña»; el backend agrega ?token=...
+    enlace: ${RECUPERACION_ENLACE:http://localhost:5173/app/nueva-contrasena}
+    # Solo desarrollo: escribe el enlace en el log mientras no haya envío de correo real
+    mostrar-enlace-en-log: ${RECUPERACION_MOSTRAR_ENLACE:false}

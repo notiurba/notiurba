@@ -19,6 +19,8 @@ esta carpeta la resume y la aterriza para el código.
 | [contexto/07-asignacion-de-correos.md](contexto/07-asignacion-de-correos.md) | Categorías, entidades de destino y enrutamiento. |
 | [contexto/08-pendientes.md](contexto/08-pendientes.md) | Lo abierto, por prioridad. |
 | [contexto/09-equipo-y-proceso.md](contexto/09-equipo-y-proceso.md) | Roles, sprints, gestión en Linear y control de cambios. |
+| [contexto/10-modelo-de-datos.md](contexto/10-modelo-de-datos.md) | Modelo de datos: tablas, reglas de la base y mapa de formularios. |
+| [contexto/11-contrato-api.md](contexto/11-contrato-api.md) | Contrato de la API REST: formato de error, los 6 endpoints del MVP y los reservados (NOT-43). |
 | [glosario.md](glosario.md) | Términos del proyecto. |
 
 ## Decisiones (ADR)
@@ -27,10 +29,13 @@ Registro de decisiones de arquitectura. Cada una explica el contexto, la decisi�
 sus consecuencias. Ver [decisiones/README.md](decisiones/README.md).
 
 - [ADR-0001](decisiones/0001-comunas-no-cuadrantes.md) — Comunas, no cuadrantes.
-- [ADR-0002](decisiones/0002-mecanismo-de-correo.md) — Mecanismo de envío de correo (abierta).
+- [ADR-0002](decisiones/0002-mecanismo-de-correo.md) — Mecanismo de envío de correo: Resend (aceptada).
 - [ADR-0003](decisiones/0003-fuente-cartografica-comunas.md) — Fuente cartográfica de las comunas.
 - [ADR-0004](decisiones/0004-hosting-gratuito.md) — Hosting en capas gratuitas.
 - [ADR-0005](decisiones/0005-estructura-frontend-app-admin.md) — Estructura del frontend `app/` / `admin/` / `compartido/`.
+- [ADR-0006](decisiones/0006-almacenamiento-de-fotos-cloudinary.md) — Almacenamiento de fotos: Cloudinary.
+- [ADR-0007](decisiones/0007-dominio-para-el-correo.md) — Dominio `notiurba.com` para el correo de Resend (aceptada).
+- [ADR-0008](decisiones/0008-privacidad-autorizacion-unica-y-verificacion-de-correo.md) — Privacidad: aviso v3, autorización única, mayores de 18 y verificación de correo.
 
 ## Convenciones
 

@@ -1,0 +1,30 @@
+$kind: http-request
+description: "Sin la clave foto responde 400 VALIDACION, campo foto."
+url: "{{baseUrl}}/api/reportes/{{codigoReporte}}/fotos"
+method: POST
+body:
+  type: formdata
+  content:
+    - type: text
+      key: otra
+      value: sin-archivo
+      description: ""
+      disabled: false
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Rechazada (400)', function () {
+          pm.response.to.have.status(400);
+      });
+      pm.test('Formato de error del contrato', function () {
+          const r = pm.response.json();
+          pm.expect(r.codigo).to.eql('VALIDACION');
+          pm.expect(r.campo).to.eql('foto');
+          pm.expect(r.mensaje).to.be.a('string').and.not.empty;
+      });
+    language: text/javascript
+order: 11700

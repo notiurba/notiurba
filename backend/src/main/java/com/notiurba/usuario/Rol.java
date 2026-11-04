@@ -8,6 +8,8 @@ import jakarta.persistence.Table;
 @Table(name = "rol")
 public class Rol {
 
+    public static final String CIUDADANO = "CIUDADANO";
+
     @Id
     private Short idRol;
 
