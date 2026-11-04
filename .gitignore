@@ -8,3 +8,11 @@
 
 # Notas de trabajo de sesiones de Claude (no son parte del proyecto)
 Claude outputs/
+
+# Artefactos locales de EDT 5.1 (no secretos en Git)
+maven-cache/
+verification-classes/
+baseline-maven.log
+edt51-latency.json
+external-results/
+!**/.env.validation.example
