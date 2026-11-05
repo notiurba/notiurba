@@ -1,0 +1,29 @@
+{
+  "estado": "CARGA_REAL_OK",
+  "uso": "EXPERIMENTAL_ACADEMICO_NO_OFICIAL",
+  "geojson_sha256": "36f037dcc945184c1e918166d7f9ee06095d592e20537ccdf68c350e2e7489da",
+  "pruebas_fallidas": 0,
+  "dos_cargas": true,
+  "persistencia_confirmada": true,
+  "otras_tablas_sin_cambios": true,
+  "ejecuciones": [
+    {
+      "numero": 1,
+      "comunas": 10,
+      "validas": 10,
+      "huecos": 0,
+      "solapamientos": 0,
+      "puntos_correctos": 74,
+      "puntos_totales": 74
+    },
+    {
+      "numero": 2,
+      "comunas": 10,
+      "validas": 10,
+      "huecos": 0,
+      "solapamientos": 0,
+      "puntos_correctos": 74,
+      "puntos_totales": 74
+    }
+  ]
+}

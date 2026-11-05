@@ -1,0 +1,75 @@
+﻿id,tipo,latitud,longitud,resultado_esperado,comunas_covers,comunas_borde_1e_10_grados,origen,justificacion
+P001,interior,4.0725468993547125,-76.1883620903414,01,01,,punto_prueba_geometrico,Interior exclusivo calculado con representative_point; sin verificacion de campo
+P002,interior,4.087103454039726,-76.18310661852672,02,02,,punto_prueba_geometrico,Interior exclusivo calculado con representative_point; sin verificacion de campo
+P003,interior,4.09433846913491,-76.17977506145986,03,03,,punto_prueba_geometrico,Interior exclusivo calculado con representative_point; sin verificacion de campo
+P004,interior,4.086947036670706,-76.19832931626084,04,04,,punto_prueba_geometrico,Interior exclusivo calculado con representative_point; sin verificacion de campo
+P005,interior,4.070831579999258,-76.20140160026219,05,05,,punto_prueba_geometrico,Interior exclusivo calculado con representative_point; sin verificacion de campo
+P006,interior,4.079682068628073,-76.20808938935758,06,06,,punto_prueba_geometrico,Interior exclusivo calculado con representative_point; sin verificacion de campo
+P007,interior,4.094062082877395,-76.2142389394119,07,07,,punto_prueba_geometrico,Interior exclusivo calculado con representative_point; sin verificacion de campo
+P008,interior,4.100523222496509,-76.20657838539428,08,08,,punto_prueba_geometrico,Interior exclusivo calculado con representative_point; sin verificacion de campo
+P009,interior,4.1010056564985655,-76.20000920940825,09,09,,punto_prueba_geometrico,Interior exclusivo calculado con representative_point; sin verificacion de campo
+P010,interior,4.109735156955706,-76.19580270777875,10,10,,punto_prueba_geometrico,Interior exclusivo calculado con representative_point; sin verificacion de campo
+P011,limite_compartido,4.0839653236222135,-76.18570249012893,PENDIENTE_REVISION,01,01|02,punto_prueba_geometrico,"Frontera compartida 01|02; evaluar distancia a borde <=1e-10 grados por precision numerica, sin elegir comuna"
+P012,limite_compartido,4.064486203885131,-76.19290923327651,PENDIENTE_REVISION,05,01|05,punto_prueba_geometrico,"Frontera compartida 01|05; evaluar distancia a borde <=1e-10 grados por precision numerica, sin elegir comuna"
+P013,limite_compartido,4.091350769746711,-76.1821956722951,PENDIENTE_REVISION,03,02|03,punto_prueba_geometrico,"Frontera compartida 02|03; evaluar distancia a borde <=1e-10 grados por precision numerica, sin elegir comuna"
+P014,limite_compartido,4.100255995603487,-76.1937398354935,PENDIENTE_REVISION,03,03|10,punto_prueba_geometrico,"Frontera compartida 03|10; evaluar distancia a borde <=1e-10 grados por precision numerica, sin elegir comuna"
+P015,limite_compartido,4.088545955485447,-76.20119201695545,PENDIENTE_REVISION,04|07,04|07,punto_prueba_geometrico,"Frontera compartida 04|07; evaluar distancia a borde <=1e-10 grados por precision numerica, sin elegir comuna"
+P016,limite_compartido,4.0753059233604425,-76.2046333792713,PENDIENTE_REVISION,05,05|06,punto_prueba_geometrico,"Frontera compartida 05|06; evaluar distancia a borde <=1e-10 grados por precision numerica, sin elegir comuna"
+P017,limite_compartido,4.093233199362497,-76.2116403333573,PENDIENTE_REVISION,06,06|07,punto_prueba_geometrico,"Frontera compartida 06|07; evaluar distancia a borde <=1e-10 grados por precision numerica, sin elegir comuna"
+P018,limite_compartido,4.095278081064146,-76.20699233375956,PENDIENTE_REVISION,08,07|08,punto_prueba_geometrico,"Frontera compartida 07|08; evaluar distancia a borde <=1e-10 grados por precision numerica, sin elegir comuna"
+P019,limite_compartido,4.093381153400695,-76.19993438175361,PENDIENTE_REVISION,09,07|09,punto_prueba_geometrico,"Frontera compartida 07|09; evaluar distancia a borde <=1e-10 grados por precision numerica, sin elegir comuna"
+P020,limite_compartido,4.1021667830335815,-76.2031589310256,PENDIENTE_REVISION,09,08|09,punto_prueba_geometrico,"Frontera compartida 08|09; evaluar distancia a borde <=1e-10 grados por precision numerica, sin elegir comuna"
+P021,limite_compartido,4.108418640923745,-76.1999583422917,PENDIENTE_REVISION,10,09|10,punto_prueba_geometrico,"Frontera compartida 09|10; evaluar distancia a borde <=1e-10 grados por precision numerica, sin elegir comuna"
+P022,fuera_cobertura,4.089255346743201,-76.23331263061847,SIN_DETERMINAR,,,punto_prueba_geometrico,Fuera de la union POT; no demuestra estar fuera del municipio
+P023,fuera_cobertura,4.089255346743201,-76.1534031259071,SIN_DETERMINAR,,,punto_prueba_geometrico,Fuera de la union POT; no demuestra estar fuera del municipio
+P024,fuera_cobertura,4.131345672137344,-76.19335787826279,SIN_DETERMINAR,,,punto_prueba_geometrico,Fuera de la union POT; no demuestra estar fuera del municipio
+P025,hueco,4.086130827723062,-76.19487992290627,SIN_DETERMINAR,,,punto_prueba_geometrico,Anomalia H001; microareas pueden ser sensibles a precision; no es punto de campo
+P026,hueco,4.084110247397575,-76.1860451682054,SIN_DETERMINAR,,,punto_prueba_geometrico,Anomalia H002; microareas pueden ser sensibles a precision; no es punto de campo
+P027,hueco,4.092708604246685,-76.21331352690572,SIN_DETERMINAR,,,punto_prueba_geometrico,Anomalia H003; microareas pueden ser sensibles a precision; no es punto de campo
+P028,hueco,4.061557009034679,-76.19066735746557,SIN_DETERMINAR,,,punto_prueba_geometrico,Anomalia H004; microareas pueden ser sensibles a precision; no es punto de campo
+P029,hueco,4.090472401990047,-76.18474150067237,SIN_DETERMINAR,,,punto_prueba_geometrico,Anomalia H005; microareas pueden ser sensibles a precision; no es punto de campo
+P030,hueco,4.062654036191314,-76.19117660182343,SIN_DETERMINAR,,,punto_prueba_geometrico,Anomalia H006; microareas pueden ser sensibles a precision; no es punto de campo
+P031,hueco,4.060390193597755,-76.18983883527858,SIN_DETERMINAR,,,punto_prueba_geometrico,Anomalia H007; microareas pueden ser sensibles a precision; no es punto de campo
+P032,hueco,4.063754109007739,-76.19225905255394,SIN_DETERMINAR,,,punto_prueba_geometrico,Anomalia H008; microareas pueden ser sensibles a precision; no es punto de campo
+P033,hueco,4.074556763615204,-76.20507776655518,PENDIENTE_REVISION_NUMERICA,,05|06,punto_prueba_geometrico,Anomalia H009; microareas pueden ser sensibles a precision; no es punto de campo
+P034,hueco,4.063937078437145,-76.1925194900945,PENDIENTE_REVISION_NUMERICA,,01|05,punto_prueba_geometrico,Anomalia H010; microareas pueden ser sensibles a precision; no es punto de campo
+P035,hueco,4.089879842407545,-76.18652199548747,PENDIENTE_REVISION_NUMERICA,,02|03,punto_prueba_geometrico,Anomalia H011; microareas pueden ser sensibles a precision; no es punto de campo
+P036,hueco,4.089422704210818,-76.1917926838182,PENDIENTE_REVISION_NUMERICA,,02|03,punto_prueba_geometrico,Anomalia H012; microareas pueden ser sensibles a precision; no es punto de campo
+P037,hueco,4.090164679701527,-76.19101096778078,PENDIENTE_REVISION_NUMERICA,,02|03,punto_prueba_geometrico,Anomalia H013; microareas pueden ser sensibles a precision; no es punto de campo
+P038,hueco,4.090372440098422,-76.19876438661629,PENDIENTE_REVISION_NUMERICA,,04|07,punto_prueba_geometrico,Anomalia H014; microareas pueden ser sensibles a precision; no es punto de campo
+P039,hueco,4.089592422614671,-76.20040970981839,PENDIENTE_REVISION_NUMERICA,04,04|07,punto_prueba_geometrico,Anomalia H015; microareas pueden ser sensibles a precision; no es punto de campo
+P040,hueco,4.082822103514223,-76.19965786327418,PENDIENTE_REVISION_NUMERICA,04,04|05,punto_prueba_geometrico,Anomalia H016; microareas pueden ser sensibles a precision; no es punto de campo
+P041,hueco,4.091700193576337,-76.19534261577724,PENDIENTE_REVISION_NUMERICA,04,04|09,punto_prueba_geometrico,Anomalia H017; microareas pueden ser sensibles a precision; no es punto de campo
+P042,hueco,4.087533468915376,-76.20166513927856,PENDIENTE_REVISION_NUMERICA,07,04|07,punto_prueba_geometrico,Anomalia H018; microareas pueden ser sensibles a precision; no es punto de campo
+P043,hueco,4.087626174820118,-76.17242553232673,PENDIENTE_REVISION_NUMERICA,,02|03,punto_prueba_geometrico,Anomalia H019; microareas pueden ser sensibles a precision; no es punto de campo
+P044,hueco,4.085447316672455,-76.20213300842242,PENDIENTE_REVISION_NUMERICA,,04|06,punto_prueba_geometrico,Anomalia H020; microareas pueden ser sensibles a precision; no es punto de campo
+P045,hueco,4.089792414624291,-76.17530530499789,PENDIENTE_REVISION_NUMERICA,,02|03,punto_prueba_geometrico,Anomalia H021; microareas pueden ser sensibles a precision; no es punto de campo
+P046,hueco,4.0906606524659415,-76.19829479219979,PENDIENTE_REVISION_NUMERICA,07,04|07,punto_prueba_geometrico,Anomalia H022; microareas pueden ser sensibles a precision; no es punto de campo
+P047,hueco,4.091041848260363,-76.18817819689929,PENDIENTE_REVISION_NUMERICA,02,02|03,punto_prueba_geometrico,Anomalia H023; microareas pueden ser sensibles a precision; no es punto de campo
+P048,hueco,4.083549714460004,-76.20245198170407,PENDIENTE_REVISION_NUMERICA,05|06,04|05|06,punto_prueba_geometrico,Anomalia H024; microareas pueden ser sensibles a precision; no es punto de campo
+P049,hueco,4.090829428932496,-76.1881612599419,PENDIENTE_REVISION_NUMERICA,03,02|03,punto_prueba_geometrico,Anomalia H025; microareas pueden ser sensibles a precision; no es punto de campo
+P050,hueco,4.109318794415023,-76.20029415956459,PENDIENTE_REVISION_NUMERICA,,09|10,punto_prueba_geometrico,Anomalia H026; microareas pueden ser sensibles a precision; no es punto de campo
+P051,hueco,4.087320038678213,-76.20167294348619,PENDIENTE_REVISION_NUMERICA,04,04|06,punto_prueba_geometrico,Anomalia H027; microareas pueden ser sensibles a precision; no es punto de campo
+P052,solapamiento,4.083262433880408,-76.19373659133558,PENDIENTE_REVISION,01|02,,punto_prueba_geometrico,Anomalia S001; microareas pueden ser sensibles a precision; no es punto de campo
+P053,solapamiento,4.0988354546698815,-76.194989986852,PENDIENTE_REVISION,03|10,,punto_prueba_geometrico,Anomalia S002; microareas pueden ser sensibles a precision; no es punto de campo
+P054,solapamiento,4.10618624448934,-76.19894841011771,PENDIENTE_REVISION,09|10,,punto_prueba_geometrico,Anomalia S003; microareas pueden ser sensibles a precision; no es punto de campo
+P055,solapamiento,4.073478081205837,-76.20576081436106,PENDIENTE_REVISION,05|06,,punto_prueba_geometrico,Anomalia S004; microareas pueden ser sensibles a precision; no es punto de campo
+P056,solapamiento,4.109735156955706,-76.20050828726313,PENDIENTE_REVISION,09|10,,punto_prueba_geometrico,Anomalia S005; microareas pueden ser sensibles a precision; no es punto de campo
+P057,solapamiento,4.109558871513194,-76.20041323777374,PENDIENTE_REVISION,09|10,,punto_prueba_geometrico,Anomalia S006; microareas pueden ser sensibles a precision; no es punto de campo
+P058,solapamiento,4.087189652442124,-76.20170801991574,PENDIENTE_REVISION,04|06,,punto_prueba_geometrico,Anomalia S007; microareas pueden ser sensibles a precision; no es punto de campo
+P059,solapamiento,4.109197520254802,-76.20024005701035,PENDIENTE_REVISION,09|10,,punto_prueba_geometrico,Anomalia S008; microareas pueden ser sensibles a precision; no es punto de campo
+P060,solapamiento,4.082609681999051,-76.19772929799639,PENDIENTE_REVISION_NUMERICA,04|05,04|05,punto_prueba_geometrico,Anomalia S009; microareas pueden ser sensibles a precision; no es punto de campo
+P061,solapamiento,4.0831108065060375,-76.20186738000481,PENDIENTE_REVISION_NUMERICA,04|05,04|05,punto_prueba_geometrico,Anomalia S010; microareas pueden ser sensibles a precision; no es punto de campo
+P062,solapamiento,4.091412108893326,-76.18814062503961,PENDIENTE_REVISION_NUMERICA,02|03,02|03,punto_prueba_geometrico,Anomalia S011; microareas pueden ser sensibles a precision; no es punto de campo
+P063,solapamiento,4.084594426134082,-76.20230388327096,PENDIENTE_REVISION_NUMERICA,04|06,04|06,punto_prueba_geometrico,Anomalia S012; microareas pueden ser sensibles a precision; no es punto de campo
+P064,solapamiento,4.086116800586478,-76.20194388486513,PENDIENTE_REVISION_NUMERICA,06,04|06,punto_prueba_geometrico,Anomalia S013; microareas pueden ser sensibles a precision; no es punto de campo
+P065,solapamiento,4.09099266295813,-76.19740354928905,PENDIENTE_REVISION_NUMERICA,09,04|09,punto_prueba_geometrico,Anomalia S014; microareas pueden ser sensibles a precision; no es punto de campo
+P066,solapamiento,4.088833451344382,-76.20107162454393,PENDIENTE_REVISION_NUMERICA,04|07,04|07,punto_prueba_geometrico,Anomalia S015; microareas pueden ser sensibles a precision; no es punto de campo
+P067,solapamiento,4.089972717768838,-76.18743095046932,PENDIENTE_REVISION_NUMERICA,02|03,02|03,punto_prueba_geometrico,Anomalia S016; microareas pueden ser sensibles a precision; no es punto de campo
+P068,solapamiento,4.08782856416685,-76.2015249590217,PENDIENTE_REVISION_NUMERICA,07,04|07,punto_prueba_geometrico,Anomalia S017; microareas pueden ser sensibles a precision; no es punto de campo
+P069,solapamiento,4.0901886835925705,-76.19924827962129,PENDIENTE_REVISION_NUMERICA,04|07,04|07,punto_prueba_geometrico,Anomalia S018; microareas pueden ser sensibles a precision; no es punto de campo
+P070,solapamiento,4.087320038678556,-76.2016729434861,PENDIENTE_REVISION_NUMERICA,04,04|06,punto_prueba_geometrico,Anomalia S019; microareas pueden ser sensibles a precision; no es punto de campo
+P071,solapamiento,4.09190535200489,-76.19467877611248,PENDIENTE_REVISION_NUMERICA,04,04|09,punto_prueba_geometrico,Anomalia S020; microareas pueden ser sensibles a precision; no es punto de campo
+P072,solapamiento,4.090594680041456,-76.19834912455478,PENDIENTE_REVISION_NUMERICA,07,04|07,punto_prueba_geometrico,Anomalia S021; microareas pueden ser sensibles a precision; no es punto de campo
+P073,solapamiento,4.085415317735692,-76.2020959047242,PENDIENTE_REVISION_NUMERICA,04|06,04|06,punto_prueba_geometrico,Anomalia S022; microareas pueden ser sensibles a precision; no es punto de campo
+P074,solapamiento,4.090909086180458,-76.18816761130091,PENDIENTE_REVISION_NUMERICA,03,02|03,punto_prueba_geometrico,Anomalia S023; microareas pueden ser sensibles a precision; no es punto de campo
