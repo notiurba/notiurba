@@ -116,6 +116,306 @@ body:has(.marco-app, .auth--celular, .bienvenida) {
   box-shadow: 0 0 0 1px var(--nu-borde-encabezado);
 }
 
+/* ── Celular: letras y separaciones ~10 % más chicas ──────────────────────────
+   Generado a partir de los tamaños de cada componente (letra y alto de línea × 0,9; la letra no baja de
+   11 px) más las separaciones del sistema de diseño. Solo en pantallas de hasta 480 px.
+   Va con `body` delante para ganarle a cada componente. Para volver al tamaño anterior, borrar este
+   bloque y el siguiente («Celular: un poco más compacto»). */
+@media (max-width: 480px) {
+  html:root {
+    --nu-esp-4: 3.5px;
+    --nu-esp-6: 5.5px;
+    --nu-esp-8: 7px;
+    --nu-esp-10: 9px;
+    --nu-esp-12: 11px;
+    --nu-esp-14: 12.5px;
+    --nu-esp-16: 14.5px;
+    --nu-esp-20: 18px;
+    --nu-esp-24: 21.5px;
+    --nu-esp-32: 29px;
+  }
+
+  body .fila-ajuste__titulo {
+    font-size: 14.5px;
+  }
+  body .fila-ajuste__descripcion {
+    font-size: 11.5px;
+  }
+  body .hoja-estados li {
+    font-size: 12.5px;
+  }
+  body .pestana {
+    font-size: 11.5px;
+  }
+  body .tarjeta-reporte h3 {
+    font-size: 15.5px;
+    line-height: 20px;
+  }
+  body .tarjeta-reporte__lugar,
+  body .tarjeta-reporte__codigo {
+    font-size: 11.5px;
+  }
+  body .tarjeta-reporte__fila {
+    font-size: 12.5px;
+  }
+  body .tarjeta-reporte__boton {
+    font-size: 13.5px;
+  }
+  body .ajustes__nombre strong {
+    font-size: 15.5px;
+  }
+  body .ajustes__nombre span {
+    font-size: 12.5px;
+  }
+  body .ajustes__seccion {
+    font-size: 12.5px;
+  }
+  body .detalle__titulo h2 {
+    font-size: 18px;
+  }
+  body .detalle__titulo p {
+    font-size: 11.5px;
+  }
+  body .detalle__datos dt {
+    font-size: 11.5px;
+  }
+  body .detalle__datos dd {
+    font-size: 13.5px;
+  }
+  body .detalle__subtitulo {
+    font-size: 15.5px;
+  }
+  body .detalle__historial p {
+    font-size: 12.5px;
+  }
+  body .detalle__fecha {
+    font-size: 11.5px;
+  }
+  body .mis-reportes__cabecera {
+    font-size: 12.5px;
+  }
+  body .mapa-ubicacion__etiqueta {
+    font-size: 10px;
+  }
+  body .confirmacion__fila span {
+    font-size: 11.5px;
+  }
+  body .confirmacion__fila strong {
+    font-size: 13.5px;
+  }
+  body .confirmacion__fila strong span {
+    font-size: 13.5px;
+  }
+  body .confirmacion__fila a {
+    font-size: 12.5px;
+  }
+  body .detalles__contador {
+    font-size: 11.5px;
+  }
+  body .detalles__etiqueta {
+    font-size: 12.5px;
+  }
+  body .detalles__botones .boton {
+    font-size: 13.5px;
+  }
+  body .detalles__foto span:not(.detalles__miniatura) {
+    font-size: 11.5px;
+  }
+  body .ubicacion__tarjeta {
+    font-size: 12.5px;
+  }
+  body .ubicacion__tarjeta strong {
+    font-size: 16px;
+  }
+  body .reportar__titulo {
+    font-size: 20px;
+    line-height: 25px;
+  }
+  body .reportar__pie {
+    font-size: 11.5px;
+  }
+  body .reportar__mensaje {
+    font-size: 11.5px;
+  }
+  body .enviado h1 {
+    font-size: 23.5px;
+  }
+  body .enviado__texto {
+    font-size: 13.5px;
+    line-height: 20px;
+  }
+  body .enviado__codigo span,
+  body .enviado__fila > span {
+    font-size: 12.5px;
+  }
+  body .enviado__codigo strong {
+    font-size: 23.5px;
+  }
+  body .enviado__fila strong {
+    font-size: 13.5px;
+  }
+  body .enviado__copiado {
+    font-size: 11.5px;
+  }
+  body .resumen-categoria span {
+    font-size: 11.5px;
+  }
+  body .resumen-categoria strong {
+    font-size: 14.5px;
+  }
+  body .resumen-categoria a {
+    font-size: 12.5px;
+  }
+  body .aviso__titulo,
+  body .aviso__texto {
+    font-size: 12.5px;
+    line-height: 18px;
+  }
+  body .aviso--nota .aviso__texto {
+    font-size: 11.5px;
+  }
+  body .boton {
+    font-size: 14.5px;
+  }
+  body .boton--enlace {
+    font-size: 12.5px;
+  }
+  body .cabecera-auth__titulo h1 {
+    font-size: 23.5px;
+    line-height: 29px;
+  }
+  body .cabecera-auth__titulo p {
+    font-size: 13.5px;
+    line-height: 20px;
+  }
+  body .pie-auth {
+    font-size: 13.5px;
+  }
+  body .enlace-campo {
+    font-size: 12.5px;
+  }
+  body .campo__cabecera label {
+    font-size: 12.5px;
+  }
+  body .campo__opcional {
+    font-size: 11.5px;
+  }
+  body .campo__caja input,
+  body .campo__caja select {
+    font-size: 14.5px;
+  }
+  body .campo__error {
+    font-size: 11.5px;
+  }
+  body .campo__ayuda {
+    font-size: 11.5px;
+  }
+  body .campo__caja textarea {
+    font-size: 14.5px;
+  }
+  body .casilla__fila {
+    font-size: 13.5px;
+    line-height: 20px;
+  }
+  body .chip-estado {
+    font-size: 11.5px;
+  }
+  body .encabezado__titulo {
+    font-size: 16px;
+  }
+  body .estado-vacio h2 {
+    font-size: 21.5px;
+  }
+  body .estado-vacio p {
+    font-size: 13.5px;
+    line-height: 20px;
+  }
+  body .filtro {
+    font-size: 12.5px;
+  }
+  body .hoja__titulo {
+    font-size: 20px;
+    line-height: 25px;
+  }
+  body .hoja__texto {
+    font-size: 13.5px;
+    line-height: 20px;
+  }
+  body .panel-marca__nombre {
+    font-size: 21.5px;
+  }
+  body .panel-marca h2 {
+    font-size: 41.5px;
+    line-height: 47px;
+  }
+  body .panel-marca__texto p {
+    font-size: 17px;
+    line-height: 25px;
+  }
+  body .panel-marca li {
+    font-size: 13.5px;
+  }
+  body .pasos__textos {
+    font-size: 12.5px;
+  }
+  body .separador {
+    font-size: 12.5px;
+  }
+  body .tarjeta-opcion__titulo {
+    font-size: 13.5px;
+  }
+  body .tarjeta-opcion__descripcion {
+    font-size: 11.5px;
+  }
+  body .grupo-opciones legend {
+    font-size: 12.5px;
+  }
+  body .aviso-privacidad__ley,
+  body .aviso-privacidad__version {
+    font-size: 11.5px;
+  }
+  body .aviso-privacidad__intro {
+    font-size: 13.5px;
+    line-height: 20px;
+  }
+  body .aviso-privacidad h2 {
+    font-size: 14.5px;
+  }
+  body .aviso-privacidad p,
+  body .aviso-privacidad li {
+    font-size: 12.5px;
+    line-height: 19px;
+  }
+  body .bienvenida__lugar {
+    font-size: 12.5px;
+  }
+  body .bienvenida__marca {
+    font-size: 13.5px;
+  }
+  body .bienvenida h1 {
+    font-size: 29px;
+    line-height: 34px;
+  }
+  body .bienvenida__descripcion {
+    font-size: 15.5px;
+    line-height: 22.5px;
+  }
+  body .bienvenida__etiquetas li {
+    font-size: 11px;
+  }
+  body .bienvenida__sesion {
+    font-size: 13.5px;
+  }
+  body .verificar h1 {
+    font-size: 23.5px;
+  }
+  body .verificar p {
+    font-size: 14.5px;
+    line-height: 21.5px;
+  }
+
+}
+
 /* ── Celular: un poco más compacto ─────────────────────────────────────────────
    Baja la altura de botones, campos y tarjetas y las separaciones, sin tocar casi la letra.
    Va con `body` delante para ganarle a los estilos de cada componente.
@@ -158,4 +458,26 @@ body:has(.marco-app, .auth--celular, .bienvenida) {
   body .formulario-pantalla__acciones .boton {
     height: 46px;
   }
+}
+
+/* ── Enlaces fáciles de tocar ──────────────────────────────────────────────────
+   Los enlaces de texto miden ~16 px de alto; el dedo necesita ~48 px (guía de accesibilidad de Android).
+   Se agranda solo el área que responde al toque (con un pseudo-elemento invisible): no cambia el aspecto
+   ni mueve nada. Para quitarlo, borrar este bloque. */
+.pie-auth a,
+.enlace-campo,
+.enlace-privacidad,
+.enlace-boton,
+.bienvenida__sesion a {
+  position: relative;
+}
+
+.pie-auth a::after,
+.enlace-campo::after,
+.enlace-privacidad::after,
+.enlace-boton::after,
+.bienvenida__sesion a::after {
+  content: '';
+  position: absolute;
+  inset: -14px -8px;
 }

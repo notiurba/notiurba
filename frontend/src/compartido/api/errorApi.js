@@ -16,7 +16,7 @@ export class ErrorApi extends Error {
   }
 }
 
-const MENSAJE_RESPUESTA_RARA = 'El servidor respondió algo inesperado. Intenta de nuevo en un momento.'
+const MENSAJE_RESPUESTA_RARA = 'El servidor respondió algo inesperado. Intente de nuevo en un momento.'
 
 // Para los datos simulados: arma un ErrorApi con el cuerpo que daría el servidor.
 export function crearErrorApi(estado, cuerpo = {}, ruta = '') {

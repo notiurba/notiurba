@@ -18,6 +18,9 @@ import { useReporte } from './useReporte'
 import './Reportar.css'
 import './PasoUbicacion.css'
 
+const MENSAJE_FUERA_DE_TULUA =
+  'Ese punto está fuera de las comunas de Tuluá. Marque un lugar dentro de la ciudad o acérquese al límite si está justo en el borde.'
+
 // Paso 2 de 4: ¿dónde ocurrió? Punto en el mapa (o GPS), dirección y barrio.
 // La comuna sale del barrio elegido (POT 2015, provisional); la fuente de verdad es el backend.
 export default function PasoUbicacion() {
@@ -33,9 +36,11 @@ export default function PasoUbicacion() {
 
   const barrio = barrios.find((b) => String(b.idBarrio) === borrador.idBarrio)
   const hayPunto = borrador.latitud != null
-  const punto = hayPunto ? { latitud: borrador.latitud, longitud: borrador.longitud } : null
   // Comuna según el punto del mapa (capa POT 2015, provisional); null si cae en un límite o fuera de la capa.
-  const comunaDelMapa = punto ? identificarComunaPorCoordenadas(punto, comunasTulua).comuna : null
+  const comunaDelMapa = hayPunto
+    ? identificarComunaPorCoordenadas({ latitud: borrador.latitud, longitud: borrador.longitud }, comunasTulua).comuna
+    : null
+  const fueraDeTulua = hayPunto && !comunaDelMapa
 
   function elegirPunto(latitud, longitud) {
     cambiar({ latitud, longitud })
@@ -65,6 +70,7 @@ export default function PasoUbicacion() {
   function continuar(evento) {
     evento.preventDefault()
     const encontrados = validarUbicacion(borrador)
+    if (fueraDeTulua) encontrados.punto = MENSAJE_FUERA_DE_TULUA
     setErrores(encontrados)
     if (Object.keys(encontrados).length === 0) navigate('/reportar/detalles')
   }
@@ -85,10 +91,10 @@ export default function PasoUbicacion() {
         <ResumenCategoria categoria={categoria} />
         <h2 className="reportar__titulo">¿Dónde ocurrió?</h2>
 
-        <MapaUbicacion punto={punto} alElegir={elegirPunto} />
-        {errores.punto && (
+        <MapaUbicacion latitud={borrador.latitud} longitud={borrador.longitud} alElegir={elegirPunto} />
+        {(errores.punto || fueraDeTulua) && (
           <p className="campo__error" role="alert">
-            {errores.punto}
+            {errores.punto || MENSAJE_FUERA_DE_TULUA}
           </p>
         )}
 

@@ -7,6 +7,7 @@ import ConfirmarCorreo from './compartido/paginas/ConfirmarCorreo'
 import CompletarPerfil from './compartido/paginas/CompletarPerfil'
 import NuevaContrasena from './compartido/paginas/NuevaContrasena'
 import RecuperarContrasena from './compartido/paginas/RecuperarContrasena'
+import NoEncontrada from './compartido/paginas/NoEncontrada'
 import Registro from './compartido/paginas/Registro'
 import VerificarCorreo from './compartido/paginas/VerificarCorreo'
 import RutaProtegida from './compartido/auth/RutaProtegida'
@@ -62,6 +63,7 @@ function App() {
           </RutaProtegida>
         }
       />
+      <Route path="*" element={<NoEncontrada />} />
     </Routes>
   )
 }

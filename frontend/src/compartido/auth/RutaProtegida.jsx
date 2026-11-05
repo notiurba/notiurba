@@ -1,10 +1,5 @@
 import { Navigate } from 'react-router-dom'
-import { estadoSesion, obtenerRol } from './sesion'
-
-const RUTA_POR_ROL = {
-  CIUDADANO: '/app',
-  ADMIN: '/admin',
-}
+import { RUTA_POR_ROL, estadoSesion, obtenerRol } from './sesion'
 
 // Uso: <RutaProtegida> exige sesión; <RutaProtegida rol="ADMIN"> exige además ese rol.
 // Sin la propiedad "rol" entra cualquiera con sesión (así un ADMIN también usa /app).

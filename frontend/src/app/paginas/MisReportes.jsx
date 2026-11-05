@@ -6,7 +6,7 @@ import Boton from '../../compartido/componentes/Boton'
 import EncabezadoPantalla from '../../compartido/componentes/EncabezadoPantalla'
 import EstadoVacio from '../../compartido/componentes/EstadoVacio'
 import Filtro from '../../compartido/componentes/Filtro'
-import { IconoDocumento, IconoMas, IconoOrdenar, IconoSinConexion } from '../../compartido/componentes/Iconos'
+import { IconoMas, IconoOrdenar, IconoPin, IconoSinConexion } from '../../compartido/componentes/Iconos'
 import useCargar from '../../compartido/hooks/useCargar'
 import HojaActualizarReporte from '../componentes/HojaActualizarReporte'
 import HojaEstados from '../componentes/HojaEstados'
@@ -55,13 +55,14 @@ export default function MisReportes() {
 
       {!cargando && reportes.length === 0 ? (
         <EstadoVacio
-          icono={<IconoDocumento tamano={52} />}
+          icono={<IconoPin tamano={60} />}
+          insignia="👋"
           titulo="Le damos la bienvenida a NotiUrba"
-          texto="Aquí verá sus reportes, su estado y su código de seguimiento. Empiece reportando el primer problema de su barrio: toque «Reportar» en la barra de abajo o use este botón."
+          texto="Aquí verá sus reportes y cómo avanzan. Para empezar, cree el primero: toque «Reportar» en la barra de abajo o use este botón."
         >
           <Boton to="/reportar">
             <IconoMas tamano={18} />
-            Hacer mi primer reporte
+            Crear mi primer reporte
           </Boton>
         </EstadoVacio>
       ) : (

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 // Estado común de los formularios: lo escrito, los errores por campo y el manejador `cambiar`.
-// Lo usan el registro, «Completa tu perfil», «Editar mis datos» y los pasos del reporte.
+// Lo usan el registro, «Complete su perfil», «Editar mis datos» y los pasos del reporte.
 export default function useFormulario(inicial) {
   const [datos, setDatos] = useState(inicial)
   const [errores, setErrores] = useState({})

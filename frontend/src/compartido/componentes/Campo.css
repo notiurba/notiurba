@@ -161,3 +161,15 @@
 .campo__caja textarea::placeholder {
   color: var(--nu-texto-tenue);
 }
+
+/* Autocompletado del navegador: pinta el campo de gris o azul. Lo tapamos con el fondo de la caja
+   y conservamos el color del texto. (El truco del `transition` evita que el color reaparezca.) */
+.campo__caja input:-webkit-autofill,
+.campo__caja input:-webkit-autofill:hover,
+.campo__caja input:-webkit-autofill:focus,
+.campo__caja select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--nu-superficie-base) inset;
+  -webkit-text-fill-color: var(--nu-texto-principal);
+  caret-color: var(--nu-texto-principal);
+  transition: background-color 9999s ease-in-out 0s;
+}

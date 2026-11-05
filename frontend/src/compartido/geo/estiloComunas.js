@@ -1,5 +1,5 @@
 // Colores y estilo de las comunas de Tuluá en los mapas (el del panel y el de «Nuevo reporte»).
-export const COLORES_COMUNA = [
+const COLORES_COMUNA = [
   '#2f80ed',
   '#27ae60',
   '#f2994a',

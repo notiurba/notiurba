@@ -17,8 +17,9 @@ const ICONO = L.divIcon({
 })
 
 // Mapa (Leaflet + OpenStreetMap) donde la persona toca para marcar el lugar del problema.
-//  - punto: { latitud, longitud } o null.   - alElegir(latitud, longitud): se llama al tocar el mapa.
-export default function MapaUbicacion({ punto, alElegir }) {
+//  - latitud, longitud: números del punto marcado (o null).   - alElegir(latitud, longitud): se llama al tocar el mapa.
+// Se reciben como números (no como objeto) para que el mapa solo se recentre cuando el punto cambia de verdad.
+export default function MapaUbicacion({ latitud, longitud, alElegir }) {
   const contenedor = useRef(null)
   const mapa = useRef(null)
   const marcador = useRef(null)
@@ -39,7 +40,7 @@ export default function MapaUbicacion({ punto, alElegir }) {
     // Comunas del POT 2015 (referencia): coloreadas y con su etiqueta; no capturan toques del mapa.
     capaComunas.current = L.geoJSON(comunasTulua, {
       interactive: false,
-      style: (comuna) => estiloComuna(comuna),
+      style: estiloComuna,
       onEachFeature: (comuna, capa) => {
         capa.bindTooltip(`COMUNA ${Number(comuna.properties.COD_LOC_COM)}`, {
           permanent: true,
@@ -65,19 +66,19 @@ export default function MapaUbicacion({ punto, alElegir }) {
 
   // Cada vez que cambia el punto (toque o GPS) se mueve el marcador y se centra el mapa.
   useEffect(() => {
-    if (!punto || !mapa.current) return
-    const posicion = [punto.latitud, punto.longitud]
+    if (latitud == null || longitud == null || !mapa.current) return
+    const posicion = [latitud, longitud]
     if (marcador.current) marcador.current.setLatLng(posicion)
     else marcador.current = L.marker(posicion, { icon: ICONO, keyboard: false }).addTo(mapa.current)
     // Sin animación: una animación en curso al salir de la pantalla hace que Leaflet falle.
     mapa.current.setView(posicion, Math.max(mapa.current.getZoom(), 16), { animate: false })
 
     // La comuna donde cae el punto se resalta; las demás vuelven a su estilo normal.
-    const { comuna } = identificarComunaPorCoordenadas(punto, comunasTulua)
+    const { comuna } = identificarComunaPorCoordenadas({ latitud, longitud }, comunasTulua)
     capaComunas.current?.eachLayer((capa) =>
       capa.setStyle(estiloComuna(capa.feature, comuna?.id === capa.feature.properties.COD_LOC_COM)),
     )
-  }, [punto])
+  }, [latitud, longitud])
 
   return (
     <div

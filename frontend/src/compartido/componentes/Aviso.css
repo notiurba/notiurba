@@ -60,3 +60,15 @@
 .aviso--nota .aviso__texto {
   font-size: 13px;
 }
+
+/* Botón con aspecto de enlace dentro de un aviso (por ejemplo «Reintentar») */
+.enlace-boton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}

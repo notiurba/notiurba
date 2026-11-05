@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   max-width: 430px;
-  min-height: 100svh;
+  min-height: 100dvh;
   margin: 0 auto;
   background: var(--nu-superficie-base);
   font-family: var(--nu-fuente);
@@ -13,8 +13,8 @@
 /* Parte de arriba: cielo azul con la ciudad dibujada y el logo en una tarjeta blanca */
 .bienvenida__cielo {
   position: relative;
-  flex: 1;
-  min-height: 360px;
+  flex: 1 1 0; /* la imagen es la que se encoge para que todo quepa en la pantalla */
+  min-height: 190px;
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -58,16 +58,16 @@
   z-index: 1;
   display: grid;
   place-items: center;
-  width: 240px;
-  height: 236px;
+  height: min(236px, 76%);
+  aspect-ratio: 240 / 236;
   border-radius: 40px;
   background: var(--nu-superficie-base);
   box-shadow: 0 14px 30px rgba(4, 32, 79, 0.28);
 }
 
 .bienvenida__tarjeta-logo img {
-  width: 210px;
-  height: 206px;
+  width: 88%;
+  height: 88%;
   object-fit: contain;
 }
 
@@ -176,3 +176,52 @@
   text-decoration: none;
 }
 
+
+/* Celular: la portada completa (imagen, texto, botón y «¿Ya tiene cuenta?») cabe en una pantalla. */
+@media (max-width: 480px) {
+  body .bienvenida__cielo {
+    padding: 44px 0 12px; /* deja libre la franja de «Tuluá · Valle del Cauca» y el degradado de abajo */
+  }
+
+  body .bienvenida__tarjeta-logo {
+    height: min(236px, 74%);
+  }
+
+  body .bienvenida__lugar {
+    top: 14px;
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  body .bienvenida__contenido {
+    gap: 8px;
+    padding: 2px 20px max(16px, env(safe-area-inset-bottom));
+  }
+
+  body .bienvenida__marca {
+    font-size: 13px;
+  }
+
+  body .bienvenida h1 {
+    font-size: 24px;
+    line-height: 29px;
+  }
+
+  body .bienvenida__descripcion {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  body .bienvenida__etiquetas {
+    margin: 0 0 4px;
+  }
+
+  body .bienvenida__etiquetas li {
+    padding: 4px 9px;
+    font-size: 11px;
+  }
+
+  body .bienvenida__sesion {
+    font-size: 13.5px;
+  }
+}

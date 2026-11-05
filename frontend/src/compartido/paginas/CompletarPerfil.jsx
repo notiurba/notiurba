@@ -83,7 +83,7 @@ export default function CompletarPerfil() {
 
   return (
     <LayoutAuth>
-      <EncabezadoPantalla titulo="Completa tu perfil" atras="/login" />
+      <EncabezadoPantalla titulo="Complete su perfil" atras="/login" />
 
       <FormularioPantalla
         alEnviar={guardar}

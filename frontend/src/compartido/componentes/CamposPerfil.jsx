@@ -5,7 +5,7 @@ import Selector from './Selector'
 import './CamposPerfil.css'
 
 // Campos de identidad: nombres, apellidos, documento y teléfono. Los usan el registro (paso 1),
-// «Completa tu perfil» (Google) y «Editar mis datos». No guardan nada: reciben `datos`, `errores` y
+// «Complete su perfil» (Google) y «Editar mis datos». No guardan nada: reciben `datos`, `errores` y
 // `cambiar(campo)` de la pantalla que los contiene. Si se pasa `correo`, se muestra bloqueado
 // (en «Editar mis datos» el correo no se puede cambiar).
 export function CamposIdentidad({ datos, errores, cambiar, tiposDocumento, correo }) {

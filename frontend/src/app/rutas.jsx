@@ -1,4 +1,5 @@
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
+import NoEncontrada from '../compartido/paginas/NoEncontrada'
 import AvisoAcceso from '../compartido/componentes/AvisoAcceso'
 import LayoutApp from './componentes/LayoutApp'
 import MarcoApp from './componentes/MarcoApp'
@@ -38,6 +39,7 @@ export default function RutasApp() {
         <Route element={<LayoutSinPestanas />}>
           <Route path="ajustes/datos" element={<EditarDatos />} />
         </Route>
+        <Route path="*" element={<NoEncontrada />} />
       </Routes>
     </>
   )

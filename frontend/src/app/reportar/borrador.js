@@ -2,7 +2,7 @@
 // y volver. Las fotos no se guardan (un archivo no cabe ahí), solo los textos y la ubicación.
 const CLAVE = 'notiurba.borrador'
 
-export const BORRADOR_VACIO = {
+const BORRADOR_VACIO = {
   idCategoria: '',
   latitud: null,
   longitud: null,

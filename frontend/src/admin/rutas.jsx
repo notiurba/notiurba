@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
+import NoEncontrada from '../compartido/paginas/NoEncontrada'
 import LayoutAdmin from './componentes/LayoutAdmin'
 import MapaComunas from './paginas/MapaComunas'
 import Reportes from './paginas/Reportes'
@@ -11,6 +12,7 @@ export default function RutasAdmin() {
         <Route index element={<Reportes />} />
         <Route path="mapa" element={<MapaComunas />} />
       </Route>
+      <Route path="*" element={<NoEncontrada />} />
     </Routes>
   )
 }

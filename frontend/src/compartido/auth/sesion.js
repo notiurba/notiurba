@@ -1,6 +1,6 @@
 const CLAVE_TOKEN = 'notiurba.token'
 
-/** Pantalla de ingreso (correo y contraseña). RutaProtegida y el cliente de la API llevan aquí. */
+/** Ruta a la que el cliente de la API manda cuando la sesión venció (ahí se redirige al login). */
 export const RUTA_LOGIN = '/app/ingresar'
 
 /** Página de inicio de cada rol después de ingresar. */

@@ -28,8 +28,8 @@ export function validarPasoDatos(d) {
   })
 }
 
-// Dónde vive: barrio y dirección (registro paso 2, «Completa tu perfil» y «Editar mis datos»).
-export function validarResidencia(d) {
+// Dónde vive: barrio y dirección (registro paso 2, «Complete su perfil» y «Editar mis datos»).
+function validarResidencia(d) {
   return soloErrores({
     idBarrio: validarObligatorio(d.idBarrio, 'Seleccione su barrio'),
     direccionCorrespondencia: validarDireccion(d.direccionCorrespondencia),

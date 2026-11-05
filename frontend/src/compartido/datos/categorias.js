@@ -36,6 +36,10 @@ const POR_ID = {
   15: { Icono: IconoInfo, tono: 'agua' },
 }
 
+// «Gas natural» (Gases de Occidente). Con una fuga la app manda a llamar a la línea 164 en vez de enviar correo (RN-16).
+export const ID_CATEGORIA_GAS = 12
+export const LINEA_EMERGENCIA_GAS = '164'
+
 export function visualCategoria(idCategoria) {
   return POR_ID[idCategoria] ?? { Icono: IconoPuntos, tono: 'otro' }
 }

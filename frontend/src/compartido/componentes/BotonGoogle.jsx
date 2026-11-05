@@ -7,7 +7,7 @@ import Boton from './Boton'
 import { IconoGoogle } from './Iconos'
 
 // «Continuar con Google». Tiene tres modos:
-//  - Simulación (VITE_USAR_MOCKS=true): lleva a «Completa tu perfil» para poder ver esa pantalla.
+//  - Simulación (VITE_USAR_MOCKS=true): lleva a «Complete su perfil» para poder ver esa pantalla.
 //  - Real: si hay VITE_GOOGLE_CLIENT_ID, muestra el botón oficial de Google (Google Identity Services).
 //    Google entrega un «credential» (ID token) y se manda a POST /api/auth/google.
 //  - Sin ID de cliente: el botón queda apagado con «Próximamente».

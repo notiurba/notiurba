@@ -18,7 +18,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--nu-esp-4);
-  padding: var(--nu-esp-12) 0 max(var(--nu-esp-16), env(safe-area-inset-bottom));
+  padding: var(--nu-esp-10) 0 max(var(--nu-esp-12), env(safe-area-inset-bottom));
   background: var(--nu-superficie-base);
   border-top: 1px solid var(--nu-borde-divisor);
 }
@@ -29,4 +29,17 @@
 .formulario-pantalla textarea {
   scroll-margin-bottom: 140px;
   scroll-margin-top: 80px;
+}
+
+/* Barra compacta: botones de 48 px en lugar de 52 px. */
+.formulario-pantalla__acciones .boton {
+  height: 48px;
+}
+
+/* Pantalla baja (por ejemplo, con el teclado abierto): la barra deja de ir pegada abajo para no tapar
+   lo que la persona escribe; queda al final del formulario. */
+@media (max-height: 520px) {
+  .formulario-pantalla__acciones {
+    position: static;
+  }
 }

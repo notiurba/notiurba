@@ -3,7 +3,7 @@ import { peticion } from './cliente'
 // Las pantallas usan un reporte «plano» (categoria como texto, barrio como texto, idComuna). La API
 // (contrato 3.6) devuelve objetos anidados: categoria { idCategoria, nombre }, barrio { idBarrio, nombre }
 // y comuna numérica. Esta función convierte una forma en la otra; también acepta el reporte ya plano.
-export function normalizarReporte(r) {
+function normalizarReporte(r) {
   const categoria = typeof r.categoria === 'object' && r.categoria ? r.categoria : null
   const barrio = typeof r.barrio === 'object' && r.barrio ? r.barrio : null
   return {
@@ -19,7 +19,17 @@ export function normalizarReporte(r) {
 }
 
 // Mis reportes (propuesto en el contrato, sección 4: GET /api/reportes). Lista propia, más recientes primero.
-export const listarMisReportes = async () => (await peticion('/api/reportes')).map(normalizarReporte)
+// Mientras la API no publique ese GET, responde 404 o 405: se toma como «aún no hay reportes» y se muestra la
+// bienvenida. Un fallo de red o un error del servidor sí se sigue avisando. Al publicarlo, borrar el catch.
+const AUN_NO_PUBLICADO = [404, 405]
+export const listarMisReportes = async () => {
+  try {
+    return (await peticion('/api/reportes')).map(normalizarReporte)
+  } catch (error) {
+    if (AUN_NO_PUBLICADO.includes(error.estado)) return []
+    throw error
+  }
+}
 
 // Reporte completo (contrato 3.6, solo reportes propios).
 export const obtenerReporte = async (codigo) =>
