@@ -14,10 +14,11 @@
   <artifactId>backend</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>notiurba-backend</name>
-  <description>API de NotiUrba: reporte ciudadano georreferenciado de Tuluá</description>
+  <description>API de NotiUrba: reporte ciudadano georreferenciado de Tulu├í</description>
 
   <properties>
     <java.version>21</java.version>
+    <testcontainers.version>1.21.4</testcontainers.version>
   </properties>
 
   <dependencies>
@@ -38,7 +39,7 @@
       <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
 
-    <!-- PostGIS: tipos geométricos en JPA -->
+    <!-- PostGIS: tipos geom├®tricos en JPA -->
     <dependency>
       <groupId>org.hibernate.orm</groupId>
       <artifactId>hibernate-spatial</artifactId>
@@ -59,13 +60,13 @@
       <artifactId>flyway-database-postgresql</artifactId>
     </dependency>
 
-    <!-- Verificación del ID token de «Continuar con Google» (firma con las JWK públicas de Google) -->
+    <!-- Verificaci├│n del ID token de ┬½Continuar con Google┬╗ (firma con las JWK p├║blicas de Google) -->
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-oauth2-jose</artifactId>
     </dependency>
 
-    <!-- JWT: login y autorización por rol -->
+    <!-- JWT: login y autorizaci├│n por rol -->
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-api</artifactId>
@@ -94,6 +95,22 @@
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.cloudinary</groupId>
+      <artifactId>cloudinary-http5</artifactId>
+      <version>2.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -102,6 +119,63 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes><exclude>**/*IntegrationTest.java</exclude></excludes>
+          <failIfNoTests>true</failIfNoTests>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>spatial-tests</id>
+      <build><plugins><plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <includes><include>**/SpatialIntegrationTest.java</include></includes>
+          <failIfNoTests>true</failIfNoTests>
+          <failIfNoSpecifiedTests>true</failIfNoSpecifiedTests>
+        </configuration>
+        <executions><execution><goals>
+          <goal>integration-test</goal><goal>verify</goal>
+        </goals></execution></executions>
+      </plugin></plugins></build>
+    </profile>
+    <profile>
+      <id>cloudinary-tests</id>
+      <build><plugins><plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <includes><include>**/CloudinaryIntegrationTest.java</include></includes>
+          <failIfNoTests>true</failIfNoTests>
+          <failIfNoSpecifiedTests>true</failIfNoSpecifiedTests>
+        </configuration>
+        <executions><execution><goals>
+          <goal>integration-test</goal><goal>verify</goal>
+        </goals></execution></executions>
+      </plugin></plugins></build>
+    </profile>
+    <profile>
+      <id>migration-tests</id>
+      <build><plugins><plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <includes><include>**/MigrationIntegrationTest.java</include></includes>
+          <failIfNoTests>true</failIfNoTests>
+          <failIfNoSpecifiedTests>true</failIfNoSpecifiedTests>
+        </configuration>
+        <executions><execution><goals>
+          <goal>integration-test</goal><goal>verify</goal>
+        </goals></execution></executions>
+      </plugin></plugins></build>
+    </profile>
+  </profiles>
 </project>

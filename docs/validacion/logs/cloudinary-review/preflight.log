@@ -1,0 +1,7 @@
+UTC=2026-10-27T10:51:50.7360964Z
+DNS api.cloudinary.com resolved=True
+DNS repo.maven.apache.org resolved=True
+CLOUDINARY_CLOUD_NAME present=False
+CLOUDINARY_API_KEY present=False
+CLOUDINARY_API_SECRET present=False
+CLOUDINARY_URL present=False

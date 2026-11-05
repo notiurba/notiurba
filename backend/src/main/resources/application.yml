@@ -6,7 +6,7 @@ spring:
     username: ${DB_USER:notiurba}
     password: ${DB_PASSWORD}          # obligatoria: variable de entorno (ver .env.example)
   servlet:
-    multipart:                        # fotos: 1 MB por archivo (ya era el valor por defecto; se deja explícito)
+    multipart:                        # fotos: 1 MB por archivo (ya era el valor por defecto; se deja expl├¡cito)
       max-file-size: 1MB
       max-request-size: 2MB
   jpa:
@@ -23,11 +23,14 @@ server:
   port: ${PORT:8080}
 
 notiurba:
+  diagnostics:
+    enabled: ${DIAGNOSTICS_ENABLED:false}
+    photos-enabled: ${PHOTO_DIAGNOSTICS_ENABLED:false}
   correo:
     resend:
       url: https://api.resend.com
       api-key: ${RESEND_API_KEY:}      # secreta: solo variable de entorno (Render y .env local)
-      remitente: ${RESEND_REMITENTE:}  # solo la dirección, del dominio verificado (reportes.notiurba.com)
+      remitente: ${RESEND_REMITENTE:}  # solo la direcci├│n, del dominio verificado (reportes.notiurba.com)
   fotos:
     cloudinary:
       url: https://api.cloudinary.com
@@ -43,10 +46,10 @@ notiurba:
   google:
     client-id: ${GOOGLE_CLIENT_ID}  # obligatoria: ID de cliente OAuth de Google Cloud (aud del ID token)
   verificacion:
-    # Página del frontend «Confirmar correo»; el backend agrega ?token=...
+    # P├ígina del frontend ┬½Confirmar correo┬╗; el backend agrega ?token=...
     enlace: ${VERIFICACION_ENLACE:http://localhost:5173/app/verificar-correo}
   recuperacion:
-    # Página del frontend «Nueva contraseña»; el backend agrega ?token=...
+    # P├ígina del frontend ┬½Nueva contrase├▒a┬╗; el backend agrega ?token=...
     enlace: ${RECUPERACION_ENLACE:http://localhost:5173/app/nueva-contrasena}
-    # Solo desarrollo: escribe el enlace en el log mientras no haya envío de correo real
+    # Solo desarrollo: escribe el enlace en el log mientras no haya env├¡o de correo real
     mostrar-enlace-en-log: ${RECUPERACION_MOSTRAR_ENLACE:false}
