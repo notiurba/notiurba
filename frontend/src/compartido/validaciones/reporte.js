@@ -1,7 +1,7 @@
 import { soloErrores } from './campos.js'
 
 export const MAX_DESCRIPCION = 500
-const MIN_DESCRIPCION = 10
+export const MIN_DESCRIPCION = 10
 export const MAX_FOTOS = 3
 export const MAX_BYTES_FOTO = 1024 * 1024 // 1 MB por foto (contrato propuesto en simulacion/README.md)
 export const TIPOS_FOTO = ['image/jpeg', 'image/png']

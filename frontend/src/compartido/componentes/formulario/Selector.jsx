@@ -1,6 +1,6 @@
 import CampoBase from './CampoBase'
 import { ariaCampo } from './ariaCampo'
-import { IconoChevron } from './Iconos'
+import { IconoChevron } from '../Iconos'
 
 // Lista desplegable. Usa el <select> del navegador: en el celular abre su selector nativo,
 // que es lo más cómodo y accesible. `opciones` es una lista de { valor, texto }.

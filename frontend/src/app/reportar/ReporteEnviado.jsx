@@ -1,12 +1,13 @@
 import { useCallback, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { obtenerReporte } from '../../compartido/api/reportes'
-import Aviso from '../../compartido/componentes/Aviso'
+import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
 import BotonIcono from '../../compartido/componentes/BotonIcono'
 import ChipEstado from '../../compartido/componentes/ChipEstado'
 import { IconoCopiar, IconoCorreo, IconoX } from '../../compartido/componentes/Iconos'
 import useCargar from '../../compartido/hooks/useCargar'
+import { textoLugar } from '../../compartido/utilidades/reportes'
 import './ReporteEnviado.css'
 
 // Pantalla final: el reporte salió. Muestra el código de seguimiento de NotiUrba (no es el radicado oficial).
@@ -71,11 +72,7 @@ export default function ReporteEnviado() {
             </div>
             <div className="enviado__fila">
               <span>Lugar</span>
-              <strong>
-                {[reporte.barrio && `Barrio ${reporte.barrio}`, reporte.idComuna && `Comuna ${reporte.idComuna}`]
-                  .filter(Boolean)
-                  .join(' · ') || 'Punto marcado en el mapa'}
-              </strong>
+              <strong>{textoLugar(reporte) || 'Punto marcado en el mapa'}</strong>
             </div>
           </>
         )}

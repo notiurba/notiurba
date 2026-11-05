@@ -52,21 +52,41 @@ export function validarPasoAcceso(d) {
   })
 }
 
-// Convierte lo que está en el formulario en el cuerpo que espera la API (contrato en docs/contexto/11-contrato-api.md):
-// quita espacios sobrantes, pasa los ids a número, no manda la confirmación y omite el teléfono vacío.
-export function armarSolicitudRegistro(d) {
-  const solicitud = {
+// Valores iniciales de los datos personales (los usan el registro y «Complete su perfil»).
+export const DATOS_PERFIL_VACIOS = {
+  nombres: '',
+  apellidos: '',
+  idTipoDocumento: '',
+  numeroDocumento: '',
+  telefono: '',
+  idBarrio: '',
+  direccionCorrespondencia: '',
+  aceptaPrivacidad: false,
+}
+
+// Cuerpo de la API con los datos personales (contrato en docs/contexto/11-contrato-api.md): quita espacios
+// sobrantes y pasa los ids a número. El teléfono vacío se omite, salvo en «Editar mis datos»
+// (`enviarTelefonoVacio`), donde hay que enviarlo para poder borrarlo.
+export function armarDatosPerfil(d, { enviarTelefonoVacio = false } = {}) {
+  const datos = {
     nombres: d.nombres.trim(),
     apellidos: d.apellidos.trim(),
     idTipoDocumento: Number(d.idTipoDocumento),
     numeroDocumento: d.numeroDocumento.trim(),
     idBarrio: Number(d.idBarrio),
     direccionCorrespondencia: d.direccionCorrespondencia.trim(),
+  }
+  if (d.telefono || enviarTelefonoVacio) datos.telefono = d.telefono
+  return datos
+}
+
+// Cuerpo del registro: los datos personales más correo y contraseña (la confirmación no se manda).
+export function armarSolicitudRegistro(d) {
+  return {
+    ...armarDatosPerfil(d),
     correo: d.correo.trim(),
     password: d.password,
     aceptaPrivacidad: d.aceptaPrivacidad,
     declaraMayorEdad: d.aceptaPrivacidad, // es la misma casilla
   }
-  if (d.telefono) solicitud.telefono = d.telefono
-  return solicitud
 }

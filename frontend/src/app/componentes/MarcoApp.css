@@ -14,10 +14,6 @@
   font-family: var(--nu-fuente);
 }
 
-.marco-app--amplio {
-  --marco-ancho: 430px;
-}
-
 .marco-app__contenido {
   display: flex;
   flex: 1;

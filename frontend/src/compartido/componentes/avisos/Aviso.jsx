@@ -1,4 +1,4 @@
-import { IconoAlerta, IconoCheck, IconoError, IconoEscudo, IconoInfo } from './Iconos'
+import { IconoAlerta, IconoCheck, IconoError, IconoEscudo, IconoInfo } from '../Iconos'
 import './Aviso.css'
 
 const ICONOS = {

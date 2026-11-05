@@ -1,17 +1,18 @@
 import { useRef, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import AreaTexto from '../../compartido/componentes/AreaTexto'
-import Aviso from '../../compartido/componentes/Aviso'
+import AreaTexto from '../../compartido/componentes/formulario/AreaTexto'
+import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
-import Campo from '../../compartido/componentes/Campo'
+import Campo from '../../compartido/componentes/formulario/Campo'
 import EncabezadoPantalla from '../../compartido/componentes/EncabezadoPantalla'
-import FormularioPantalla from '../../compartido/componentes/FormularioPantalla'
-import HojaInferior from '../../compartido/componentes/HojaInferior'
+import FormularioPantalla from '../../compartido/componentes/formulario/FormularioPantalla'
+import HojaInferior from '../../compartido/componentes/avisos/HojaInferior'
 import { IconoCamara, IconoImagen, IconoImagenError, IconoPapelera } from '../../compartido/componentes/Iconos'
 import PasosBarra from '../../compartido/componentes/PasosBarra'
 import BotonIcono from '../../compartido/componentes/BotonIcono'
 import { reducirFoto } from '../../compartido/utilidades/fotos'
-import { MAX_DESCRIPCION, MAX_FOTOS, validarDetalles, validarFoto } from '../../compartido/validaciones/reporte'
+import { LIMITES } from '../../compartido/validaciones/campos'
+import { MAX_DESCRIPCION, MAX_FOTOS, MIN_DESCRIPCION, validarDetalles, validarFoto } from '../../compartido/validaciones/reporte'
 import ResumenCategoria from './ResumenCategoria'
 import { useReporte } from './useReporte'
 import './Reportar.css'
@@ -70,11 +71,7 @@ export default function PasoDetalles() {
 
       <FormularioPantalla
         alEnviar={continuar}
-        acciones={
-          <>
-            <Boton type="submit">Continuar</Boton>
-          </>
-        }
+        acciones={<Boton type="submit">Continuar</Boton>}
       >
         <PasosBarra paso={3} total={4} etiqueta="Detalles" />
         <ResumenCategoria categoria={categoria} />
@@ -92,7 +89,7 @@ export default function PasoDetalles() {
               setErrores({})
             }}
             error={errores.descripcion}
-            ayuda="Mínimo 10 caracteres"
+            ayuda={`Mínimo ${MIN_DESCRIPCION} caracteres`}
           />
           <p className="detalles__contador" aria-live="polite">
             {borrador.descripcion.length}/{MAX_DESCRIPCION}
@@ -158,6 +155,7 @@ export default function PasoDetalles() {
 
         <Campo
           id="matricula"
+          maxLength={LIMITES.matricula}
           etiqueta="Matrícula o cuenta del servicio"
           opcional
           placeholder="Ej. N.º de contrato o matrícula"

@@ -10,7 +10,8 @@ const MENSAJE_RESPUESTA_RARA = 'El servidor respondió algo inesperado. Intente 
 
 async function leerError(respuesta) {
   const cuerpo = await respuesta.json().catch(() => null)
-  if (cuerpo && typeof cuerpo.codigo === 'string' && typeof cuerpo.mensaje === 'string') {
+  // Un error del servidor (500 en adelante) puede traer texto técnico (SQL, nombres de clases): no se muestra.
+  if (respuesta.status < 500 && cuerpo && typeof cuerpo.codigo === 'string' && typeof cuerpo.mensaje === 'string') {
     return new ErrorApi({ estado: respuesta.status, ...cuerpo })
   }
   // Sin cuerpo del contrato (p. ej. Render despertando, o un proxy): mensaje genérico

@@ -1,5 +1,5 @@
 import Aviso from './Aviso'
-import Boton from './Boton'
+import Boton from '../Boton'
 import HojaInferior from './HojaInferior'
 
 // Hoja de «¿está segura?»: ícono, título, texto, un aviso opcional y dos botones.

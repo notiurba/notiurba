@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import EncabezadoPantalla from '../componentes/EncabezadoPantalla'
-import LayoutAuth from '../componentes/LayoutAuth'
+import LayoutAuth from '../componentes/acceso/LayoutAuth'
 import '../estilos/marca.css'
 import { AVISO_PRIVACIDAD } from '../textos/avisoPrivacidad'
 import './AvisoPrivacidad.css'

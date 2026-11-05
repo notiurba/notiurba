@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { registrarCuenta } from '../api/auth'
 import { obtenerBarrios, obtenerTiposDocumento } from '../api/catalogos'
-import Aviso from '../componentes/Aviso'
+import Aviso from '../componentes/avisos/Aviso'
+import EstadoCarga from '../componentes/avisos/EstadoCarga'
 import Boton from '../componentes/Boton'
 import EncabezadoPantalla from '../componentes/EncabezadoPantalla'
-import FormularioPantalla from '../componentes/FormularioPantalla'
-import LayoutAuth from '../componentes/LayoutAuth'
+import FormularioPantalla from '../componentes/formulario/FormularioPantalla'
+import LayoutAuth from '../componentes/acceso/LayoutAuth'
 import PasosBarra from '../componentes/PasosBarra'
 import '../estilos/marca.css'
 import useCargar from '../hooks/useCargar'
@@ -14,25 +15,14 @@ import useFormulario from '../hooks/useFormulario'
 import {
   armarSolicitudRegistro,
   CAMPOS_PASO_DATOS,
+  DATOS_PERFIL_VACIOS,
   validarPasoAcceso,
   validarPasoDatos,
 } from '../validaciones/registro'
 import PasoAcceso from './registro/PasoAcceso'
 import PasoDatos from './registro/PasoDatos'
 
-const DATOS_INICIALES = {
-  nombres: '',
-  apellidos: '',
-  idTipoDocumento: '',
-  numeroDocumento: '',
-  telefono: '',
-  idBarrio: '',
-  direccionCorrespondencia: '',
-  correo: '',
-  password: '',
-  confirmar: '',
-  aceptaPrivacidad: false,
-}
+const DATOS_INICIALES = { ...DATOS_PERFIL_VACIOS, correo: '', password: '', confirmar: '' }
 
 const MENSAJE_ERROR_GENERAL = 'No pudimos crear su cuenta. Inténtelo de nuevo en un momento.'
 
@@ -41,7 +31,7 @@ const MENSAJE_ERROR_GENERAL = 'No pudimos crear su cuenta. Inténtelo de nuevo e
 export default function Registro() {
   const navigate = useNavigate()
   const [paso, setPaso] = useState(1)
-  const { datos, errores, setErrores, cambiar } = useFormulario(DATOS_INICIALES)
+  const { datos, errores, setErrores, cambiar, errorDeCampo } = useFormulario(DATOS_INICIALES)
   const [errorGeneral, setErrorGeneral] = useState('')
   const [enviando, setEnviando] = useState(false)
   const tipos = useCargar(obtenerTiposDocumento)
@@ -57,8 +47,7 @@ export default function Registro() {
   // Si la API rechaza un campo (por ejemplo «documento ya registrado»), se muestra bajo esa
   // casilla y, si pertenece al paso 1, se vuelve a ese paso. Sin `campo`, va el aviso general.
   function mostrarErrorApi(error) {
-    if (error.campo && error.campo in datos) {
-      setErrores({ [error.campo]: error.mensaje ?? 'Revise este dato' })
+    if (errorDeCampo(error)) {
       if (CAMPOS_PASO_DATOS.includes(error.campo)) setPaso(1)
     } else {
       setErrorGeneral(error.mensaje ?? MENSAJE_ERROR_GENERAL)
@@ -123,13 +112,7 @@ export default function Registro() {
           </Aviso>
         )}
 
-        {catalogosFallaron && (
-          <Aviso variante="error" titulo="No pudimos cargar las listas">
-            Revise su conexión y vuelva a abrir esta pantalla.
-          </Aviso>
-        )}
-
-        {!catalogosListos && !catalogosFallaron && <p className="cargando-texto">Cargando…</p>}
+        <EstadoCarga cargando={!catalogosListos} fallo={catalogosFallaron} />
 
         {catalogosListos && paso === 1 && (
           <PasoDatos datos={datos} errores={errores} cambiar={cambiar} tiposDocumento={tipos.datos} />

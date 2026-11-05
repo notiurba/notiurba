@@ -1,6 +1,6 @@
-import BotonGoogle from '../../componentes/BotonGoogle'
-import { CamposIdentidad } from '../../componentes/CamposPerfil'
-import NotaPrivacidad from '../../componentes/NotaPrivacidad'
+import BotonGoogle from '../../componentes/acceso/BotonGoogle'
+import { CamposIdentidad } from '../../componentes/formulario/CamposPerfil'
+import NotaPrivacidad from '../../componentes/avisos/NotaPrivacidad'
 import Separador from '../../componentes/Separador'
 
 // Paso 1 de 2: datos personales. No guarda nada por sí mismo: recibe los datos y los

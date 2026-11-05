@@ -1,7 +1,7 @@
 import Boton from '../../compartido/componentes/Boton'
 import ChipEstado from '../../compartido/componentes/ChipEstado'
-import Aviso from '../../compartido/componentes/Aviso'
-import HojaInferior from '../../compartido/componentes/HojaInferior'
+import Aviso from '../../compartido/componentes/avisos/Aviso'
+import HojaInferior from '../../compartido/componentes/avisos/HojaInferior'
 import './HojaEstados.css'
 
 // Qué significa cada estado de un reporte (como en el Figma).

@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { restablecerPassword } from '../api/auth'
-import Aviso from '../componentes/Aviso'
+import Aviso from '../componentes/avisos/Aviso'
 import Boton from '../componentes/Boton'
-import CabeceraAuth from '../componentes/CabeceraAuth'
-import CampoPassword from '../componentes/CampoPassword'
+import CabeceraAuth from '../componentes/acceso/CabeceraAuth'
+import CampoPassword from '../componentes/formulario/CampoPassword'
 import EncabezadoPantalla from '../componentes/EncabezadoPantalla'
-import LayoutAuth from '../componentes/LayoutAuth'
-import PieAuth from '../componentes/PieAuth'
+import LayoutAuth from '../componentes/acceso/LayoutAuth'
+import PieAuth from '../componentes/acceso/PieAuth'
+import enfocarPrimerError from '../componentes/formulario/enfocarPrimerError'
 import '../estilos/marca.css'
 import useFormulario from '../hooks/useFormulario'
 import { soloErrores, validarConfirmacion, validarPasswordNueva } from '../validaciones/campos'
@@ -25,6 +26,7 @@ export default function NuevaContrasena() {
 
   async function guardar(evento) {
     evento.preventDefault()
+    enfocarPrimerError(evento.currentTarget)
     const encontrados = soloErrores({
       password: validarPasswordNueva(datos.password),
       confirmar: validarConfirmacion(datos.password, datos.confirmar),

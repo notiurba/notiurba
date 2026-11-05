@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { eliminarMiCuenta, eliminarMisDatos, obtenerPerfil } from '../../compartido/api/usuario'
 import { cerrarSesion } from '../../compartido/auth/sesion'
-import Aviso from '../../compartido/componentes/Aviso'
+import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
 import EncabezadoPantalla from '../../compartido/componentes/EncabezadoPantalla'
-import HojaConfirmacion from '../../compartido/componentes/HojaConfirmacion'
+import HojaConfirmacion from '../../compartido/componentes/avisos/HojaConfirmacion'
 import {
   IconoAlerta,
   IconoChevronDerecha,

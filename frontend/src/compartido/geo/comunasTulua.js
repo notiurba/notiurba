@@ -2,6 +2,9 @@ import comunasTuluaRaw from './comunas-tulua-POT2015-candidato.geojson?raw'
 
 const comunasTuluaGeoJson = JSON.parse(comunasTuluaRaw)
 
+// Centro de Tuluá [latitud, longitud]: donde arrancan los dos mapas.
+export const CENTRO_TULUA = [4.0847, -76.1954]
+
 export const COMUNAS_TULUA_SOURCE = {
   name: 'POT Tulua 2015 - capa provisional',
   url: 'https://www.colombiaot.gov.co/pot/buscador.html?u=76834',

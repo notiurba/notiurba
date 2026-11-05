@@ -1,8 +1,8 @@
 import { useLocation } from 'react-router-dom'
 import Boton from '../componentes/Boton'
-import EstadoVacio from '../componentes/EstadoVacio'
+import EstadoVacio from '../componentes/avisos/EstadoVacio'
 import { IconoPin } from '../componentes/Iconos'
-import LayoutAuth from '../componentes/LayoutAuth'
+import LayoutAuth from '../componentes/acceso/LayoutAuth'
 import '../estilos/marca.css'
 
 // Se muestra cuando la dirección no existe (por ejemplo, un enlace mal escrito), en lugar de dejar la página en blanco.

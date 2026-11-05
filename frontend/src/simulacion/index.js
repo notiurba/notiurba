@@ -4,7 +4,7 @@
 //
 // Para ELIMINARLA: borre esta carpeta entera (src/simulacion). Nada más se rompe: cliente.js la
 // busca con import.meta.glob y, si no existe, simplemente habla con la API real.
-import { crearErrorApi } from '../compartido/api/errorApi'
+import { ErrorApi } from '../compartido/api/errorApi'
 import * as almacen from './almacen'
 import barrios from './datos/catalogos/barrios.json'
 import categorias from './datos/catalogos/categorias.json'
@@ -21,6 +21,16 @@ import documentoRepetido from './datos/auth/registro.error.documento-repetido.js
 import enlaceVencido from './datos/auth/restablecer.error.enlace-vencido.json'
 import verificarVencido from './datos/auth/verificar.error.enlace-vencido.json'
 import reenviarOk from './datos/auth/reenviar-verificacion.ok.json'
+
+// Arma un ErrorApi con el cuerpo que daría el servidor.
+function crearErrorApi(estado, cuerpo = {}, ruta = '') {
+  return new ErrorApi({
+    estado,
+    codigo: cuerpo.codigo ?? (estado === 400 ? 'VALIDACION' : `HTTP_${estado}`),
+    mensaje: cuerpo.mensaje ?? `El servidor respondió algo inesperado (${estado} ${ruta})`.trim(),
+    campo: cuerpo.campo ?? null,
+  })
+}
 
 const ESPERA_MS = 500 // pausa para que se vean los estados de carga
 

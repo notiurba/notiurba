@@ -1,4 +1,4 @@
-import { visualCategoria } from '../datos/categorias'
+import { visualCategoria } from '../utilidades/categorias'
 import './IconoCategoria.css'
 
 // Cuadrito de color con el ícono de una categoría. Lo usan la lista de categorías y el

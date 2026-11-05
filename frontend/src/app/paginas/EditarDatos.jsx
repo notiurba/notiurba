@@ -2,14 +2,15 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { obtenerBarrios, obtenerTiposDocumento } from '../../compartido/api/catalogos'
 import { guardarPerfil, obtenerPerfil } from '../../compartido/api/usuario'
-import Aviso from '../../compartido/componentes/Aviso'
+import Aviso from '../../compartido/componentes/avisos/Aviso'
+import EstadoCarga from '../../compartido/componentes/avisos/EstadoCarga'
 import Boton from '../../compartido/componentes/Boton'
-import { CamposIdentidad, CamposResidencia } from '../../compartido/componentes/CamposPerfil'
+import { CamposIdentidad, CamposResidencia } from '../../compartido/componentes/formulario/CamposPerfil'
 import EncabezadoPantalla from '../../compartido/componentes/EncabezadoPantalla'
-import FormularioPantalla from '../../compartido/componentes/FormularioPantalla'
+import FormularioPantalla from '../../compartido/componentes/formulario/FormularioPantalla'
 import useCargar from '../../compartido/hooks/useCargar'
 import useFormulario from '../../compartido/hooks/useFormulario'
-import { validarPerfil } from '../../compartido/validaciones/registro'
+import { armarDatosPerfil, validarPerfil } from '../../compartido/validaciones/registro'
 
 // Carga el perfil y, cuando llega, muestra el formulario ya relleno. Se separa en dos componentes
 // para que el formulario nazca con los datos (useFormulario solo usa el valor inicial una vez).
@@ -23,12 +24,7 @@ export default function EditarDatos() {
   return (
     <>
       <EncabezadoPantalla titulo="Editar mis datos" atras="/app/ajustes" />
-      {fallaron && (
-        <Aviso variante="error" titulo="No pudimos cargar sus datos">
-          Revise su conexión y vuelva a abrir esta pantalla.
-        </Aviso>
-      )}
-      {!listos && !fallaron && <p className="cargando-texto">Cargando…</p>}
+      <EstadoCarga cargando={!listos} fallo={fallaron} titulo="No pudimos cargar sus datos" />
       {listos && <Formulario perfil={perfil.datos} tipos={tipos.datos} barrios={barrios.datos} />}
     </>
   )
@@ -36,7 +32,7 @@ export default function EditarDatos() {
 
 function Formulario({ perfil, tipos, barrios }) {
   const navigate = useNavigate()
-  const { datos, errores, setErrores, cambiar } = useFormulario({
+  const { datos, errores, setErrores, cambiar, errorDeCampo } = useFormulario({
     nombres: perfil.nombres,
     apellidos: perfil.apellidos,
     idTipoDocumento: String(perfil.idTipoDocumento),
@@ -57,22 +53,10 @@ function Formulario({ perfil, tipos, barrios }) {
 
     setGuardando(true)
     try {
-      await guardarPerfil({
-        nombres: datos.nombres.trim(),
-        apellidos: datos.apellidos.trim(),
-        idTipoDocumento: Number(datos.idTipoDocumento),
-        numeroDocumento: datos.numeroDocumento.trim(),
-        telefono: datos.telefono,
-        idBarrio: Number(datos.idBarrio),
-        direccionCorrespondencia: datos.direccionCorrespondencia.trim(),
-      })
+      await guardarPerfil(armarDatosPerfil(datos, { enviarTelefonoVacio: true }))
       navigate('/app/ajustes', { replace: true, state: { mensaje: 'Sus datos se guardaron.' } })
     } catch (error) {
-      if (error.campo && error.campo in datos) {
-        setErrores({ [error.campo]: error.mensaje ?? 'Revise este dato' })
-      } else {
-        setErrorGeneral('No pudimos guardar sus cambios. Inténtelo de nuevo en un momento.')
-      }
+      if (!errorDeCampo(error)) setErrorGeneral('No pudimos guardar sus cambios. Inténtelo de nuevo en un momento.')
       setGuardando(false)
     }
   }

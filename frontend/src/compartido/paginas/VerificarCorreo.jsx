@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { reenviarVerificacion } from '../api/auth'
-import Aviso from '../componentes/Aviso'
+import Aviso from '../componentes/avisos/Aviso'
 import Boton from '../componentes/Boton'
 import EncabezadoPantalla from '../componentes/EncabezadoPantalla'
 import { IconoCorreo } from '../componentes/Iconos'
-import LayoutAuth from '../componentes/LayoutAuth'
+import LayoutAuth from '../componentes/acceso/LayoutAuth'
 import '../estilos/marca.css'
 import './VerificarCorreo.css'
 

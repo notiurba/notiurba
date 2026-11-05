@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { solicitarRecuperacion } from '../api/auth'
-import Aviso from '../componentes/Aviso'
+import Aviso from '../componentes/avisos/Aviso'
 import Boton from '../componentes/Boton'
-import CabeceraAuth from '../componentes/CabeceraAuth'
-import Campo from '../componentes/Campo'
+import CabeceraAuth from '../componentes/acceso/CabeceraAuth'
+import Campo from '../componentes/formulario/Campo'
 import EncabezadoPantalla from '../componentes/EncabezadoPantalla'
 import { IconoCorreo } from '../componentes/Iconos'
-import LayoutAuth from '../componentes/LayoutAuth'
-import PieAuth from '../componentes/PieAuth'
+import LayoutAuth from '../componentes/acceso/LayoutAuth'
+import PieAuth from '../componentes/acceso/PieAuth'
+import enfocarPrimerError from '../componentes/formulario/enfocarPrimerError'
 import '../estilos/marca.css'
 import { LIMITES, validarCorreo } from '../validaciones/campos'
 
@@ -22,6 +23,7 @@ export default function RecuperarContrasena() {
 
   async function enviar(evento) {
     evento.preventDefault()
+    enfocarPrimerError(evento.currentTarget)
     const errorCorreo = validarCorreo(correo)
     setError(errorCorreo)
     setFallo(false)

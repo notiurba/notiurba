@@ -1,10 +1,10 @@
-import Aviso from '../../componentes/Aviso'
-import Campo from '../../componentes/Campo'
-import { CamposResidencia } from '../../componentes/CamposPerfil'
-import CampoPassword from '../../componentes/CampoPassword'
-import Casilla from '../../componentes/Casilla'
+import Aviso from '../../componentes/avisos/Aviso'
+import Campo from '../../componentes/formulario/Campo'
+import { CamposResidencia } from '../../componentes/formulario/CamposPerfil'
+import CampoPassword from '../../componentes/formulario/CampoPassword'
+import Casilla from '../../componentes/formulario/Casilla'
 import { IconoCorreo } from '../../componentes/Iconos'
-import { EnlacePrivacidad } from '../../componentes/NotaPrivacidad'
+import { EnlacePrivacidad } from '../../componentes/avisos/NotaPrivacidad'
 import { LIMITES } from '../../validaciones/campos'
 
 // Paso 2 de 2: dónde vive y con qué correo y contraseña entra.

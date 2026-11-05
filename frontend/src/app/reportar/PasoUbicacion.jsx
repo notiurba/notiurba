@@ -1,16 +1,17 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import Aviso from '../../compartido/componentes/Aviso'
+import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
-import Campo from '../../compartido/componentes/Campo'
+import Campo from '../../compartido/componentes/formulario/Campo'
 import EncabezadoPantalla from '../../compartido/componentes/EncabezadoPantalla'
-import FormularioPantalla from '../../compartido/componentes/FormularioPantalla'
-import HojaInferior from '../../compartido/componentes/HojaInferior'
+import FormularioPantalla from '../../compartido/componentes/formulario/FormularioPantalla'
+import HojaInferior from '../../compartido/componentes/avisos/HojaInferior'
 import { IconoSinUbicacion, IconoUbicacion } from '../../compartido/componentes/Iconos'
 import PasosBarra from '../../compartido/componentes/PasosBarra'
-import Selector from '../../compartido/componentes/Selector'
+import Selector from '../../compartido/componentes/formulario/Selector'
 import { comunasTulua } from '../../compartido/geo/comunasTulua'
-import { identificarComunaPorCoordenadas } from '../../compartido/utils/geoUtils'
+import { identificarComunaPorCoordenadas } from '../../compartido/geo/geoUtils'
+import { LIMITES } from '../../compartido/validaciones/campos'
 import { validarUbicacion } from '../../compartido/validaciones/reporte'
 import MapaUbicacion from './MapaUbicacion'
 import ResumenCategoria from './ResumenCategoria'
@@ -81,11 +82,7 @@ export default function PasoUbicacion() {
 
       <FormularioPantalla
         alEnviar={continuar}
-        acciones={
-          <>
-            <Boton type="submit">Continuar</Boton>
-          </>
-        }
+        acciones={<Boton type="submit">Continuar</Boton>}
       >
         <PasosBarra paso={2} total={4} etiqueta="Ubicación" />
         <ResumenCategoria categoria={categoria} />
@@ -119,7 +116,8 @@ export default function PasoUbicacion() {
           id="direccion"
           etiqueta="Dirección"
           placeholder="Ej. Cra 26 #28-40"
-          autoComplete="street-address"
+          autoComplete="off"
+          maxLength={LIMITES.direccion}
           value={borrador.direccion}
           onChange={(e) => cambiar({ direccion: e.target.value })}
         />
@@ -131,11 +129,7 @@ export default function PasoUbicacion() {
             marcador="Seleccione el barrio"
             opciones={barrios.map((b) => ({ valor: b.idBarrio, texto: b.nombre }))}
             value={borrador.idBarrio}
-            onChange={(e) => {
-              cambiar({ idBarrio: e.target.value })
-              setErrores((anteriores) => ({ ...anteriores, idBarrio: '' }))
-            }}
-            error={errores.idBarrio}
+            onChange={(e) => cambiar({ idBarrio: e.target.value })}
           />
         )}
       </FormularioPantalla>

@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { actualizarMiReporte } from '../../compartido/api/reportes'
-import Aviso from '../../compartido/componentes/Aviso'
+import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
-import Campo from '../../compartido/componentes/Campo'
-import HojaInferior from '../../compartido/componentes/HojaInferior'
+import Campo from '../../compartido/componentes/formulario/Campo'
+import HojaInferior from '../../compartido/componentes/avisos/HojaInferior'
 import TarjetaOpcion from '../../compartido/componentes/TarjetaOpcion'
+import { LIMITES } from '../../compartido/validaciones/campos'
 
 const OPCIONES = [
   { valor: 'RESPUESTA', titulo: 'Me respondieron' },
@@ -56,6 +57,7 @@ export default function HojaActualizarReporte({ reporte, alCerrar, alGuardar }) 
 
       <Campo
         id="radicado"
+        maxLength={LIMITES.radicado}
         etiqueta="Número de radicado"
         opcional
         placeholder="Ej. GAC-003660-26"

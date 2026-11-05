@@ -2,21 +2,22 @@ import { useMemo, useState } from 'react'
 import { cambiarEstadoReporte, listarTodosLosReportes } from '../../compartido/api/reportes'
 import ChipEstado from '../../compartido/componentes/ChipEstado'
 import Filtro from '../../compartido/componentes/Filtro'
-import Aviso from '../../compartido/componentes/Aviso'
+import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
-import EstadoVacio from '../../compartido/componentes/EstadoVacio'
+import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
 import useCargar from '../../compartido/hooks/useCargar'
 import { formatearFecha, formatearFechaHora } from '../../compartido/utilidades/fechas'
+import { ESTADOS_REPORTE, ESTADO_ENVIADO, textoLugar } from '../../compartido/utilidades/reportes'
 import './Reportes.css'
 
-const ESTADOS = ['Todos', 'Recibido', 'Enviado', 'En trámite', 'Resuelto']
-const ESTADOS_EDITABLES = ['Enviado', 'En trámite', 'Resuelto']
+const ESTADOS = ['Todos', ...ESTADOS_REPORTE]
+const ESTADOS_EDITABLES = ESTADOS_REPORTE.slice(1)
 const DIAS_SIN_RESPUESTA = 15
 const DIA_MS = 24 * 60 * 60 * 1000
 
 // Un reporte lleva demasiado tiempo si sigue «Enviado» (sin respuesta) más de 15 días.
 const sinRespuesta = (r) =>
-  r.estado === 'Enviado' && Date.now() - new Date(r.creadoEn).getTime() > DIAS_SIN_RESPUESTA * DIA_MS
+  r.estado === ESTADO_ENVIADO && Date.now() - new Date(r.creadoEn).getTime() > DIAS_SIN_RESPUESTA * DIA_MS
 
 // Panel de reportes: búsqueda, filtros, tabla y detalle con cambio de estado.
 export default function Reportes() {
@@ -198,7 +199,7 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
       {pestana === 'resumen' ? (
         <dl className="adm-rep__datos">
           <dt>Tipo</dt><dd>{reporte.categoria}</dd>
-          <dt>Ubicación</dt><dd>{reporte.barrio} · Comuna {reporte.idComuna}{reporte.direccion && ` · ${reporte.direccion}`}</dd>
+          <dt>Ubicación</dt><dd>{textoLugar(reporte)}</dd>
           <dt>Descripción</dt><dd>{reporte.descripcion}</dd>
           <dt>Creado</dt><dd>{formatearFecha(reporte.creadoEn)}</dd>
           {reporte.radicadoOficial && (<><dt>Radicado oficial</dt><dd>{reporte.radicadoOficial}</dd></>)}

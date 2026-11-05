@@ -39,15 +39,6 @@
   color: var(--nu-peligro-texto);
 }
 
-/* Enlace: texto verde sin caja (acciones secundarias dentro de una hoja o un aviso) */
-.boton--enlace {
-  height: auto;
-  min-height: 44px;
-  background: transparent;
-  color: var(--nu-marca-primario);
-  font-size: 14px;
-}
-
 .boton--texto {
   background: transparent;
   color: var(--nu-texto-secundario);
@@ -67,7 +58,6 @@
   cursor: not-allowed;
 }
 
-.boton--enlace:disabled,
 .boton--texto:disabled {
   background: transparent;
   border-color: transparent;

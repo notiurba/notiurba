@@ -3,7 +3,7 @@ import Boton from '../../compartido/componentes/Boton'
 import ChipEstado from '../../compartido/componentes/ChipEstado'
 import { IconoLapiz } from '../../compartido/componentes/Iconos'
 import { formatearFecha } from '../../compartido/utilidades/fechas'
-import { puedeActualizar } from '../utilidades/reportes'
+import { puedeActualizar } from '../../compartido/utilidades/reportes'
 import './TarjetaReporte.css'
 
 // Tarjeta de un reporte en «Mis reportes»: abre el seguimiento y, si corresponde, ofrece «Actualizar mi reporte».

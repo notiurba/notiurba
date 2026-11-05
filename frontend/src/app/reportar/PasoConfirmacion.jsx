@@ -1,19 +1,19 @@
 import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { crearReporte, enviarReporte, subirFoto } from '../../compartido/api/reportes'
+import { publicarReporte } from '../../compartido/api/reportes'
 import { obtenerPerfil } from '../../compartido/api/usuario'
 import { estadoSesion } from '../../compartido/auth/sesion'
-import Aviso from '../../compartido/componentes/Aviso'
+import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
-import Casilla from '../../compartido/componentes/Casilla'
+import Casilla from '../../compartido/componentes/formulario/Casilla'
 import EncabezadoPantalla from '../../compartido/componentes/EncabezadoPantalla'
-import FormularioPantalla from '../../compartido/componentes/FormularioPantalla'
-import HojaConfirmacion from '../../compartido/componentes/HojaConfirmacion'
-import HojaInferior from '../../compartido/componentes/HojaInferior'
+import FormularioPantalla from '../../compartido/componentes/formulario/FormularioPantalla'
+import HojaConfirmacion from '../../compartido/componentes/avisos/HojaConfirmacion'
+import HojaInferior from '../../compartido/componentes/avisos/HojaInferior'
 import { IconoCorreo, IconoUsuario } from '../../compartido/componentes/Iconos'
 import PasosBarra from '../../compartido/componentes/PasosBarra'
 import useCargar from '../../compartido/hooks/useCargar'
-import { armarSolicitudReporte } from '../../compartido/validaciones/reporte'
+import { armarSolicitudReporte, MIN_DESCRIPCION } from '../../compartido/validaciones/reporte'
 import { useReporte } from './useReporte'
 import './Reportar.css'
 import './PasoConfirmacion.css'
@@ -54,7 +54,7 @@ export default function PasoConfirmacion() {
   if (!borrador.idCategoria) return <Navigate to="/reportar" replace />
   if (!categoria) return <p className="cargando-texto">Cargando…</p>
   if (pideUbicacion && borrador.latitud == null) return <Navigate to="/reportar/ubicacion" replace />
-  if (borrador.descripcion.trim().length < 10) return <Navigate to="/reportar/detalles" replace />
+  if (borrador.descripcion.trim().length < MIN_DESCRIPCION) return <Navigate to="/reportar/detalles" replace />
 
   function pedirEnvio(evento) {
     evento.preventDefault()
@@ -67,22 +67,10 @@ export default function PasoConfirmacion() {
     try {
       // Una categoría sin ubicación no lleva punto ni barrio, aunque la persona haya marcado uno antes de cambiarla.
       const datos = pideUbicacion ? borrador : { ...borrador, latitud: null, longitud: null, idBarrio: '' }
-      const reporte = await crearReporte(armarSolicitudReporte(datos))
-      // Las fotos se suben una por una al reporte ya creado. Si alguna falla, el reporte sigue creado: se avisa.
-      let fotosFallidas = 0
-      for (const foto of fotos) {
-        try {
-          await subirFoto(reporte.codigoSeguimiento, foto)
-        } catch {
-          fotosFallidas += 1
-        }
-      }
-      // Después de las fotos se pide el envío a la entidad. Ese endpoint aún falta en la API (contrato, sección 4):
-      // si falla no se detiene nada, el reporte ya quedó guardado.
-      await enviarReporte(reporte.codigoSeguimiento).catch(() => null)
+      const { codigoSeguimiento, fotosFallidas } = await publicarReporte(armarSolicitudReporte(datos), fotos)
       setEnviado(true)
       limpiar()
-      navigate(`/reportar/enviado/${reporte.codigoSeguimiento}`, { replace: true, state: { fotosFallidas } })
+      navigate(`/reportar/enviado/${codigoSeguimiento}`, { replace: true, state: { fotosFallidas } })
     } catch (error) {
       setErrorEnvio(error.mensaje ?? 'No pudimos enviar su reporte. Su información sigue aquí; inténtelo de nuevo.')
       setHoja(null)
@@ -102,12 +90,10 @@ export default function PasoConfirmacion() {
       <FormularioPantalla
         alEnviar={pedirEnvio}
         acciones={
-          <>
-            <Boton type="submit" disabled={!autorizaEnvio}>
-              <IconoCorreo tamano={20} />
-              Enviar reporte
-            </Boton>
-          </>
+          <Boton type="submit" disabled={!autorizaEnvio}>
+            <IconoCorreo tamano={20} />
+            Enviar reporte
+          </Boton>
         }
       >
         <PasosBarra paso={4} total={4} etiqueta="Confirmación" />

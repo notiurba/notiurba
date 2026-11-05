@@ -3,7 +3,7 @@
 // las reutiliza y se pueden probar sin abrir el navegador.
 
 const FORMATO_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const SOLO_DIGITOS = /^\d{10}$/
+const FORMATO_TELEFONO = /^\d{10}$/
 
 // Largos máximos de cada casilla. Son más estrictos que los del contrato (nombres 255, dirección 300)
 // porque en la práctica nadie escribe tanto; los usan tanto la validación como el `maxLength` de las casillas.
@@ -14,6 +14,8 @@ export const LIMITES = {
   password: 72, // límite del contrato (bytes)
   telefono: 10,
   documento: 15,
+  matricula: 50, // matrícula o cuenta del servicio, límite del contrato
+  radicado: 50, // radicado oficial, límite del contrato
 }
 
 // Reglas del número de documento según el tipo (ids del contrato: 1 CC, 2 CE, 3 PPT, 4 PAS).
@@ -27,10 +29,15 @@ const REGLA_DOCUMENTO_GENERAL = {
   mensaje: 'Escriba de 6 a 15 letras o números, sin espacios ni símbolos.',
 }
 
+const MAX_DIGITOS_CEDULA = 10
+
+// Las cédulas (CC y CE) son solo números; el pasaporte y el PPT admiten letras.
+export const documentoEsNumerico = (idTipo) => Number(idTipo) in REGLAS_DOCUMENTO
+
 // Deja pasar solo lo que ese tipo de documento admite. Se usa mientras la persona escribe.
 export function limpiarNumeroDocumento(valor, idTipo) {
   const texto = String(valor ?? '')
-  if (REGLAS_DOCUMENTO[Number(idTipo)]) return texto.replace(/\D/g, '').slice(0, 10)
+  if (documentoEsNumerico(idTipo)) return texto.replace(/\D/g, '').slice(0, MAX_DIGITOS_CEDULA)
   return texto.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, LIMITES.documento)
 }
 
@@ -73,7 +80,7 @@ export function validarCorreo(valor) {
 export function validarTelefono(valor) {
   const telefono = String(valor ?? '')
   if (!telefono) return ''
-  return SOLO_DIGITOS.test(telefono) ? '' : 'Escriba 10 dígitos, sin espacios.'
+  return FORMATO_TELEFONO.test(telefono) ? '' : 'Escriba 10 dígitos, sin espacios.'
 }
 
 // Contraseña nueva: mínimo 8 caracteres, con al menos una letra y un número (RF-01).

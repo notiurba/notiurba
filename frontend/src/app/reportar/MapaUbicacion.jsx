@@ -1,12 +1,10 @@
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useRef } from 'react'
-import { comunasTulua } from '../../compartido/geo/comunasTulua'
+import { CENTRO_TULUA, comunasTulua } from '../../compartido/geo/comunasTulua'
 import { estiloComuna } from '../../compartido/geo/estiloComunas'
-import { identificarComunaPorCoordenadas } from '../../compartido/utils/geoUtils'
+import { identificarComunaPorCoordenadas } from '../../compartido/geo/geoUtils'
 import './MapaUbicacion.css'
-
-const CENTRO_TULUA = [4.0847, -76.1954]
 
 // Marcador dibujado con SVG (así no hay que empaquetar las imágenes por defecto de Leaflet).
 const ICONO = L.divIcon({

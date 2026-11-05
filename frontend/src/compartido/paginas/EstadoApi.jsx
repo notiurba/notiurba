@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { URL_BASE } from '../../compartido/api/cliente'
+import { URL_BASE } from '../api/cliente'
 
 const RUTA_HEALTH = '/api/health'
 // Render Free tarda ~50 s en despertar: se espera más que eso antes de rendirse

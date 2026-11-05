@@ -4,13 +4,13 @@ import { obtenerReporte } from '../../compartido/api/reportes'
 import Boton from '../../compartido/componentes/Boton'
 import ChipEstado from '../../compartido/componentes/ChipEstado'
 import EncabezadoPantalla from '../../compartido/componentes/EncabezadoPantalla'
-import EstadoVacio from '../../compartido/componentes/EstadoVacio'
+import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
 import IconoCategoria from '../../compartido/componentes/IconoCategoria'
 import { IconoDocumento, IconoLapiz } from '../../compartido/componentes/Iconos'
 import useCargar from '../../compartido/hooks/useCargar'
 import { formatearFechaHora } from '../../compartido/utilidades/fechas'
 import HojaActualizarReporte from '../componentes/HojaActualizarReporte'
-import { puedeActualizar } from '../utilidades/reportes'
+import { puedeActualizar, textoLugar } from '../../compartido/utilidades/reportes'
 import './DetalleReporte.css'
 
 // Seguimiento de un reporte: datos, estado actual e historial de cambios.
@@ -19,6 +19,7 @@ export default function DetalleReporte() {
   const cargador = useCallback(() => obtenerReporte(codigo), [codigo])
   const { datos: reporte, cargando, error, recargar } = useCargar(cargador)
   const [actualizando, setActualizando] = useState(null)
+  const noExiste = error?.estado === 404
 
   return (
     <>
@@ -30,10 +31,10 @@ export default function DetalleReporte() {
         <EstadoVacio
           icono={<IconoDocumento tamano={52} />}
           tono="alerta"
-          titulo="No encontramos este reporte"
-          texto="Revise el código o vuelva a Mis reportes."
+          titulo={noExiste ? 'No encontramos este reporte' : 'No pudimos cargar el reporte'}
+          texto={noExiste ? 'Revise el código o vuelva a Mis reportes.' : 'Revise su conexión e intente de nuevo.'}
         >
-          <Boton to="/app/reportes">Ver mis reportes</Boton>
+          {noExiste ? <Boton to="/app/reportes">Ver mis reportes</Boton> : <Boton onClick={recargar}>Reintentar</Boton>}
         </EstadoVacio>
       )}
 
@@ -56,10 +57,7 @@ export default function DetalleReporte() {
             </div>
             <div>
               <dt>Lugar</dt>
-              <dd>
-                {reporte.direccion && `${reporte.direccion} · `}
-                {[reporte.barrio, reporte.idComuna && `Comuna ${reporte.idComuna}`].filter(Boolean).join(' · ')}
-              </dd>
+              <dd>{textoLugar(reporte)}</dd>
             </div>
             <div>
               <dt>Descripción</dt>
@@ -94,6 +92,7 @@ export default function DetalleReporte() {
       )}
 
       <HojaActualizarReporte
+        key={actualizando?.codigoSeguimiento ?? 'cerrada'}
         reporte={actualizando}
         alCerrar={() => setActualizando(null)}
         alGuardar={() => {

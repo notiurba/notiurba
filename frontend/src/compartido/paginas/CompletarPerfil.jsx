@@ -2,37 +2,27 @@ import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { completarPerfilGoogle } from '../api/auth'
 import { obtenerBarrios, obtenerTiposDocumento } from '../api/catalogos'
-import { guardarToken } from '../auth/sesion'
-import Aviso from '../componentes/Aviso'
+import { RUTA_POR_ROL, guardarToken } from '../auth/sesion'
+import Aviso from '../componentes/avisos/Aviso'
+import EstadoCarga from '../componentes/avisos/EstadoCarga'
 import Boton from '../componentes/Boton'
-import { CamposIdentidad, CamposResidencia } from '../componentes/CamposPerfil'
-import Casilla from '../componentes/Casilla'
+import { CamposIdentidad, CamposResidencia } from '../componentes/formulario/CamposPerfil'
+import Casilla from '../componentes/formulario/Casilla'
 import EncabezadoPantalla from '../componentes/EncabezadoPantalla'
-import FormularioPantalla from '../componentes/FormularioPantalla'
-import LayoutAuth from '../componentes/LayoutAuth'
-import NotaPrivacidad, { EnlacePrivacidad } from '../componentes/NotaPrivacidad'
+import FormularioPantalla from '../componentes/formulario/FormularioPantalla'
+import LayoutAuth from '../componentes/acceso/LayoutAuth'
+import NotaPrivacidad, { EnlacePrivacidad } from '../componentes/avisos/NotaPrivacidad'
 import '../estilos/marca.css'
 import useCargar from '../hooks/useCargar'
 import useFormulario from '../hooks/useFormulario'
-import { MENSAJE_ACEPTAR, validarPerfil } from '../validaciones/registro'
-
-const INICIAL = {
-  nombres: '',
-  apellidos: '',
-  idTipoDocumento: '',
-  numeroDocumento: '',
-  telefono: '',
-  idBarrio: '',
-  direccionCorrespondencia: '',
-  aceptaPrivacidad: false,
-}
+import { armarDatosPerfil, DATOS_PERFIL_VACIOS, MENSAJE_ACEPTAR, validarPerfil } from '../validaciones/registro'
 
 // Quien entró con Google ya tiene nombre y correo, pero faltan documento, barrio y dirección.
 export default function CompletarPerfil() {
   const navigate = useNavigate()
   const { state } = useLocation()
-  const { datos, errores, setErrores, cambiar } = useFormulario({
-    ...INICIAL,
+  const { datos, errores, setErrores, cambiar, errorDeCampo } = useFormulario({
+    ...DATOS_PERFIL_VACIOS,
     nombres: state?.nombres ?? '',
     apellidos: state?.apellidos ?? '',
   })
@@ -56,22 +46,14 @@ export default function CompletarPerfil() {
       const { token, rol } = await completarPerfilGoogle({
         // Lo entrega la API al entrar con Google; con la simulación no existe y no se envía.
         ...(state?.tokenRegistro ? { tokenRegistro: state.tokenRegistro } : {}),
-        nombres: datos.nombres.trim(),
-        apellidos: datos.apellidos.trim(),
-        idTipoDocumento: Number(datos.idTipoDocumento),
-        numeroDocumento: datos.numeroDocumento.trim(),
-        ...(datos.telefono ? { telefono: datos.telefono } : {}),
-        idBarrio: Number(datos.idBarrio),
-        direccionCorrespondencia: datos.direccionCorrespondencia.trim(),
+        ...armarDatosPerfil(datos),
         aceptaPrivacidad: true,
         declaraMayorEdad: true, // misma casilla que acepta el aviso
       })
       guardarToken(token)
-      navigate(rol === 'ADMIN' ? '/admin' : '/app', { replace: true })
+      navigate(RUTA_POR_ROL[rol] ?? '/app', { replace: true })
     } catch (error) {
-      if (error.campo && error.campo in datos) {
-        setErrores({ [error.campo]: error.mensaje ?? 'Revise este dato' })
-      } else {
+      if (!errorDeCampo(error)) {
         setErrorGeneral(error.mensaje ?? 'No pudimos guardar sus datos. Inténtelo de nuevo en un momento.')
       }
       setEnviando(false)
@@ -108,12 +90,7 @@ export default function CompletarPerfil() {
             {errorGeneral}
           </Aviso>
         )}
-        {fallaron && (
-          <Aviso variante="error" titulo="No pudimos cargar las listas">
-            Revise su conexión y vuelva a abrir esta pantalla.
-          </Aviso>
-        )}
-        {!listos && !fallaron && <p className="cargando-texto">Cargando…</p>}
+        <EstadoCarga cargando={!listos} fallo={fallaron} />
 
         {listos && (
           <>

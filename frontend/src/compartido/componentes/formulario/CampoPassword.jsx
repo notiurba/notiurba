@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { LIMITES } from '../validaciones/campos'
+import { LIMITES } from '../../validaciones/campos'
 import Campo from './Campo'
-import { IconoCandado, IconoOjo } from './Iconos'
+import { IconoCandado, IconoOjo } from '../Iconos'
 
 // Campo de contraseña con candado y el ojo para mostrar u ocultar lo escrito.
 export default function CampoPassword(props) {

@@ -1,18 +1,19 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { iniciarSesion } from '../api/auth'
-import { guardarToken } from '../auth/sesion'
-import Aviso from '../componentes/Aviso'
+import { RUTA_POR_ROL, guardarToken } from '../auth/sesion'
+import Aviso from '../componentes/avisos/Aviso'
 import Boton from '../componentes/Boton'
-import CabeceraAuth from '../componentes/CabeceraAuth'
-import Campo from '../componentes/Campo'
-import CampoPassword from '../componentes/CampoPassword'
+import CabeceraAuth from '../componentes/acceso/CabeceraAuth'
+import Campo from '../componentes/formulario/Campo'
+import CampoPassword from '../componentes/formulario/CampoPassword'
 import EncabezadoPantalla from '../componentes/EncabezadoPantalla'
-import BotonGoogle from '../componentes/BotonGoogle'
+import BotonGoogle from '../componentes/acceso/BotonGoogle'
 import { IconoCorreo } from '../componentes/Iconos'
-import LayoutAuth from '../componentes/LayoutAuth'
-import PieAuth from '../componentes/PieAuth'
+import LayoutAuth from '../componentes/acceso/LayoutAuth'
+import PieAuth from '../componentes/acceso/PieAuth'
 import Separador from '../componentes/Separador'
+import enfocarPrimerError from '../componentes/formulario/enfocarPrimerError'
 import '../estilos/marca.css'
 import { LIMITES, soloErrores, validarCorreo, validarObligatorio } from '../validaciones/campos'
 
@@ -43,6 +44,7 @@ export default function Login() {
 
   async function enviar(evento) {
     evento.preventDefault()
+    enfocarPrimerError(evento.currentTarget)
     const encontrados = soloErrores({
       correo: validarCorreo(correo),
       password: validarObligatorio(password, 'Escriba su contraseña'),
@@ -58,7 +60,7 @@ export default function Login() {
       guardarToken(token)
       // Cada rol aterriza en su zona: el ciudadano en la PWA y el administrador en el panel.
       // Quien venía de «Inicie sesión para enviar» vuelve a su reporte (state.siguiente).
-      const destino = rol === 'ADMIN' ? '/admin' : (state?.siguiente ?? '/app')
+      const destino = rol === 'ADMIN' ? RUTA_POR_ROL.ADMIN : (state?.siguiente ?? RUTA_POR_ROL.CIUDADANO)
       navigate(destino, { replace: true })
     } catch (error) {
       if (error.codigo === 'CORREO_NO_VERIFICADO') {
@@ -71,7 +73,7 @@ export default function Login() {
         // La API no dice cuál dato falló (RF-02): mensaje general.
         setErrorGeneral(MENSAJE_CREDENCIALES)
       } else {
-        setErrorGeneral(error.codigo === 'SIN_CONEXION' ? MENSAJE_SIN_CONEXION : error.mensaje ?? MENSAJE_SIN_CONEXION)
+        setErrorGeneral(error.mensaje ?? MENSAJE_SIN_CONEXION)
       }
       setEnviando(false)
     }

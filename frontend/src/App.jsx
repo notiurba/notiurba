@@ -12,7 +12,7 @@ import Registro from './compartido/paginas/Registro'
 import VerificarCorreo from './compartido/paginas/VerificarCorreo'
 import RutaProtegida from './compartido/auth/RutaProtegida'
 import RutasApp from './app/rutas'
-import EstadoApi from './app/paginas/EstadoApi'
+import EstadoApi from './compartido/paginas/EstadoApi'
 
 // El flujo de reportes (con el mapa) y el panel se descargan solo cuando alguien entra a esas rutas.
 const RutasReportar = lazy(() => import('./app/reportar/rutas'))

@@ -15,13 +15,13 @@
 .reportar__pie {
   margin: 0;
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--nu-texto-secundario);
 }
 
 .reportar__mensaje {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--nu-texto-secundario);
 }
 

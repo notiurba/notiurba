@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom'
 import logo from '../assets/logo-notiurba.png'
 import Boton from '../componentes/Boton'
-import FondoCiudad from '../componentes/FondoCiudad'
+import FondoCiudad from '../componentes/acceso/FondoCiudad'
 import '../estilos/marca.css'
+import useTituloPagina from '../hooks/useTituloPagina'
 import { DESCRIPCION_MARCA, ETIQUETAS_MARCA, TITULO_MARCA } from '../textos/marca'
 import './Bienvenida.css'
 
 // Pantalla de inicio: arriba la ciudad con el logo, abajo el mensaje y el botón para comenzar.
 export default function Bienvenida() {
+  useTituloPagina('NotiUrba · Reporte de problemas de su barrio')
   return (
     <main className="bienvenida">
       <section className="bienvenida__cielo">

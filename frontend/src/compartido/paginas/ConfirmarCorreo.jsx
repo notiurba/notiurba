@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { verificarCorreo } from '../api/auth'
-import { guardarToken } from '../auth/sesion'
-import Aviso from '../componentes/Aviso'
+import { RUTA_POR_ROL, guardarToken } from '../auth/sesion'
+import Aviso from '../componentes/avisos/Aviso'
 import Boton from '../componentes/Boton'
-import LayoutAuth from '../componentes/LayoutAuth'
+import LayoutAuth from '../componentes/acceso/LayoutAuth'
 import '../estilos/marca.css'
 import './VerificarCorreo.css'
 
@@ -25,7 +25,7 @@ export default function ConfirmarCorreo() {
     verificarCorreo(token)
       .then(({ token: sesion, rol }) => {
         guardarToken(sesion)
-        navigate(rol === 'ADMIN' ? '/admin' : '/app', { replace: true })
+        navigate(RUTA_POR_ROL[rol] ?? '/app', { replace: true })
       })
       .catch((error) => setFallo(error.codigo === 'ENLACE_INVALIDO' ? 'enlace' : 'conexion'))
   }, [token, navigate])

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { iniciarSesionConGoogle } from '../api/auth'
-import { guardarToken } from '../auth/sesion'
-import Aviso from './Aviso'
-import Boton from './Boton'
-import { IconoGoogle } from './Iconos'
+import { iniciarSesionConGoogle } from '../../api/auth'
+import { RUTA_POR_ROL, guardarToken } from '../../auth/sesion'
+import Aviso from '../avisos/Aviso'
+import Boton from '../Boton'
+import { IconoGoogle } from '../Iconos'
 
 // «Continuar con Google». Tiene tres modos:
 //  - Simulación (VITE_USAR_MOCKS=true): lleva a «Complete su perfil» para poder ver esa pantalla.
@@ -49,7 +49,7 @@ function BotonGoogleReal() {
           return
         }
         guardarToken(respuesta.token)
-        navigate(respuesta.rol === 'ADMIN' ? '/admin' : '/app', { replace: true })
+        navigate(RUTA_POR_ROL[respuesta.rol] ?? '/app', { replace: true })
       } catch (fallo) {
         setError(fallo.mensaje ?? 'No pudimos ingresar con Google. Inténtelo de nuevo.')
       }

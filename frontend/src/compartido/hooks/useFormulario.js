@@ -15,5 +15,13 @@ export default function useFormulario(inicial) {
     }
   }
 
-  return { datos, setDatos, errores, setErrores, cambiar }
+  // Si la API rechazó una casilla concreta (error.campo), muestra su mensaje bajo ella y devuelve true.
+  // Si el error no es de una casilla, no hace nada y devuelve false (la pantalla muestra un aviso general).
+  function errorDeCampo(error) {
+    if (!error.campo || !(error.campo in datos)) return false
+    setErrores({ [error.campo]: error.mensaje ?? 'Revise este dato' })
+    return true
+  }
+
+  return { datos, errores, setErrores, cambiar, errorDeCampo }
 }

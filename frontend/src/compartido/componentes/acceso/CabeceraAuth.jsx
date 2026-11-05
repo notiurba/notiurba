@@ -1,8 +1,10 @@
-import logo from '../assets/logo-notiurba.png'
+import useTituloPagina from '../../hooks/useTituloPagina'
+import logo from '../../assets/logo-notiurba.png'
 import './CabeceraAuth.css'
 
 // Logo, título y texto de apoyo que abren las pantallas de cuenta (login, recuperar, nueva contraseña).
 export default function CabeceraAuth({ titulo, texto }) {
+  useTituloPagina(titulo)
   return (
     <>
       <img className="cabecera-auth__logo" src={logo} alt="Logo de NotiUrba" />

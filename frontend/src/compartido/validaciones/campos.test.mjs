@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import {
+  documentoEsNumerico,
   limpiarNumeroDocumento,
   soloErrores,
   validarDireccion,
@@ -100,4 +101,11 @@ test('dirección: de 5 a 150 caracteres', () => {
 test('correo y contraseña demasiado largos se rechazan', () => {
   assert.notEqual(validarCorreo(`${'a'.repeat(250)}@correo.com`), '')
   assert.notEqual(validarPasswordNueva(`Clave1${'x'.repeat(80)}`), '')
+})
+
+test('documentoEsNumerico: las cédulas son números; el pasaporte admite letras', () => {
+  assert.equal(documentoEsNumerico(1), true)
+  assert.equal(documentoEsNumerico('2'), true)
+  assert.equal(documentoEsNumerico('4'), false)
+  assert.equal(documentoEsNumerico(''), false)
 })

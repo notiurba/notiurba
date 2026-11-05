@@ -16,7 +16,7 @@ const codigoComuna = (numero) => String(numero).padStart(2, '0')
 
 before(async () => {
   server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
-  identificar = (await server.ssrLoadModule('/src/compartido/utils/geoUtils.js')).identificarComunaPorCoordenadas
+  identificar = (await server.ssrLoadModule('/src/compartido/geo/geoUtils.js')).identificarComunaPorCoordenadas
   comunas = (await server.ssrLoadModule('/src/compartido/geo/comunasTulua.js')).comunasTulua
   const datos = await server.ssrLoadModule('/src/admin/datos/reportesPrueba.js')
   reportes = datos.reportesPrueba
@@ -125,7 +125,7 @@ test('el solapamiento real POT entre comunas 03 y 10 requiere revision', () => {
 
 test('el diagnostico corresponde al POT intacto y sus sumas coinciden con el resumen', async () => {
   const { diagnosticoLimites: d } = await server.ssrLoadModule('/src/admin/datos/diagnosticoLimites.js')
-  const original = readFileSync(new URL('../geo/comunas-tulua-POT2015-candidato.geojson', import.meta.url))
+  const original = readFileSync(new URL('./comunas-tulua-POT2015-candidato.geojson', import.meta.url))
   assert.equal(createHash('sha256').update(original).digest('hex'), d.metadata.source_sha256)
   assert.equal(d.metadata.geometry_crs, 'EPSG:4326')
   assert.equal(d.metadata.area_crs, 'EPSG:3115')

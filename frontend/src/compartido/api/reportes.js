@@ -36,11 +36,11 @@ export const obtenerReporte = async (codigo) =>
   normalizarReporte(await peticion(`/api/reportes/${encodeURIComponent(codigo)}`))
 
 // Crea el reporte (contrato 3.4). Devuelve { codigoSeguimiento, estado, creadoEn, vigenteHasta }.
-export const crearReporte = (solicitud) =>
+const crearReporte = (solicitud) =>
   peticion('/api/reportes', { method: 'POST', body: JSON.stringify(solicitud) })
 
 // Sube UNA foto de un reporte ya creado (contrato 3.5): multipart con la parte «foto», 1 MB como máximo.
-export function subirFoto(codigo, archivo) {
+function subirFoto(codigo, archivo) {
   const formulario = new FormData()
   formulario.append('foto', archivo)
   return peticion(`/api/reportes/${encodeURIComponent(codigo)}/fotos`, { method: 'POST', body: formulario })
@@ -48,10 +48,27 @@ export function subirFoto(codigo, archivo) {
 
 // Pide a la API que envíe el reporte a la entidad (contrato sección 4; responde 202). Se llama al final,
 // después de subir las fotos.
-export const enviarReporte = (codigo) =>
+const enviarReporte = (codigo) =>
   peticion(`/api/reportes/${encodeURIComponent(codigo)}/enviar`, { method: 'POST' })
 
 // tipo: 'RESPUESTA' (la entidad respondió) o 'RESUELTO'; radicado es opcional.
+// Publica un reporte completo: lo crea, sube sus fotos una por una y pide el envío a la entidad.
+// Si una foto falla el reporte sigue creado (se cuenta en `fotosFallidas`); lo mismo si falla el envío,
+// porque ese endpoint aún falta en la API (contrato, sección 4). Solo falla si no se pudo crear el reporte.
+export async function publicarReporte(solicitud, fotos) {
+  const reporte = await crearReporte(solicitud)
+  let fotosFallidas = 0
+  for (const foto of fotos) {
+    try {
+      await subirFoto(reporte.codigoSeguimiento, foto)
+    } catch {
+      fotosFallidas += 1
+    }
+  }
+  await enviarReporte(reporte.codigoSeguimiento).catch(() => null)
+  return { codigoSeguimiento: reporte.codigoSeguimiento, fotosFallidas }
+}
+
 export const actualizarMiReporte = (codigo, tipo, radicado) =>
   peticion(`/api/reportes/${encodeURIComponent(codigo)}/actualizacion`, {
     method: 'PATCH',

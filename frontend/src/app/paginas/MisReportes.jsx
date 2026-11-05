@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listarMisReportes } from '../../compartido/api/reportes'
-import Aviso from '../../compartido/componentes/Aviso'
+import { ESTADO_RESUELTO } from '../../compartido/utilidades/reportes'
+import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
 import EncabezadoPantalla from '../../compartido/componentes/EncabezadoPantalla'
-import EstadoVacio from '../../compartido/componentes/EstadoVacio'
+import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
 import Filtro from '../../compartido/componentes/Filtro'
 import { IconoMas, IconoOrdenar, IconoPin, IconoSinConexion } from '../../compartido/componentes/Iconos'
 import useCargar from '../../compartido/hooks/useCargar'
@@ -14,8 +15,8 @@ import TarjetaReporte from '../componentes/TarjetaReporte'
 import './MisReportes.css'
 
 const FILTROS = [
-  { clave: 'activos', texto: 'Activos', coincide: (r) => r.estado !== 'Resuelto' },
-  { clave: 'resueltos', texto: 'Resueltos', coincide: (r) => r.estado === 'Resuelto' },
+  { clave: 'activos', texto: 'Activos', coincide: (r) => r.estado !== ESTADO_RESUELTO },
+  { clave: 'resueltos', texto: 'Resueltos', coincide: (r) => r.estado === ESTADO_RESUELTO },
   { clave: 'todos', texto: 'Todos', coincide: () => true },
 ]
 
@@ -108,6 +109,7 @@ export default function MisReportes() {
       <HojaEstados abierta={verEstados} alCerrar={() => setVerEstados(false)} />
 
       <HojaActualizarReporte
+        key={aActualizar?.codigoSeguimiento ?? 'cerrada'}
         reporte={aActualizar}
         alCerrar={() => setAActualizar(null)}
         alGuardar={() => {

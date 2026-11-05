@@ -25,8 +25,10 @@ Esta carpeta (`src/simulacion/`) **simula el backend dentro del frontend**. No t
 5. Las rutas simuladas están en `src/simulacion/index.js`. Cuando Andrés publique un endpoint se borra
    su línea y la pantalla usa la API real sin otro cambio.
 6. El build de producción **no incluye** esta carpeta.
-7. **Para eliminar la simulación:** borre la carpeta `src/simulacion/` completa. No hay que editar
-   nada más: `api/cliente.js` la busca con `import.meta.glob` y, si no está, usa la API real.
+7. **Para eliminar la simulación:** borre la carpeta `src/simulacion/` completa. `api/cliente.js` la
+   busca con `import.meta.glob` y, si no está, usa la API real. Además, para dejar el código limpio:
+   quite la rama `SIMULANDO` de `compartido/componentes/acceso/BotonGoogle.jsx`, la variable
+   `VITE_USAR_MOCKS` de `.env.example` y los comentarios que citan este archivo.
 
 ## Contrato por pantalla
 
@@ -105,4 +107,4 @@ frontend es Netlify desde `develop`; las variables de entorno son `VITE_API_URL`
 
 
 **Nota:** «Pendiente de envío» no es un estado del reporte (es el estado del envío del correo); por eso no está en el catálogo de estados.
-**Pendiente con Andrés:** el mapa de calor del panel sigue usando sus propios datos de prueba (`admin/datos/reportesPrueba.js`), no los reportes simulados.
+**Mapa de calor:** el panel pide `GET /api/admin/reportes` y dibuja esos reportes. La simulación trae 4 reportes de la ciudadana y 26 de otras personas (`datos/comunidad.js`, repartidos por las 10 comunas; los barrios «de ejemplo» 8 a 14 existen solo para eso). Si el endpoint no existe, el mapa usa `admin/datos/reportesPrueba.js`. Al cambiar los datos iniciales se sube la versión de la clave de `localStorage` (hoy `notiurba.simulacion.v2`).

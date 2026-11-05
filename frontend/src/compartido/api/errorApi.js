@@ -15,15 +15,3 @@ export class ErrorApi extends Error {
     this.mensaje = mensaje
   }
 }
-
-const MENSAJE_RESPUESTA_RARA = 'El servidor respondió algo inesperado. Intente de nuevo en un momento.'
-
-// Para los datos simulados: arma un ErrorApi con el cuerpo que daría el servidor.
-export function crearErrorApi(estado, cuerpo = {}, ruta = '') {
-  return new ErrorApi({
-    estado,
-    codigo: cuerpo.codigo ?? (estado === 400 ? 'VALIDACION' : `HTTP_${estado}`),
-    mensaje: cuerpo.mensaje ?? `${MENSAJE_RESPUESTA_RARA} (${estado} ${ruta})`.trim(),
-    campo: cuerpo.campo ?? null,
-  })
-}

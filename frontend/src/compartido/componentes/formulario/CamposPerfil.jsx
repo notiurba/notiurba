@@ -1,6 +1,6 @@
-import { LIMITES, limpiarNumeroDocumento } from '../validaciones/campos'
+import { LIMITES, documentoEsNumerico, limpiarNumeroDocumento } from '../../validaciones/campos'
 import Campo from './Campo'
-import { IconoCorreo, IconoTelefono } from './Iconos'
+import { IconoCorreo, IconoTelefono } from '../Iconos'
 import Selector from './Selector'
 import './CamposPerfil.css'
 
@@ -57,7 +57,7 @@ export function CamposIdentidad({ datos, errores, cambiar, tiposDocumento, corre
           id="numeroDocumento"
           etiqueta="N.º de documento"
           placeholder="Ej. 1234567890"
-          inputMode={datos.idTipoDocumento === '3' || datos.idTipoDocumento === '4' ? 'text' : 'numeric'}
+          inputMode={!datos.idTipoDocumento || documentoEsNumerico(datos.idTipoDocumento) ? 'numeric' : 'text'}
           maxLength={LIMITES.documento}
           autoComplete="off"
           value={datos.numeroDocumento}

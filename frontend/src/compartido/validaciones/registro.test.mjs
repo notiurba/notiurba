@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { armarSolicitudRegistro, validarPasoAcceso, validarPasoDatos } from './registro.js'
+import { armarDatosPerfil, armarSolicitudRegistro, validarPasoAcceso, validarPasoDatos } from './registro.js'
 
 const completo = {
   nombres: ' Ana María ',
@@ -59,4 +59,12 @@ test('solicitud: limpia espacios, ids numéricos y sin confirmación', () => {
 
 test('solicitud: el teléfono vacío no se envía', () => {
   assert.equal('telefono' in armarSolicitudRegistro({ ...completo, telefono: '' }), false)
+})
+
+test('armarDatosPerfil: el teléfono vacío se omite, salvo al editar (para poder borrarlo)', () => {
+  const sinTelefono = { ...completo, telefono: '' }
+  assert.equal('telefono' in armarDatosPerfil(sinTelefono), false)
+  assert.equal(armarDatosPerfil(sinTelefono, { enviarTelefonoVacio: true }).telefono, '')
+  assert.equal(armarDatosPerfil(completo).nombres, 'Ana María')
+  assert.equal(armarDatosPerfil(completo).idBarrio, 5)
 })

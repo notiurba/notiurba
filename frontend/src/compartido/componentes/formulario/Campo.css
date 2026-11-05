@@ -19,7 +19,7 @@
 }
 
 .campo__opcional {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--nu-texto-secundario);
 }
@@ -108,14 +108,14 @@
 
 .campo__error {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--nu-peligro-texto);
 }
 
 .campo__ayuda {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--nu-texto-secundario);
 }
 

@@ -2,8 +2,7 @@ import { Link } from 'react-router-dom'
 import './Boton.css'
 
 // Un solo botón para toda la app.
-//  - variante: 'primario' (verde), 'secundario' (con borde), 'peligro' (rosa),
-//    'enlace' (texto verde) o 'texto' (neutro, sin fondo).
+//  - variante: 'primario' (verde), 'secundario' (con borde), 'peligro' (rosa) o 'texto' (neutro, sin fondo).
 //  - cargando: bloquea el botón y muestra `textoCargando` mientras se espera a la API.
 //  - to: si se pasa, se dibuja como enlace interno (<Link>) con el mismo aspecto.
 //  - href: igual, pero para enlaces externos (por ejemplo mailto:).
