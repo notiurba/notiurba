@@ -1,0 +1,755 @@
+{
+  "repository": "notiurba/notiurba",
+  "base_commit": "2d6ceca3804ceebe1df95e838ef90bab911bcd9b",
+  "branch": "codex/edt-5-1-validaciones",
+  "neon": {
+    "utc": "2026-10-27T05:04:47.126Z",
+    "transport": "Connected SQL tool, NOT Spring/JDBC",
+    "database_mutation": false,
+    "postgres": "18.6",
+    "postgis": "3.6.4",
+    "contains_inside": true,
+    "contains_border": false,
+    "covers_border": true,
+    "geojson": {
+      "type": "Point",
+      "coordinates": [
+        -76.195,
+        4.085
+      ]
+    }
+  },
+  "jpeg": {
+    "utc": "2026-10-27T05:07:31.729943800Z",
+    "runtime": "Java 21.0.10",
+    "passed": 12,
+    "failed": 0,
+    "runner": "com.notiurba.foto.JpegValidatorCheck",
+    "last_run_utc": "2026-10-27T05:10:42.567167Z"
+  },
+  "r2": {
+    "bucket": "notiurba-edt51-20261027-isolated",
+    "created_utc": "2026-10-27T05:07:08.478Z",
+    "uploaded_utc": "2026-10-27T05:07:31.266Z",
+    "synthetic_jpeg_bytes": 646,
+    "synthetic_dimensions": [
+      32,
+      24
+    ],
+    "upload_http": 200,
+    "authenticated_get_http": 200,
+    "authenticated_binary_equality_verified": false,
+    "public_enabled_http": 200,
+    "anonymous_attempt_utc": "2026-10-27T05:07:55.6486153Z",
+    "anonymous_http": null,
+    "anonymous_error": "Unknown host; external retrieval tool also could not access URL",
+    "public_disabled_http": 200,
+    "public_disabled_verified": true,
+    "object_delete_http": 200,
+    "empty_verified": true,
+    "bucket_delete_http": 200,
+    "final_state": "No concluyente",
+    "existing_buckets_modified": false,
+    "bucket_absence_verified": true
+  },
+  "github": {
+    "branch_creation_http": 403,
+    "message": "Resource not accessible by integration",
+    "remote_branch_created": false,
+    "pull_request_created": false
+  },
+  "local": {
+    "java": "21.0.10",
+    "maven": "3.9.16 (IntelliJ bundled)",
+    "docker_daemon": false,
+    "git_clone": "Unknown host github.com",
+    "maven_test": "Blocked before compilation: unknown host repo.maven.apache.org",
+    "maven_package": "Executed; exit 1 before compilation: unknown host repo.maven.apache.org",
+    "maven_final_attempt_utc": "2026-10-27T05:10:25.7939214Z",
+    "latency_script_parser_errors": 0,
+    "flyway_original_hashes_verified": true
+  },
+  "secret_scan": {
+    "text_files": 67,
+    "high_confidence_pattern_matches": 0,
+    "scope": "current selected textual files, not history, binary assets or provider settings"
+  },
+  "continuation": {
+    "remote_main": "2d6ceca3804ceebe1df95e838ef90bab911bcd9b",
+    "remote_work_head": "9bd16279dbb01c82e584e677225551d7676bf68c",
+    "remote_ahead": 1,
+    "remote_behind": 0,
+    "remote_changed_paths": [
+      "render.yaml"
+    ],
+    "main_commits_incorporated": 0,
+    "full_sync": false,
+    "local_before": "92f510adc6b9f77bff7face4cf15bcb23eadaf23",
+    "backup_verified": true,
+    "zip_files": 51,
+    "zip_differences": 0,
+    "zip_sha256": "D075CC1F3EAF1E40EBA7D87E7B1375EAB1DD4496F00909859216E02F0C92B36F",
+    "git_fetch": "DNS github.com",
+    "maven_clean_test_exit": 1,
+    "maven_package_exit": 1,
+    "jpeg_assertions": 12,
+    "signature_assertions": 8,
+    "configuration_assertions": 18,
+    "spring_tests_executed": false,
+    "workflow_executed": false,
+    "pr_created": false,
+    "browser_stopped_reason": "Cannot determine active browser URL confidently enough to enforce Windows policy",
+    "upload_block": "Extension Allow access to file URLs is disabled",
+    "r2_state": "No concluyente; DNS persists, no new resources created",
+    "shared_infrastructure_changed": false
+  },
+  "final_review": {
+    "utc": "2026-10-27T06:29:57.3906677Z",
+    "source": "Continuation of local v2; original v2 artifacts retained",
+    "remote_main": "2d6ceca3804ceebe1df95e838ef90bab911bcd9b",
+    "remote_validation": "9bd16279dbb01c82e584e677225551d7676bf68c",
+    "remote_new_main_commits": 0,
+    "local_authentic_clone": false,
+    "github_workflow_runs": [],
+    "jpeg_checks": 12,
+    "signature_checks": 8,
+    "configuration_checks": 18,
+    "maven_commands_exit": {
+      "cloudinary": 1,
+      "migration": 1,
+      "spatial": 1,
+      "clean_test": 1,
+      "package": 1
+    },
+    "spring_tests_executed": false,
+    "report_rows": [
+      {
+        "ID": "H01",
+        "Validacion": "Neon previo",
+        "Estado": "APROBADO",
+        "Evidencia": "Antecedente aportado; N01 lo corrobora",
+        "Limitacion": "Fecha original no disponible",
+        "FechaUTC": "Fecha original no aportada",
+        "Procedimiento": "Conservacion del antecedente del usuario",
+        "Comando": "No consta",
+        "Ambiente": "Proveedor externo; antecedente"
+      },
+      {
+        "ID": "H02",
+        "Validacion": "Cloudinary directo previo",
+        "Estado": "APROBADO",
+        "Evidencia": "JPG 864x576 109669 bytes; transformacion 320x213 19259 bytes; borrado informado",
+        "Limitacion": "Antecedente del usuario; no es Spring",
+        "FechaUTC": "Fecha original no aportada",
+        "Procedimiento": "Conservacion del antecedente del usuario",
+        "Comando": "No consta",
+        "Ambiente": "Proveedor externo; antecedente"
+      },
+      {
+        "ID": "H03",
+        "Validacion": "R2 autenticado previo",
+        "Estado": "APROBADO",
+        "Evidencia": "Carga lectura y borrado informados",
+        "Limitacion": "Antecedente del usuario; no acceso anonimo",
+        "FechaUTC": "Fecha original no aportada",
+        "Procedimiento": "Conservacion del antecedente del usuario",
+        "Comando": "No consta",
+        "Ambiente": "Proveedor externo; antecedente"
+      },
+      {
+        "ID": "N01",
+        "Validacion": "SQL PostGIS",
+        "Estado": "APROBADO",
+        "Evidencia": "EDT-5.1-evidencia.json neon UTC 05:04:47.126Z",
+        "Limitacion": "Transporte SQL conectado; no JDBC",
+        "FechaUTC": "2026-10-27T05:04:47.126Z",
+        "Procedimiento": "SELECT sintetico versiones y predicados espaciales",
+        "Comando": "SELECT ST_Contains(...), ST_Covers(...), ST_AsGeoJSON(...)",
+        "Ambiente": "Neon PostgreSQL18.6 PostGIS3.6.4; conector SQL"
+      },
+      {
+        "ID": "N02",
+        "Validacion": "Spring Boot Neon JDBC JPA",
+        "Estado": "PENDIENTE",
+        "Evidencia": "logs/cierre/spatial.log salida 1",
+        "Limitacion": "Maven DNS y TEST_DB_* ausentes",
+        "FechaUTC": "2026-10-27 UTC; bootstrap Maven fallido",
+        "Procedimiento": "Intento Failsafe spatial-tests; no arranco Java",
+        "Comando": "mvn -B -f backend/pom.xml -Pspatial-tests verify",
+        "Ambiente": "Java21 Maven3.9.16 Windows"
+      },
+      {
+        "ID": "N03",
+        "Validacion": "Hibernate Point MultiPolygon SRID4326",
+        "Estado": "PENDIENTE",
+        "Evidencia": "logs/cierre/spatial.log salida 1",
+        "Limitacion": "No llego a ejecutar Hibernate",
+        "FechaUTC": "2026-10-27 UTC; bootstrap Maven fallido",
+        "Procedimiento": "Intento Failsafe spatial-tests; no arranco Java",
+        "Comando": "mvn -B -f backend/pom.xml -Pspatial-tests verify",
+        "Ambiente": "Java21 Maven3.9.16 Windows"
+      },
+      {
+        "ID": "N04",
+        "Validacion": "Flyway PostgreSQL18",
+        "Estado": "PENDIENTE",
+        "Evidencia": "logs/cierre/migration.log salida 1; docker.log",
+        "Limitacion": "Maven DNS y Docker inactivo",
+        "FechaUTC": "2026-10-27 UTC; bootstrap Maven fallido",
+        "Procedimiento": "Intento Failsafe migration-tests; no arranco contenedor",
+        "Comando": "mvn -B -f backend/pom.xml -Pmigration-tests verify",
+        "Ambiente": "Windows; artefactos locales"
+      },
+      {
+        "ID": "R01",
+        "Validacion": "Docker arranque Render",
+        "Estado": "PENDIENTE",
+        "Evidencia": "logs/cierre/docker.log",
+        "Limitacion": "Sin motor Docker ni servicio Render verificado",
+        "FechaUTC": "No ejecutada; revision 2026-10-27 UTC",
+        "Procedimiento": "Revision de codigo; sin ejecucion del criterio",
+        "Comando": "No ejecutado",
+        "Ambiente": "Windows; artefactos locales"
+      },
+      {
+        "ID": "R02",
+        "Validacion": "HTTP espacial en Render",
+        "Estado": "PENDIENTE",
+        "Evidencia": "Controlador ADMIN preparado",
+        "Limitacion": "Sin URL autorizada de servicio aislado",
+        "FechaUTC": "No ejecutada; revision 2026-10-27 UTC",
+        "Procedimiento": "Revision de codigo; sin ejecucion del criterio",
+        "Comando": "No ejecutado",
+        "Ambiente": "Windows; artefactos locales"
+      },
+      {
+        "ID": "R03",
+        "Validacion": "Latencia reposo16min",
+        "Estado": "PENDIENTE",
+        "Evidencia": "tools/Measure-Edt51Latency.ps1",
+        "Limitacion": "No hay solicitudes ni tiempos reales",
+        "FechaUTC": "No ejecutada; revision 2026-10-27 UTC",
+        "Procedimiento": "Revision de codigo; sin ejecucion del criterio",
+        "Comando": "No ejecutado",
+        "Ambiente": "Windows; artefactos locales"
+      },
+      {
+        "ID": "C01",
+        "Validacion": "JPEG 1MB metadatos",
+        "Estado": "APROBADO",
+        "Evidencia": "logs/cierre/jpeg-java21.log 12 aserciones 0 fallos",
+        "Limitacion": "Java puro; no MVC",
+        "FechaUTC": "2026-10-27T06:27:09.798956100Z",
+        "Procedimiento": "Compilar javac y ejecutar 12 aserciones reales",
+        "Comando": "java -cp verification-classes com.notiurba.foto.JpegValidatorCheck",
+        "Ambiente": "OpenJDK21.0.10 Windows"
+      },
+      {
+        "ID": "C02",
+        "Validacion": "Cloudinary Spring",
+        "Estado": "PENDIENTE",
+        "Evidencia": "Cloudinary-authenticated-revision.md; logs/cloudinary-review",
+        "Limitacion": "Maven Permission denied: getsockopt antes de compilar; secretos Cloudinary ausentes",
+        "FechaUTC": "2026-10-27 UTC; bootstrap Maven fallido",
+        "Procedimiento": "Intento Failsafe cloudinary-tests; no llamada a proveedor",
+        "Comando": "mvn -B -f backend/pom.xml -Pcloudinary-tests verify",
+        "Ambiente": "Windows; artefactos locales"
+      },
+      {
+        "ID": "C03",
+        "Validacion": "HTTPS anonimo con enlace temporal",
+        "Estado": "PENDIENTE",
+        "Evidencia": "Cloudinary-authenticated-revision.md; logs/cloudinary-review",
+        "Limitacion": "Maven Permission denied: getsockopt antes de compilar; secretos Cloudinary ausentes",
+        "FechaUTC": "No ejecutada; revision 2026-10-27 UTC",
+        "Procedimiento": "Revision de codigo; sin ejecucion del criterio",
+        "Comando": "No ejecutado",
+        "Ambiente": "Windows; artefactos locales"
+      },
+      {
+        "ID": "C04",
+        "Validacion": "HTTP autorizacion fotos",
+        "Estado": "PENDIENTE",
+        "Evidencia": "Cloudinary-authenticated-revision.md; logs/cloudinary-review",
+        "Limitacion": "Maven Permission denied: getsockopt antes de compilar; secretos Cloudinary ausentes",
+        "FechaUTC": "No ejecutada; revision 2026-10-27 UTC",
+        "Procedimiento": "Revision de codigo; sin ejecucion del criterio",
+        "Comando": "No ejecutado",
+        "Ambiente": "Windows; artefactos locales"
+      },
+      {
+        "ID": "O01",
+        "Validacion": "R2 carga aislada",
+        "Estado": "APROBADO",
+        "Evidencia": "EDT-5.1-evidencia.json r2; HTTP200",
+        "Limitacion": "Solo JPEG sintetico",
+        "FechaUTC": "2026-10-27T05:07:31.266Z",
+        "Procedimiento": "Crear bucket aislado y cargar JPEG sintetico",
+        "Comando": "Operaciones API create bucket y put object",
+        "Ambiente": "Cloudflare R2 conector"
+      },
+      {
+        "ID": "O02",
+        "Validacion": "R2 lectura e integridad",
+        "Estado": "NO CONCLUYENTE",
+        "Evidencia": "GET autenticado200; binario alterado por canal de texto",
+        "Limitacion": "SHA256 de descarga no comprobado",
+        "FechaUTC": "2026-10-27 UTC; ver evidencia r2",
+        "Procedimiento": "GET autenticado; canal de texto no conserva bytes",
+        "Comando": "API get object",
+        "Ambiente": "Cloudflare R2 conector"
+      },
+      {
+        "ID": "O03",
+        "Validacion": "R2 acceso anonimo",
+        "Estado": "NO CONCLUYENTE",
+        "Evidencia": "Intento previo DNS fallido; sin HTTP externo",
+        "Limitacion": "No hay JPEG externo decodificado",
+        "FechaUTC": "2026-10-27T05:07:55.6486153Z",
+        "Procedimiento": "Publicacion temporal; intento HTTP anonimo bloqueado DNS",
+        "Comando": "curl URL_PUBLICA_TEMPORAL (sin respuesta HTTP)",
+        "Ambiente": "R2; cliente externo"
+      },
+      {
+        "ID": "O04",
+        "Validacion": "R2 limpieza",
+        "Estado": "APROBADO",
+        "Evidencia": "Publicacion false; objeto y bucket eliminados y ausencia confirmada",
+        "Limitacion": "No se repitio creacion al persistir DNS",
+        "FechaUTC": "2026-10-27 UTC; ver evidencia r2",
+        "Procedimiento": "Deshabilitar publico; borrar objeto y bucket; consultar ausencia",
+        "Comando": "API managed domain disable; delete object; list; delete bucket; list",
+        "Ambiente": "Cloudflare R2 conector"
+      },
+      {
+        "ID": "S01",
+        "Validacion": "Revision secretos",
+        "Estado": "APROBADO",
+        "Evidencia": "logs/cierre/secret-scan.log; 58 textos cero patrones",
+        "Limitacion": "Revision limitada; no todo historial ni binarios",
+        "FechaUTC": "2026-10-27T06:28:06.4689622Z",
+        "Procedimiento": "Patrones de claves y PEM; 58 textos; no imprimir coincidencias",
+        "Comando": "Escaner PowerShell de textos actuales",
+        "Ambiente": "Windows; artefactos locales"
+      },
+      {
+        "ID": "S02",
+        "Validacion": "JWT ADMIN",
+        "Estado": "PENDIENTE",
+        "Evidencia": "Pruebas 401 403 ADMIN y flags escritas",
+        "Limitacion": "Maven bloqueo su ejecucion",
+        "FechaUTC": "No ejecutada; revision 2026-10-27 UTC",
+        "Procedimiento": "Revision de codigo; sin ejecucion del criterio",
+        "Comando": "No ejecutado",
+        "Ambiente": "Windows; artefactos locales"
+      },
+      {
+        "ID": "B01",
+        "Validacion": "Maven clean test",
+        "Estado": "PENDIENTE",
+        "Evidencia": "Cloudinary-authenticated-revision.md; logs/cloudinary-review",
+        "Limitacion": "Maven Permission denied: getsockopt antes de compilar; secretos Cloudinary ausentes",
+        "FechaUTC": "2026-10-27 UTC; fecha exacta en log",
+        "Procedimiento": "Ejecutar Maven y registrar salida1 antes de compilar",
+        "Comando": "mvn -B -f backend/pom.xml clean test",
+        "Ambiente": "Windows; artefactos locales"
+      },
+      {
+        "ID": "B02",
+        "Validacion": "Maven package",
+        "Estado": "PENDIENTE",
+        "Evidencia": "Cloudinary-authenticated-revision.md; logs/cloudinary-review",
+        "Limitacion": "Maven Permission denied: getsockopt antes de compilar; secretos Cloudinary ausentes",
+        "FechaUTC": "2026-10-27 UTC; fecha exacta en log",
+        "Procedimiento": "Ejecutar Maven y registrar salida1 antes de compilar",
+        "Comando": "mvn -B -f backend/pom.xml package",
+        "Ambiente": "Windows; artefactos locales"
+      },
+      {
+        "ID": "G01",
+        "Validacion": "Publicar rama completa PR CI",
+        "Estado": "PENDIENTE",
+        "Evidencia": "Rama9bd1627 solo render.yaml; workflow_runs vacio",
+        "Limitacion": "Git DNS; escritura conector403; subida navegador sin permiso",
+        "FechaUTC": "2026-10-27 UTC",
+        "Procedimiento": "Consultar ramas commits workflows; intentar clon y blob; probar carga navegador",
+        "Comando": "git clone; API fetch_commit/fetch_commit_workflow_runs/create_blob",
+        "Ambiente": "GitHub conector; Git terminal; Chrome"
+      }
+    ]
+  },
+  "cloudinary_review": {
+    "utc": "2026-10-27T10:54:31.0979115Z",
+    "sdk": "com.cloudinary:cloudinary-http5:2.3.1",
+    "sdk_source_commit": "4d2e62b",
+    "finding": "REST example differs from SDK implementation; v3 provider incompatibility not established",
+    "implementation": "SDK upload/privateDownload/destroy; no manual production signing",
+    "maven_test_exit": 1,
+    "maven_package_exit": 1,
+    "cloudinary_profile_exit": 1,
+    "provider_requests_executed": false,
+    "synthetic_assets_created": 0,
+    "cloudinary_credentials_present": false,
+    "dns_resolved": true,
+    "network_error": "Permission denied: getsockopt",
+    "new_unit_tests_executed": false,
+    "real_integration_state": "PENDIENTE",
+    "jpeg_assertions_passed": 12,
+    "evidence_directory": "logs/cloudinary-review",
+    "report": "Cloudinary-authenticated-revision.md"
+  },
+  "publication_attempt": {
+    "utc": "2026-10-27T12:20:26.8310129Z",
+    "authentic_clone": true,
+    "previous_local_checkpoint": "c681a8a",
+    "remote_validation": "649fe0b7833817948c965b5674f999d5bf0915f3",
+    "main_unchanged": "2d6ceca3804ceebe1df95e838ef90bab911bcd9b",
+    "automatic_pr_or_merge": false,
+    "workflow_push_branch": "codex/edt-5-1-validaciones",
+    "workflow_published": false,
+    "actions_runs": 0,
+    "code_publication_complete": false,
+    "native_windows_publisher": "tools/Publish-Edt51Branch.ps1",
+    "maven_clean_test_exit": 1
+  },
+  "external_validation_configuration": {
+    "utc": "2026-10-27T13:16:11.9393681Z",
+    "baseline_commit": "a5995934455e5f6685cc2687b56dee27b377a2c7",
+    "baseline_run": 40507497490,
+    "unit_tests_passed": 25,
+    "migration_tests_passed": 1,
+    "postgres_container": "18.6 (Debian 18.6-1.pgdg13+2)",
+    "postgis_container": "3.6.4",
+    "cloudinary_sdk": "2.3.2",
+    "external_provider_requests": 0,
+    "neon_isolated_branch_available": false,
+    "process_provider_credentials_present": false,
+    "environment_secrets_verified": false,
+    "external_workflow_dispatch_configured": true,
+    "external_workflow_executed": false,
+    "manual_dispatch_default_branch_limitation": true,
+    "offline_guard_checks_passed": 8,
+    "configuration_checks_passed": 27,
+    "new_validation_startup_test_executed": false,
+    "render_deployed": false,
+    "report": "INTEGRACIONES-EXTERNAS.md",
+    "publication": {
+      "local_code_commit": "673e33f",
+      "pushed": false,
+      "git_push_exit": 1,
+      "connector_write_status": 403,
+      "new_ci_run": false,
+      "main_unchanged": "2d6ceca3804ceebe1df95e838ef90bab911bcd9b"
+    }
+  },
+  "latest_external_review": {
+    "recorded_utc": "2026-10-27T16:04:32.761286Z",
+    "base_commit": "f38ad7cdf5417fb421a7d7e23f0ed0f22b93c451",
+    "branch": "feature/edt-5.1-technical-validation",
+    "baseline_run": 40518412910,
+    "baseline_units": 25,
+    "baseline_migration_tests": 2,
+    "baseline_validation_startup_http": 200,
+    "external_jobs": "skipped (not approved)",
+    "neon": {
+      "plan": "free",
+      "project_count": 1,
+      "existing_branches": [
+        "production"
+      ],
+      "isolated_environment_available": false,
+      "production_credentials_accessed": false,
+      "new_resource_authorization_required": true,
+      "proposed_new_empty_project": "NotiUrba-EDT51-isolated",
+      "new_resources_created": 0
+    },
+    "cloudinary": {
+      "process_credentials_present": false,
+      "cleanup_query": "search_assets public_id:notiurba/edt51/*",
+      "search_count": 0,
+      "assets_created_this_session": 0,
+      "signed_links_generated": 0,
+      "java_integration_executed": false,
+      "browser_executed": false
+    },
+    "r2": {
+      "checked_utc": "2026-10-27T14:19:54.259Z",
+      "list_http": 200,
+      "previous_temporary_bucket_absent": true,
+      "remaining_test_bucket": "notiurba-edt51-jpg-test-20261026",
+      "r2_dev_enabled": false,
+      "custom_domains_checked_utc": "2026-10-27T14:21:29.927Z",
+      "custom_domain_count": 0,
+      "aws_cli_available": false,
+      "s3_process_credentials_present": false,
+      "new_resources_created": 0,
+      "binary_integrity_executed_this_session": false,
+      "anonymous_download_executed_this_session": false
+    },
+    "docker": {
+      "desktop_installed": true,
+      "normal_start_requested": true,
+      "wsl_status": "E_ACCESSDENIED",
+      "daemon_pipe_available": false,
+      "build_attempted": true,
+      "build_exit": 1,
+      "build_error": "Access denied to C:\\Users\\Usuario\\.docker\\buildx\\.lock",
+      "container_started": false
+    },
+    "render": {
+      "connector_available": false,
+      "authorized_service_url_available": false,
+      "api_key_available": false,
+      "service_created": false,
+      "deployed": false,
+      "latency_samples": 0
+    },
+    "github": {
+      "cli_authenticated": false,
+      "environment_secrets_existence_verified": false,
+      "workflow_dispatch_runtime_verified": false,
+      "workflow_api_metadata_read": "connector rejected endpoint (400), no state changes",
+      "main": "2d6ceca3804ceebe1df95e838ef90bab911bcd9b",
+      "develop": "2d6ceca3804ceebe1df95e838ef90bab911bcd9b"
+    },
+    "runner_regression": {
+      "checks_passed": 12,
+      "provider_calls": 0,
+      "correction": "executed test failures become FALLIDO; absent or skipped execution remains PENDIENTE"
+    },
+    "publication": {
+      "utc": "2026-10-27T16:10:18.3914534Z",
+      "local_code_commit": "98a1a40",
+      "preflight": "PASS",
+      "push_exit": 1,
+      "pushed": false,
+      "new_ci_executed": false,
+      "error": "Credential Manager/sh/bash 0xC0000022; could not read Username"
+    }
+  },
+  "neon_isolated_authorized_execution": {
+    "recorded_utc": "2026-10-27T16:33:21.1440466Z",
+    "authorization": "Explicit user authorization for empty NotiUrba-EDT51-isolated project on existing Free plan",
+    "provisioning": {
+      "project": {
+        "name": "NotiUrba-EDT51-isolated",
+        "id": "small-bonus-50024456",
+        "org_plan_before": "free",
+        "org_plan_after": "free",
+        "pg_version": 18,
+        "region": "aws-us-east-2",
+        "created_at": "2026-10-27T16:19:06Z",
+        "compute_min_cu": 0.25,
+        "compute_max_cu": 0.25,
+        "no_parent_project_or_restore_requested": true,
+        "production_modified": false
+      },
+      "branch": {
+        "id": "br-little-mouse-b5tlorl9",
+        "name": "edt51-isolated",
+        "root_branch": true
+      },
+      "database": "notiurba_edt51",
+      "initial_check": {
+        "user_tables": 0,
+        "app_extensions": 0,
+        "postgres": "18.6 (fd34222)"
+      },
+      "provisioning": {
+        "transport": "authorized Neon SQL connector",
+        "atomic": true,
+        "original_scripts": [
+          {
+            "name": "V1__esquema.sql",
+            "sha256": "D100A7F374241DD6D3689772127C2CEAF4CED5C71E76722C8D84D4EFF6DA6032"
+          },
+          {
+            "name": "V2__reglas_y_vistas.sql",
+            "sha256": "4855998F3A3530610C9671FA497A06F4640F604F69CA5EE759253CB9CD7187B5"
+          },
+          {
+            "name": "V3__catalogos_iniciales.sql",
+            "sha256": "EDE28EC56DD36CB64B719960D28BEBC633AF0BE5938CB3B6F4D3D163FE937F6E"
+          },
+          {
+            "name": "V4__usuario_admin_semilla.sql",
+            "sha256": "53139BCCB445F41DC7B38A1BD8A229CD173CA5195C1A8EC63620D9FCBFE0C934"
+          }
+        ],
+        "statements": [
+          {
+            "name": "V1__esquema.sql",
+            "statements": 47
+          },
+          {
+            "name": "V2__reglas_y_vistas.sql",
+            "statements": 24
+          },
+          {
+            "name": "V3__catalogos_iniciales.sql",
+            "statements": 30
+          },
+          {
+            "name": "V4__usuario_admin_semilla.sql",
+            "statements": 3
+          }
+        ],
+        "runtime_placeholder_generated": true,
+        "secret_values_recorded": false,
+        "flyway_runtime_used": false,
+        "flyway_history_created": false,
+        "public_tables": 25,
+        "synthetic_seed_users": 1,
+        "reference_catalogs": "Original V3, no production copying",
+        "reports": 0,
+        "citizen_photos": 0
+      },
+      "reader": {
+        "name": "edt51_validation_reader",
+        "login_tested_via_connector": true,
+        "read_only": "on",
+        "superuser": false,
+        "create_db": false,
+        "create_role": false,
+        "replication": false,
+        "bypass_rls": false,
+        "inherit": false,
+        "memberships": [],
+        "can_read_all_tables": true,
+        "can_modify_any_table": false,
+        "schema_create": false,
+        "database_temp": false,
+        "initial_api_privileged_role_deleted": true
+      },
+      "spatial_sql": {
+        "contains_inside": true,
+        "contains_border": false,
+        "covers_border": true,
+        "geojson": {
+          "type": "Point",
+          "coordinates": [
+            -76.195,
+            4.085
+          ]
+        },
+        "multipolygon_type": "ST_MultiPolygon",
+        "srid": 4326,
+        "backend_tls_reported_by_sql_connector": false,
+        "tls_jdbc_not_certified": true,
+        "final_read": [
+          {
+            "executed_at_utc": "2026-10-27T16:30:25.225Z",
+            "role": "edt51_validation_reader",
+            "read_only": "on",
+            "point_type": "ST_Point",
+            "point_srid": 4326,
+            "multipolygon_type": "ST_MultiPolygon",
+            "multipolygon_srid": 4326,
+            "reports": "0",
+            "citizen_photos": "0"
+          }
+        ]
+      },
+      "errors_and_corrections": [
+        {
+          "error": "HTTP412 modifying suspend interval not permitted",
+          "correction": "Omitted optional interval setting; kept Free policy unchanged; no plan change"
+        },
+        {
+          "error": "Multiple SQL commands in prepared statement",
+          "correction": "Split original scripts lexically preserving dollar-quoted functions; transaction rollback then atomic retry"
+        },
+        {
+          "error": "API-created role has elevated default permissions; owner cannot revoke protected membership",
+          "correction": "Created SQL role with minimum privileges; removed unused API role via management API"
+        },
+        {
+          "error": "Maven cache permission denied",
+          "correction": "Used writable cache inside authorized workspace"
+        },
+        {
+          "error": "Maven HTTPS and Java TCP Permission denied: getsockopt",
+          "correction": "No security bypass; Java integration remains pending"
+        }
+      ],
+      "java_execution": {
+        "maven_test_compile_exit": 1,
+        "dependency_parent_unresolved": true,
+        "tcp_probe_utc": "2026-10-27T16:26:04.685587400Z",
+        "tcp_probe_exit": 1,
+        "exception": "SocketException: Permission denied: getsockopt",
+        "spring_boot_started": false,
+        "hibernate_spatial_executed": false,
+        "spatial_tests_run": 0,
+        "N02": "PENDIENTE",
+        "N03": "PENDIENTE"
+      }
+    },
+    "verified_ci": {
+      "recorded_for": "Neon isolated authorization",
+      "run": {
+        "id": 40538495198,
+        "sha": "3580726a9b5941995cd3ab311e4b72315b9c8e5a",
+        "branch": "feature/edt-5.1-technical-validation",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/notiurba/notiurba/actions/runs/40538495198"
+      },
+      "jobs": [
+        {
+          "job_id": 122310144487,
+          "lines": [
+            "2026-10-27T16:12:05.1344751Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.243 s -- in com.notiurba.DiagnosticsDisabledTest",
+            "2026-10-27T16:12:05.8113819Z [INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.730 s -- in com.notiurba.DiagnosticsSecurityTest",
+            "2026-10-27T16:12:06.8442743Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.032 s -- in com.notiurba.foto.JpegValidatorTest",
+            "2026-10-27T16:12:06.8516507Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.notiurba.foto.CloudinarySignatureTest",
+            "2026-10-27T16:12:07.1956140Z [INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.340 s -- in com.notiurba.foto.CloudinaryPhotoStoreTest",
+            "2026-10-27T16:12:07.2346514Z [INFO] Tests run: 25, Failures: 0, Errors: 0, Skipped: 0",
+            "2026-10-27T16:12:07.2372094Z [INFO] BUILD SUCCESS",
+            "2026-10-27T16:12:14.7562788Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.149 s -- in com.notiurba.DiagnosticsDisabledTest",
+            "2026-10-27T16:12:15.4462835Z [INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.742 s -- in com.notiurba.DiagnosticsSecurityTest",
+            "2026-10-27T16:12:15.8283243Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.375 s -- in com.notiurba.foto.JpegValidatorTest",
+            "2026-10-27T16:12:15.8410471Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.notiurba.foto.CloudinarySignatureTest",
+            "2026-10-27T16:12:16.2632721Z [INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.438 s -- in com.notiurba.foto.CloudinaryPhotoStoreTest",
+            "2026-10-27T16:12:16.3193575Z [INFO] Tests run: 25, Failures: 0, Errors: 0, Skipped: 0",
+            "2026-10-27T16:12:16.9772416Z [INFO] BUILD SUCCESS"
+          ]
+        },
+        {
+          "job_id": 122310144943,
+          "lines": [
+            "2026-10-27T16:12:11.6582285Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.776 s -- in com.notiurba.DiagnosticsDisabledTest",
+            "2026-10-27T16:12:14.3246693Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.700 s -- in com.notiurba.foto.JpegValidatorTest",
+            "2026-10-27T16:12:14.3540773Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.notiurba.foto.CloudinarySignatureTest",
+            "2026-10-27T16:12:14.8606507Z [INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.509 s -- in com.notiurba.foto.CloudinaryPhotoStoreTest",
+            "2026-10-27T16:12:15.5101214Z [INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.653 s -- in com.notiurba.DiagnosticsSecurityTest",
+            "2026-10-27T16:12:15.5594249Z [INFO] Tests run: 25, Failures: 0, Errors: 0, Skipped: 0",
+            "2026-10-27T16:12:35.0607955Z UTC=2026-10-27T16:12:35.036564652Z PostgreSQL=18.6 (Debian 18.6-1.pgdg13+2) PostGIS=POSTGIS=\"3.6.4 94d984b\" [EXTENSION] PGSQL=\"180\" GEOS=\"3.14.1-CAPI-1.20.5\" (compiled against GEOS 3.13.1) PROJ=\"9.8.1 NETWORK_ENABLED=OFF URL_ENDPOINT=https://cdn.proj.org USER_WRITABLE_DIRECTORY=/var/lib/postgresql/.local/share/proj DATABASE_PATH=/usr/share/proj/proj.db\" (compiled against PROJ 9.6.0) LIBXML=\"2.9.14\" LIBJSON=\"0.18\" LIBPROTOBUF=\"1.5.1\" WAGYU=\"0.5.0 (Internal)\" TOPOLOGY image=postgis/postgis:18-3.6 Flyway V1-V4; Hibernate validate OK",
+            "2026-10-27T16:12:36.5044244Z UTC=2026-10-27T16:12:36.478318380Z validation profile startup HTTP=200 Flyway=disabled readOnly=true DB_PASSWORD=absent ADMIN_DEV_PASSWORD=absent",
+            "2026-10-27T16:12:36.9126265Z [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 19.85 s -- in com.notiurba.MigrationIntegrationTest",
+            "2026-10-27T16:12:37.2911567Z [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0",
+            "2026-10-27T16:12:37.8126498Z [INFO] BUILD SUCCESS"
+          ]
+        }
+      ],
+      "external_jobs": {
+        "neon": "skipped",
+        "cloudinary": "skipped"
+      }
+    },
+    "N02": "PENDIENTE",
+    "N03": "PENDIENTE",
+    "further_project_creation_needed": false,
+    "publication": {
+      "utc": "2026-10-27T16:36:36.2159071Z",
+      "local_evidence_commit": "86e9beb",
+      "preflight": "PASS",
+      "push_exit": 1,
+      "pushed": false,
+      "previous_3580726_published": true,
+      "previous_ci_40538495198": "success",
+      "new_ci_executed": false
+    }
+  }
+}
