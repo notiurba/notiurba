@@ -1,6 +1,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { enlaceCanal, presentacionCorreo } from './estadoCorreo'
+import iconoCorreo from '../../compartido/assets/correo/mail.svg'
+import iconoCerrar from '../../compartido/assets/correo/close.svg'
+import iconoCopiar from '../../compartido/assets/correo/copy.svg'
+import iconoRecibido from '../../compartido/assets/correo/clock.svg'
+import iconoEnviado from '../../compartido/assets/correo/send.svg'
+import iconoInfo from '../../compartido/assets/correo/info.svg'
 
 export function CanalOficial({ ruta }) {
   if (!ruta) return null
@@ -19,18 +25,19 @@ export default function ResultadoCorreo({ reporte, envio, onEnviar, ocupado }) {
     catch { setCopia('Selecciona el código para copiarlo') }
   }
   return <section className="correo-resultado" aria-labelledby="titulo-resultado">
-    <header><Link className="correo-cerrar" to="/app" aria-label="Cerrar resultado">×</Link></header>
+    <header><Link className="correo-cerrar" to="/app" aria-label="Cerrar resultado"><img src={iconoCerrar} alt="" /></Link></header>
     <div className="correo-contenido">
+      <div className="correo-hero" aria-hidden="true"><img src={iconoCorreo} alt="" /></div>
       <h1 id="titulo-resultado">{estado.titulo}</h1><p className="correo-intro" role="status">{estado.mensaje}</p>
-      <dl className="correo-resumen"><div><dt>Código de seguimiento NotiUrba</dt><dd className="correo-codigo">{reporte.codigoSeguimiento}<button type="button" onClick={copiar} aria-label="Copiar código">Copiar</button></dd></div>
-        <div><dt>Estado</dt><dd><span className={`correo-chip ${reporte.estado === 'Enviado' ? 'enviado' : ''}`}>{reporte.estado}</span></dd></div>
+      <dl className="correo-resumen"><div><dt>Código de seguimiento NotiUrba</dt><dd className="correo-codigo">{reporte.codigoSeguimiento}<button type="button" onClick={copiar} aria-label="Copiar código"><img src={iconoCopiar} alt="" /></button></dd></div>
+        <div><dt>Estado</dt><dd><span className={`correo-chip ${reporte.estado === 'Enviado' ? 'enviado' : ''}`}>{['Recibido', 'Enviado'].includes(reporte.estado) && <img src={reporte.estado === 'Enviado' ? iconoEnviado : iconoRecibido} alt="" />}{reporte.estado}</span></dd></div>
         <div><dt>Tipo de problema</dt><dd>{reporte.categoria?.nombre}</dd></div>
         <div><dt>Lugar</dt><dd>{reporte.barrio?.nombre || 'Sin barrio'}{reporte.comuna ? ` · Comuna ${reporte.comuna}` : ''}</dd></div>
-      </dl><p role="status">{copia}</p>
-      <div className={`correo-estado ${estado.clase}`} aria-live="polite"><strong>CORREO · {estado.etiqueta}</strong><h2>{estado.subtitulo}</h2><p>{envio?.rebote ? 'El reporte conserva su estado «Enviado». La falla está registrada por separado.' : 'El reporte se conserva con su código de seguimiento. No necesitas registrarlo otra vez.'}</p></div>
+      </dl>{copia && <p role="status">{copia}</p>}
+      <div className={`correo-estado ${estado.clase}`} aria-live="polite"><strong>CORREO · {estado.etiqueta}</strong><h2>{estado.subtitulo}</h2><p>{envio?.rebote ? `El reporte conserva su estado «${reporte.estado}». La falla está registrada por separado.` : 'El reporte se conserva con su código de seguimiento. No necesitas registrarlo otra vez.'}</p></div>
       {(envio?.estado === 'SIN_SOLICITAR' || (envio?.estado === 'FALLIDO' && envio.reintentable && !envio.rebote)) && <button className="correo-secundario" disabled={ocupado} onClick={onEnviar}>{ocupado ? 'Solicitando…' : 'Reintentar envío'}</button>}
       {envio?.estado === 'NO_ENVIADO_CORREO' && <CanalOficial ruta={envio.ruta} />}
-      <p className="correo-aviso">Código de NotiUrba, no radicado oficial. Conserva este número para consultar el avance. La aceptación del proveedor no confirma entrega ni lectura.</p>
+      <p className="correo-aviso correo-aviso-icono"><img src={iconoInfo} alt="" /><span>Código de NotiUrba, no radicado oficial. Conserva este número para consultar el avance. La aceptación del proveedor no confirma entrega ni lectura.</span></p>
     </div>
     <footer><Link className="correo-primario" to="/app/mis-reportes">Ver mis reportes</Link><Link className="correo-secundario" to="/app/crear-reporte">Hacer otro reporte</Link></footer>
   </section>

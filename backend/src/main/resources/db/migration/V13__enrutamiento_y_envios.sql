@@ -61,7 +61,7 @@ ALTER TABLE registro_envio_correo
  ADD COLUMN rebote BOOLEAN NOT NULL DEFAULT FALSE,
  ADD COLUMN procesando BOOLEAN NOT NULL DEFAULT FALSE;
 CREATE UNIQUE INDEX uq_envio_pendiente ON registro_envio_correo(id_reporte)
- WHERE id_estado_envio=1;
+ WHERE id_estado_envio=1 AND clave_idempotencia IS NOT NULL;
 -- La carga se congela antes de encolar para reutilizar exactamente el mismo mensaje en reintentos.
 ALTER TABLE registro_envio_correo ADD COLUMN mensaje_json TEXT;
 CREATE TABLE evento_correo (

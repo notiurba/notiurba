@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.beans.factory.annotation.Value;
 
 /** Cola persistente: crear/enviar son transacciones separadas; nunca se borra un reporte por fallo de correo. */
 @Service
@@ -21,9 +22,12 @@ public class EnvioReporteServicio {
     private final PlantillaReporte plantilla;
     private final EnviadorCorreo enviador;
     private final ObjectMapper json;
+    private final boolean habilitado;
     public EnvioReporteServicio(JdbcTemplate jdbc, TransactionTemplate tx, EnrutamientoServicio rutas,
-            PlantillaReporte plantilla, EnviadorCorreo enviador, ObjectMapper json) {
+            PlantillaReporte plantilla, EnviadorCorreo enviador, ObjectMapper json,
+            @Value("${notiurba.correo.reportes-habilitados:false}") boolean habilitado) {
         this.jdbc=jdbc; this.tx=tx; this.rutas=rutas; this.plantilla=plantilla; this.enviador=enviador; this.json=json;
+        this.habilitado=habilitado;
     }
     public record Estado(String estado, String motivo, boolean reintentable, boolean rebote,
             EnrutamientoServicio.Ruta ruta) { }
@@ -108,10 +112,12 @@ public class EnvioReporteServicio {
 
     /** Reclamo corto con SKIP LOCKED; ninguna transacción de BD permanece abierta durante la llamada HTTP. */
     public void procesarSiguiente() {
+        if (!habilitado) return;
         Map<String,Object> intento=tx.execute(status->{
             var rows=jdbc.queryForList("""
                 SELECT e.* FROM registro_envio_correo e JOIN estado_envio s USING(id_estado_envio)
                 WHERE s.nombre='PENDIENTE' AND NOT e.procesando
+                 AND e.clave_idempotencia IS NOT NULL AND e.mensaje_json IS NOT NULL
                 ORDER BY e.creado_en,e.id_registro_envio LIMIT 1 FOR UPDATE OF e SKIP LOCKED
                 """);
             if(rows.isEmpty()) return null;
@@ -150,6 +156,7 @@ public class EnvioReporteServicio {
                 UPDATE registro_envio_correo SET id_estado_envio=(SELECT id_estado_envio FROM estado_envio WHERE nombre='ENVIADO'),
                 enviado_en=now(),id_envio_proveedor=?,procesando=FALSE WHERE id_registro_envio=?
                 """,aceptado,id);
+            // tg_historial_sincroniza (V2) actualiza reporte al insertar el historial: no duplicar el UPDATE.
             jdbc.update("""
                 INSERT INTO historial_estado(id_reporte,id_estado_reporte,observacion)
                 SELECT r.id_reporte,n.id_estado_reporte,'Correo aceptado por el proveedor; no acredita entrega ni lectura.'

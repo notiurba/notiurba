@@ -28,7 +28,7 @@ class EnrutamientoIntegracionTest {
         Flyway.configure().dataSource(ds).placeholders(java.util.Map.of("adminPassword","PruebaSintetica2026"))
             .load().migrate();
         jdbc=new JdbcTemplate(ds);rutas=new EnrutamientoServicio(jdbc);proveedor=mock(EnviadorCorreo.class);
-        servicio=new EnvioReporteServicio(jdbc,new TransactionTemplate(new DataSourceTransactionManager(ds)),rutas,new PlantillaReporte(),proveedor,new ObjectMapper().findAndRegisterModules());
+        servicio=new EnvioReporteServicio(jdbc,new TransactionTemplate(new DataSourceTransactionManager(ds)),rutas,new PlantillaReporte(),proveedor,new ObjectMapper().findAndRegisterModules(),true);
         correo="prueba-"+UUID.randomUUID()+"@example.test";
         usuario=jdbc.queryForObject("""
             INSERT INTO usuario(nombres,apellidos,id_tipo_documento,numero_documento,id_barrio,direccion_correspondencia,
@@ -78,6 +78,11 @@ class EnrutamientoIntegracionTest {
         servicio.procesarSiguiente();
         assertThat(servicio.consultar(correo,codigo).estado()).isEqualTo("ENVIADO");
         assertThat(estadoGeneral(codigo)).isEqualTo("Enviado");
+        assertThat(jdbc.queryForObject("""
+            SELECT count(*) FROM historial_estado h JOIN reporte r USING(id_reporte)
+             JOIN estado_reporte e ON e.id_estado_reporte=h.id_estado_reporte
+            WHERE r.codigo_seguimiento=? AND e.nombre='Enviado'
+            """,Integer.class,codigo)).isEqualTo(1);
         servicio.solicitar(correo,codigo);servicio.procesarSiguiente();verify(proveedor,times(1)).enviar(any());
         assertThat(jdbc.queryForObject("SELECT count(*) FROM reporte WHERE codigo_seguimiento=?",Integer.class,codigo)).isEqualTo(1);
     }
@@ -110,4 +115,16 @@ class EnrutamientoIntegracionTest {
         jdbc.update("DELETE FROM evento_correo WHERE id_evento=?",id);
     }
     String estadoGeneral(String codigo){return jdbc.queryForObject("SELECT e.nombre FROM reporte r JOIN estado_reporte e USING(id_estado_reporte) WHERE codigo_seguimiento=?",String.class,codigo);}
+
+    @Test void colaDeshabilitadaConservaPendienteSinLlamarAlProveedor() {
+        String codigo=reporte(1,false);
+        servicio.solicitar(correo,codigo);
+        var apagado=new EnvioReporteServicio(jdbc,new TransactionTemplate(new DataSourceTransactionManager(
+            new DriverManagerDataSource(System.getenv("NOTIURBA_TEST_DB_URL"),System.getenv("NOTIURBA_TEST_DB_USER"),System.getenv("NOTIURBA_TEST_DB_PASSWORD")))),
+            rutas,new PlantillaReporte(),proveedor,new ObjectMapper().findAndRegisterModules(),false);
+        apagado.procesarSiguiente();
+        verifyNoInteractions(proveedor);
+        assertThat(servicio.consultar(correo,codigo).estado()).isEqualTo("PENDIENTE");
+        assertThat(estadoGeneral(codigo)).isEqualTo("Recibido");
+    }
 }

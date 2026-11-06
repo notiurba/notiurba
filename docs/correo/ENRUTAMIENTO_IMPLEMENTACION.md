@@ -2,6 +2,8 @@
 
 Fecha: 6 de noviembre de 2026. Rama: `feat/enrutamiento-correos-notiurba`.
 
+Actualización: las correcciones y los resultados posteriores (Java 21, build frontend y SQL real) están en [la auditoría del 6 de noviembre](AUDITORIA_CORRECCIONES_2026-11-06.md). Las limitaciones descritas al final de este documento corresponden a la primera implementación.
+
 ## Base y alcance
 
 Worktree limpio: `C:\notiurba\enrutamiento-correos`, desde `origin/main` local `c18c3fd08a041ada4134816c5dd4e82de6ea20fe`. La consulta remota encontró `20ae16999c41d24a5f15715a46eb4c254a356dbf`: tres commits posteriores que agregan únicamente los tres archivos del aviso de privacidad. `fetch` falló por DNS; no se afirma sincronización con ese commit. No se importaron otras ramas, no se tocó el aviso ni se modificaron main o la rama de integración. No se crea PR ni se hacen envíos reales en esta tarea.
