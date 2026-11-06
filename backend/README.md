@@ -24,3 +24,14 @@ Java 21 · Spring Boot 3.3 · Maven · PostgreSQL 16 + PostGIS 3.4 · Flyway.
 - Las migraciones aplicadas **no se editan**: los cambios van en `V4__…`, `V5__…`.
 - Pendientes de datos: barrios, polígonos de `comuna.geom` y la validación jurídica del aviso de privacidad (la versión 3 ya es la vigente, V12).
 - Verificar el SQL en una base desechable: `./db/probar.sh` (desde la raíz).
+
+## Cargar datos de territorio (scripts)
+
+Los scripts de `backend/scripts/` convierten un archivo en una migración nueva de Flyway. No tocan código.
+
+- **Comunas** (`generar-capa-comunas.py`): reemplaza la capa de polígonos. Hoy está la experimental (V14).
+- **Barrios** (`generar-barrios.py`): llena la tabla `barrio` desde un CSV con las columnas `comuna` y `barrio`
+  (plantilla en `plantilla-barrios.csv`). Solo agrega y se puede repetir sin duplicar.
+
+Ejemplo: `python3 backend/scripts/generar-barrios.py barrios.csv > backend/src/main/resources/db/migration/V16__barrios_reales.sql`
+(poner el número de versión que siga; cada script explica sus opciones con `--help` o en su encabezado).
