@@ -24,17 +24,16 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.notiurba.reporte.BaseDeDatosTemporal;
 
 /**
  * NOT-55, «Listo cuando»: la lista de coordenadas de prueba de NOT-31 (74 puntos) contra la capa de
- * NOT-31 cargada en PostGIS; los puntos con resultado distinto al esperado deben ser 0.
+ * NOT-31 tal como la carga la migración V14; los puntos con resultado distinto al esperado deben ser 0.
  *
- * Ojo: la capa es SINTÉTICA y NO OFICIAL (docs/gis-not31/README.md). Aquí solo sirve para probar la
- * regla de asignación; esta prueba no la instala en ninguna base real. Como esa capa no tiene huecos
- * ni solapes, el hueco y el solape se prueban en AsignacionDeComunaIntegracionTest.
+ * Ojo: la capa es SINTÉTICA y NO OFICIAL (docs/gis-not31/README.md). Cuando llegue la capa oficial y
+ * se reemplace V14 (ver backend/scripts/generar-capa-comunas.py), esta prueba y su CSV hay que
+ * regenerarlos o retirarlos. Como esta capa no tiene huecos ni solapes, el hueco y el solape se
+ * prueban en AsignacionDeComunaIntegracionTest.
  *
  * Esperado de cada punto: el CSV de resultados dice en qué comunas cae (columna «comunas») y si está
  * dentro del perímetro. Dentro: la de menor número; fuera: ninguna (fuera de cobertura).
@@ -43,7 +42,6 @@ import com.notiurba.reporte.BaseDeDatosTemporal;
 @TestPropertySource(locations = "classpath:pruebas.properties")
 class AsignacionListaNot31IntegracionTest {
 
-    private static final Path CAPA = Path.of("../docs/gis-not31/comunas-tulua-NOT31-prototipo-experimental.geojson");
     private static final Path COORDENADAS = Path.of("../docs/gis-not31/pruebas/coordenadas_prueba.csv");
     private static final Path RESULTADOS = Path.of("../docs/gis-not31/pruebas/resultados_puntos_prototipo.csv");
 
@@ -51,7 +49,7 @@ class AsignacionListaNot31IntegracionTest {
 
     @BeforeAll
     static void crearBaseDesechable() {
-        assumeTrue(Files.exists(CAPA) && Files.exists(COORDENADAS) && Files.exists(RESULTADOS),
+        assumeTrue(Files.exists(COORDENADAS) && Files.exists(RESULTADOS),
                 "No están los archivos de docs/gis-not31: se omite la prueba de la lista de NOT-31");
         bd = BaseDeDatosTemporal.crearOOmitir();
     }
@@ -71,7 +69,6 @@ class AsignacionListaNot31IntegracionTest {
     }
 
     @Autowired private JdbcTemplate jdbc;
-    @Autowired private ObjectMapper json;
 
     private record Punto(String id, double latitud, double longitud) {
     }
@@ -88,20 +85,17 @@ class AsignacionListaNot31IntegracionTest {
         return filas;
     }
 
-    private void cargarLaCapaDeNot31() throws IOException {
-        jdbc.update("UPDATE comuna SET geom = NULL");
-        JsonNode capa = json.readTree(Files.readString(CAPA, StandardCharsets.UTF_8));
-        for (JsonNode f : capa.get("features")) {
-            int idComuna = Integer.parseInt(f.get("properties").get("COD_LOC_COM").asText());
-            jdbc.update("UPDATE comuna SET geom = ST_Multi(ST_SetSRID(ST_GeomFromGeoJSON(?), 4326)) WHERE id_comuna = ?",
-                    f.get("geometry").toString(), idComuna);
-        }
-        assertThat(jdbc.queryForObject("SELECT count(*) FROM comuna WHERE geom IS NOT NULL", Long.class)).isEqualTo(10L);
+    /** La capa la instala la migración V14 (la misma que correrá en Render): aquí solo se comprueba. */
+    private void verificarLaCapaDeV14() {
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM comuna WHERE geom IS NOT NULL AND ST_IsValid(geom)", Long.class))
+                .isEqualTo(10L);
+        assertThat(jdbc.queryForObject("SELECT valor FROM configuracion WHERE clave = 'comunas_capa_fuente'", String.class))
+                .contains("EXPERIMENTAL");
     }
 
     @Test
     void ningunPuntoDeLaListaDaUnResultadoDistintoAlEsperado() throws IOException {
-        cargarLaCapaDeNot31();
+        verificarLaCapaDeV14();
 
         Map<String, Punto> puntos = new HashMap<>();
         for (String[] c : filas(COORDENADAS)) {                       // id,tipo,latitud,longitud,...

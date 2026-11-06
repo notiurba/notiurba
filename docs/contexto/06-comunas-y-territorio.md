@@ -21,6 +21,10 @@ idea inicial de «pendiente de revisión»):
 - Más lejos que eso de toda comuna: el reporte se rechaza como «fuera de cobertura»
   (RN-03). No implica estar fuera de Tuluá, solo fuera de la capa.
 
+Capa instalada hoy (V14): la **experimental y no oficial de NOT-31**, aceptada por el docente como
+aproximación porque la Alcaldía no entregó los datos oficiales. Para cambiarla:
+`python3 backend/scripts/generar-capa-comunas.py capa.geojson --fuente "..." > .../V15__capa_comunas_oficial.sql`.
+
 ## Capa GeoJSON
 
 - La capa se almacena en GeoJSON, un polígono por comuna, con ID (`01`–`10`) y nombre
