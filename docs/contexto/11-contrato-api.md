@@ -13,7 +13,7 @@ Estado de cada endpoint:
 - Producción: `https://notiurba-api.onrender.com` (Render Free, el primer arranque en frío tarda ~2 min). Local: `http://localhost:8080`.
 - JSON en UTF-8, nombres en camelCase, fechas en ISO-8601 con zona (`2026-10-31T14:05:00-05:00`).
 - Autenticación: encabezado `Authorization: Bearer <JWT>`. El JWT vence a los 60 minutos y lleva el correo (`sub`) y el `rol` (CIUDADANO o ADMIN).
-- Rutas: públicas `/api/health` y `/api/auth/**` (y `/api/catalogos/**` cuando exista); ciudadano `/api/...` (exige sesión, cualquier rol); panel `/api/admin/...` (exige rol ADMIN, Sprint 3).
+- Rutas: públicas `/api/health` y `/api/auth/**` y `/api/catalogos/**`; ciudadano `/api/...` (exige sesión, cualquier rol); panel `/api/admin/...` (exige rol ADMIN, Sprint 3).
 - Todo endpoint protegido responde 401 sin token, con token inválido o vencido (RNF-03), y 403 si el rol no alcanza.
 - CORS: solo el origen configurado (`CORS_ORIGINS`). El encabezado `Location` está expuesto para que el navegador lo pueda leer.
 
@@ -143,7 +143,6 @@ Fuera de los 6, pero necesarios para que ninguna pantalla del Figma quede sin da
 - `GET /api/reportes` — «Mis reportes». Lista propia, más recientes primero, filtro opcional `estado`. Salida: `[ { codigoSeguimiento, estado, categoria, creadoEn, vigenteHasta } ]`.
 - `PATCH /api/reportes/{codigo}` — «Actualizar mi reporte». Solo cambia `radicadoOficial` (máx. 50). Devuelve el reporte.
 - `POST /api/reportes/{codigo}/enviar` — el frontend lo llama después de subir las fotos (si subió). Responde 202; el envío con Resend (API HTTP) corre en segundo plano (RNF-04) y es idempotente. Así el correo (RF-14) puede llevar el enlace a la foto. Sale un solo correo, a la entidad, con el correo del ciudadano en Reply-To y sin copia para él.
-- `GET /api/catalogos/barrios` (`{ idBarrio, idComuna, nombre }`) y `GET /api/catalogos/tipos-documento` — públicos. Al implementarlos hay que agregar `/api/catalogos/**` a las rutas públicas de `SecurityConfig`.
 
 Verificación de correo (EXISTEN):
 - `POST /api/auth/verificar` — público. Entrada `{ token }`, el del enlace del correo (usa el tipo de token «Verificación de correo»; el enlace vence en 24 h y se guarda solo su hash). Salida 200 `{ token, rol }`: confirma el correo e inicia sesión. Error 400 ENLACE_INVALIDO.
@@ -154,6 +153,8 @@ Aviso de rebotes:
 - `POST /api/webhooks/resend` — FALTA, público (sin JWT) pero protegido: se valida la firma del evento con un secreto (`RESEND_WEBHOOK_SECRET`) y se rechaza lo que no esté firmado. Si Resend avisa de un rebote o de una queja, el envío pasa a FALLIDO con su motivo y se avisa al ciudadano (decisión 3). Los nombres exactos de los eventos se confirman en la documentación de Resend al implementar. Requiere guardar el identificador que Resend da a cada envío: hoy `registro_envio_correo` no tiene columna para eso (migración nueva).
 
 Ya implementados (EXISTEN):
+- `GET /api/catalogos/tipos-documento` — público. 200 lista `[ { idTipoDocumento, nombre, codigo } ]` ordenada por id (hoy CC, CE, PPT y PAS).
+- `GET /api/catalogos/barrios` — público. 200 lista `[ { idBarrio, idComuna, nombre } ]` ordenada por nombre. Mientras no se carguen los barrios reales (depende de Amelia), trae solo el barrio de prueba que siembra V4. (NOT-55)
 - `GET /api/health` — público. 200 `{ estado, baseDeDatos }` ambos «ok»; 503 con «error» si la base no responde (`SELECT 1`).
 - `POST /api/auth/google` — público. Entrada `{ credential }` (ID token de Google). Salida 200 `{ token, rol }` si ya hay cuenta (o si se vincula por correo, *propuesto*), o `{ estado: "PERFIL_INCOMPLETO", tokenRegistro, correo, nombres, apellidos }`. Error 401 NO_AUTENTICADO.
 - `POST /api/auth/google/completar` — público. Entrada: `tokenRegistro` (dura 15 min), `nombres`, `apellidos`, `idTipoDocumento`, `numeroDocumento`, `idBarrio`, `direccionCorrespondencia`, `telefono` (opcional), `aceptaPrivacidad` (true), `declaraMayorEdad` (true). Salida 200 `{ token, rol }`. Errores 400, 401, 409.
