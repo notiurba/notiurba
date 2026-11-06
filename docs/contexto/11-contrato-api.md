@@ -44,7 +44,7 @@ Toda respuesta de error tiene el mismo cuerpo:
 | 409 | FOTOS_MAXIMO | foto | El reporte ya tiene 3 fotos |
 | 413 | ARCHIVO_MUY_GRANDE | foto | La foto pasa de 1 MB |
 | 415 | FORMATO_NO_SOPORTADO | foto | No es JPG ni PNG |
-| 422 | FUERA_DE_COBERTURA | latitud | El punto no cae en ninguna de las 10 comunas |
+| 422 | FUERA_DE_COBERTURA | latitud | El punto no cae en ninguna de las 10 comunas ni a menos de la distancia máxima (50 m por defecto) de una |
 | 502 | ALMACEN_FOTOS_NO_DISPONIBLE | null | Cloudinary no respondió |
 | 500 | ERROR_INTERNO | null | Error no previsto; sin detalles |
 
@@ -103,9 +103,14 @@ Entrada:
 - `autorizaEnvio`: obligatorio, `true`. Autoriza enviar el reporte a la entidad a nombre del ciudadano y con sus datos (RN-07). El servidor guarda la fecha-hora en `autorizacion_envio_en`. Es la única autorización: no hay una segunda ni se envía copia al ciudadano (decidido el 01/11/2026). Texto de la casilla del paso 4: «Autorizo a NotiUrba a enviar este reporte a la entidad competente, a mi nombre y con mis datos, ubicación y fotos (con enlace público). La entidad podrá responderme a mi correo. Ver aviso de privacidad».
 
 Salida: 201 con `Location: /api/reportes/NU-000123` y un cuerpo mínimo `{ codigoSeguimiento, estado, creadoEn, vigenteHasta }` leído de la base tras guardar, en estado «Recibido». El código lo asigna el trigger de la base, no Java. El reporte completo se obtiene con 3.6 (NOT-89).
-La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02).
+La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02). No se guarda en el reporte: la vista `v_reporte_comuna` la deriva con `fn_asignar_comuna` (V13), la misma función que decide el rechazo. Reglas con GPS (NOT-55):
+- El punto cae dentro de una comuna (el borde cuenta como dentro): esa comuna.
+- Cae dentro de dos o más (solape): la de menor número.
+- Cae en un hueco: la comuna más cercana, si está a una distancia menor o igual a `configuracion.comuna_distancia_maxima_m` (50 m por defecto, valor propuesto; `0` desactiva la regla).
+- Más lejos que eso de toda comuna: 422 FUERA_DE_COBERTURA y no se guarda nada.
+- Las comunas sin polígono no participan. Si **ninguna** tiene polígono, no se puede decidir: no se rechaza y la comuna sale del barrio.
 Detalle técnico: la base exige `autorizacion_envio_en <= creado_en`, así que el servidor debe fijar ambas fechas con el mismo instante.
-Errores: 400 VALIDACION, 401, 422 FUERA_DE_COBERTURA (el 422 aún no se aplica: depende de cargar `comuna.geom` y los barrios, NOT-31 / NOT-54).
+Errores: 400 VALIDACION, 401, 422 FUERA_DE_COBERTURA (se aplica en cuanto `comuna.geom` tenga polígonos; mientras todos estén en NULL el reporte se guarda).
 
 ### 3.5 Subir foto — `POST /api/reportes/{codigo}/fotos` — EXISTE
 JWT, solo el autor del reporte. `multipart/form-data`, parte `foto`:
@@ -203,7 +208,7 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 - **Endpoint `enviar`**: pendiente (decisión 2).
 - **Aviso de privacidad**: la versión 3 ya es la vigente en la base (V12) y en el frontend; su **validación jurídica sigue pendiente** (ADR-0008). El aviso promete cosas que todavía no existen: Ajustes (editar datos, eliminar datos y cuenta, volver a leer el aviso), «Mis reportes» (`GET /api/reportes`, propuesto en la sección 4), el aviso al ciudadano cuando un correo rebota (webhook), el borrado de sus fotos en Cloudinary al eliminar sus datos y volver a aceptar el aviso si sube de versión. Hay que implementarlas antes de abrir el servicio al público.
 - **Paso 4 del Figma**: si muestra dos casillas de autorización, debe quedar una sola (`autorizaEnvio`). Avisar a Amelia (diseño).
-- **`comuna.geom` es NULL y los barrios reales no están cargados** (solo hay un barrio administrativo de V4): `FUERA_DE_COBERTURA` no se puede verificar y nadie puede completar el perfil hasta NOT-31 / NOT-54. Depende de la carga de barrios y polígonos (Amelia).
+- **`comuna.geom` sigue en NULL en las bases reales y los barrios no están cargados** (solo hay un barrio administrativo de V4). La regla de la comuna y `FUERA_DE_COBERTURA` ya están implementadas (NOT-55, V13) y probadas con la capa sintética de NOT-31, pero esa capa no está instalada en ninguna base: falta una carga repetible de los polígonos y de los barrios (Amelia). Sin barrios nadie puede completar el perfil.
 - **Código sin escribir**: el endpoint `enviar`, conectar `EnviadorCorreo` a la recuperación de contraseña y el borrado de fotos y datos a pedido del ciudadano (la columna del identificador ya lo permite). El almacén de fotos (NOT-51) y el endpoint de subida (NOT-52) están hechos; se probaron en producción el 01/11/2026: una foto subida desde Render a Cloudinary, con su URL pública cargando sin sesión (las migraciones V10 y V11 ya estaban aplicadas en Neon; V11 se comprobó porque la subida guarda el identificador en esa columna). En Render también se verificó el rechazo de un archivo de 1,5 MB (413) y de un `.jpg` que no es imagen (415).
 - **Prueba de Resend desde Render**: el 01/11/2026 se probó la API HTTP desde la máquina de Andrés (respuesta 200 con el subdominio verificado, enviando a una dirección de pruebas de Resend). El 01/11/2026 también se envió un correo real con `EnviadorCorreoResend` a una bandeja de Andrés. Falta probarlo desde Render: hay que desplegar y poner `RESEND_API_KEY` y `RESEND_REMITENTE` en sus variables. El SMTP por 2587 no se usa.
 - **Rutas del frontend**: `RutaProtegida` aún no envuelve `/admin/*`; el panel sigue abierto con datos de prueba.

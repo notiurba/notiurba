@@ -11,9 +11,15 @@ Ver ADR-0001.
 
     reporte → coordenadas GPS → polígono GeoJSON → comuna
 
-Un punto dentro de un solo polígono se asigna a esa comuna. Un punto en un borde o en
-dos polígonos queda «pendiente de revisión» (sin comuna arbitraria). Un punto fuera de
-la cobertura queda «sin determinar» (no implica estar fuera de Tuluá).
+Regla vigente en el backend (NOT-21 / NOT-55, `fn_asignar_comuna` en V13; sustituye a la
+idea inicial de «pendiente de revisión»):
+
+- Punto dentro de una comuna (el borde cuenta como dentro): esa comuna.
+- Punto dentro de dos o más (solape): la de menor número.
+- Punto en un hueco: la comuna más cercana, si está a menos de la distancia máxima
+  (`comuna_distancia_maxima_m`, 50 m por defecto, valor propuesto).
+- Más lejos que eso de toda comuna: el reporte se rechaza como «fuera de cobertura»
+  (RN-03). No implica estar fuera de Tuluá, solo fuera de la capa.
 
 ## Capa GeoJSON
 
@@ -42,8 +48,8 @@ la cobertura queda «sin determinar» (no implica estar fuera de Tuluá).
   el resto son micro-superficies numéricas sin efecto práctico.
 - El hueco mayor (H001) sigue el corredor del río Tuluá: posible exclusión
   hidrográfica, no un error. Un reporte que caiga ahí queda sin comuna.
-- **Falta definir la regla** para huecos y solapamientos (asignar la comuna más cercana,
-  enviar a revisión del administrador, etc.). Hoy no está en las RN.
+- Regla para huecos y solapamientos: definida en NOT-21 (la más cercana hasta la distancia
+  máxima; en un solape, la de menor número) e implementada en NOT-55. Falta pasarla a las RN.
 
 ## Pendientes
 

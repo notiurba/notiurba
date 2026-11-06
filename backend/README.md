@@ -17,6 +17,7 @@ Java 21 · Spring Boot 3.3 · Maven · PostgreSQL 16 + PostGIS 3.4 · Flyway.
 | `V1__esquema.sql` | 24 tablas, restricciones e índices (GiST incluido). |
 | `V2__reglas_y_vistas.sql` | Triggers de las reglas B1–B12 y vistas (`v_reporte_destino`, `v_reporte_no_enviado_por_correo`, `v_reporte_comuna`, `v_reporte_mapa`). |
 | `V3__catalogos_iniciales.sql` | Catálogos, entidades, dependencias, canales y categorías. |
+| `V13__asignar_comuna_por_punto.sql` | `fn_asignar_comuna` (contiene, solape, hueco cercano, fuera de cobertura), la distancia máxima en `configuracion` y la vista `v_reporte_comuna` con esas reglas (NOT-55). |
 
 - Las migraciones aplicadas **no se editan**: los cambios van en `V4__…`, `V5__…`.
 - Pendientes de datos: barrios, polígonos de `comuna.geom` y la validación jurídica del aviso de privacidad (la versión 3 ya es la vigente, V12).
