@@ -1,4 +1,4 @@
-# INSTRUCCIONES PENDIENTES PARA LA IA DE KATHERINE
+# INSTRUCCIONES PENDIENTES PARA LA IA 
 
 ## Contexto
 
@@ -6,7 +6,6 @@ Este archivo contiene una tarea de integración pendiente para el frontend de No
 
 La documentación del aviso de privacidad ya ha sido preparada.
 
-**Responsable del frontend:** Katherine López Unas.
 
 **Requisito relacionado:** RF-03.
 
