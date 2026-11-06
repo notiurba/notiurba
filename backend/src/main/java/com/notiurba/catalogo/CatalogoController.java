@@ -33,10 +33,11 @@ public class CatalogoController {
                         rs.getString("nombre"), rs.getString("codigo")));
     }
 
+    /** Sin los barrios internos (p. ej. el del administrador): no son para elegir. */
     @GetMapping("/api/catalogos/barrios")
     public List<BarrioResponse> barrios() {
         return jdbc.query(
-                "SELECT id_barrio, id_comuna, nombre FROM barrio ORDER BY nombre, id_barrio",
+                "SELECT id_barrio, id_comuna, nombre FROM barrio WHERE NOT interno ORDER BY nombre, id_barrio",
                 (rs, n) -> new BarrioResponse(rs.getInt("id_barrio"), rs.getShort("id_comuna"),
                         rs.getString("nombre")));
     }

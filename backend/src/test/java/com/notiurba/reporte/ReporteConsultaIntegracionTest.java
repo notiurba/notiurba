@@ -77,7 +77,7 @@ class ReporteConsultaIntegracionTest {
 
     @BeforeEach
     void preparar() {
-        idBarrio = jdbc.queryForObject("SELECT min(id_barrio) FROM barrio", Integer.class);
+        idBarrio = BarrioDePrueba.id(jdbc);
         Ciudadano c = nuevoCiudadano();
         idUsuario = c.id();
         token = c.token();

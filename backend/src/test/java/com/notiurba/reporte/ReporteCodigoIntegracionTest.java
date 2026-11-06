@@ -70,7 +70,7 @@ class ReporteCodigoIntegracionTest {
     @BeforeEach
     void crearCiudadano() {
         String correo = "ciudadano-" + UUID.randomUUID() + "@prueba.com";
-        idBarrio = jdbc.queryForObject("SELECT min(id_barrio) FROM barrio", Integer.class);
+        idBarrio = BarrioDePrueba.id(jdbc);
         idUsuario = jdbc.queryForObject("""
                 INSERT INTO usuario (nombres, apellidos, id_tipo_documento, numero_documento, id_barrio,
                                      direccion_correspondencia, correo, correo_verificado_en, password_hash,

@@ -21,7 +21,9 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.notiurba.reporte.BarrioDePrueba;
 import com.notiurba.reporte.BaseDeDatosTemporal;
+import com.notiurba.usuario.CatalogosRegistro;
 
 /** NOT-55: los catálogos leen los datos sembrados por las migraciones (se omite sola sin Docker). */
 @SpringBootTest
@@ -51,6 +53,7 @@ class CatalogoIntegracionTest {
     @Autowired private MockMvc mvc;
     @Autowired private JdbcTemplate jdbc;
     @Autowired private ObjectMapper json;
+    @Autowired private CatalogosRegistro catalogos;
 
     private JsonNode pedir(String ruta) throws Exception {
         MvcResult r = mvc.perform(get(ruta)).andReturn(); // sin token: son públicos
@@ -78,5 +81,15 @@ class CatalogoIntegracionTest {
         assertThat(nombres).contains("Aaa Prueba catálogo", "Zzz Prueba catálogo");
         assertThat(lista.get(0).get("idBarrio").asInt()).isPositive();
         assertThat(lista.get(0).get("idComuna").asInt()).isBetween(1, 10);
+    }
+
+    @Test
+    void elBarrioInternoDelAdministradorNoSaleNiSePuedeElegir() throws Exception {
+        int idInterno = jdbc.queryForObject(
+                "SELECT id_barrio FROM barrio WHERE nombre = 'Administración NotiUrba'", Integer.class);
+
+        assertThat(pedir("/api/catalogos/barrios").findValuesAsText("nombre")).doesNotContain("Administración NotiUrba");
+        assertThat(catalogos.existeBarrio(idInterno)).isFalse();
+        assertThat(catalogos.existeBarrio(BarrioDePrueba.id(jdbc))).isTrue();
     }
 }

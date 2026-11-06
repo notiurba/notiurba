@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.notiurba.reporte.BarrioDePrueba;
 import com.notiurba.reporte.BaseDeDatosTemporal;
 import com.notiurba.seguridad.JwtProveedor;
 
@@ -89,7 +90,7 @@ class AsignacionDeComunaIntegracionTest {
         poner(3, 2.0, 3.0, 0.5, 1.5);
         jdbc.update("UPDATE configuracion SET valor = '50' WHERE clave = 'comuna_distancia_maxima_m'");
 
-        int idBarrio = jdbc.queryForObject("SELECT min(id_barrio) FROM barrio", Integer.class);
+        int idBarrio = BarrioDePrueba.id(jdbc);
         String correo = "ciudadano-" + UUID.randomUUID() + "@prueba.com";
         jdbc.queryForObject("""
                 INSERT INTO usuario (nombres, apellidos, id_tipo_documento, numero_documento, id_barrio,

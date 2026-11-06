@@ -154,7 +154,7 @@ Aviso de rebotes:
 
 Ya implementados (EXISTEN):
 - `GET /api/catalogos/tipos-documento` — público. 200 lista `[ { idTipoDocumento, nombre, codigo } ]` ordenada por id (hoy CC, CE, PPT y PAS).
-- `GET /api/catalogos/barrios` — público. 200 lista `[ { idBarrio, idComuna, nombre } ]` ordenada por nombre. Mientras no se carguen los barrios reales (depende de Amelia), trae solo el barrio de prueba que siembra V4. (NOT-55)
+- `GET /api/catalogos/barrios` — público. 200 lista `[ { idBarrio, idComuna, nombre } ]` ordenada por nombre. No incluye los barrios internos (`barrio.interno`, V15), como el «Administración NotiUrba» del administrador: tampoco se pueden elegir al registrarse ni al reportar. Mientras no se carguen los barrios reales (depende de Amelia), la lista sale vacía. (NOT-55)
 - `GET /api/health` — público. 200 `{ estado, baseDeDatos }` ambos «ok»; 503 con «error» si la base no responde (`SELECT 1`).
 - `POST /api/auth/google` — público. Entrada `{ credential }` (ID token de Google). Salida 200 `{ token, rol }` si ya hay cuenta (o si se vincula por correo, *propuesto*), o `{ estado: "PERFIL_INCOMPLETO", tokenRegistro, correo, nombres, apellidos }`. Error 401 NO_AUTENTICADO.
 - `POST /api/auth/google/completar` — público. Entrada: `tokenRegistro` (dura 15 min), `nombres`, `apellidos`, `idTipoDocumento`, `numeroDocumento`, `idBarrio`, `direccionCorrespondencia`, `telefono` (opcional), `aceptaPrivacidad` (true), `declaraMayorEdad` (true). Salida 200 `{ token, rol }`. Errores 400, 401, 409.
