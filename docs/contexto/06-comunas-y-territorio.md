@@ -23,7 +23,7 @@ idea inicial de «pendiente de revisión»):
 
 Capa instalada hoy (V14): la **experimental y no oficial de NOT-31**, aceptada por el docente como
 aproximación porque la Alcaldía no entregó los datos oficiales. Para cambiarla:
-`python3 backend/scripts/generar-capa-comunas.py capa.geojson --fuente "..." > .../V15__capa_comunas_oficial.sql`.
+`python3 backend/scripts/generar-capa-comunas.py capa.geojson --fuente "..." > .../V16__capa_comunas_oficial.sql`.
 
 ## Capa GeoJSON
 

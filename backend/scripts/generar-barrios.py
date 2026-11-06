@@ -11,7 +11,7 @@ La comuna puede escribirse 1, 01 o «Comuna 1». Separa con coma o punto y coma 
 guarda con punto y coma) y guarda el archivo en UTF-8. Uso:
 
     python3 backend/scripts/generar-barrios.py barrios.csv \
-        > backend/src/main/resources/db/migration/V16__barrios_reales.sql
+        > backend/src/main/resources/db/migration/V17__barrios_reales.sql
 
 La migración solo AGREGA barrios (ON CONFLICT DO NOTHING), así que se puede volver a generar con
 un CSV más completo sin duplicar. Un barrio ya cargado no se borra ni se corrige por aquí: los

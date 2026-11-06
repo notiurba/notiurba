@@ -33,5 +33,5 @@ Los scripts de `backend/scripts/` convierten un archivo en una migración nueva 
 - **Barrios** (`generar-barrios.py`): llena la tabla `barrio` desde un CSV con las columnas `comuna` y `barrio`
   (plantilla en `plantilla-barrios.csv`). Solo agrega y se puede repetir sin duplicar.
 
-Ejemplo: `python3 backend/scripts/generar-barrios.py barrios.csv > backend/src/main/resources/db/migration/V16__barrios_reales.sql`
+Ejemplo: `python3 backend/scripts/generar-barrios.py barrios.csv > backend/src/main/resources/db/migration/V17__barrios_reales.sql`
 (poner el número de versión que siga; cada script explica sus opciones con `--help` o en su encabezado).
