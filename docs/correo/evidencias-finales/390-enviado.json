@@ -1,0 +1,12 @@
+{
+  "clientWidth": 375,
+  "font": "\"Nunito Sans\", system-ui, \"Segoe UI\", Roboto, sans-serif",
+  "fontReady": true,
+  "heading": "Reporte enviado",
+  "imagesLoaded": true,
+  "lang": "es",
+  "reportState": "Enviado",
+  "scrollWidth": 375,
+  "status": "CORREO · ENVIADOEnvío aceptado por ResendEl reporte se conserva con su código de seguimiento. No necesitas registrarlo otra vez.",
+  "width": 390
+}
