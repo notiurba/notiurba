@@ -30,6 +30,16 @@ public class ReporteRepositorio {
 
     private final NamedParameterJdbcTemplate jdbc;
 
+    public void prepararEnrutamiento(String codigo, boolean emergencia) {
+        jdbc.update("""
+            UPDATE reporte r SET emergencia=:emergencia OR (EXISTS(SELECT 1 FROM configuracion_enrutamiento x
+             WHERE x.id_categoria=r.id_categoria AND x.es_gas) AND lower(r.descripcion) ~ '(fuga|olor.*gas|escape.*gas)'),
+             requiere_revision=r.requiere_revision OR COALESCE((SELECT x.revision_clasificacion
+              FROM configuracion_enrutamiento x WHERE x.id_categoria=r.id_categoria),FALSE)
+            WHERE codigo_seguimiento=:codigo
+            """, new MapSqlParameterSource("codigo",codigo).addValue("emergencia",emergencia));
+    }
+
     public ReporteRepositorio(NamedParameterJdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }

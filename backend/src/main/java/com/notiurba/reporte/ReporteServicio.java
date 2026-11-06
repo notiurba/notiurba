@@ -40,6 +40,7 @@ public class ReporteServicio {
 
     @Transactional
     public ReporteCreadoResponse crear(String correoUsuario, CrearReporteRequest p) {
+        if (!Boolean.TRUE.equals(p.autorizaEnvio())) throw error("Debes autorizar la remisión", "autorizaEnvio");
         long idUsuario = usuarios.findByCorreoIgnoreCase(correoUsuario)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, Codigos.NO_AUTENTICADO,
                         Codigos.MSG_NO_AUTENTICADO))
@@ -69,9 +70,11 @@ public class ReporteServicio {
             throw error("La matrícula solo aplica a servicios públicos", "matriculaCuentaServicio");
         }
 
-        return repositorio.insertar(new ReporteRepositorio.NuevoReporte(
+        ReporteCreadoResponse creado = repositorio.insertar(new ReporteRepositorio.NuevoReporte(
                 idUsuario, p.idCategoria(), p.idBarrio(), descripcion, p.latitud(), p.longitud(),
                 vacioANulo(p.direccionIncidente()), matricula, vacioANulo(p.radicadoOficial())));
+        repositorio.prepararEnrutamiento(creado.codigoSeguimiento(), Boolean.TRUE.equals(p.emergencia()));
+        return creado;
     }
 
     /** Un reporte propio por código. No existe y «es de otra persona» dan exactamente la misma respuesta. */

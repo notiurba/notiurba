@@ -24,6 +24,8 @@ server:
 
 notiurba:
   correo:
+    reportes-habilitados: ${NOTIURBA_ENVIO_REPORTES_HABILITADO:false}
+    webhook-secret: ${RESEND_WEBHOOK_SECRET:}
     resend:
       url: https://api.resend.com
       api-key: ${RESEND_API_KEY:}      # secreta: solo variable de entorno (Render y .env local)
