@@ -5,19 +5,7 @@ const comunasTuluaGeoJson = JSON.parse(comunasTuluaRaw)
 // Centro de Tuluá [latitud, longitud]: donde arrancan los dos mapas.
 export const CENTRO_TULUA = [4.0847, -76.1954]
 
-export const COMUNAS_TULUA_SOURCE = {
-  name: 'POT Tulua 2015 - capa provisional',
-  url: 'https://www.colombiaot.gov.co/pot/buscador.html?u=76834',
-  catalogRecord: 30349,
-  originalLayer: '01_P_Comunas_urbanas_2014',
-  originalCrs: 'EPSG:3115',
-  downloadedAt: '2026-10-11',
-  municipalityCode: '76834',
-  crs: 'EPSG:4326',
-  status: 'pendiente_validacion_administrativa',
-  notes:
-    'Diez comunas del insumo POT 2015. Referencia provisional; no confirma la division administrativa vigente en 2026.',
-}
+// Procedencia de la capa (POT Tuluá 2015, provisional): docs/decisiones/0003-fuente-cartografica-comunas.md
 
 const expectedCodes = Array.from({ length: 10 }, (_, index) =>
   String(index + 1).padStart(2, '0'),
