@@ -2,6 +2,8 @@ package com.notiurba.foto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
@@ -120,8 +122,9 @@ class AlmacenFotosCloudinaryTest {
 
     @Test
     void sinCredencialesFallaSinLlamarARed() {
-        var sinNada = new AlmacenFotosCloudinary(RestClient.create(), "", "", "", "carpeta", Clock.systemUTC());
-        var sinSecreto = new AlmacenFotosCloudinary(RestClient.create(), "demo", "clave", null, "carpeta", Clock.systemUTC());
+        var cliente = mock(RestClient.class);
+        var sinNada = new AlmacenFotosCloudinary(cliente, "", "", "", "carpeta", Clock.systemUTC());
+        var sinSecreto = new AlmacenFotosCloudinary(cliente, "demo", "clave", null, "carpeta", Clock.systemUTC());
 
         for (AlmacenFotos a : new AlmacenFotos[] { sinNada, sinSecreto }) {
             assertThatThrownBy(() -> a.guardar(new byte[] { 1 }, "image/png"))
@@ -129,5 +132,6 @@ class AlmacenFotosCloudinaryTest {
                     .hasMessageContaining("no están configuradas");
             assertThatThrownBy(() -> a.borrar("x")).isInstanceOf(AlmacenFotosNoDisponibleException.class);
         }
+        verifyNoInteractions(cliente);
     }
 }
