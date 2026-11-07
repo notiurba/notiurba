@@ -27,6 +27,8 @@ notiurba:
     enabled: ${DIAGNOSTICS_ENABLED:false}
     photos-enabled: ${PHOTO_DIAGNOSTICS_ENABLED:false}
   correo:
+    # Si tiene valor, el correo del reporte sale a esta dirección y NO a la entidad real (pruebas y demo).
+    destino-prueba: ${RESEND_PRUEBA_DESTINO:}
     reportes-habilitados: ${NOTIURBA_ENVIO_REPORTES_HABILITADO:false}
     webhook-secret: ${RESEND_WEBHOOK_SECRET:}
     resend:

@@ -51,9 +51,10 @@ class AdminIntegracionTest {
     private static BaseDeDatosTemporal bd;
     @BeforeAll static void crearBase() {
         String url = System.getenv("DB_URL");
-        if (url == null || !url.matches("jdbc:postgresql://127\\.0\\.0\\.1:[0-9]+/notiurba_test_admin_bootstrap")) {
-            throw new IllegalArgumentException("Usa el contenedor local desechable de docs/admin-estados-validar-local.ps1");
-        }
+        // Se omite (no falla) si DB_URL apunta a otra base: así no rompe `mvn test` a quien tenga su propia base local
+        org.junit.jupiter.api.Assumptions.assumeTrue(
+                url != null && url.matches("jdbc:postgresql://127\\.0\\.0\\.1:[0-9]+/notiurba_test_admin_bootstrap"),
+                "Se omite: usa el contenedor local desechable de docs/admin-estados-validar-local.ps1");
         bd = BaseDeDatosTemporal.crearOOmitir();
     }
     @AfterAll static void borrarBase() throws SQLException { if (bd != null) bd.borrar(); }

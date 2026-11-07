@@ -23,6 +23,9 @@ public class EnvioReporteServicio {
     private final EnviadorCorreo enviador;
     private final ObjectMapper json;
     private final boolean habilitado;
+    /** Si tiene valor (RESEND_PRUEBA_DESTINO), el correo sale a esa dirección y NO a la entidad real. */
+    @Value("${notiurba.correo.destino-prueba:}")
+    private String destinoPrueba = "";
     public EnvioReporteServicio(JdbcTemplate jdbc, TransactionTemplate tx, EnrutamientoServicio rutas,
             PlantillaReporte plantilla, EnviadorCorreo enviador, ObjectMapper json,
             @Value("${notiurba.correo.reportes-habilitados:false}") boolean habilitado) {
@@ -137,7 +140,7 @@ public class EnvioReporteServicio {
             OffsetDateTime primero=jdbc.queryForObject("SELECT min(creado_en) FROM registro_envio_correo WHERE id_reporte=?",OffsetDateTime.class,intento.get("id_reporte"));
             if(previos!=null && previos>0 && Duration.between(primero,OffsetDateTime.now()).compareTo(Duration.ofHours(23))>=0)
                 throw new CorreoNoEnviadoException("Ventana de idempotencia vencida; requiere conciliación",false);
-            CorreoSaliente mensaje=json.readValue((String)intento.get("mensaje_json"),CorreoSaliente.class);
+            CorreoSaliente mensaje=aDestinoDePrueba(json.readValue((String)intento.get("mensaje_json"),CorreoSaliente.class),destinoPrueba);
             proveedor=enviador.enviar(mensaje);
             if(proveedor==null || proveedor.isBlank()) throw new CorreoNoEnviadoException("Proveedor sin confirmación",true);
         } catch(Exception fallo) {
@@ -170,5 +173,18 @@ public class EnvioReporteServicio {
                 """,id,aceptado);
         });
     }
+    /**
+     * Con destino de prueba, el correo no sale a la entidad real: va a esa dirección, con «[PRUEBA]» en el
+     * asunto y una línea que dice a quién habría llegado. Sin destino de prueba devuelve el mismo correo.
+     */
+    static CorreoSaliente aDestinoDePrueba(CorreoSaliente c, String destinoPrueba) {
+        if (destinoPrueba == null || destinoPrueba.isBlank()) return c;
+        String aviso = "CORREO DE PRUEBA: el destino real habría sido " + String.join(", ", c.para()) + ".";
+        String html = c.html() == null || c.html().isBlank() ? c.html()
+                : "<p><strong>" + org.springframework.web.util.HtmlUtils.htmlEscape(aviso) + "</strong></p>" + c.html();
+        return new CorreoSaliente(List.of(destinoPrueba.trim()), "[PRUEBA] " + c.asunto(), aviso + "\n\n" + c.texto(),
+                html, c.nombreRemitente(), c.responderA(), c.claveIdempotencia());
+    }
+
     private static ApiException error(String m){ return new ApiException(HttpStatus.CONFLICT,"CONFLICTO",m); }
 }

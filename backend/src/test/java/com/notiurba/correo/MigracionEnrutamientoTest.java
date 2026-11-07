@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Map;
 import java.util.UUID;
 
-/** Ensaya actualización V12 -> V13 con intentos históricos; jamás usa la BD de la aplicación. */
+/** Ensaya actualización V12 -> última (la de enrutamiento es la V16) con intentos históricos; jamás usa la BD de la aplicación. */
 @EnabledIfEnvironmentVariable(named="NOTIURBA_TEST_DB_URL",matches="jdbc:postgresql:.*")
 class MigracionEnrutamientoTest {
     @Test void conservaPendientesHistoricosYElTriggerSincronizaReporte() {
