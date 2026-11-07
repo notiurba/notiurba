@@ -1,0 +1,12 @@
+{
+  "clientWidth": 1425,
+  "font": "\"Nunito Sans\", system-ui, \"Segoe UI\", Roboto, sans-serif",
+  "fontReady": true,
+  "heading": "Aviso de fallo de correo",
+  "imagesLoaded": true,
+  "lang": "es",
+  "reportState": "Enviado",
+  "scrollWidth": 1425,
+  "status": "CORREO · FALLIDO (rebote)Correo no entregado a la entidadEl reporte conserva su estado «Enviado». La falla está registrada por separado.",
+  "width": 1440
+}

@@ -1,0 +1,1780 @@
+{
+  "info": {
+    "_postman_id": "notiurba-not45-2026-11-03",
+    "name": "NotiUrba | NOT-45 | Pruebas de 6 endpoints",
+    "description": "Colección COMPLEMENTARIA de NOT-45 basada en docs/contexto/11-contrato-api.md (rama develop, 03-11-2026). Contiene 24 escenarios: válido, campo faltante/no aplica, sin token, JWT vencido. NO sustituye la colección oficial docs/api/NotiUrba API/. No se ejecutó contra servidor. Los tests de token vencido requieren un JWT REAL expirado. El registro y el login son PÚBLICOS, y sus pruebas con token vencido deben seguir respondiendo conforme a su cuerpo. El GET de categorías no tiene campos obligatorios; su caso campo faltante se marca NO APLICA y se prueba el mismo GET. Preparar variables y permisos para escrituras antes de ejecutar; ver guía adjunta.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 · Registro /api/auth/registro (público)",
+      "item": [
+        {
+          "name": "01 Válido (201)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/registro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "registro"
+              ]
+            },
+            "description": "Público. Crea cuenta nueva y envío de confirmación. Requiere idBarrio existente y habilitarEscrituras=true. El correo generado usa delivered+…@resend.dev; puede consumir cuota de Resend.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Prueba\",\n  \"apellidos\": \"NotiUrba\",\n  \"idTipoDocumento\": 1,\n  \"numeroDocumento\": \"{{documentoUnico}}\",\n  \"idBarrio\": {{idBarrio}},\n  \"direccionCorrespondencia\": \"Calle de prueba 10 # 20-30, Tuluá\",\n  \"correo\": \"{{correoUnico}}\",\n  \"telefono\": \"3000000000\",\n  \"password\": \"Prueba12345\",\n  \"aceptaPrivacidad\": true,\n  \"declaraMayorEdad\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get('habilitarEscrituras') !== 'true') {",
+                  "    console.warn('Saltado: habilitarEscrituras=false. Solo ejecutar escrituras en entorno de pruebas.');",
+                  "    pm.execution.skipRequest();",
+                  "}",
+                  "",
+                  "const stamp=Date.now()+'-'+Math.floor(Math.random()*1000000);",
+                  "pm.collectionVariables.set('correoUnico', 'delivered+not45-'+stamp+'@resend.dev');",
+                  "pm.collectionVariables.set('documentoUnico', String(Date.now())+String(Math.floor(Math.random()*10000)).padStart(4,'0'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Cuenta creada, sin JWT', () => { const r=pm.response.json(); pm.expect(r.correo).to.eql(pm.collectionVariables.get('correoUnico')); pm.expect(r).not.to.have.property('token'); pm.expect(r.mensaje).to.be.a('string'); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Ejemplo esperado (ilustrativo)",
+              "originalRequest": {
+                "method": "POST",
+                "auth": {
+                  "type": "noauth"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/registro",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "registro"
+                  ]
+                },
+                "description": "Público. Crea cuenta nueva y envío de confirmación. Requiere idBarrio existente y habilitarEscrituras=true. El correo generado usa delivered+…@resend.dev; puede consumir cuota de Resend.",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombres\": \"Prueba\",\n  \"apellidos\": \"NotiUrba\",\n  \"idTipoDocumento\": 1,\n  \"numeroDocumento\": \"{{documentoUnico}}\",\n  \"idBarrio\": {{idBarrio}},\n  \"direccionCorrespondencia\": \"Calle de prueba 10 # 20-30, Tuluá\",\n  \"correo\": \"{{correoUnico}}\",\n  \"telefono\": \"3000000000\",\n  \"password\": \"Prueba12345\",\n  \"aceptaPrivacidad\": true,\n  \"declaraMayorEdad\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"correo\": \"delivered+not45-...@resend.dev\",\n  \"mensaje\": \"Revisa tu correo para confirmar la cuenta.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "02 Campo faltante: nombres (400)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/registro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "registro"
+              ]
+            },
+            "description": "Omitir nombres: 400 VALIDACION, campo nombres.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"apellidos\": \"NotiUrba\",\n  \"idTipoDocumento\": 1,\n  \"numeroDocumento\": \"{{documentoUnico}}\",\n  \"idBarrio\": {{idBarrio}},\n  \"direccionCorrespondencia\": \"Calle de prueba 10 # 20-30, Tuluá\",\n  \"correo\": \"{{correoUnico}}\",\n  \"telefono\": \"3000000000\",\n  \"password\": \"Prueba12345\",\n  \"aceptaPrivacidad\": true,\n  \"declaraMayorEdad\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const stamp=Date.now()+'-'+Math.floor(Math.random()*1000000);",
+                  "pm.collectionVariables.set('correoUnico', 'delivered+not45-'+stamp+'@resend.dev');",
+                  "pm.collectionVariables.set('documentoUnico', String(Date.now())+String(Math.floor(Math.random()*10000)).padStart(4,'0'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"VALIDACION\"); pm.expect(r.campo).to.eql(\"nombres\"); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 Sin token: público (201)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/registro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "registro"
+              ]
+            },
+            "description": "Público. Crea cuenta nueva y envío de confirmación. Requiere idBarrio existente y habilitarEscrituras=true. El correo generado usa delivered+…@resend.dev; puede consumir cuota de Resend.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Prueba\",\n  \"apellidos\": \"NotiUrba\",\n  \"idTipoDocumento\": 1,\n  \"numeroDocumento\": \"{{documentoUnico}}\",\n  \"idBarrio\": {{idBarrio}},\n  \"direccionCorrespondencia\": \"Calle de prueba 10 # 20-30, Tuluá\",\n  \"correo\": \"{{correoUnico}}\",\n  \"telefono\": \"3000000000\",\n  \"password\": \"Prueba12345\",\n  \"aceptaPrivacidad\": true,\n  \"declaraMayorEdad\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get('habilitarEscrituras') !== 'true') {",
+                  "    console.warn('Saltado: habilitarEscrituras=false. Solo ejecutar escrituras en entorno de pruebas.');",
+                  "    pm.execution.skipRequest();",
+                  "}",
+                  "",
+                  "const stamp=Date.now()+'-'+Math.floor(Math.random()*1000000);",
+                  "pm.collectionVariables.set('correoUnico', 'delivered+not45-'+stamp+'@resend.dev');",
+                  "pm.collectionVariables.set('documentoUnico', String(Date.now())+String(Math.floor(Math.random()*10000)).padStart(4,'0'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Registro público', () => pm.expect(pm.response.json()).not.to.have.property('token'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 Token vencido: sigue público (201)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenVencido}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/registro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "registro"
+              ]
+            },
+            "description": "La ruta /api/auth/** es pública. JWT vencido no debe bloquear un registro con datos válidos. Requiere tokenVencido REAL.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Prueba\",\n  \"apellidos\": \"NotiUrba\",\n  \"idTipoDocumento\": 1,\n  \"numeroDocumento\": \"{{documentoUnico}}\",\n  \"idBarrio\": {{idBarrio}},\n  \"direccionCorrespondencia\": \"Calle de prueba 10 # 20-30, Tuluá\",\n  \"correo\": \"{{correoUnico}}\",\n  \"telefono\": \"3000000000\",\n  \"password\": \"Prueba12345\",\n  \"aceptaPrivacidad\": true,\n  \"declaraMayorEdad\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get('habilitarEscrituras') !== 'true') {",
+                  "    console.warn('Saltado: habilitarEscrituras=false. Solo ejecutar escrituras en entorno de pruebas.');",
+                  "    pm.execution.skipRequest();",
+                  "}",
+                  "",
+                  "if (!pm.collectionVariables.get('tokenVencido')) { console.warn('Falta un JWT realmente vencido; no se puede probar expiración con token ficticio.'); pm.execution.skipRequest(); }",
+                  "",
+                  "const stamp=Date.now()+'-'+Math.floor(Math.random()*1000000);",
+                  "pm.collectionVariables.set('correoUnico', 'delivered+not45-'+stamp+'@resend.dev');",
+                  "pm.collectionVariables.set('documentoUnico', String(Date.now())+String(Math.floor(Math.random()*10000)).padStart(4,'0'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Ruta pública pese a JWT vencido', () => pm.expect(pm.response.json()).to.have.property('correo'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 · Login /api/auth/login (público)",
+      "item": [
+        {
+          "name": "01 Válido (200)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Credenciales verificadas de pruebas. Guarda el JWT en la variable token solo si el servidor devuelve 200.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"{{correoLogin}}\",\n  \"password\": \"{{passwordLogin}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('correoLogin') || !pm.collectionVariables.get('passwordLogin')) { console.warn('Configura correoLogin y passwordLogin de una cuenta verificada de pruebas.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code===200) {",
+                  " const r=pm.response.json();",
+                  " pm.test('Token y rol recibidos', () => { pm.expect(r.token).to.be.a('string').and.not.empty; pm.expect(r.rol).to.be.oneOf(['CIUDADANO','ADMIN']); });",
+                  " pm.collectionVariables.set('token', r.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Ejemplo esperado (ilustrativo)",
+              "originalRequest": {
+                "method": "POST",
+                "auth": {
+                  "type": "noauth"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                },
+                "description": "Credenciales verificadas de pruebas. Guarda el JWT en la variable token solo si el servidor devuelve 200.",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"correo\": \"{{correoLogin}}\",\n  \"password\": \"{{passwordLogin}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"token\": \"<JWT real devuelto por API>\",\n  \"rol\": \"CIUDADANO\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "02 Campo faltante: password (400)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Se omite password deliberadamente: es VALIDACION, no error de credenciales.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"pruebas@ejemplo.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"VALIDACION\"); pm.expect(r.campo).to.eql(\"password\"); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 Sin token: público (200)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Credenciales verificadas de pruebas. Guarda el JWT en la variable token solo si el servidor devuelve 200.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"{{correoLogin}}\",\n  \"password\": \"{{passwordLogin}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('correoLogin') || !pm.collectionVariables.get('passwordLogin')) { console.warn('Configura correoLogin y passwordLogin de una cuenta verificada de pruebas.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code===200) {",
+                  " const r=pm.response.json();",
+                  " pm.test('Token y rol recibidos', () => { pm.expect(r.token).to.be.a('string').and.not.empty; pm.expect(r.rol).to.be.oneOf(['CIUDADANO','ADMIN']); });",
+                  " pm.collectionVariables.set('token', r.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 Token vencido: sigue público (200)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenVencido}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login público debe ser posible aunque el cliente tenga un JWT anterior vencido.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"{{correoLogin}}\",\n  \"password\": \"{{passwordLogin}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('tokenVencido')) { console.warn('Falta un JWT realmente vencido; no se puede probar expiración con token ficticio.'); pm.execution.skipRequest(); }",
+                  "",
+                  "if (!pm.collectionVariables.get('correoLogin') || !pm.collectionVariables.get('passwordLogin')) { console.warn('Configura correoLogin y passwordLogin de una cuenta verificada de pruebas.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code===200) {",
+                  " const r=pm.response.json();",
+                  " pm.test('Token y rol recibidos', () => { pm.expect(r.token).to.be.a('string').and.not.empty; pm.expect(r.rol).to.be.oneOf(['CIUDADANO','ADMIN']); });",
+                  " pm.collectionVariables.set('token', r.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 · Categorías /api/categorias (JWT)",
+      "item": [
+        {
+          "name": "01 Válido (200)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categorias"
+              ]
+            },
+            "description": "JWT obligatorio. Devuelve categorías activas. GET no requiere body ni campos de entrada."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('token')) { console.warn('Falta token válido; ejecutar Login antes.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Categorías como lista', () => { const r=pm.response.json(); pm.expect(r).to.be.an('array'); if (r.length) { pm.expect(r[0]).to.include.all.keys('idCategoria','nombre','descripcion','requiereUbicacion','requiereEvidencia'); } });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Ejemplo esperado (ilustrativo)",
+              "originalRequest": {
+                "method": "GET",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/categorias",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "categorias"
+                  ]
+                },
+                "description": "JWT obligatorio. Devuelve categorías activas. GET no requiere body ni campos de entrada."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"idCategoria\": 1,\n    \"nombre\": \"Vías, huecos, andenes y daños de infraestructura\",\n    \"descripcion\": \"Reportes de deterioro de vías y andenes\",\n    \"requiereUbicacion\": true,\n    \"requiereEvidencia\": false\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "02 Campo faltante: NO APLICA (200)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categorias"
+              ]
+            },
+            "description": "JWT obligatorio. Devuelve categorías activas. GET no requiere body ni campos de entrada."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('token')) { console.warn('Falta token válido; ejecutar Login antes.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Sin campos requeridos en GET', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 Sin token (401)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categorias"
+              ]
+            },
+            "description": "Sin header Authorization, debe devolver 401."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"NO_AUTENTICADO\"); pm.expect(r.campo).to.eql(null); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 Token vencido (401)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenVencido}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categorias"
+              ]
+            },
+            "description": "Usa tokenVencido REAL."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('tokenVencido')) { console.warn('Falta un JWT realmente vencido; no se puede probar expiración con token ficticio.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"NO_AUTENTICADO\"); pm.expect(r.campo).to.eql(null); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 · Crear reporte /api/reportes (JWT)",
+      "item": [
+        {
+          "name": "01 Válido (201)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reportes"
+              ]
+            },
+            "description": "JWT. Usa idBarrio de prueba existente, sin GPS. El backend asigna NU-XXXXXX. Crear reportes consume filas de prueba; no llamar en producción sin permiso.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idCategoria\": {{idCategoria}},\n  \"idBarrio\": {{idBarrio}},\n  \"descripcion\": \"Hay un hueco profundo en una vía del barrio. Representa un peligro para peatones y conductores.\",\n  \"direccionIncidente\": \"Calle 25, Tuluá\",\n  \"autorizaEnvio\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('token')) { console.warn('Falta token válido; ejecutar Login antes.'); pm.execution.skipRequest(); }",
+                  "",
+                  "if (pm.collectionVariables.get('habilitarEscrituras') !== 'true') {",
+                  "    console.warn('Saltado: habilitarEscrituras=false. Solo ejecutar escrituras en entorno de pruebas.');",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  " const r=pm.response.json();",
+                  " pm.test('Código y estado recibidos', () => { pm.expect(r.codigoSeguimiento).to.match(/^NU-\\d{6,}$/); pm.expect(r.estado).to.eql('Recibido'); pm.expect(r.creadoEn).to.be.a('string'); pm.expect(r.vigenteHasta).to.be.a('string'); });",
+                  " pm.test('Cabecera Location', () => pm.expect(pm.response.headers.get('Location')).to.include('/api/reportes/'));",
+                  " pm.collectionVariables.set('codigoReporte', r.codigoSeguimiento);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Ejemplo esperado (ilustrativo)",
+              "originalRequest": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/reportes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "reportes"
+                  ]
+                },
+                "description": "JWT. Usa idBarrio de prueba existente, sin GPS. El backend asigna NU-XXXXXX. Crear reportes consume filas de prueba; no llamar en producción sin permiso.",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"idCategoria\": {{idCategoria}},\n  \"idBarrio\": {{idBarrio}},\n  \"descripcion\": \"Hay un hueco profundo en una vía del barrio. Representa un peligro para peatones y conductores.\",\n  \"direccionIncidente\": \"Calle 25, Tuluá\",\n  \"autorizaEnvio\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"codigoSeguimiento\": \"NU-000123\",\n  \"estado\": \"Recibido\",\n  \"creadoEn\": \"2026-11-03T10:00:00-05:00\",\n  \"vigenteHasta\": \"2026-12-03T10:00:00-05:00\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "02 Campo faltante: idCategoria (400)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reportes"
+              ]
+            },
+            "description": "No se envía idCategoria. Respuesta 400 VALIDACION campo idCategoria.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idBarrio\": {{idBarrio}},\n  \"descripcion\": \"Hay un hueco profundo en una vía del barrio. Representa un peligro para peatones y conductores.\",\n  \"direccionIncidente\": \"Calle 25, Tuluá\",\n  \"autorizaEnvio\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('token')) { console.warn('Falta token válido; ejecutar Login antes.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"VALIDACION\"); pm.expect(r.campo).to.eql(\"idCategoria\"); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 Sin token (401)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reportes"
+              ]
+            },
+            "description": "Cuerpo válido, sin Authorization. No debe crear reporte.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idCategoria\": {{idCategoria}},\n  \"idBarrio\": {{idBarrio}},\n  \"descripcion\": \"Hay un hueco profundo en una vía del barrio. Representa un peligro para peatones y conductores.\",\n  \"direccionIncidente\": \"Calle 25, Tuluá\",\n  \"autorizaEnvio\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"NO_AUTENTICADO\"); pm.expect(r.campo).to.eql(null); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 Token vencido (401)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenVencido}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reportes"
+              ]
+            },
+            "description": "Cuerpo válido, Authorization con JWT realmente vencido. No debe crear reporte.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idCategoria\": {{idCategoria}},\n  \"idBarrio\": {{idBarrio}},\n  \"descripcion\": \"Hay un hueco profundo en una vía del barrio. Representa un peligro para peatones y conductores.\",\n  \"direccionIncidente\": \"Calle 25, Tuluá\",\n  \"autorizaEnvio\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('tokenVencido')) { console.warn('Falta un JWT realmente vencido; no se puede probar expiración con token ficticio.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"NO_AUTENTICADO\"); pm.expect(r.campo).to.eql(null); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 · Subir foto /api/reportes/{codigo}/fotos (JWT)",
+      "item": [
+        {
+          "name": "01 Válido (201)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/{{codigoReporte}}/fotos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reportes",
+                "{{codigoReporte}}",
+                "fotos"
+              ]
+            },
+            "description": "Multipart/form-data. Elegir archivo real en Body > form-data > foto (File); no definir Content-Type manualmente. El usuario debe ser autor del reporte.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "foto",
+                  "type": "file",
+                  "src": null,
+                  "description": "Seleccionar docs/api/archivos-de-prueba/foto-valida.png en Postman (o JPG/PNG real <= 1MB)."
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('token')) { console.warn('Falta token válido; ejecutar Login antes.'); pm.execution.skipRequest(); }",
+                  "",
+                  "if (!pm.collectionVariables.get('codigoReporte')) { console.warn('Falta codigoReporte: ejecuta primero Crear reporte válido.'); pm.execution.skipRequest(); }",
+                  "",
+                  "if (pm.collectionVariables.get('habilitarEscrituras') !== 'true') {",
+                  "    console.warn('Saltado: habilitarEscrituras=false. Solo ejecutar escrituras en entorno de pruebas.');",
+                  "    pm.execution.skipRequest();",
+                  "}",
+                  "",
+                  "const f=pm.request.body && pm.request.body.formdata && pm.request.body.formdata.find(x=>x.key==='foto');",
+                  "if (!f || !f.src || (Array.isArray(f.src) && f.src.length===0)) { console.warn('Selecciona manualmente una imagen PNG/JPG real en Body > form-data > foto (File).'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Foto y URL devueltos', () => {const r=pm.response.json();pm.expect(r.codigoSeguimiento).to.eql(pm.collectionVariables.get('codigoReporte'));pm.expect(r.foto.orden).to.be.within(1,3);pm.expect(r.foto.url).to.match(/^https:\\/\\//);});"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Ejemplo esperado (ilustrativo)",
+              "originalRequest": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/reportes/{{codigoReporte}}/fotos",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "reportes",
+                    "{{codigoReporte}}",
+                    "fotos"
+                  ]
+                },
+                "description": "Multipart/form-data. Elegir archivo real en Body > form-data > foto (File); no definir Content-Type manualmente. El usuario debe ser autor del reporte.",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "foto",
+                      "type": "file",
+                      "src": [],
+                      "description": "Seleccionar docs/api/archivos-de-prueba/foto-valida.png en Postman (o JPG/PNG real <= 1MB)."
+                    }
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"codigoSeguimiento\": \"NU-000123\",\n  \"foto\": {\n    \"orden\": 1,\n    \"url\": \"https://res.cloudinary.com/ejemplo/image/upload/imagen.png\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "02 Campo faltante: foto (400)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/{{codigoReporte}}/fotos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reportes",
+                "{{codigoReporte}}",
+                "fotos"
+              ]
+            },
+            "description": "Multipart/form-data sin la parte foto; debe devolver VALIDACION campo foto.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "otra",
+                  "type": "text",
+                  "value": "sin archivo foto"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('token')) { console.warn('Falta token válido; ejecutar Login antes.'); pm.execution.skipRequest(); }",
+                  "",
+                  "if (!pm.collectionVariables.get('codigoReporte')) { console.warn('Falta codigoReporte: ejecuta primero Crear reporte válido.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"VALIDACION\"); pm.expect(r.campo).to.eql(\"foto\"); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 Sin token (401)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/{{codigoReporte}}/fotos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reportes",
+                "{{codigoReporte}}",
+                "fotos"
+              ]
+            },
+            "description": "Sin Authorization. La seguridad debe responder 401 ANTES de procesar foto.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "foto",
+                  "type": "file",
+                  "src": null,
+                  "description": "Seleccionar docs/api/archivos-de-prueba/foto-valida.png en Postman (o JPG/PNG real <= 1MB)."
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('codigoReporte')) { console.warn('Falta codigoReporte: ejecuta primero Crear reporte válido.'); pm.execution.skipRequest(); }",
+                  "",
+                  "const f=pm.request.body && pm.request.body.formdata && pm.request.body.formdata.find(x=>x.key==='foto');",
+                  "if (!f || !f.src || (Array.isArray(f.src) && f.src.length===0)) { console.warn('Selecciona manualmente una imagen PNG/JPG real en Body > form-data > foto (File).'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"NO_AUTENTICADO\"); pm.expect(r.campo).to.eql(null); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 Token vencido (401)",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenVencido}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/{{codigoReporte}}/fotos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reportes",
+                "{{codigoReporte}}",
+                "fotos"
+              ]
+            },
+            "description": "JWT realmente vencido, sin subida autorizada.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "foto",
+                  "type": "file",
+                  "src": null,
+                  "description": "Seleccionar docs/api/archivos-de-prueba/foto-valida.png en Postman (o JPG/PNG real <= 1MB)."
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('codigoReporte')) { console.warn('Falta codigoReporte: ejecuta primero Crear reporte válido.'); pm.execution.skipRequest(); }",
+                  "",
+                  "if (!pm.collectionVariables.get('tokenVencido')) { console.warn('Falta un JWT realmente vencido; no se puede probar expiración con token ficticio.'); pm.execution.skipRequest(); }",
+                  "",
+                  "const f=pm.request.body && pm.request.body.formdata && pm.request.body.formdata.find(x=>x.key==='foto');",
+                  "if (!f || !f.src || (Array.isArray(f.src) && f.src.length===0)) { console.warn('Selecciona manualmente una imagen PNG/JPG real en Body > form-data > foto (File).'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"NO_AUTENTICADO\"); pm.expect(r.campo).to.eql(null); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 · Consultar reporte /api/reportes/{codigo} (JWT)",
+      "item": [
+        {
+          "name": "01 Válido (200)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/{{codigoReporte}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reportes",
+                "{{codigoReporte}}"
+              ]
+            },
+            "description": "GET de un reporte propio, consulta por código NU-000123. Usa variable codigoReporte creada por POST /api/reportes."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('token')) { console.warn('Falta token válido; ejecutar Login antes.'); pm.execution.skipRequest(); }",
+                  "",
+                  "if (!pm.collectionVariables.get('codigoReporte')) { console.warn('Falta codigoReporte: ejecuta primero Crear reporte válido.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Detalle del reporte propio', () => { const r=pm.response.json();pm.expect(r.codigoSeguimiento).to.eql(pm.collectionVariables.get('codigoReporte'));pm.expect(r).to.have.all.keys('codigoSeguimiento','estado','categoria','descripcion','latitud','longitud','comuna','barrio','direccionIncidente','matriculaCuentaServicio','radicadoOficial','fotos','creadoEn','vigenteHasta','historial','envio');pm.expect(r.fotos).to.be.an('array'); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Ejemplo esperado (ilustrativo)",
+              "originalRequest": {
+                "method": "GET",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/reportes/{{codigoReporte}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "reportes",
+                    "{{codigoReporte}}"
+                  ]
+                },
+                "description": "GET de un reporte propio, consulta por código NU-000123. Usa variable codigoReporte creada por POST /api/reportes."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"codigoSeguimiento\": \"NU-000123\",\n  \"estado\": \"Recibido\",\n  \"categoria\": {\n    \"idCategoria\": 1,\n    \"nombre\": \"Vías, huecos, andenes y daños de infraestructura\"\n  },\n  \"descripcion\": \"Hay un hueco profundo en la vía del barrio.\",\n  \"latitud\": null,\n  \"longitud\": null,\n  \"comuna\": 1,\n  \"barrio\": {\n    \"idBarrio\": 1,\n    \"nombre\": \"Barrio de prueba\"\n  },\n  \"direccionIncidente\": \"Calle 25, Tuluá\",\n  \"matriculaCuentaServicio\": null,\n  \"radicadoOficial\": null,\n  \"fotos\": [],\n  \"creadoEn\": \"2026-11-03T10:00:00-05:00\",\n  \"vigenteHasta\": \"2026-12-03T10:00:00-05:00\",\n  \"historial\": [],\n  \"envio\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "02 Campo faltante/incompleto: código sin dígitos (400)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/NU-",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reportes",
+                "NU-"
+              ]
+            },
+            "description": "Código en ruta incompleto NU-: VALIDACION campo codigo. No usar GET /api/reportes, pues es otra ruta y daría 405."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('token')) { console.warn('Falta token válido; ejecutar Login antes.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"VALIDACION\"); pm.expect(r.campo).to.eql(\"codigo\"); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 Sin token (401)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/{{codigoReporte}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reportes",
+                "{{codigoReporte}}"
+              ]
+            },
+            "description": "No debe revelar reportes sin sesión."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('codigoReporte')) { console.warn('Falta codigoReporte: ejecuta primero Crear reporte válido.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"NO_AUTENTICADO\"); pm.expect(r.campo).to.eql(null); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 Token vencido (401)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenVencido}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/{{codigoReporte}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reportes",
+                "{{codigoReporte}}"
+              ]
+            },
+            "description": "JWT realmente vencido. No debe revelar datos."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('codigoReporte')) { console.warn('Falta codigoReporte: ejecuta primero Crear reporte válido.'); pm.execution.skipRequest(); }",
+                  "",
+                  "if (!pm.collectionVariables.get('tokenVencido')) { console.warn('Falta un JWT realmente vencido; no se puede probar expiración con token ficticio.'); pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+                  "pm.test('Formato de error en español', () => { const r=pm.response.json(); pm.expect(r.codigo).to.eql(\"NO_AUTENTICADO\"); pm.expect(r.campo).to.eql(null); pm.expect(r.mensaje).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:18080",
+      "type": "string",
+      "description": "Usar local o el entorno Render de pruebas conscientemente. No cambiar a producción sin permiso."
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "JWT válido de ciudadano, se guarda después de un login exitoso."
+    },
+    {
+      "key": "tokenVencido",
+      "value": "",
+      "type": "string",
+      "description": "JWT REAL expirado (no token falso). Capturarlo antes y usarlo cuando haya expirado."
+    },
+    {
+      "key": "correoLogin",
+      "value": "",
+      "type": "string",
+      "description": "Correo de cuenta VERIFICADA de pruebas."
+    },
+    {
+      "key": "passwordLogin",
+      "value": "",
+      "type": "string",
+      "description": "Contraseña de cuenta de pruebas, no exportar con valor real."
+    },
+    {
+      "key": "idBarrio",
+      "value": "1",
+      "type": "string",
+      "description": "Confirmar un ID de barrio real cargado en el entorno."
+    },
+    {
+      "key": "idCategoria",
+      "value": "1",
+      "type": "string",
+      "description": "Confirmar categoría activa que requiere ubicación."
+    },
+    {
+      "key": "codigoReporte",
+      "value": "",
+      "type": "string",
+      "description": "Se guarda en crear reporte válido, también se puede introducir manualmente."
+    },
+    {
+      "key": "habilitarEscrituras",
+      "value": "false",
+      "type": "string",
+      "description": "Cambiar a true SOLO en una base/entorno de pruebas: registro crea usuarios, reportes y fotos consumen servicios."
+    },
+    {
+      "key": "correoUnico",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "documentoUnico",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
