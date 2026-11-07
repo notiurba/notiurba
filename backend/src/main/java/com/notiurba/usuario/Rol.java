@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 public class Rol {
 
     public static final String CIUDADANO = "CIUDADANO";
+    public static final String ADMIN = "ADMIN";
 
     @Id
     private Short idRol;
