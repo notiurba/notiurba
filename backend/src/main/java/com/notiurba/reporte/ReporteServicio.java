@@ -46,6 +46,7 @@ public class ReporteServicio {
 
     @Transactional
     public ReporteCreadoResponse crear(String correoUsuario, CrearReporteRequest p) {
+        if (!Boolean.TRUE.equals(p.autorizaEnvio())) throw error("Debes autorizar la remisión", "autorizaEnvio");
         long idUsuario = usuarios.findByCorreoIgnoreCase(correoUsuario)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, Codigos.NO_AUTENTICADO,
                         Codigos.MSG_NO_AUTENTICADO))
@@ -79,9 +80,11 @@ public class ReporteServicio {
             throw error("La matrícula solo aplica a servicios públicos", "matriculaCuentaServicio");
         }
 
-        return repositorio.insertar(new ReporteRepositorio.NuevoReporte(
+        ReporteCreadoResponse creado = repositorio.insertar(new ReporteRepositorio.NuevoReporte(
                 idUsuario, p.idCategoria(), p.idBarrio(), descripcion, p.latitud(), p.longitud(),
                 vacioANulo(p.direccionIncidente()), matricula, vacioANulo(p.radicadoOficial())));
+        repositorio.prepararEnrutamiento(creado.codigoSeguimiento(), Boolean.TRUE.equals(p.emergencia()));
+        return creado;
     }
 
     /** Un reporte propio por código. No existe y «es de otra persona» dan exactamente la misma respuesta. */
@@ -97,8 +100,8 @@ public class ReporteServicio {
     }
 
     /** Quita espacios, pasa a mayúsculas y exige el formato NU-000123 (400 con campo «codigo» si no cumple). */
-    static String normalizarCodigo(String codigo) {
-        String normalizado = codigo == null ? "" : codigo.trim().toUpperCase();
+    public static String normalizarCodigo(String codigo) {
+        String normalizado = codigo == null ? "" : codigo.trim().toUpperCase(java.util.Locale.ROOT);
         if (!FORMATO_CODIGO.matcher(normalizado).matches()) {
             throw error("El código tiene el formato NU-000123", "codigo");
         }

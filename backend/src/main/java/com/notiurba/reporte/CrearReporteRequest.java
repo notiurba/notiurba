@@ -17,5 +17,11 @@ public record CrearReporteRequest(
         @Size(max = 300) String direccionIncidente,
         @Size(max = 50) String matriculaCuentaServicio,
         @Size(max = 50) String radicadoOficial,
-        @NotNull @AssertTrue Boolean autorizaEnvio) {
+        @NotNull @AssertTrue Boolean autorizaEnvio,
+        Boolean emergencia) {
+    public CrearReporteRequest(Integer idCategoria, Double latitud, Double longitud, Integer idBarrio,
+            String descripcion, String direccionIncidente, String matriculaCuentaServicio, String radicadoOficial,
+            Boolean autorizaEnvio) {
+        this(idCategoria,latitud,longitud,idBarrio,descripcion,direccionIncidente,matriculaCuentaServicio,radicadoOficial,autorizaEnvio,false);
+    }
 }
