@@ -19,15 +19,12 @@ public final class Codigos {
     public static final String FORMATO_NO_SOPORTADO = "FORMATO_NO_SOPORTADO";
     public static final String ALMACEN_FOTOS_NO_DISPONIBLE = "ALMACEN_FOTOS_NO_DISPONIBLE";
     public static final String FUERA_DE_COBERTURA = "FUERA_DE_COBERTURA";
-    public static final String SIN_DESTINO_DE_CORREO = "SIN_DESTINO_DE_CORREO";
     public static final String ERROR_INTERNO = "ERROR_INTERNO";
 
     public static final String MSG_NO_AUTENTICADO = "Tu sesión no es válida o venció. Inicia sesión de nuevo.";
     public static final String MSG_SIN_PERMISO = "No tienes permiso para esta acción.";
     public static final String MSG_FUERA_DE_COBERTURA =
             "Esa ubicación está fuera de cobertura: NotiUrba solo atiende las 10 comunas urbanas de Tuluá.";
-    public static final String MSG_SIN_DESTINO_DE_CORREO =
-            "Esta categoría todavía no tiene un correo de destino confirmado. Tu reporte quedó guardado.";
     public static final String MSG_CREDENCIALES = "Correo o contraseña incorrectos.";
     public static final String MSG_CORREO_NO_VERIFICADO =
             "Confirma tu correo para ingresar. Revisa tu bandeja de entrada o pide un nuevo enlace.";

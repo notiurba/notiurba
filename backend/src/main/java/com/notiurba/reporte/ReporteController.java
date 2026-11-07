@@ -23,12 +23,10 @@ public class ReporteController {
 
     private final ReporteServicio servicio;
     private final FotoServicio fotos;
-    private final EnvioReporteServicio envios;
 
-    public ReporteController(ReporteServicio servicio, FotoServicio fotos, EnvioReporteServicio envios) {
+    public ReporteController(ReporteServicio servicio, FotoServicio fotos) {
         this.servicio = servicio;
         this.fotos = fotos;
-        this.envios = envios;
     }
 
     /** 201 con Location: /api/reportes/{codigo} y el código leído de la base tras guardar (NOT-69). */
@@ -51,14 +49,5 @@ public class ReporteController {
             @PathVariable String codigo, @RequestPart(name = "foto", required = true) MultipartFile foto,
             Authentication sesion) {
         return ResponseEntity.status(201).body(fotos.subir(sesion.getName(), codigo, foto));
-    }
-
-    /**
-     * Manda el reporte a la entidad por correo (después de subir las fotos). 202: el correo sale en segundo
-     * plano; es idempotente (si ya salió responde ENVIADO sin repetirlo). Solo el autor del reporte.
-     */
-    @PostMapping("/{codigo}/enviar")
-    public ResponseEntity<ReporteDetalleResponse.Envio> enviar(@PathVariable String codigo, Authentication sesion) {
-        return ResponseEntity.accepted().body(envios.enviar(sesion.getName(), codigo));
     }
 }
