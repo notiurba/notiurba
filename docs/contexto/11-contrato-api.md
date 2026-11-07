@@ -15,7 +15,7 @@ Estado de cada endpoint:
 - Autenticación: encabezado `Authorization: Bearer <JWT>`. El JWT vence a los 60 minutos y lleva el correo (`sub`) y el `rol` (CIUDADANO o ADMIN).
 - Rutas: públicas `/api/health` y `/api/auth/**` y `/api/catalogos/**`; ciudadano `/api/...` (exige sesión, cualquier rol); panel `/api/admin/...` (exige rol ADMIN, Sprint 3).
 - Todo endpoint protegido responde 401 sin token, con token inválido o vencido (RNF-03), y 403 si el rol no alcanza.
-- CORS: solo el origen configurado (`CORS_ORIGINS`). El encabezado `Location` está expuesto para que el navegador lo pueda leer.
+- CORS: solo los orígenes de `CORS_ORIGINS`, separados por coma. Cada uno es una dirección completa o un patrón con comodín; en Render va `https://notiurba.netlify.app,https://deploy-preview-*--notiurba.netlify.app` (producción y las vistas previas de Netlify, una por PR). Cualquier otro sitio recibe 403. El encabezado `Location` está expuesto para que el navegador lo pueda leer.
 
 ## 2. Formato de error único (EXISTE)
 
