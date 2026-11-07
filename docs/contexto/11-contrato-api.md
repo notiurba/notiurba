@@ -158,7 +158,9 @@ Ya implementados (EXISTEN):
 - `GET /api/health` — público. 200 `{ estado, baseDeDatos }` ambos «ok»; 503 con «error» si la base no responde (`SELECT 1`).
 - `POST /api/auth/google` — público. Entrada `{ credential }` (ID token de Google). Salida 200 `{ token, rol }` si ya hay cuenta (o si se vincula por correo, *propuesto*), o `{ estado: "PERFIL_INCOMPLETO", tokenRegistro, correo, nombres, apellidos }`. Error 401 NO_AUTENTICADO.
 - `POST /api/auth/google/completar` — público. Entrada: `tokenRegistro` (dura 15 min), `nombres`, `apellidos`, `idTipoDocumento`, `numeroDocumento`, `idBarrio`, `direccionCorrespondencia`, `telefono` (opcional), `aceptaPrivacidad` (true), `declaraMayorEdad` (true). Salida 200 `{ token, rol }`. Errores 400, 401, 409.
-- `POST /api/auth/recuperar` — público. Entrada `{ correo }`. Siempre 200 `{ mensaje }`, exista o no la cuenta.
+- `POST /api/auth/recuperar` — público. Entrada `{ correo }`. Siempre 200 `{ mensaje }`, exista o no la cuenta. El enlace llega por correo (Resend) y vence en 1 hora; si el envío falla la respuesta no cambia (no se revela si la cuenta existe).
+- `GET /api/usuarios/me` — EXISTE. Exige sesión. Devuelve `{ nombres, apellidos, idTipoDocumento, numeroDocumento, correo, telefono, idBarrio, direccionCorrespondencia }` (`telefono` puede ser null). Alimenta «Ajustes» y «Editar mis datos».
+- `PUT /api/usuarios/me` — EXISTE. Exige sesión. Entrada: los mismos campos menos `correo` (el correo no se edita aquí); `telefono` opcional, vacío lo borra. Reglas del registro: nombres y apellidos obligatorios, tipo de documento y barrio existentes (400 VALIDACION con `campo`; un barrio interno no se puede elegir, pero se puede conservar), documento de otra cuenta → 409 DOCUMENTO_YA_REGISTRADO (`campo` numeroDocumento). Devuelve el perfil guardado. Faltan `DELETE /api/usuarios/me/datos` y `DELETE /api/usuarios/me`.
 - `POST /api/auth/restablecer` — público. Entrada `{ token, nuevaContrasena }`. Salida 204. Errores 400 VALIDACION (campo `nuevaContrasena`) o ENLACE_INVALIDO (campo `token`).
 
 ## 5. Panel administrativo (Sprint 3, solo reservados)
