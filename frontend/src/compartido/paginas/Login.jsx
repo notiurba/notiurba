@@ -17,13 +17,17 @@ import enfocarPrimerError from '../componentes/formulario/enfocarPrimerError'
 import '../estilos/marca.css'
 import { LIMITES, soloErrores, validarCorreo, validarObligatorio } from '../validaciones/campos'
 
-// Cuando el servidor dice QUÉ campo falló, el mensaje va bajo esa casilla (decisión del equipo:
-// que el usuario sepa dónde está el error). Si no lo dice, se usa el mensaje general.
+// El error se muestra en rojo bajo la casilla que falló. Si el servidor dice cuál (campo), solo esa;
+// si no lo dice (hoy responde igual para correo y contraseña, para no revelar qué cuentas existen),
+// se marcan las dos casillas con un mensaje que invita a revisar ambas.
 const MENSAJE_POR_CAMPO = {
   correo: 'No encontramos una cuenta con ese correo. Revíselo o regístrese.',
   password: 'La contraseña no es correcta. Inténtelo de nuevo.',
 }
-const MENSAJE_CREDENCIALES = 'Correo o contraseña incorrectos. Revise sus datos e inténtelo de nuevo.'
+const ERRORES_SIN_CAMPO = {
+  correo: 'Revise que su correo esté bien escrito.',
+  password: 'Revise su contraseña o pulse «¿Olvidó su contraseña?».',
+}
 const MENSAJE_SIN_CONEXION = 'No pudimos conectar. Inténtelo de nuevo en un momento.'
 const MENSAJE_SIN_VERIFICAR = 'Falta confirmar su correo. Abra el enlace que le enviamos al registrarse.'
 const MENSAJE_RESTABLECIDA = 'Contraseña actualizada. Inicie sesión con la nueva.'
@@ -67,11 +71,11 @@ export default function Login() {
         // La contraseña era correcta, pero falta abrir el enlace del correo: se ofrece reenviarlo.
         setSinVerificar(true)
       } else if (error.estado === 401 && MENSAJE_POR_CAMPO[error.campo]) {
-        // Si el servidor dijera cuál campo falló, el mensaje iría bajo esa casilla (hoy no lo dice).
+        // El servidor dijo cuál casilla falló: el mensaje va bajo esa casilla.
         setErrores({ [error.campo]: error.mensaje ?? MENSAJE_POR_CAMPO[error.campo] })
       } else if (error.codigo === 'CREDENCIALES_INVALIDAS' || error.estado === 401) {
-        // La API no dice cuál dato falló (RF-02): mensaje general.
-        setErrorGeneral(MENSAJE_CREDENCIALES)
+        // La API no dice cuál dato falló (RF-02): se marcan las dos casillas.
+        setErrores(ERRORES_SIN_CAMPO)
       } else {
         setErrorGeneral(error.mensaje ?? MENSAJE_SIN_CONEXION)
       }
