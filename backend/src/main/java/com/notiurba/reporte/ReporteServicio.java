@@ -90,8 +90,8 @@ public class ReporteServicio {
     }
 
     /** Quita espacios, pasa a mayúsculas y exige el formato NU-000123 (400 con campo «codigo» si no cumple). */
-    static String normalizarCodigo(String codigo) {
-        String normalizado = codigo == null ? "" : codigo.trim().toUpperCase();
+    public static String normalizarCodigo(String codigo) {
+        String normalizado = codigo == null ? "" : codigo.trim().toUpperCase(java.util.Locale.ROOT);
         if (!FORMATO_CODIGO.matcher(normalizado).matches()) {
             throw error("El código tiene el formato NU-000123", "codigo");
         }

@@ -155,17 +155,100 @@ Ya implementados (EXISTEN):
 - `POST /api/auth/recuperar` — público. Entrada `{ correo }`. Siempre 200 `{ mensaje }`, exista o no la cuenta.
 - `POST /api/auth/restablecer` — público. Entrada `{ token, nuevaContrasena }`. Salida 204. Errores 400 VALIDACION (campo `nuevaContrasena`) o ENLACE_INVALIDO (campo `token`).
 
-## 5. Panel administrativo (Sprint 3, solo reservados)
+## 5. Panel administrativo
 
-Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
+Todos bajo `/api/admin/...`, rol ADMIN. Los tres endpoints de estados y vigencia están implementados (sección 5.1); el resto conserva su estado indicado.
 - `GET /api/admin/ping` — EXISTE. Marcador que confirma que la ruta exige ADMIN (200; 401 sin token; 403 con rol ciudadano).
 - `GET /api/admin/reportes` — filtros comuna, categoría, estado y fecha (RF-19).
 - `GET /api/admin/reportes/{codigo}`.
-- `PATCH /api/admin/reportes/{codigo}/estado` — estado + observación (RF-20). El estado no retrocede (regla B11 de la base).
-- `GET` y `PUT /api/admin/configuracion/vigencia` (RF-21).
+- `PATCH /api/admin/reportes/{codigo}/estado` - EXISTE. Estado y observación (RF-20); ver 5.1.
+- `GET` y `PUT /api/admin/configuracion/vigencia` - EXISTEN (RF-21); ver 5.1.
 - `GET /api/admin/mapa` y `GET /api/admin/mapa/calor` (RF-22, RF-23).
 - `GET /api/admin/estadisticas` (RF-24).
 - `PUT /api/admin/categorias/{id}/correo-destino` (RF-25).
+
+### 5.1 Estados y vigencia — IMPLEMENTADOS (RN-19, RN-20, RF-20, RF-21)
+
+Los tres endpoints siguientes exigen JWT con rol ADMIN. Sin sesión: 401
+`NO_AUTENTICADO`; con rol ciudadano: 403 `SIN_PERMISO`. Conservan el formato
+de error `{ codigo, mensaje, campo }`. Los otros endpoints de la sección 5
+mantienen su estado previo; esta entrega no implementa listados ni mapas nuevos.
+
+**PATCH /api/admin/reportes/{codigo}/estado**
+
+Petición:
+
+```json
+{ "estado": "EN_TRAMITE", "observacion": "Se revisó la evidencia y se inició el seguimiento interno." }
+```
+
+Respuesta 200 (ejemplo):
+
+```json
+{
+  "codigoSeguimiento": "NU-000123",
+  "estado": "EN_TRAMITE",
+  "observacion": "Se revisó la evidencia y se inició el seguimiento interno.",
+  "cambiadoEn": "2026-11-06T19:00:00-05:00",
+  "cambiadoPor": 7,
+  "vigenteHasta": "2026-12-01T10:00:00-05:00"
+}
+```
+
+- `estado` usa los identificadores RECIBIDO, ENVIADO, EN_TRAMITE y RESUELTO;
+  se resuelven contra los nombres existentes del catálogo PostgreSQL. Los DTO
+  ciudadanos mantienen sus etiquetas actuales (Recibido, Enviado, En trámite, Resuelto).
+- `observacion` es obligatoria, no puede contener solo espacios y admite hasta
+  1000 caracteres; se recortan los espacios exteriores antes de guardarla.
+- Se permiten RECIBIDO → EN_TRAMITE/RESUELTO, ENVIADO → EN_TRAMITE/RESUELTO
+  y EN_TRAMITE → RESUELTO. RECIBIDO → ENVIADO se reserva a la aceptación de Resend.
+- Se puede añadir una observación sin cambiar el estado mientras no esté RESUELTO.
+  Si el último asiento tiene el mismo estado, observación normalizada y administrador,
+  se devuelve ese asiento sin insertar otro. RESUELTO rechaza toda modificación,
+  incluso solicitudes repetidas, con 409.
+- El servidor obtiene el administrador del usuario autenticado; no acepta un actor
+  ni una fecha suministrados por el cliente. `cambiadoPor` es su ID interno.
+- Una transacción bloquea la fila del reporte, inserta el historial y deja que B4
+  sincronice el estado actual. No se actualiza `vigente_hasta` ni el registro del correo.
+  El bloqueo coincide con el usado por el procesamiento de la aceptación de Resend.
+- Errores: 400 VALIDACION por código, estado u observación inválidos; 404
+  NO_ENCONTRADO si el reporte no existe; 409 CONFLICTO por retroceso, estado
+  terminal o intento manual de pasar a ENVIADO. El código acepta minúsculas y
+  espacios exteriores, con la misma normalización de la consulta ciudadana.
+- Los reportes vencidos también pueden recibir seguimiento administrativo.
+
+**GET /api/admin/configuracion/vigencia**
+
+Respuesta 200 inicial, leída de `configuracion.clave='vigencia_dias'` (semilla V3):
+
+```json
+{ "vigenciaDias": 30 }
+```
+
+**PUT /api/admin/configuracion/vigencia**
+
+Petición y respuesta 200:
+
+```json
+{ "vigenciaDias": 15 }
+```
+
+Se exige un número JSON entero positivo representable por PostgreSQL INTEGER;
+se rechazan valores ausentes, null, decimales, cadenas, booleanos, cero y negativos
+con 400 VALIDACION (`campo: "vigenciaDias"`). Se guarda también el administrador
+y la fecha en las columnas de auditoría existentes de `configuracion`.
+
+Solo afecta a reportes creados posteriormente: B9 calcula y guarda
+`vigente_hasta = creado_en + make_interval(days => vigencia_dias)` al insertar.
+Los reportes anteriores conservan su fecha. No hay endpoint de vigencia individual.
+
+**Vencimiento y consultas de mapas:** vigente significa `CURRENT_TIMESTAMP < vigente_hasta`;
+vencido significa `CURRENT_TIMESTAMP >= vigente_hasta`. Se conserva `v_reporte_mapa`,
+que exige ubicación y `vigente_hasta > now()`. Será la fuente común de marcadores
+y agregaciones de calor cuando existan esos endpoints. El vencimiento no borra
+el reporte, no cambia su estado ni afecta su consulta privada o su disponibilidad
+para gestión administrativa. Los cambios de estado y el procesamiento de correo
+no recalculan su vigencia. No se agregó ninguna migración.
 
 ## 6. Decisiones propuestas (no cerradas)
 
