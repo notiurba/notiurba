@@ -1,17 +1,107 @@
 [
-  {"idCategoria": 1, "nombre": "Vías, huecos y andenes", "descripcion": "Daños o huecos en el pavimento, vías y andenes", "requiereUbicacion": true, "requiereEvidencia": false},
-  {"idCategoria": 2, "nombre": "Alumbrado, espacio público, convivencia y seguridad", "descripcion": "Luminarias apagadas, espacio público, convivencia y seguridad", "requiereUbicacion": true, "requiereEvidencia": false},
-  {"idCategoria": 3, "nombre": "Basuras, ambiente, árboles y contaminación", "descripcion": "Residuos, afectaciones ambientales y manejo de árboles", "requiereUbicacion": true, "requiereEvidencia": false},
-  {"idCategoria": 4, "nombre": "Señalización, semáforos y tránsito", "descripcion": "Señales, semáforos y problemas de tránsito", "requiereUbicacion": true, "requiereEvidencia": false},
-  {"idCategoria": 5, "nombre": "Riesgo sanitario y salud pública", "descripcion": "Situaciones que afectan la salud pública", "requiereUbicacion": true, "requiereEvidencia": false},
-  {"idCategoria": 6, "nombre": "Uso del suelo, planeación y licencias", "descripcion": "Consultas y quejas sobre uso del suelo y licencias", "requiereUbicacion": false, "requiereEvidencia": false},
-  {"idCategoria": 7, "nombre": "Instituciones educativas", "descripcion": null, "requiereUbicacion": false, "requiereEvidencia": false},
-  {"idCategoria": 8, "nombre": "Riesgo de desastres", "descripcion": "Amenazas y riesgo de desastres", "requiereUbicacion": true, "requiereEvidencia": false},
-  {"idCategoria": 9, "nombre": "Vivienda", "descripcion": null, "requiereUbicacion": false, "requiereEvidencia": false},
-  {"idCategoria": 10, "nombre": "Otro / eventos comunitarios", "descripcion": null, "requiereUbicacion": false, "requiereEvidencia": false},
-  {"idCategoria": 11, "nombre": "Acueducto y alcantarillado", "descripcion": "Fugas y fallas del servicio de acueducto y alcantarillado", "requiereUbicacion": true, "requiereEvidencia": false},
-  {"idCategoria": 12, "nombre": "Gas natural", "descripcion": "Fallas o sospecha de fuga en el servicio de gas natural", "requiereUbicacion": true, "requiereEvidencia": false},
-  {"idCategoria": 13, "nombre": "Energía eléctrica", "descripcion": "Fallas del servicio de energía eléctrica", "requiereUbicacion": true, "requiereEvidencia": false},
-  {"idCategoria": 14, "nombre": "Aseo (falla del servicio)", "descripcion": "Falla en la recolección de residuos", "requiereUbicacion": true, "requiereEvidencia": false},
-  {"idCategoria": 15, "nombre": "Solicitud de información", "descripcion": null, "requiereUbicacion": false, "requiereEvidencia": false}
+  {
+    "idCategoria": 1,
+    "nombre": "Vías, huecos y andenes",
+    "descripcion": "Huecos, grietas, andenes rotos",
+    "requiereUbicacion": true,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 2,
+    "nombre": "Alumbrado, espacio público, convivencia y seguridad",
+    "descripcion": "Bombillo apagado, ruido, rañas",
+    "requiereUbicacion": true,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 3,
+    "nombre": "Basuras, ambiente, árboles y contaminación",
+    "descripcion": "Basura acumulada, quema, tala",
+    "requiereUbicacion": true,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 4,
+    "nombre": "Señalización, semáforos y tránsito",
+    "descripcion": "Semáforo dañado, señal caída",
+    "requiereUbicacion": true,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 5,
+    "nombre": "Riesgo sanitario y salud pública",
+    "descripcion": "Plagas, aguas estancadas, alimentos",
+    "requiereUbicacion": true,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 6,
+    "nombre": "Uso del suelo, planeación y licencias",
+    "descripcion": "Construcción sin licencia, invasión",
+    "requiereUbicacion": false,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 7,
+    "nombre": "Instituciones educativas",
+    "descripcion": "Problema en un colegio o escuela",
+    "requiereUbicacion": false,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 8,
+    "nombre": "Riesgo de desastres",
+    "descripcion": "Derrumbe, inundación, árbol por caer",
+    "requiereUbicacion": true,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 9,
+    "nombre": "Vivienda",
+    "descripcion": "Casa en mal estado, riesgo de colapso",
+    "requiereUbicacion": false,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 10,
+    "nombre": "Otro / eventos comunitarios",
+    "descripcion": "Un evento o caso que no encaja",
+    "requiereUbicacion": false,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 11,
+    "nombre": "Acueducto y alcantarillado",
+    "descripcion": "Fuga de agua, sin agua, caño tapado",
+    "requiereUbicacion": true,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 12,
+    "nombre": "Gas natural",
+    "descripcion": "Olor a gas, sin servicio de gas",
+    "requiereUbicacion": true,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 13,
+    "nombre": "Energía eléctrica",
+    "descripcion": "Apagón, cable caído, transformador",
+    "requiereUbicacion": true,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 14,
+    "nombre": "Aseo (falla del servicio)",
+    "descripcion": "Camión no pasó, basura sin recoger",
+    "requiereUbicacion": true,
+    "requiereEvidencia": false
+  },
+  {
+    "idCategoria": 15,
+    "nombre": "Solicitud de información",
+    "descripcion": "Una pregunta o trámite en la Alcaldía",
+    "requiereUbicacion": false,
+    "requiereEvidencia": false
+  }
 ]
