@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.notiurba.geo.AsignadorDeComuna;
 import com.notiurba.usuario.CatalogosRegistro;
 import com.notiurba.usuario.UsuarioRepository;
 import com.notiurba.web.error.ApiException;
@@ -15,8 +16,10 @@ import com.notiurba.web.error.Codigos;
  * Crea reportes. Las reglas de la base (B3, B6) se revisan antes para devolver un error con su
  * campo en vez de una violación de la base.
  *
- * Pendiente: FUERA_DE_COBERTURA (422) y la comuna por punto-en-polígono, que dependen de cargar
- * comuna.geom y los barrios reales (NOT-31 / NOT-54).
+ * Con GPS, el punto debe caer en una comuna o a menos de la distancia máxima de una (NOT-55,
+ * RN-03); si no, 422 FUERA_DE_COBERTURA. La comuna no se guarda: sale de v_reporte_comuna, que usa
+ * la misma función de PostGIS. Mientras ninguna comuna tenga polígono (comuna.geom NULL) no se puede
+ * decidir y el reporte se guarda sin rechazo: la comuna sale del barrio.
  */
 @Service
 public class ReporteServicio {
@@ -31,11 +34,14 @@ public class ReporteServicio {
     private final ReporteRepositorio repositorio;
     private final UsuarioRepository usuarios;
     private final CatalogosRegistro catalogos;
+    private final AsignadorDeComuna asignador;
 
-    public ReporteServicio(ReporteRepositorio repositorio, UsuarioRepository usuarios, CatalogosRegistro catalogos) {
+    public ReporteServicio(ReporteRepositorio repositorio, UsuarioRepository usuarios, CatalogosRegistro catalogos,
+            AsignadorDeComuna asignador) {
         this.repositorio = repositorio;
         this.usuarios = usuarios;
         this.catalogos = catalogos;
+        this.asignador = asignador;
     }
 
     @Transactional
@@ -52,6 +58,10 @@ public class ReporteServicio {
             throw error("Envía la latitud y la longitud juntas", p.latitud() == null ? "latitud" : "longitud");
         }
         boolean hayGps = p.latitud() != null;
+        if (hayGps && asignador.asignar(p.latitud(), p.longitud()).fueraDeCobertura()) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, Codigos.FUERA_DE_COBERTURA,
+                    Codigos.MSG_FUERA_DE_COBERTURA, "latitud");
+        }
         if (p.idBarrio() != null && !catalogos.existeBarrio(p.idBarrio())) {
             throw error("El barrio no existe", "idBarrio");
         }

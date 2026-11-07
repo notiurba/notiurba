@@ -77,7 +77,7 @@ class ReporteConsultaIntegracionTest {
 
     @BeforeEach
     void preparar() {
-        idBarrio = jdbc.queryForObject("SELECT min(id_barrio) FROM barrio", Integer.class);
+        idBarrio = BarrioDePrueba.id(jdbc);
         Ciudadano c = nuevoCiudadano();
         idUsuario = c.id();
         token = c.token();
@@ -124,9 +124,10 @@ class ReporteConsultaIntegracionTest {
         assertThat(j.get("latitud").asDouble()).isEqualTo(4.0867);
         assertThat(j.get("longitud").asDouble()).isEqualTo(-76.1950);
         assertThat(j.get("barrio").get("idBarrio").asInt()).isEqualTo(idBarrio);
-        // comuna.geom está vacío: la comuna sale del barrio (la vista v_reporte_comuna)
+        // V14 carga la capa experimental: la comuna sale del polígono que contiene el punto (v_reporte_comuna)
         assertThat(j.get("comuna").asInt()).isEqualTo(jdbc.queryForObject(
-                "SELECT id_comuna FROM barrio WHERE id_barrio = ?", Integer.class, idBarrio));
+                "SELECT id_comuna FROM fn_asignar_comuna(ST_SetSRID(ST_MakePoint(-76.1950, 4.0867), 4326))",
+                Integer.class));
         assertThat(j.get("direccionIncidente").asText()).isEqualTo("Cra 5 # 10-20");
         assertThat(j.get("radicadoOficial").asText()).isEqualTo("RAD-2026-1");
         assertThat(j.get("matriculaCuentaServicio").isNull()).isTrue();
