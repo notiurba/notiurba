@@ -27,6 +27,10 @@ notiurba:
     enabled: ${DIAGNOSTICS_ENABLED:false}
     photos-enabled: ${PHOTO_DIAGNOSTICS_ENABLED:false}
   correo:
+    # Si tiene valor, el correo del reporte sale a esta dirección y NO a la entidad real (pruebas y demo).
+    # Vacío = sale a la entidad de verdad.
+    destino-prueba: ${RESEND_PRUEBA_DESTINO:}
+    envio-sincrono: false            # true solo en pruebas: el correo sale dentro de la misma llamada
     resend:
       url: https://api.resend.com
       api-key: ${RESEND_API_KEY:}      # secreta: solo variable de entorno (Render y .env local)
