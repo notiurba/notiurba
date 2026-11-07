@@ -1,22 +1,20 @@
 import { peticion } from './cliente'
 
 // Listas para los selectores del registro. Son públicas: se piden antes de tener cuenta.
-// Rutas del contrato (sección 4 de docs/contexto/11-contrato-api.md). PROPUESTAS: la API todavía no las tiene,
-// y al implementarlas hay que agregar /api/catalogos/** a las rutas públicas de SecurityConfig.
-
-// ─── RESPALDO TEMPORAL ──────────────────────────────────────────────────────────────────────────
-// Mientras la API no tenga esos endpoints, se usan estas listas. Los ids son los que existen hoy en la
-// base (migraciones V3 y V4): un solo barrio, y los 4 tipos de documento. Cuando Andrés publique los
-// endpoints, la API responde y este respaldo deja de usarse solo. Para quitarlo, comente (no borre)
-// estas listas, la función `conRespaldo` y los dos usos de abajo, y deje las llamadas directas a peticion.
+// La API ya publica estas rutas (NOT-55, rama develop). El respaldo de abajo solo se usa si el backend
+// es una versión anterior que no las tiene: sus ids son los de las migraciones V3 y V4 (un solo barrio y los
+// tipos de documento). Cuando todo el equipo use el backend nuevo, el respaldo se puede quitar: comente
+// (no borre) estas listas, la función `conRespaldo` y los dos usos de abajo, y deje las llamadas directas.
 const BARRIOS_RESPALDO = [{ idBarrio: 1, idComuna: 1, nombre: 'Administración NotiUrba' }]
 const TIPOS_DOCUMENTO_RESPALDO = [
   { idTipoDocumento: 1, codigo: 'CC', nombre: 'Cédula de ciudadanía' },
   { idTipoDocumento: 2, codigo: 'CE', nombre: 'Cédula de extranjería' },
-  // PPT oculto por decisión del equipo (basta con la cédula de extranjería). Para volver a mostrarlo, quite el //
-  // { idTipoDocumento: 3, codigo: 'PPT', nombre: 'Permiso por protección temporal' },
   { idTipoDocumento: 4, codigo: 'PAS', nombre: 'Pasaporte' },
 ]
+
+// Tipos que el equipo decidió no ofrecer aunque el catálogo de la API los traiga (basta con la cédula de
+// extranjería). Para volver a mostrar el PPT, quite 'PPT' de esta lista.
+const TIPOS_DOCUMENTO_OCULTOS = ['PPT']
 
 // Pide la lista a la API; si el endpoint aún no existe (404) o no es público (401/403), usa el respaldo.
 // Un fallo de red (sin conexión) NO usa el respaldo: eso sí se avisa a la persona.
@@ -31,4 +29,7 @@ async function conRespaldo(ruta, respaldo) {
 // ────────────────────────────────────────────────────────────────────────────────────────────────
 
 export const obtenerBarrios = () => conRespaldo('/api/catalogos/barrios', BARRIOS_RESPALDO)
-export const obtenerTiposDocumento = () => conRespaldo('/api/catalogos/tipos-documento', TIPOS_DOCUMENTO_RESPALDO)
+export const obtenerTiposDocumento = async () => {
+  const tipos = await conRespaldo('/api/catalogos/tipos-documento', TIPOS_DOCUMENTO_RESPALDO)
+  return tipos.filter((tipo) => !TIPOS_DOCUMENTO_OCULTOS.includes(tipo.codigo))
+}
