@@ -2,6 +2,8 @@ package com.notiurba.correo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
@@ -97,8 +99,9 @@ class EnviadorCorreoResendTest {
 
     @Test
     void sinClaveONoRemitenteFallaSinLlamarARed() {
-        var sinClave = new EnviadorCorreoResend(RestClient.create(), "", "reportes@reportes.notiurba.com");
-        var sinRemitente = new EnviadorCorreoResend(RestClient.create(), CLAVE, null);
+        var cliente = mock(RestClient.class);
+        var sinClave = new EnviadorCorreoResend(cliente, "", "pruebas@example.test");
+        var sinRemitente = new EnviadorCorreoResend(cliente, CLAVE, null);
 
         for (EnviadorCorreo e : List.of(sinClave, sinRemitente)) {
             assertThatThrownBy(() -> e.enviar(correo()))
@@ -107,6 +110,7 @@ class EnviadorCorreoResendTest {
                         assertThat(ex.getMessage()).contains("no está configurado");
                     });
         }
+        verifyNoInteractions(cliente);
     }
 
     @Test

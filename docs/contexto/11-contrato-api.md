@@ -142,7 +142,7 @@ Fuera de los 6, pero necesarios para que ninguna pantalla del Figma quede sin da
 
 - `GET /api/reportes` — «Mis reportes». Lista propia, más recientes primero, filtro opcional `estado`. Salida: `[ { codigoSeguimiento, estado, categoria, creadoEn, vigenteHasta } ]`.
 - `PATCH /api/reportes/{codigo}/actualizacion` — EXISTE. «Actualizar mi reporte». Solo el autor (404 si es de otra persona; 401 sin sesión). Entrada `{ tipo, radicado? }`: `tipo` es `RESPUESTA` («Me respondieron») o `RESUELTO` («Ya se resolvió»); `radicado` es opcional (máx. 50; vacío = no cambia el que ya había). **No cambia el estado oficial**: el aviso queda como una nota en el historial con el mismo estado que ya tenía (a nombre del ciudadano) y el administrador la confirma. Si hay radicado, se guarda en `radicadoOficial`. Devuelve el reporte completo (como `GET /api/reportes/{codigo}`). Errores: 400 VALIDACION (`campo` tipo o radicado), 401, 404.
-- `POST /api/reportes/{codigo}/enviar` — el frontend lo llama después de subir las fotos (si subió). Responde 202; el envío con Resend (API HTTP) corre en segundo plano (RNF-04) y es idempotente. Así el correo (RF-14) puede llevar el enlace a la foto. Sale un solo correo, a la entidad, con el correo del ciudadano en Reply-To y sin copia para él.
+- `POST /api/reportes/{codigo}/enviar` — EXISTE (PR #18). El frontend lo llama después de subir las fotos (si subió). Responde 202; el envío con Resend (API HTTP) corre en segundo plano (RNF-04) y es idempotente. Así el correo (RF-14) puede llevar el enlace a la foto. Sale un solo correo, a la entidad, con el correo del ciudadano en Reply-To y sin copia para él. El envío es una cola persistente: solo corre si `NOTIURBA_ENVIO_REPORTES_HABILITADO=true` (apagado por defecto). El estado se consulta con `GET /api/reportes/{codigo}/envio`; las categorías sin correo (gas, energía, aseo) responden con su canal oficial en vez de enviar. **Destino de prueba:** si `RESEND_PRUEBA_DESTINO` tiene valor, el correo sale a esa dirección y NO a la entidad real (asunto «[PRUEBA] …»); déjela puesta en pruebas y demos.
 
 Verificación de correo (EXISTEN):
 - `POST /api/auth/verificar` — público. Entrada `{ token }`, el del enlace del correo (usa el tipo de token «Verificación de correo»; el enlace vence en 24 h y se guarda solo su hash). Salida 200 `{ token, rol }`: confirma el correo e inicia sesión. Error 400 ENLACE_INVALIDO.
@@ -163,22 +163,105 @@ Ya implementados (EXISTEN):
 - `PUT /api/usuarios/me` — EXISTE. Exige sesión. Entrada: los mismos campos menos `correo` (el correo no se edita aquí); `telefono` opcional, vacío lo borra. Reglas del registro: nombres y apellidos obligatorios, tipo de documento y barrio existentes (400 VALIDACION con `campo`; un barrio interno no se puede elegir, pero se puede conservar), documento de otra cuenta → 409 DOCUMENTO_YA_REGISTRADO (`campo` numeroDocumento). Devuelve el perfil guardado. Faltan `DELETE /api/usuarios/me/datos` y `DELETE /api/usuarios/me`.
 - `POST /api/auth/restablecer` — público. Entrada `{ token, nuevaContrasena }`. Salida 204. Errores 400 VALIDACION (campo `nuevaContrasena`) o ENLACE_INVALIDO (campo `token`).
 
-## 5. Panel administrativo (Sprint 3, solo reservados)
+## 5. Panel administrativo
 
-Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
+Todos bajo `/api/admin/...`, rol ADMIN. Los tres endpoints de estados y vigencia están implementados (sección 5.1); el resto conserva su estado indicado.
 - `GET /api/admin/ping` — EXISTE. Marcador que confirma que la ruta exige ADMIN (200; 401 sin token; 403 con rol ciudadano).
 - `GET /api/admin/reportes` — filtros comuna, categoría, estado y fecha (RF-19).
 - `GET /api/admin/reportes/{codigo}`.
-- `PATCH /api/admin/reportes/{codigo}/estado` — estado + observación (RF-20). El estado no retrocede (regla B11 de la base).
-- `GET` y `PUT /api/admin/configuracion/vigencia` (RF-21).
+- `PATCH /api/admin/reportes/{codigo}/estado` - EXISTE. Estado y observación (RF-20); ver 5.1.
+- `GET` y `PUT /api/admin/configuracion/vigencia` - EXISTEN (RF-21); ver 5.1.
 - `GET /api/admin/mapa` y `GET /api/admin/mapa/calor` (RF-22, RF-23).
 - `GET /api/admin/estadisticas` (RF-24).
 - `PUT /api/admin/categorias/{id}/correo-destino` (RF-25).
 
+### 5.1 Estados y vigencia — IMPLEMENTADOS (RN-19, RN-20, RF-20, RF-21)
+
+Los tres endpoints siguientes exigen JWT con rol ADMIN. Sin sesión: 401
+`NO_AUTENTICADO`; con rol ciudadano: 403 `SIN_PERMISO`. Conservan el formato
+de error `{ codigo, mensaje, campo }`. Los otros endpoints de la sección 5
+mantienen su estado previo; esta entrega no implementa listados ni mapas nuevos.
+
+**PATCH /api/admin/reportes/{codigo}/estado**
+
+Petición:
+
+```json
+{ "estado": "EN_TRAMITE", "observacion": "Se revisó la evidencia y se inició el seguimiento interno." }
+```
+
+Respuesta 200 (ejemplo):
+
+```json
+{
+  "codigoSeguimiento": "NU-000123",
+  "estado": "EN_TRAMITE",
+  "observacion": "Se revisó la evidencia y se inició el seguimiento interno.",
+  "cambiadoEn": "2026-11-06T19:00:00-05:00",
+  "cambiadoPor": 7,
+  "vigenteHasta": "2026-12-01T10:00:00-05:00"
+}
+```
+
+- `estado` usa los identificadores RECIBIDO, ENVIADO, EN_TRAMITE y RESUELTO;
+  se resuelven contra los nombres existentes del catálogo PostgreSQL. Los DTO
+  ciudadanos mantienen sus etiquetas actuales (Recibido, Enviado, En trámite, Resuelto).
+- `observacion` es obligatoria, no puede contener solo espacios y admite hasta
+  1000 caracteres; se recortan los espacios exteriores antes de guardarla.
+- Se permiten RECIBIDO → EN_TRAMITE/RESUELTO, ENVIADO → EN_TRAMITE/RESUELTO
+  y EN_TRAMITE → RESUELTO. RECIBIDO → ENVIADO se reserva a la aceptación de Resend.
+- Se puede añadir una observación sin cambiar el estado mientras no esté RESUELTO.
+  Si el último asiento tiene el mismo estado, observación normalizada y administrador,
+  se devuelve ese asiento sin insertar otro. RESUELTO rechaza toda modificación,
+  incluso solicitudes repetidas, con 409.
+- El servidor obtiene el administrador del usuario autenticado; no acepta un actor
+  ni una fecha suministrados por el cliente. `cambiadoPor` es su ID interno.
+- Una transacción bloquea la fila del reporte, inserta el historial y deja que B4
+  sincronice el estado actual. No se actualiza `vigente_hasta` ni el registro del correo.
+  El bloqueo coincide con el usado por el procesamiento de la aceptación de Resend.
+- Errores: 400 VALIDACION por código, estado u observación inválidos; 404
+  NO_ENCONTRADO si el reporte no existe; 409 CONFLICTO por retroceso, estado
+  terminal o intento manual de pasar a ENVIADO. El código acepta minúsculas y
+  espacios exteriores, con la misma normalización de la consulta ciudadana.
+- Los reportes vencidos también pueden recibir seguimiento administrativo.
+
+**GET /api/admin/configuracion/vigencia**
+
+Respuesta 200 inicial, leída de `configuracion.clave='vigencia_dias'` (semilla V3):
+
+```json
+{ "vigenciaDias": 30 }
+```
+
+**PUT /api/admin/configuracion/vigencia**
+
+Petición y respuesta 200:
+
+```json
+{ "vigenciaDias": 15 }
+```
+
+Se exige un número JSON entero positivo representable por PostgreSQL INTEGER;
+se rechazan valores ausentes, null, decimales, cadenas, booleanos, cero y negativos
+con 400 VALIDACION (`campo: "vigenciaDias"`). Se guarda también el administrador
+y la fecha en las columnas de auditoría existentes de `configuracion`.
+
+Solo afecta a reportes creados posteriormente: B9 calcula y guarda
+`vigente_hasta = creado_en + make_interval(days => vigencia_dias)` al insertar.
+Los reportes anteriores conservan su fecha. No hay endpoint de vigencia individual.
+
+**Vencimiento y consultas de mapas:** vigente significa `CURRENT_TIMESTAMP < vigente_hasta`;
+vencido significa `CURRENT_TIMESTAMP >= vigente_hasta`. Se conserva `v_reporte_mapa`,
+que exige ubicación y `vigente_hasta > now()`. Será la fuente común de marcadores
+y agregaciones de calor cuando existan esos endpoints. El vencimiento no borra
+el reporte, no cambia su estado ni afecta su consulta privada o su disponibilidad
+para gestión administrativa. Los cambios de estado y el procesamiento de correo
+no recalculan su vigencia. No se agregó ninguna migración.
+
 ## 6. Decisiones propuestas (no cerradas)
 
 1. **Decidido (01/11/2026):** verificación de correo en el MVP. Quien se registra con correo y contraseña recibe un enlace de confirmación y no ingresa hasta usarlo. Evita que alguien envíe reportes con los datos de otra persona. Cuesta un correo por registro (comparte los 100 diarios con reportes y recuperaciones). Con Google no hace falta: Google ya garantiza el correo.
-2. **Decidido (01/11/2026):** el envío del reporte es un paso aparte, `POST /api/reportes/{codigo}/enviar`, después de las fotos. **Queda pendiente de implementar**: depende de que exista crear reporte (`POST /api/reportes`).
+2. **Decidido (01/11/2026):** el envío del reporte es un paso aparte, `POST /api/reportes/{codigo}/enviar`, después de las fotos. **Implementado** (PR #18, ver sección 4).
 3. **Decidido (01/11/2026):** el reporte pasa a «Enviado» cuando Resend acepta el envío (lo pone en cola). Eso no garantiza que el correo llegue: si después rebota (el buzón no existe o bloquea mensajes), Resend avisa por webhook, el envío queda FALLIDO y se notifica al ciudadano. El estado del reporte no retrocede (regla B11): el fallo se ve en `envio.estado = FALLIDO` de `GET /api/reportes/{codigo}`. El ciudadano se entera de dos formas: en la app y por un correo que le avisa del fallo (decidido el 01/11/2026; gasta un correo de la cuota y no importa). Esto vuelve necesario RF-16 (hoy «Condicional») y los webhooks (hoy «deseables», R.05). Qué puede hacer el ciudadano ante un fallo queda por definir.
 4. Categorías con sesión: *propuesto* mantener `GET /api/categorias` con JWT.
 5. Catálogos como endpoints públicos; el aviso de privacidad es estático en el frontend y el servidor guarda el vigente.
@@ -209,11 +292,11 @@ Todos bajo `/api/admin/...`, rol ADMIN. Todos «Sprint 3», salvo el primero.
 - **Código de seguimiento (NOT-69)**: la tarea hablaba de máximo 10 caracteres, pero la columna es `VARCHAR(20)`. El código mide 9 hasta el reporte 999 999 y 10 hasta el 9 999 999. Lo asigna el trigger `fn_reporte_antes_insertar` y `uq_reporte_codigo` lo hace único; ambos están probados contra PostGIS.
 - **Estado «Enviado» y rebotes**: falta implementar el webhook, la columna del identificador de envío y la notificación al ciudadano (decisión 3). Confirmar con el equipo que RF-16 y los webhooks pasan a ser necesarios en el MVP.
 - **Verificación de correo**: el backend está hecho; falta la página del frontend `/app/verificar-correo` y la de «reenviar enlace».
-- **Endpoint `enviar`**: pendiente (decisión 2).
+- **Endpoint `enviar`**: hecho (PR #18). Falta encender la cola en Render (`NOTIURBA_ENVIO_REPORTES_HABILITADO=true`, con `RESEND_PRUEBA_DESTINO` puesta) y la prueba de punta a punta con una cuenta real.
 - **Aviso de privacidad**: la versión 3 ya es la vigente en la base (V12) y en el frontend; su **validación jurídica sigue pendiente** (ADR-0008). El aviso promete cosas que todavía no existen: Ajustes (editar datos, eliminar datos y cuenta, volver a leer el aviso), «Mis reportes» (`GET /api/reportes`, propuesto en la sección 4), el aviso al ciudadano cuando un correo rebota (webhook), el borrado de sus fotos en Cloudinary al eliminar sus datos y volver a aceptar el aviso si sube de versión. Hay que implementarlas antes de abrir el servicio al público.
 - **Paso 4 del Figma**: si muestra dos casillas de autorización, debe quedar una sola (`autorizaEnvio`). Avisar a Amelia (diseño).
 - **La capa de comunas es experimental y los barrios no están cargados.** V14 instala la capa sintética y no oficial de NOT-31 en `comuna.geom` (la fuente queda en `configuracion.comunas_capa_fuente`); la regla de la comuna y `FUERA_DE_COBERTURA` (NOT-55, V13) ya actúan con ella. Para cambiarla por la oficial basta regenerar la migración con `backend/scripts/generar-capa-comunas.py` (V16). Los barrios siguen sin cargar (solo hay uno administrativo de V4): sin barrios nadie puede completar el perfil (Amelia).
-- **Código sin escribir**: el endpoint `enviar`, conectar `EnviadorCorreo` a la recuperación de contraseña y el borrado de fotos y datos a pedido del ciudadano (la columna del identificador ya lo permite). El almacén de fotos (NOT-51) y el endpoint de subida (NOT-52) están hechos; se probaron en producción el 01/11/2026: una foto subida desde Render a Cloudinary, con su URL pública cargando sin sesión (las migraciones V10 y V11 ya estaban aplicadas en Neon; V11 se comprobó porque la subida guarda el identificador en esa columna). En Render también se verificó el rechazo de un archivo de 1,5 MB (413) y de un `.jpg` que no es imagen (415).
+- **Código sin escribir**: conectar `EnviadorCorreo` a la recuperación de contraseña y el borrado de fotos y datos a pedido del ciudadano (la columna del identificador ya lo permite). El almacén de fotos (NOT-51) y el endpoint de subida (NOT-52) están hechos; se probaron en producción el 01/11/2026: una foto subida desde Render a Cloudinary, con su URL pública cargando sin sesión (las migraciones V10 y V11 ya estaban aplicadas en Neon; V11 se comprobó porque la subida guarda el identificador en esa columna). En Render también se verificó el rechazo de un archivo de 1,5 MB (413) y de un `.jpg` que no es imagen (415).
 - **Prueba de Resend desde Render**: el 01/11/2026 se probó la API HTTP desde la máquina de Andrés (respuesta 200 con el subdominio verificado, enviando a una dirección de pruebas de Resend). El 01/11/2026 también se envió un correo real con `EnviadorCorreoResend` a una bandeja de Andrés. Falta probarlo desde Render: hay que desplegar y poner `RESEND_API_KEY` y `RESEND_REMITENTE` en sus variables. El SMTP por 2587 no se usa.
 - **Rutas del frontend**: `RutaProtegida` aún no envuelve `/admin/*`; el panel sigue abierto con datos de prueba.
 - **Linear**: NOT-69 («Generar el código único, guardarlo con restricción de unicidad y devolverlo al crear el reporte») ya lo hace el trigger `fn_reporte_antes_insertar` más `uq_reporte_codigo`: queda solo devolverlo en el 201. NOT-89 («consultar un reporte propio por código, con URL de foto nula si no tiene y 404 si no es suyo») habla de una sola foto: ahora son hasta 3, así que debe decir «lista de fotos vacía si no tiene».

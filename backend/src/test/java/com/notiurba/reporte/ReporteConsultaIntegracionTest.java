@@ -119,7 +119,8 @@ class ReporteConsultaIntegracionTest {
         assertThat(j.get("codigoSeguimiento").asText()).isEqualTo(codigo);
         assertThat(j.get("estado").asText()).isEqualTo("Recibido");
         assertThat(j.get("categoria").get("idCategoria").asInt()).isEqualTo(1);
-        assertThat(j.get("categoria").get("nombre").asText()).isEqualTo("Vías, huecos y andenes");
+        assertThat(j.get("categoria").get("nombre").asText()).isEqualTo(
+                jdbc.queryForObject("SELECT nombre FROM categoria WHERE id_categoria = 1", String.class));
         assertThat(j.get("descripcion").asText()).isEqualTo("Hay un hueco enorme frente al parque");
         assertThat(j.get("latitud").asDouble()).isEqualTo(4.0867);
         assertThat(j.get("longitud").asDouble()).isEqualTo(-76.1950);
