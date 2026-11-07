@@ -20,7 +20,7 @@ public class CorreoReporteController {
     @GetMapping("/api/enrutamiento/categorias/{id}")
     public EnrutamientoServicio.Ruta resolver(@PathVariable int id,@RequestParam(defaultValue="false") boolean emergencia){return rutas.resolver(id,emergencia);}
     @GetMapping("/api/reportes/opciones/barrios")
-    public List<Map<String,Object>> barrios(){return jdbc.queryForList("SELECT id_barrio AS \"idBarrio\", nombre, id_comuna AS \"idComuna\" FROM barrio ORDER BY nombre");}
+    public List<Map<String,Object>> barrios(){return jdbc.queryForList("SELECT id_barrio AS \"idBarrio\", nombre, id_comuna AS \"idComuna\" FROM barrio WHERE NOT interno ORDER BY nombre");}
     @GetMapping("/api/reportes")
     public List<Map<String,Object>> propios(Authentication sesion){return jdbc.queryForList("""
         SELECT r.codigo_seguimiento AS "codigoSeguimiento",c.nombre AS categoria,s.nombre AS estado,
