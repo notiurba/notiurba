@@ -1,0 +1,47 @@
+.tarjeta-reporte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nu-esp-10);
+  padding: var(--nu-esp-16);
+  border: 1px solid var(--nu-borde-tarjeta);
+  border-radius: var(--nu-radio-xl);
+  background: var(--nu-superficie-base);
+  box-shadow: var(--nu-sombra-tarjeta);
+}
+
+.tarjeta-reporte__enlace {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nu-esp-6);
+  color: inherit;
+  text-decoration: none;
+}
+
+.tarjeta-reporte h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
+.tarjeta-reporte__lugar,
+.tarjeta-reporte__codigo {
+  margin: 0;
+  font-size: 13px;
+  color: var(--nu-texto-tenue);
+}
+
+.tarjeta-reporte__fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nu-texto-secundario);
+}
+
+/* Botón más bajo dentro de la tarjeta */
+.tarjeta-reporte__boton {
+  height: 44px;
+  font-size: 15px;
+}

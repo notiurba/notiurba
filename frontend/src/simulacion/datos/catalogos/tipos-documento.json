@@ -1,0 +1,6 @@
+[
+  { "idTipoDocumento": 1, "codigo": "CC", "nombre": "Cédula de ciudadanía" },
+  { "idTipoDocumento": 2, "codigo": "CE", "nombre": "Cédula de extranjería" },
+  { "idTipoDocumento": 3, "codigo": "PPT", "nombre": "Permiso por protección temporal" },
+  { "idTipoDocumento": 4, "codigo": "PAS", "nombre": "Pasaporte" }
+]

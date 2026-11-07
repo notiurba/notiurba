@@ -1,0 +1,31 @@
+.mapa-ubicacion {
+  height: clamp(220px, 38vh, 360px);
+  border: 1px solid var(--nu-borde-tarjeta);
+  border-radius: var(--nu-radio-xl);
+  overflow: hidden;
+  z-index: 0;
+}
+
+.mapa-ubicacion__pin {
+  background: none;
+  border: 0;
+}
+
+/* Etiqueta «COMUNA N» en el centro de cada comuna */
+.mapa-ubicacion__etiqueta {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--nu-texto-principal);
+  text-shadow: 0 0 3px #fff, 0 0 3px #fff;
+}
+.mapa-ubicacion__etiqueta::before {
+  display: none;
+}
+.mapa-ubicacion--sin-etiquetas .mapa-ubicacion__etiqueta {
+  display: none;
+}

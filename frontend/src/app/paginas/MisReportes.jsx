@@ -1,11 +1,122 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { peticion } from '../../compartido/api/cliente'
-import './CorreoReportes.css'
+import { listarMisReportes } from '../../compartido/api/reportes'
+import { ESTADO_RESUELTO } from '../../compartido/utilidades/reportes'
+import Aviso from '../../compartido/componentes/avisos/Aviso'
+import Boton from '../../compartido/componentes/Boton'
+import EncabezadoPantalla from '../../compartido/componentes/EncabezadoPantalla'
+import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
+import Filtro from '../../compartido/componentes/Filtro'
+import { IconoMas, IconoOrdenar, IconoPin, IconoSinConexion } from '../../compartido/componentes/Iconos'
+import useCargar from '../../compartido/hooks/useCargar'
+import HojaActualizarReporte from '../componentes/HojaActualizarReporte'
+import HojaEstados from '../componentes/HojaEstados'
+import TarjetaReporte from '../componentes/TarjetaReporte'
+import './MisReportes.css'
 
+const FILTROS = [
+  { clave: 'activos', texto: 'Activos', coincide: (r) => r.estado !== ESTADO_RESUELTO },
+  { clave: 'resueltos', texto: 'Resueltos', coincide: (r) => r.estado === ESTADO_RESUELTO },
+  { clave: 'todos', texto: 'Todos', coincide: () => true },
+]
+
+// Lista de reportes de la persona con filtro por estado y orden por fecha.
 export default function MisReportes() {
-  const [reportes, setReportes] = useState(null)
-  const [error, setError] = useState('')
-  useEffect(() => { let activo = true; peticion('/api/reportes').then(r => { if (activo) setReportes(r) }).catch(e => { if (activo) setError(e.message) }); return () => { activo = false } }, [])
-  return <main className="correo-flujo"><h1>Mis reportes</h1>{error && <p role="alert">{error}</p>}{reportes === null && !error && <p role="status">Consultando…</p>}{reportes?.length === 0 && <p>No tienes reportes guardados.</p>}<ul className="correo-lista">{reportes?.map(r => <li key={r.codigoSeguimiento}><Link to={`/app/consultar-reporte?codigo=${r.codigoSeguimiento}`}><strong>{r.codigoSeguimiento}</strong> · {r.categoria}<p>{r.estado} · Correo: {r.correo || 'SIN SOLICITAR'}</p></Link></li>)}</ul><Link className="correo-primario" to="/app/crear-reporte">Crear reporte</Link></main>
+  const { datos, cargando, error, recargar } = useCargar(listarMisReportes)
+  const [filtro, setFiltro] = useState('activos')
+  const [masRecientes, setMasRecientes] = useState(true)
+  const [aActualizar, setAActualizar] = useState(null)
+  const [verEstados, setVerEstados] = useState(false)
+
+  if (error) {
+    return (
+      <>
+        <EncabezadoPantalla titulo="Mis reportes" sinVolver />
+        <EstadoVacio
+          icono={<IconoSinConexion tamano={56} />}
+          tono="alerta"
+          titulo="Sin conexión a internet"
+          texto="Revise su conexión e inténtelo de nuevo."
+        >
+          <Boton onClick={recargar}>Reintentar</Boton>
+        </EstadoVacio>
+      </>
+    )
+  }
+
+  const reportes = datos ?? []
+  const elegido = FILTROS.find((f) => f.clave === filtro)
+  const visibles = reportes
+    .filter(elegido.coincide)
+    .toSorted((a, b) => (masRecientes ? 1 : -1) * (new Date(b.creadoEn) - new Date(a.creadoEn)))
+
+  return (
+    <>
+      <EncabezadoPantalla titulo="Mis reportes" sinVolver />
+
+      {!cargando && reportes.length === 0 ? (
+        <EstadoVacio
+          icono={<IconoPin tamano={60} />}
+          insignia="👋"
+          titulo="Le damos la bienvenida a NotiUrba"
+          texto="Aquí verá sus reportes y cómo avanzan. Para empezar, cree el primero: toque «Reportar» en la barra de abajo o use este botón."
+        >
+          <Boton to="/reportar">
+            <IconoMas tamano={18} />
+            Crear mi primer reporte
+          </Boton>
+        </EstadoVacio>
+      ) : (
+        <div className="mis-reportes">
+          <Aviso variante="info" titulo="¿Cómo se actualizan los estados?">
+            NotiUrba no conoce la respuesta de la entidad. El estado solo cambia si un administrador lo
+            actualiza o si usted lo actualiza aquí. Revise también su correo.
+            <br />
+            <button type="button" className="enlace-boton" onClick={() => setVerEstados(true)}>
+              Ver qué significa cada estado
+            </button>
+          </Aviso>
+
+          <div className="mis-reportes__filtros" role="group" aria-label="Filtrar por estado">
+            {FILTROS.map((f) => (
+              <Filtro key={f.clave} activo={filtro === f.clave} onClick={() => setFiltro(f.clave)}>
+                {f.texto}
+              </Filtro>
+            ))}
+          </div>
+
+          <div className="mis-reportes__cabecera">
+            <span aria-live="polite">{cargando ? 'Cargando…' : `${visibles.length} reportes`}</span>
+            <Filtro onClick={() => setMasRecientes(!masRecientes)}>
+              <IconoOrdenar tamano={16} />
+              {masRecientes ? 'Más recientes' : 'Más antiguos'}
+            </Filtro>
+          </div>
+
+          <div className="mis-reportes__lista">
+            {visibles.map((reporte) => (
+              <TarjetaReporte key={reporte.codigoSeguimiento} reporte={reporte} alActualizar={setAActualizar} />
+            ))}
+            {!cargando && visibles.length === 0 && (
+              <p className="cargando-texto">
+                No tiene reportes en esta lista. <Link to="/reportar">Hacer un reporte</Link>
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      <HojaEstados abierta={verEstados} alCerrar={() => setVerEstados(false)} />
+
+      <HojaActualizarReporte
+        key={aActualizar?.codigoSeguimiento ?? 'cerrada'}
+        reporte={aActualizar}
+        alCerrar={() => setAActualizar(null)}
+        alGuardar={() => {
+          setAActualizar(null)
+          recargar()
+        }}
+      />
+    </>
+  )
 }

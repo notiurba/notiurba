@@ -96,7 +96,7 @@ En esta maquina las herramientas Python estan en el directorio temporal existent
 ```powershell
 $env:PYTHONPATH="$env:TEMP\\notiurba-pdf-tools"
 python src/utils/diagnosticarLimites.py --check --zip "C:\\Users\\Usuario\\Downloads\\Consolidado cartografia formulacion (SHP) EOT2015.zip"
-node --test src/utils/geoUtils.test.mjs
+node --test src/compartido/geo/geoUtils.test.mjs
 npm run lint
 npm run build
 npm run dev

@@ -1,0 +1,10 @@
+{
+  "idCategoria": 1,
+  "descripcion": "Hay un hueco grande en la carrera 26 que daña las llantas de los carros.",
+  "latitud": 4.0847,
+  "longitud": -76.1954,
+  "idBarrio": 1,
+  "direccionIncidente": "Carrera 26 con calle 25",
+  "matriculaCuentaServicio": null,
+  "autorizaEnvio": true
+}

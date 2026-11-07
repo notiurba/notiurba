@@ -1,0 +1,5 @@
+{
+  "codigo": "CORREO_YA_REGISTRADO",
+  "mensaje": "Ya existe una cuenta con este correo.",
+  "campo": "correo"
+}

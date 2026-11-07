@@ -1,0 +1,31 @@
+.resumen-categoria {
+  display: flex;
+  align-items: center;
+  gap: var(--nu-esp-12);
+  padding: var(--nu-esp-12) var(--nu-esp-16);
+  border: 1px solid var(--nu-borde-tarjeta);
+  border-radius: var(--nu-radio-xl);
+}
+
+.resumen-categoria > div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.resumen-categoria span {
+  font-size: 13px;
+  color: var(--nu-texto-tenue);
+}
+
+.resumen-categoria strong {
+  font-size: 16px;
+}
+
+.resumen-categoria a {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nu-marca-primario);
+  text-decoration: none;
+}

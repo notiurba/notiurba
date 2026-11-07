@@ -1,0 +1,54 @@
+.pestanas {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--nu-esp-8);
+  padding: var(--nu-esp-8) var(--nu-esp-12) max(var(--nu-esp-12), env(safe-area-inset-bottom));
+  border-top: 1px solid var(--nu-borde-encabezado);
+  background: var(--nu-superficie-base);
+  font-family: var(--nu-fuente);
+}
+
+.pestana {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nu-esp-2);
+  min-height: 52px;
+  border-radius: var(--nu-radio-lg);
+  color: var(--nu-texto-principal);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.pestana--activa {
+  background: var(--nu-marca-suave);
+  color: var(--nu-marca-suave-texto);
+  font-weight: 700;
+}
+
+.pestana--reportar {
+  color: var(--nu-marca-primario);
+  font-weight: 700;
+}
+
+.pestana__mas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--nu-marca-primario);
+  color: var(--nu-texto-inverso);
+  box-shadow: var(--nu-sombra-boton-primario);
+}
+
+.pestana:focus-visible {
+  outline: 3px solid var(--nu-marca-primario);
+  outline-offset: 2px;
+}
+

@@ -1,0 +1,100 @@
+/* Tokens de NotiUrba: sistema de diseño v1.0 (Figma, Nunito Sans, base móvil 390 px).
+   Todos los componentes leen estos valores; no se escriben colores sueltos en otros CSS. */
+:root {
+  /* Marca */
+  --nu-marca-primario: #15803d;
+  --nu-marca-primario-hover: #166534; /* oscurece el primario; el sistema no define hover */
+  --nu-marca-suave: #dcfce7;
+  --nu-marca-seleccion: #f0fdf4;
+  --nu-marca-suave-texto: #14532d;
+
+  /* Texto */
+  --nu-texto-principal: #1f2937;
+  --nu-texto-secundario: #4b5563;
+  --nu-texto-tenue: #6b7280;
+  --nu-texto-inverso: #ffffff;
+
+  /* Superficies */
+  --nu-superficie-base: #ffffff;
+  --nu-superficie-app: #f8fafc;
+  --nu-superficie-atenuada: #f1f5f9;
+  --nu-superficie-velo: rgba(15, 23, 41, 0.55);
+
+  /* Bordes */
+  --nu-borde-campo: #8190a3;
+  --nu-borde-tarjeta: #cbd5e1;
+  --nu-borde-boton-secundario: #94a3b8;
+  --nu-borde-divisor: #d1d5db;
+  --nu-borde-encabezado: #e5e7eb;
+
+  /* Panel de administración */
+  --nu-admin-primario: #082f6b;
+  --nu-admin-acento: #0b4ea2;
+
+  /* Avisos */
+  --nu-info-fondo: #eff6ff;
+  --nu-info-borde: #bfdbfe;
+  --nu-info-texto: #1e3a8a;
+  --nu-alerta-fondo: #fffbeb;
+  --nu-alerta-borde: #fde68a;
+  --nu-alerta-texto: #78350f;
+  --nu-peligro-fondo: #fef2f2;
+  --nu-peligro-borde: #fecaca;
+  --nu-peligro-texto: #b91c1c;
+  --nu-exito-fondo: #f0fdf4;
+  --nu-exito-borde: #bbf7d0;
+  --nu-exito-texto: #166534;
+
+  /* Estados del reporte (fondo, borde, texto) */
+  --nu-estado-recibido-fondo: #f1f5f9;
+  --nu-estado-recibido-borde: #cbd5e1;
+  --nu-estado-recibido-texto: #334155;
+  --nu-estado-enviado-fondo: #eff6ff;
+  --nu-estado-enviado-borde: #bfdbfe;
+  --nu-estado-enviado-texto: #1d4ed8;
+  --nu-estado-tramite-fondo: #fff7ed;
+  --nu-estado-tramite-borde: #fed7aa;
+  --nu-estado-tramite-texto: #9a3412;
+  --nu-estado-resuelto-fondo: #f0fdf4;
+  --nu-estado-resuelto-borde: #bbf7d0;
+  --nu-estado-resuelto-texto: #166534;
+
+  /* Fondo del ícono de cada categoría */
+  --nu-categoria-vias: #fef3c7;
+  --nu-categoria-alumbrado: #fef9c3;
+  --nu-categoria-basuras: #dcfce7;
+  --nu-categoria-agua: #dbeafe;
+  --nu-categoria-parques: #d1fae5;
+  --nu-categoria-senalizacion: #fee2e2;
+  --nu-categoria-otro: #e5e7eb;
+
+  /* Espaciado */
+  --nu-esp-2: 2px;
+  --nu-esp-4: 4px;
+  --nu-esp-6: 6px;
+  --nu-esp-8: 8px;
+  --nu-esp-10: 10px;
+  --nu-esp-12: 12px;
+  --nu-esp-14: 14px;
+  --nu-esp-16: 16px;
+  --nu-esp-20: 20px;
+  --nu-esp-24: 24px;
+  --nu-esp-32: 32px;
+
+  /* Radios */
+  --nu-radio-xs: 3px;
+  --nu-radio-md: 12px;
+  --nu-radio-lg: 14px;
+  --nu-radio-xl: 16px;
+  --nu-radio-hoja: 28px;
+  --nu-radio-pildora: 999px;
+
+  /* Sombras: el sistema nombra 5 niveles pero no da valores; estos son provisionales */
+  --nu-sombra-campo: 0 1px 2px rgba(15, 23, 41, 0.06);
+  --nu-sombra-tarjeta: 0 1px 3px rgba(15, 23, 41, 0.1);
+  --nu-sombra-boton-primario: 0 6px 14px rgba(21, 128, 61, 0.28);
+  --nu-sombra-filtro-activo: 0 4px 10px rgba(21, 128, 61, 0.25);
+  --nu-sombra-hoja: 0 -8px 24px rgba(15, 23, 41, 0.18);
+
+  --nu-fuente: 'Nunito Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
+}

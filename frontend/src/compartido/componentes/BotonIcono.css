@@ -1,0 +1,31 @@
+.boton-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--nu-borde-encabezado);
+  border-radius: var(--nu-radio-pildora);
+  background: var(--nu-superficie-base);
+  color: var(--nu-texto-principal);
+  cursor: pointer;
+}
+
+.boton-icono--peligro {
+  border-color: var(--nu-peligro-borde);
+  background: var(--nu-peligro-fondo);
+  color: var(--nu-peligro-texto);
+}
+
+.boton-icono:disabled {
+  background: var(--nu-superficie-atenuada);
+  color: var(--nu-texto-tenue);
+  cursor: not-allowed;
+}
+
+.boton-icono:focus-visible {
+  outline: 3px solid var(--nu-marca-primario);
+  outline-offset: 2px;
+}

@@ -1,0 +1,86 @@
+.tarjeta-opcion {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--nu-esp-12);
+  padding: var(--nu-esp-12);
+  border: 1.5px solid var(--nu-borde-tarjeta);
+  border-radius: var(--nu-radio-lg);
+  background: var(--nu-superficie-base);
+  font-family: var(--nu-fuente);
+  cursor: pointer;
+}
+
+/* El radio real queda invisible pero activo (teclado y lectores de pantalla) */
+.tarjeta-opcion input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.tarjeta-opcion:has(input:focus-visible) {
+  outline: 3px solid var(--nu-marca-primario);
+  outline-offset: 2px;
+}
+
+.tarjeta-opcion--elegida {
+  border-color: var(--nu-marca-primario);
+  background: var(--nu-marca-seleccion);
+}
+
+.tarjeta-opcion__textos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--nu-esp-2);
+  min-width: 0;
+}
+
+.tarjeta-opcion__titulo {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nu-texto-principal);
+}
+
+.tarjeta-opcion__descripcion {
+  font-size: 13px;
+  color: var(--nu-texto-tenue);
+}
+
+.tarjeta-opcion__marca {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  box-sizing: border-box;
+  border: 1.5px solid var(--nu-borde-boton-secundario);
+  border-radius: 50%;
+  color: var(--nu-texto-inverso);
+}
+
+.tarjeta-opcion--elegida .tarjeta-opcion__marca {
+  border-color: var(--nu-marca-primario);
+  background: var(--nu-marca-primario);
+}
+
+/* Grupo de tarjetas dentro de un <fieldset> (por ejemplo, «¿Qué pasó con su reporte?») */
+.grupo-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nu-esp-8);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.grupo-opciones legend {
+  padding: 0;
+  margin-bottom: var(--nu-esp-8);
+  font-size: 14px;
+  font-weight: 700;
+}

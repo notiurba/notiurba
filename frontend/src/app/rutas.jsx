@@ -1,21 +1,46 @@
-import { Route, Routes } from 'react-router-dom'
-import EstadoApi from './paginas/EstadoApi'
-import Ingresar from './paginas/Ingresar'
-import Proximamente from './paginas/Proximamente'
-import CrearReporte from './paginas/CrearReporte'
-import ConsultarReporte from './paginas/ConsultarReporte'
+import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
+import NoEncontrada from '../compartido/paginas/NoEncontrada'
+import AvisoAcceso from '../compartido/componentes/avisos/AvisoAcceso'
+import LayoutApp from './componentes/LayoutApp'
+import MarcoApp from './componentes/MarcoApp'
+import Ajustes from './paginas/Ajustes'
+import DetalleReporte from './paginas/DetalleReporte'
+import EditarDatos from './paginas/EditarDatos'
 import MisReportes from './paginas/MisReportes'
-import RutaProtegida from '../compartido/auth/RutaProtegida'
 
+// «/app» lleva a Mis reportes y conserva el aviso que traiga la redirección (p. ej. «Acceso no permitido»).
+function IrAReportes() {
+  const { state } = useLocation()
+  return <Navigate to="reportes" replace state={state} />
+}
+
+// Pantallas de formulario: el mismo marco pero sin la barra de pestañas (no compite con «Guardar cambios»).
+function LayoutSinPestanas() {
+  return (
+    <MarcoApp>
+      <Outlet />
+    </MarcoApp>
+  )
+}
+
+// PWA ciudadana (/app/*): las pantallas con barra de pestañas abajo.
+// El flujo de «Nuevo reporte» vive aparte, en /reportar (ver ./reportar/rutas.jsx).
 export default function RutasApp() {
   return (
-    <Routes>
-      <Route index element={<Proximamente />} />
-      <Route path="estado" element={<EstadoApi />} />
-      <Route path="ingresar" element={<Ingresar />} />
-      <Route path="crear-reporte" element={<RutaProtegida><CrearReporte /></RutaProtegida>} />
-      <Route path="consultar-reporte" element={<RutaProtegida><ConsultarReporte /></RutaProtegida>} />
-      <Route path="mis-reportes" element={<RutaProtegida><MisReportes /></RutaProtegida>} />
-    </Routes>
+    <>
+      <AvisoAcceso />
+      <Routes>
+        <Route element={<LayoutApp />}>
+          <Route index element={<IrAReportes />} />
+          <Route path="reportes" element={<MisReportes />} />
+          <Route path="reportes/:codigo" element={<DetalleReporte />} />
+          <Route path="ajustes" element={<Ajustes />} />
+        </Route>
+        <Route element={<LayoutSinPestanas />}>
+          <Route path="ajustes/datos" element={<EditarDatos />} />
+        </Route>
+        <Route path="*" element={<NoEncontrada />} />
+      </Routes>
+    </>
   )
 }

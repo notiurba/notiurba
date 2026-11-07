@@ -1,0 +1,30 @@
+.casilla {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.casilla__fila {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-family: var(--nu-fuente);
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--nu-texto-principal);
+  cursor: pointer;
+}
+
+.casilla__fila input {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  accent-color: var(--nu-marca-primario);
+  cursor: pointer;
+}
+
+.casilla__fila input[aria-invalid='true'] {
+  outline: 2px solid var(--nu-peligro-texto);
+  outline-offset: 1px;
+}

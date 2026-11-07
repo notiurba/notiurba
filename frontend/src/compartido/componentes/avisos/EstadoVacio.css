@@ -1,0 +1,94 @@
+.estado-vacio {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nu-esp-12);
+  padding: var(--nu-esp-24) 0;
+  text-align: center;
+  font-family: var(--nu-fuente);
+}
+
+.estado-vacio > :last-child:not(h2):not(p) {
+  align-self: stretch;
+  margin-top: var(--nu-esp-8);
+}
+
+.estado-vacio__icono {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
+
+.estado-vacio__icono--exito {
+  background: var(--nu-marca-suave);
+  color: var(--nu-marca-primario);
+}
+
+.estado-vacio__icono--alerta {
+  background: var(--nu-alerta-borde);
+  color: var(--nu-estado-tramite-texto);
+}
+
+.estado-vacio h2 {
+  margin: var(--nu-esp-8) 0 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--nu-texto-principal);
+}
+
+.estado-vacio p {
+  max-width: 320px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--nu-texto-secundario);
+}
+
+/* Insignia en la esquina del círculo (la mano que saluda). Se mueve un poco, salvo que la persona pida menos animación. */
+.estado-vacio__insignia {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--nu-superficie-base);
+  box-shadow: 0 4px 12px rgba(15, 23, 41, 0.18);
+  font-size: 26px;
+  line-height: 1;
+  transform-origin: 70% 80%;
+  animation: saludo 2.4s ease-in-out 0.4s 2;
+}
+
+@keyframes saludo {
+  0%,
+  60%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10%,
+  30% {
+    transform: rotate(16deg);
+  }
+  20%,
+  40% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(8deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .estado-vacio__insignia {
+    animation: none;
+  }
+}

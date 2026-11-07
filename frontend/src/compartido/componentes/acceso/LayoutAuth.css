@@ -1,0 +1,55 @@
+.auth {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  background: var(--nu-superficie-base);
+  color: var(--nu-texto-principal);
+  font-family: var(--nu-fuente);
+}
+
+.auth .panel-marca {
+  display: none;
+}
+
+.auth__panel {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0 20px;
+}
+
+/* Todo lo que va dentro del panel (encabezado, formulario...) comparte ancho y queda centrado */
+.auth__panel > * {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 440px;
+  margin-inline: auto;
+}
+
+/* Pantallas de celular (todas menos Login y Registro): columna centrada de 430 px máximo */
+.auth--celular {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+@media (min-width: 900px) {
+  .auth:not(.auth--celular) {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+
+  .auth:not(.auth--celular) .panel-marca {
+    display: flex;
+  }
+
+  .auth:not(.auth--celular) .auth__panel {
+    justify-content: center;
+    padding: 48px;
+  }
+
+  /* El panel de marca ya tiene la marca: sin título, la flecha de volver sobra en computador */
+  .auth:not(.auth--celular) .auth__panel .encabezado:not(.encabezado--con-titulo) .encabezado__volver {
+    display: none;
+  }
+}

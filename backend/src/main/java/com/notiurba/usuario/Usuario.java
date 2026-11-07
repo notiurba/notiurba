@@ -151,4 +151,36 @@ public class Usuario {
     public Rol getRol() {
         return rol;
     }
+
+    public Short getIdTipoDocumento() {
+        return idTipoDocumento;
+    }
+
+    public String getNumeroDocumento() {
+        return numeroDocumento;
+    }
+
+    public Integer getIdBarrio() {
+        return idBarrio;
+    }
+
+    public String getDireccionCorrespondencia() {
+        return direccionCorrespondencia;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    /** «Editar mis datos»: cambia los datos personales. El correo, el rol y la contraseña no se tocan aquí. */
+    public void actualizarPerfil(String nombres, String apellidos, Short idTipoDocumento, String numeroDocumento,
+            Integer idBarrio, String direccionCorrespondencia, String telefono) {
+        this.nombres = nombres;
+        this.apellidos = apellidos;
+        this.idTipoDocumento = idTipoDocumento;
+        this.numeroDocumento = numeroDocumento;
+        this.idBarrio = idBarrio;
+        this.direccionCorrespondencia = direccionCorrespondencia;
+        this.telefono = telefono;
+    }
 }

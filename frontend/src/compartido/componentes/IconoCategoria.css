@@ -1,0 +1,8 @@
+.icono-categoria {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--nu-radio-md);
+  color: var(--nu-texto-principal);
+}

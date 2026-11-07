@@ -1,0 +1,34 @@
+/* Móvil primero: todo el ancho. Más grande: columna centrada con ancho máximo según el tipo de pantalla. */
+.marco-app {
+  --marco-ancho: 430px;
+  --marco-margen: var(--nu-esp-16);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--marco-ancho);
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: var(--nu-superficie-base);
+  color: var(--nu-texto-principal);
+  font-family: var(--nu-fuente);
+}
+
+.marco-app__contenido {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 0 var(--marco-margen);
+}
+
+@media (min-width: 640px) {
+  .marco-app {
+    --marco-margen: var(--nu-esp-24);
+  }
+}
+
+@media (min-width: 1024px) {
+  .marco-app {
+    --marco-margen: var(--nu-esp-32);
+  }
+}

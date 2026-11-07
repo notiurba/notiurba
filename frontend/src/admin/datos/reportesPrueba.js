@@ -1,30 +1,3 @@
-// Las 15 categorías y los 4 estados de la base de datos (V3, V8 y estado_reporte). Si cambian
-// allá, cambian aquí: son datos de demostración, no vienen de la API todavía.
-export const categoriasReporte = [
-  'Vías, huecos y andenes',
-  'Alumbrado, espacio público, convivencia y seguridad',
-  'Basuras, ambiente, árboles y contaminación',
-  'Señalización, semáforos y tránsito',
-  'Riesgo sanitario y salud pública',
-  'Uso del suelo, planeación y licencias',
-  'Instituciones educativas',
-  'Riesgo de desastres',
-  'Vivienda',
-  'Otro / no clasificado',
-  'Acueducto y alcantarillado',
-  'Gas natural',
-  'Energía eléctrica',
-  'Aseo (falla del servicio)',
-  'Solicitud de información',
-]
-
-export const estadosReporte = [
-  'Recibido',
-  'Enviado',
-  'En trámite',
-  'Resuelto',
-]
-
 // Puntos representativos interiores de la cobertura exclusiva de cada comuna POT.
 // comunaEsperada es el número de comuna (1 a 10), como en la base de datos.
 // No son centroides, ubicaciones verificadas de problemas ni coordenadas reales de ciudadanos.
