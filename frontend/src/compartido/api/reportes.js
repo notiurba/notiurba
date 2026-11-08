@@ -79,7 +79,8 @@ export const actualizarMiReporte = (codigo, tipo, radicado) =>
 export const obtenerCategorias = () => peticion('/api/categorias')
 
 // Panel de administración
-export const listarTodosLosReportes = () => peticion('/api/admin/reportes')
+export const listarTodosLosReportes = async () =>
+  (await peticion('/api/admin/reportes')).map(normalizarReporte)
 
 export const cambiarEstadoReporte = (codigo, estado, observacion) =>
   peticion(`/api/admin/reportes/${encodeURIComponent(codigo)}/estado`, {
