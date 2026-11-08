@@ -18,18 +18,8 @@ function normalizarReporte(r) {
   }
 }
 
-// Mis reportes (propuesto en el contrato, sección 4: GET /api/reportes). Lista propia, más recientes primero.
-// Mientras la API no publique ese GET, responde 404 o 405: se toma como «aún no hay reportes» y se muestra la
-// bienvenida. Un fallo de red o un error del servidor sí se sigue avisando. Al publicarlo, borrar el catch.
-const AUN_NO_PUBLICADO = [404, 405]
-export const listarMisReportes = async () => {
-  try {
-    return (await peticion('/api/reportes')).map(normalizarReporte)
-  } catch (error) {
-    if (AUN_NO_PUBLICADO.includes(error.estado)) return []
-    throw error
-  }
-}
+// Mis reportes (GET /api/reportes). Lista propia, más recientes primero. Cualquier fallo se avisa en pantalla.
+export const listarMisReportes = async () => (await peticion('/api/reportes')).map(normalizarReporte)
 
 // Reporte completo (contrato 3.6, solo reportes propios).
 export const obtenerReporte = async (codigo) =>
