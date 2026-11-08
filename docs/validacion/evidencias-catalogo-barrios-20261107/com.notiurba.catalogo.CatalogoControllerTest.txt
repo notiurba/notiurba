@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.notiurba.catalogo.CatalogoControllerTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.864 s -- in com.notiurba.catalogo.CatalogoControllerTest

@@ -1,0 +1,24 @@
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+INSERT 0 3
+INSERT 0 1
+INSERT 0 1
+INSERT 0 8
+DO
+BEGIN
+SET
+SET
+psql:/tmp/temporales-qa.sql:14: NOTICE:  PASS: nuevos ejemplos internos; identidades existentes conservadas
+CREATE TABLE
+INSERT 0 1
+DO
+ id_barrio | id_comuna |      nombre      | interno | usuarios | reportes 
+-----------+-----------+------------------+---------+----------+----------
+         3 |         3 | Barrio ejemplo 3 | f       |        1 |        1
+(1 row)
+
+psql:/tmp/temporales-qa.sql:56: ERROR:  syntax error at or near "$"
+LINE 1: DO $ DECLARE filas integer;
+           ^
+UPDATE 1

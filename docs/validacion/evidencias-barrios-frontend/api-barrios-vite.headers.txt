@@ -1,0 +1,20 @@
+HTTP/1.1 200 OK
+vary: Origin, Access-Control-Request-Method, Access-Control-Request-Headers, Accept-Encoding
+date: Sat, 07 Nov 2026 19:28:42 GMT
+content-type: application/json
+connection: close
+cache-control: no-cache, no-store, max-age=0, must-revalidate
+cf-cache-status: DYNAMIC
+expires: 0
+pragma: no-cache
+rndr-id: 6d417a4c-f1c8-4e49
+server: cloudflare
+strict-transport-security: max-age=31536000 ; includeSubDomains
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-render-origin-server: Render
+x-xss-protection: 0
+cf-ray: a56ebe1b7c7a7edd-BOG
+alt-svc: h3=":443"; ma=86400
+Transfer-Encoding: chunked
+

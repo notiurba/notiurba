@@ -1,0 +1,16 @@
+{
+  "fecha": "2026-11-07",
+  "cliente": {
+    "aprobadas": 17
+  },
+  "flujoSimulado": {
+    "aprobadas": 1
+  },
+  "catalogoRealConMocks": {
+    "aprobadas": 5
+  },
+  "totalAprobadas": 23,
+  "observacion": "Primer lote: 18 casos aprobados y fallo de ruta en el archivo nuevo; corregida la ruta, los 5 casos nuevos aprobaron. No se repitieron los otros 18.",
+  "eslint": "aprobado, solo archivos afectados",
+  "build": "aprobado Vite 8.3.4"
+}

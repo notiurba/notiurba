@@ -1,0 +1,42 @@
+async page => {
+  page.setDefaultTimeout(30000);
+  const folder='C:/notiurba/noti-urba/docs/validacion/NOT-25-final-20261107';
+  const traffic=[];
+  page.on('response',r=>{if(r.url().includes('/api/'))traffic.push({url:r.url(),method:r.request().method(),status:r.status()});});
+  const setup=await page.evaluate(async()=>{
+    if(sessionStorage.getItem('notiurba.reporteGuardado'))throw Error('Existe reporte conservado: no crear otro');
+    const auth=await import('/src/compartido/api/auth.js');
+    const session=await auth.iniciarSesion('not25@qa.invalid','SoloPruebasNOT25-123');
+    (await import('/src/compartido/auth/sesion.js')).guardarToken(session.token);
+    const response=await fetch('/api/catalogos/barrios');const barrios=await response.json();
+    const barrio=barrios.find(b=>b.nombre==='Barrio tecnico NOT25, solo QA aislado');if(!barrio)throw Error('Falta barrio QA');
+    sessionStorage.setItem('notiurba.borrador',JSON.stringify({idCategoria:'11',idBarrio:String(barrio.idBarrio),latitud:null,longitud:null,direccion:'Entorno aislado NOT25',descripcion:'Validación aislada NOT-25 de fotografía pública de prueba; no corresponde a un reporte ciudadano real.',matricula:'0000000000',emergencia:false}));
+    return {barrio:barrio.idBarrio,datos:'Sintéticos de QA; sin V17 ni datos ciudadanos'};
+  });
+  await page.goto('http://127.0.0.1:5175/reportar/detalles');
+  await page.locator('#descripcion').waitFor();
+  await page.locator('input[type=file][multiple]').setInputFiles('C:/notiurba/noti-urba/docs/validacion/NOT-88-commons-20261108T011359Z/reducidas/foto-1.jpg');
+  await page.getByRole('button',{name:'Continuar',exact:true}).click();
+  await page.waitForURL('**/reportar/confirmacion');
+  await page.getByText('Centroaguas S.A. E.S.P.',{exact:true}).waitFor();
+  await page.locator('#autorizaEnvio').check();
+  const created=page.waitForResponse(r=>r.request().method()==='POST'&&r.url().endsWith('/api/reportes'));
+  const uploadRequest=page.waitForRequest(r=>r.method()==='POST'&&r.url().endsWith('/fotos')).catch(()=>null);
+  const uploadResponse=page.waitForResponse(r=>r.request().method()==='POST'&&r.url().endsWith('/fotos')).catch(()=>null);
+  await page.getByRole('button',{name:'Guardar reporte',exact:true}).click();
+  await page.getByRole('button',{name:'Confirmar',exact:true}).click();
+  const creation=await created;
+  if(creation.status()!==201)throw Error('Creación HTTP '+creation.status()+': '+await creation.text());
+  const createdBody=await creation.json();
+  const request=await uploadRequest;if(!request)throw Error('Se creó '+createdBody.codigoSeguimiento+' sin solicitud de foto; conservar código');
+  const loading=await page.locator('button[aria-busy="true"]').evaluateAll(es=>es.map(e=>({text:e.textContent,disabled:e.disabled,visible:!!e.getClientRects().length})));
+  await page.screenshot({path:folder+'/01-subida-cargando.png',fullPage:true});
+  const failed=await uploadResponse;if(!failed||failed.status()!==502)throw Error('Fallo de QA no observado');
+  const message='Su reporte está guardado. No se completaron las fotos o la solicitud de envío. Reintente sobre este mismo código.';
+  await page.getByText(message,{exact:true}).waitFor();
+  await page.getByRole('button',{name:'Reintentar sobre este código',exact:true}).waitFor();
+  const state=await page.evaluate(async()=>{const guardado=JSON.parse(sessionStorage.getItem('notiurba.reporteGuardado'));const detail=await(await import('/src/app/servicios/correoReportes.js')).consultar(guardado.codigoSeguimiento);return{guardado,detail}});
+  if(state.detail.fotos.length!==0||!loading.some(e=>e.visible&&e.disabled))throw Error('Carga/fallo no demostrados');
+  await page.screenshot({path:folder+'/02-fallo-y-reintento.png',fullPage:true});
+  return{phase:'carga-fallo',date:new Date().toISOString(),setup,reportCode:createdBody.codigoSeguimiento,loading,message,failureStatus:failed.status(),storedPhotosAfterFailure:state.detail.fotos.length,createdReportsHttp:traffic.filter(t=>t.method==='POST'&&t.url.endsWith('/api/reportes')).length,traffic,scope:'API/BD reales aisladas; almacén local con retardo y fallo controlados, sin Cloudinary'};
+}

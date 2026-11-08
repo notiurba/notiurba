@@ -1,0 +1,11 @@
+{
+  "date":"2026-11-07",
+  "browserScenarios":{"simulationNotice":true,"loadingInsteadOfFalseEmpty":true,"validPointWithStaleBarrioCanAdvance":true,"payloadOmitsStaleBarrioId":true},
+  "unitTests":{"command":"node --test src/compartido/validaciones/reporte.test.mjs src/compartido/api/cliente.test.mjs","passed":28,"failed":0,"exitCode":0},
+  "lint":{"command":"npm.cmd run lint","exitCode":0},
+  "build":{"command":"npm.cmd run build","exitCode":0,"modules":237},
+  "gpsRequested":false,
+  "reportCreatedOrSent":false,
+  "not65PhysicalCasesRepeated":false,
+  "apiOrProxyConfigurationChanged":false
+}

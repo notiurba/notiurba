@@ -9,14 +9,16 @@ partir del modelo de datos v8 y los requisitos; **falta confirmarlo con Andrés*
 
 ## Cómo se usan estos datos
 
-Esta carpeta (`src/simulacion/`) **simula el backend dentro del frontend**. No toca el backend real.
+Esta carpeta (`src/simulacion/`) **simula el backend dentro del frontend**. La excepción son los
+catálogos de barrios: se consultan en lectura a la API real para no ofrecer residencias ficticias.
 
 1. Copie `frontend/.env.example` como `frontend/.env.local` (no se sube a Git) y reinicie `pnpm dev`.
 2. Con `VITE_USAR_MOCKS=true` se simula toda la app: login, registro, recuperar/restablecer contraseña,
-   completar perfil, barrios, tipos de documento, categorías, perfil y ajustes, reportes del ciudadano
+   completar perfil, tipos de documento, categorías, perfil y ajustes, reportes del ciudadano
    (crear, listar, detalle, actualizar) y el panel de administración (listar y cambiar estado).
    Los datos se guardan en `localStorage` (clave `notiurba.simulacion.v1`); para volver al inicio,
-   borre esa clave en las herramientas del navegador. Cualquier ruta sin simulación va a la API real.
+   borre esa clave en las herramientas del navegador. Una ruta no simulada da `MOCK_NO_DISPONIBLE`,
+   salvo el catálogo público de barrios, que usa la API real.
 3. Cuentas de prueba para el login (contraseña `Clave1234`): `ciudadano@correo.com` entra a `/app` y
    `admin@correo.com` entra a `/admin`. Otro correo → «no encontramos una cuenta»; otra contraseña →
    «no es correcta».
@@ -32,6 +34,16 @@ Esta carpeta (`src/simulacion/`) **simula el backend dentro del frontend**. No t
 
 ## Contrato por pantalla
 
+### Excepción obligatoria: barrios ciudadanos
+
+`GET /api/catalogos/barrios` consulta siempre la API real, incluso con `VITE_USAR_MOCKS=true`.
+En simulación, la ruta antigua `/api/reportes/opciones/barrios` también consulta ese catálogo
+público, sin enviar el JWT ficticio. No hay lista de respaldo: un catálogo vacío bloquea
+el registro y un error se informa. El resto de operaciones conserva la simulación.
+`datos/catalogos/barrios.json` se conserva exclusivamente para interpretar perfiles y reportes
+históricos del almacén simulado; no se ofrece como catálogo seleccionable ni acredita IDs reales.
+No copiar sus IDs a la base ni reasignar borradores por coincidencia numérica.
+
 | Pantalla | Endpoint | Estado | Envía | Recibe | Archivos |
 |---|---|---|---|---|---|
 | Login | `POST /api/auth/login` | EXISTE | `correo`, `password` | `{ token, rol }` · 401 si no coinciden. **Propuesto:** el 401 trae `campo` (`correo` o `password`) para mostrar el error bajo la casilla | `datos/auth/login.ok.*.json`, `datos/auth/login.error.*.json` |
@@ -41,7 +53,7 @@ Esta carpeta (`src/simulacion/`) **simula el backend dentro del frontend**. No t
 | Recuperar contraseña | `POST /api/auth/recuperar` | EXISTE (campos por confirmar) | `correo` | mensaje igual exista o no la cuenta; enlace de 1 hora, un solo uso | `datos/auth/recuperar.*.json` |
 | Nueva contraseña | `POST /api/auth/restablecer` | EXISTE (campos por confirmar) | `token`, `password` | OK · error si el enlace venció | `datos/auth/restablecer.*.json` |
 | Registro (selectores) | `GET /api/tipos-documento` (público, sin sesión) | PROPUESTO | — | lista de tipos | `datos/catalogos/tipos-documento.json` |
-| Registro (selectores) | `GET /api/barrios` (público, sin sesión) | PROPUESTO | — | lista con `idComuna` | `datos/catalogos/barrios.json` |
+| Registro (selectores) | `GET /api/catalogos/barrios` (público, sin sesión) | REAL incluso con mocks activos | — | lista con `idComuna`; puede estar vacía | API real, sin fixture de respaldo |
 | Crear reporte (categoría) | `GET /api/categorias` | EXISTE (exige sesión) | — | lista de categorías activas | `datos/catalogos/categorias.json` |
 | Crear reporte | `POST /api/reportes` | PROPUESTO | `idCategoria`, `descripcion` (10-500), `latitud`, `longitud`, `idBarrio`, `direccionIncidente?`, `matriculaCuentaServicio?`, `autorizaEnvio` | `idReporte`, `codigoSeguimiento`, `estado`, `idComuna` · error con `campo` | `datos/reportes/crear.*.json` |
 | Crear reporte (foto) | `POST /api/reportes/{id}/fotos` | PROPUESTO | imagen JPG/PNG de máximo 1 MB, hasta 3 (`orden` 1-3) | URL de la foto | — |

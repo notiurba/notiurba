@@ -1,0 +1,15 @@
+{
+  "source": "Resultados de Playwright observados en la continuacion anterior, conservados sin repetir casos aprobados",
+  "browser": "Chrome 156 en Windows, sesion Playwright not65",
+  "cases": [
+    {"id":"MAP-01","passed":true,"tilesLoaded":8,"evidence":"not65-desktop-01-mapa.png"},
+    {"id":"MAP-05","passed":true,"finitePoint":true,"markers":1,"evidence":"not65-desktop-05-manual.png"},
+    {"id":"MAP-06","passed":true,"pointChanged":true,"markers":1,"evidence":"not65-desktop-06-cambio.png"},
+    {"id":"MAP-08","passed":true,"routeVisited":"/reportar/detalles","pointPreservedOnReturn":true,"earlyDetailsTextMatched":false,"note":"La lectura inmediata del texto fue anterior a la carga; la navegacion de ida, enlace de retorno y conservacion del punto si se observaron.","evidence":"not65-desktop-08-retorno.png"}
+  ],
+  "responsive": [
+    {"id":"RESP-360","innerWidth":360,"innerHeight":800,"dpr":1,"clientWidth":345,"scrollWidth":345,"map":{"x":16,"y":496.4375,"width":313,"height":306},"zoomSizes":[[44,45],[44,44]],"gpsSize":[313,46],"horizontalOverflow":false,"evidence":["not65-responsive-360-inicio.png","not65-responsive-360-mapa.png"]},
+    {"id":"RESP-1366","innerWidth":1366,"innerHeight":768,"dpr":1,"clientWidth":1351,"scrollWidth":1351,"map":{"x":227.5,"y":392.5625,"width":896,"height":293.828125},"zoomSizes":[[44,45],[44,44]],"gpsSize":[896,52],"horizontalOverflow":false,"evidence":["not65-responsive-1366-inicio.png","not65-responsive-1366-mapa.png"]}
+  ],
+  "personalCoordinatesIncluded":false
+}

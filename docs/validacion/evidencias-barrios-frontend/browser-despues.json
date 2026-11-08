@@ -1,0 +1,164 @@
+{
+  "comparison": {
+    "date": "2026-11-07T20:47:10.442Z",
+    "apiStatus": 200,
+    "actual": [],
+    "actualEvidence": "docs/validacion/evidencias-barrios-frontend/api-barrios-vite.body.json (GET real verificado previamente)",
+    "mocked": [
+      {
+        "idBarrio": 1,
+        "idComuna": 2,
+        "nombre": "San Vicente"
+      },
+      {
+        "idBarrio": 2,
+        "idComuna": 2,
+        "nombre": "Franciscanos"
+      },
+      {
+        "idBarrio": 3,
+        "idComuna": 2,
+        "nombre": "Alvernia"
+      },
+      {
+        "idBarrio": 4,
+        "idComuna": 2,
+        "nombre": "Céspedes"
+      },
+      {
+        "idBarrio": 5,
+        "idComuna": 5,
+        "nombre": "Salesiano"
+      },
+      {
+        "idBarrio": 6,
+        "idComuna": 2,
+        "nombre": "La Floresta"
+      },
+      {
+        "idBarrio": 7,
+        "idComuna": 1,
+        "nombre": "Los Sauces"
+      },
+      {
+        "idBarrio": 8,
+        "nombre": "Barrio de ejemplo 3",
+        "idComuna": 3
+      },
+      {
+        "idBarrio": 9,
+        "nombre": "Barrio de ejemplo 4",
+        "idComuna": 4
+      },
+      {
+        "idBarrio": 10,
+        "nombre": "Barrio de ejemplo 6",
+        "idComuna": 6
+      },
+      {
+        "idBarrio": 11,
+        "nombre": "Barrio de ejemplo 7",
+        "idComuna": 7
+      },
+      {
+        "idBarrio": 12,
+        "nombre": "Barrio de ejemplo 8",
+        "idComuna": 8
+      },
+      {
+        "idBarrio": 13,
+        "nombre": "Barrio de ejemplo 9",
+        "idComuna": 9
+      },
+      {
+        "idBarrio": 14,
+        "nombre": "Barrio de ejemplo 10",
+        "idComuna": 10
+      }
+    ],
+    "options": [
+      {
+        "id": "",
+        "name": "Seleccione el barrio"
+      },
+      {
+        "id": "1",
+        "name": "San Vicente"
+      },
+      {
+        "id": "2",
+        "name": "Franciscanos"
+      },
+      {
+        "id": "3",
+        "name": "Alvernia"
+      },
+      {
+        "id": "4",
+        "name": "Céspedes"
+      },
+      {
+        "id": "5",
+        "name": "Salesiano"
+      },
+      {
+        "id": "6",
+        "name": "La Floresta"
+      },
+      {
+        "id": "7",
+        "name": "Los Sauces"
+      },
+      {
+        "id": "8",
+        "name": "Barrio de ejemplo 3"
+      },
+      {
+        "id": "9",
+        "name": "Barrio de ejemplo 4"
+      },
+      {
+        "id": "10",
+        "name": "Barrio de ejemplo 6"
+      },
+      {
+        "id": "11",
+        "name": "Barrio de ejemplo 7"
+      },
+      {
+        "id": "12",
+        "name": "Barrio de ejemplo 8"
+      },
+      {
+        "id": "13",
+        "name": "Barrio de ejemplo 9"
+      },
+      {
+        "id": "14",
+        "name": "Barrio de ejemplo 10"
+      }
+    ],
+    "simulationNotice": true
+  },
+  "stale": {
+    "url": "/reportar/detalles",
+    "errors": [],
+    "staleIdCleared": true,
+    "pointPreserved": true,
+    "payloadOmitsStaleId": true,
+    "payloadKeepsPoint": true,
+    "staleNotice": true,
+    "replayedActualPayload": true,
+    "replayScope": "Solo esta pestaña: catálogo real reproducido en simulador para aislar el frontend; no es una prueba integral sin mocks"
+  },
+  "loading": {
+    "falseEmpty": false,
+    "loadingShown": true,
+    "selectorExists": false,
+    "explicitDelayInjected": true
+  },
+  "mapDoesNotAutoAssignBarrio": true,
+  "gpsRequested": false,
+  "reportSubmitted": false,
+  "passed": true
+}

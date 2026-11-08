@@ -2,11 +2,16 @@ import { Link } from 'react-router-dom'
 import Aviso from './Aviso'
 import './NotaPrivacidad.css'
 
-// «Ver aviso de privacidad»: abre el aviso (público) en la misma pestaña.
-export function EnlacePrivacidad() {
+// Abre el aviso público v3; durante el registro conserva el formulario en su pestaña.
+export function EnlacePrivacidad({ nuevaPestana = false }) {
   return (
-    <Link to="/aviso-privacidad" className="enlace-privacidad">
-      Ver aviso de privacidad
+    <Link
+      to="/aviso-privacidad"
+      className="enlace-privacidad"
+      target={nuevaPestana ? '_blank' : undefined}
+      rel={nuevaPestana ? 'noopener noreferrer' : undefined}
+    >
+      {nuevaPestana ? 'Aviso de privacidad' : 'Ver aviso de privacidad'}
     </Link>
   )
 }
@@ -17,7 +22,7 @@ export default function NotaPrivacidad() {
   return (
     <Aviso variante="nota">
       Sus datos solo se usan para enviar los reportes que usted haga a la Alcaldía o a las
-      empresas de servicios públicos. <EnlacePrivacidad />
+      empresas de servicios públicos. <EnlacePrivacidad nuevaPestana />
     </Aviso>
   )
 }

@@ -1,0 +1,34 @@
+{
+  "url": "https://tulua.gov.co/loader.php?lServicio=Tools2&lTipo=descargas&lFuncion=exposeDocument&idFile=12112",
+  "titulo": "Actualización Plan Municipal de Gestión del Riesgo V3 diciembre 2020",
+  "emisor": "Alcaldía de Tuluá, Secretaría de Gobierno; tabla atribuida a DAPM Tuluá",
+  "tabla": "4. División Político Administrativa de Tuluá",
+  "paginas": [
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+  ],
+  "sha256": "106135a48a81848c0b1804284550114eacdac9b91f13b03e2adbbfc221d88b10",
+  "filas": 135,
+  "conteosPorComuna": [
+    12,
+    8,
+    21,
+    5,
+    16,
+    16,
+    21,
+    18,
+    15,
+    3
+  ],
+  "alcance": "Fuente oficial histórica de 2020; no acredita vigencia administrativa en 2026. Preparación para revisión, no aplicada a producción.",
+  "incidencias": [
+    "La fuente repite el ordinal global 41 y omite 46: se usa la columna Comuna y la numeración local, no el ordinal como id_barrio.",
+    "Cgto. Aguaclara no se incluye: la fuente lo identifica como corregimiento.",
+    "Se conservan los nombres tal como aparecen, incluido El Principio y Urbanización Lusitania/Lusitania (comuna 5). Validar esos nombres y la vigencia con DAPM antes de producción."
+  ]
+}

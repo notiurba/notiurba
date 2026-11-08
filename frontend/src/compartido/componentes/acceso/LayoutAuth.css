@@ -25,6 +25,14 @@
   width: 100%;
   max-width: 440px;
   margin-inline: auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 360px) {
+  .auth__panel {
+    padding-inline: 12px;
+  }
 }
 
 /* Pantallas de celular (todas menos Login y Registro): columna centrada de 430 px máximo */

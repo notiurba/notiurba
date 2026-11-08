@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-07",
+  "observedViteEnv": {"VITE_USAR_MOCKS":"true","VITE_API_URL":""},
+  "realRequest": {
+    "method":"GET",
+    "url":"http://127.0.0.1:5173/api/catalogos/barrios",
+    "proxyTargetConfigured":"https://notiurba-api.onrender.com",
+    "status":200,
+    "contentType":"application/json",
+    "body":[],
+    "responseDate":"Sat, 07 Nov 2026 19:28:42 GMT",
+    "bodyEvidence":"api-barrios-vite.body.json",
+    "headersEvidence":"api-barrios-vite.headers.txt",
+    "authenticationSent":false
+  },
+  "directRequest": {
+    "method":"GET",
+    "url":"https://notiurba-api.onrender.com/api/catalogos/barrios",
+    "httpResponseObserved":false,
+    "result":"curl timeout sin bytes de respuesta, tambien fuera del sandbox (55 segundos). HTTP_STATUS=000 no es un estado HTTP del servidor.",
+    "backendFailureProven":false
+  },
+  "mockCatalog":{"count":14,"explicitExampleNames":7,"geographicProvenanceVerified":false},
+  "browserReplay":{"payload":[],"scope":"Solo obtenerBarrios en pestanas aisladas; las demas operaciones siguen simuladas. No acredita integracion completa ni una sesion real sin mocks."},
+  "gpsRequested":false,
+  "reportSubmitted":false,
+  "backendModified":false
+}

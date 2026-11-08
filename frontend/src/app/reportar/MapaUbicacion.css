@@ -11,6 +11,17 @@
   border: 0;
 }
 
+.mapa-ubicacion:focus-visible {
+  outline: 3px solid var(--nu-marca-primario);
+  outline-offset: 2px;
+}
+
+.mapa-ubicacion .leaflet-control-zoom a {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+}
+
 /* Etiqueta «COMUNA N» en el centro de cada comuna */
 .mapa-ubicacion__etiqueta {
   padding: 0;

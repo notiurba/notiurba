@@ -1,0 +1,47 @@
+{
+  "fecha": "2026-11-07",
+  "entorno": "https://notiurba-api.onrender.com",
+  "respuestas": [
+    {
+      "ruta": "/api/catalogos/barrios",
+      "estado": 200,
+      "cuerpo": []
+    },
+    {
+      "ruta": "/api/catalogos/tipos-documento",
+      "estado": 200,
+      "cuerpo": [
+        {
+          "idTipoDocumento": 1,
+          "nombre": "Cédula de ciudadanía",
+          "codigo": "CC"
+        },
+        {
+          "idTipoDocumento": 2,
+          "nombre": "Cédula de extranjería",
+          "codigo": "CE"
+        },
+        {
+          "idTipoDocumento": 3,
+          "nombre": "Permiso por protección temporal",
+          "codigo": "PPT"
+        },
+        {
+          "idTipoDocumento": 4,
+          "nombre": "Pasaporte",
+          "codigo": "PAS"
+        }
+      ]
+    },
+    {
+      "ruta": "/api/reportes/opciones/barrios",
+      "estado": 401,
+      "cuerpo": {
+        "codigo": "NO_AUTENTICADO",
+        "mensaje": "Tu sesión no es válida o venció. Inicia sesión de nuevo.",
+        "campo": null
+      }
+    }
+  ],
+  "metodo": "curl.exe directo, sin token; no se crearon usuarios ni reportes"
+}

@@ -8,6 +8,10 @@ import ChipEstado from '../../compartido/componentes/ChipEstado'
 import { IconoCopiar, IconoCorreo, IconoX } from '../../compartido/componentes/Iconos'
 import useCargar from '../../compartido/hooks/useCargar'
 import { textoLugar } from '../../compartido/utilidades/reportes'
+import { estadoCorreo } from '../servicios/correoReportes'
+import { presentacionCorreo } from '../componentes/estadoCorreo'
+import { CanalOficial } from '../componentes/ResultadoCorreo'
+import '../paginas/CorreoReportes.css'
 import './ReporteEnviado.css'
 
 // Pantalla final: el reporte salió. Muestra el código de seguimiento de NotiUrba (no es el radicado oficial).
@@ -17,6 +21,10 @@ export default function ReporteEnviado() {
   const { state } = useLocation()
   const cargador = useCallback(() => obtenerReporte(codigo), [codigo])
   const { datos: reporte } = useCargar(cargador)
+  const cargarEnvio = useCallback(() => estadoCorreo(codigo), [codigo])
+  const consultaEnvio = useCargar(cargarEnvio)
+  const envio = consultaEnvio.datos ?? state?.envio
+  const presentacion = presentacionCorreo(envio)
   const [copiado, setCopiado] = useState(false)
 
   async function copiar() {
@@ -39,11 +47,14 @@ export default function ReporteEnviado() {
       <span className="enviado__icono">
         <IconoCorreo tamano={44} />
       </span>
-      <h1>Reporte enviado</h1>
+      <h1>{presentacion.titulo}</h1>
       <p className="enviado__texto">
-        NotiUrba envía su reporte a la Alcaldía de Tuluá. La entidad le responderá directamente a su
-        correo.
+        {presentacion.mensaje}
       </p>
+      <Aviso titulo={presentacion.subtitulo}>{presentacion.etiqueta}. Guardar el reporte o aceptar una solicitud de envío no confirma entrega ni lectura.</Aviso>
+      {consultaEnvio.error && <Aviso variante="error" titulo="No pudimos actualizar el estado del correo">El reporte sigue guardado. Inténtelo de nuevo.</Aviso>}
+      <Boton variante="secundario" onClick={consultaEnvio.recargar} cargando={consultaEnvio.cargando} textoCargando="Consultando…">Actualizar estado del correo</Boton>
+      {envio?.ruta && <CanalOficial ruta={envio.ruta} />}
 
       <div className="enviado__tarjeta">
         <div className="enviado__codigo">
@@ -85,7 +96,7 @@ export default function ReporteEnviado() {
       )}
 
       <Aviso variante="info">
-        Este código es de NotiUrba. La Alcaldía asigna el radicado oficial cuando recibe su correo.
+        Este código es de NotiUrba, no un radicado oficial. Use el seguimiento y el canal indicado para consultar a la entidad.
       </Aviso>
 
       <div className="enviado__acciones">

@@ -1,12 +1,17 @@
 import { peticion } from './cliente'
+import { ErrorApi } from './errorApi'
 
 // POST /api/auth/login → { token, rol }. Con credenciales malas la API responde 401.
-export function iniciarSesion(correo, password) {
-  return peticion('/api/auth/login', {
+export async function iniciarSesion(correo, password) {
+  const respuesta = await peticion('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify({ correo, password }),
     publica: true,
   })
+  if (!respuesta || typeof respuesta.token !== 'string' || !respuesta.token.trim() || typeof respuesta.rol !== 'string') {
+    throw new ErrorApi({ estado: 200, codigo: 'RESPUESTA_INESPERADA', mensaje: 'No pudimos completar el ingreso. Inténtelo de nuevo en un momento.' })
+  }
+  return respuesta
 }
 
 // POST /api/auth/registro → 201 { correo, mensaje } SIN token: hay que confirmar el correo antes de entrar.

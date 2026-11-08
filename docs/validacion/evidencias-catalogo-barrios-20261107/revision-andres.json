@@ -1,0 +1,172 @@
+{
+  "estado": "PENDIENTE_DE_APROBACION",
+  "responsableAprobacion": "Andrés",
+  "aprobadoPor": null,
+  "aprobadoEn": null,
+  "migracion": "backend/migraciones-pendientes/barrios-pmgr-2020/V17__catalogo_barrios_pmgr_2020.sql",
+  "sha256Migracion": "e824e2b71011938b8c0666f07b302ac537a81bd27865689055048fb503dd4fec",
+  "csv": "docs/validacion/evidencias-catalogo-barrios-20261107/barrios-pmgr-2020.csv",
+  "sha256Csv": "fce84f32cfcbd1324b5fa9a8c9b6aa199dfe63d36d212c41297f6766a1744ecc",
+  "sha256Pdf": "106135a48a81848c0b1804284550114eacdac9b91f13b03e2adbbfc221d88b10",
+  "filas": 135,
+  "ejecutadaEnProduccion": false,
+  "ubicadaEnFlywayActivo": false,
+  "incidencias": [
+    {
+      "id": "B01",
+      "nombres": [
+        "El Principio"
+      ],
+      "comunas": [
+        5
+      ],
+      "pendiente": "Confirmar denominacion; no reemplazar automaticamente por El Principe.",
+      "estado": "PENDIENTE",
+      "decision": null,
+      "evidenciaDecision": null,
+      "filas": [
+        {
+          "nombre": "El Principio",
+          "pagina": 18,
+          "ordenFuente": 52,
+          "numeroEnComuna": 6,
+          "comuna": 5
+        }
+      ]
+    },
+    {
+      "id": "B02",
+      "nombres": [
+        "Lusitania",
+        "Urbanización Lusitania"
+      ],
+      "comunas": [
+        5
+      ],
+      "pendiente": "Confirmar si son barrios distintos o denominaciones de una misma entidad.",
+      "estado": "PENDIENTE",
+      "decision": null,
+      "evidenciaDecision": null,
+      "filas": [
+        {
+          "nombre": "Urbanización Lusitania",
+          "pagina": 18,
+          "ordenFuente": 48,
+          "numeroEnComuna": 2,
+          "comuna": 5
+        },
+        {
+          "nombre": "Lusitania",
+          "pagina": 18,
+          "ordenFuente": 56,
+          "numeroEnComuna": 10,
+          "comuna": 5
+        }
+      ]
+    },
+    {
+      "id": "B03",
+      "nombres": [
+        "Diablos Rojos"
+      ],
+      "comunas": [
+        7,
+        8
+      ],
+      "pendiente": "Confirmar que ambas asociaciones son correctas; un nombre compartido no permite deduplicar por nombre solo.",
+      "estado": "PENDIENTE",
+      "decision": null,
+      "evidenciaDecision": null,
+      "filas": [
+        {
+          "nombre": "Diablos Rojos",
+          "pagina": 19,
+          "ordenFuente": 80,
+          "numeroEnComuna": 2,
+          "comuna": 7
+        },
+        {
+          "nombre": "Diablos Rojos",
+          "pagina": 20,
+          "ordenFuente": 102,
+          "numeroEnComuna": 3,
+          "comuna": 8
+        }
+      ]
+    },
+    {
+      "id": "B04",
+      "nombres": [
+        "San Luis",
+        "Urbanización San Luis"
+      ],
+      "comunas": [
+        8
+      ],
+      "pendiente": "Revisar identidad administrativa de ambas variantes; no son duplicados demostrados.",
+      "estado": "PENDIENTE",
+      "decision": null,
+      "evidenciaDecision": null,
+      "filas": [
+        {
+          "nombre": "San Luis",
+          "pagina": 20,
+          "ordenFuente": 111,
+          "numeroEnComuna": 12,
+          "comuna": 8
+        },
+        {
+          "nombre": "Urbanización San Luis",
+          "pagina": 20,
+          "ordenFuente": 114,
+          "numeroEnComuna": 15,
+          "comuna": 8
+        }
+      ]
+    },
+    {
+      "id": "B05",
+      "nombres": [
+        "Santa Inés",
+        "Santa Inés - Comfamiliar"
+      ],
+      "comunas": [
+        8
+      ],
+      "pendiente": "Revisar identidad administrativa de ambas variantes; no son duplicados demostrados.",
+      "estado": "PENDIENTE",
+      "decision": null,
+      "evidenciaDecision": null,
+      "filas": [
+        {
+          "nombre": "Santa Inés",
+          "pagina": 20,
+          "ordenFuente": 112,
+          "numeroEnComuna": 13,
+          "comuna": 8
+        },
+        {
+          "nombre": "Santa Inés - Comfamiliar",
+          "pagina": 20,
+          "ordenFuente": 116,
+          "numeroEnComuna": 17,
+          "comuna": 8
+        }
+      ]
+    }
+  ],
+  "confirmados": [
+    "Transcripcion de 135 filas y correspondencias barrio-comuna de la fuente de 2020",
+    "Cero duplicados exactos del par comuna/nombre en el CSV",
+    "Ordinales de la fuente no son IDs de base de datos",
+    "Cgto. Aguaclara excluido por ser corregimiento",
+    "Idempotencia, integridad y UI demostradas en QA anterior"
+  ],
+  "pendientesGenerales": [
+    "Vigencia de las 135 asociaciones en 2026 y cobertura del catalogo",
+    "Resolucion documentada de B01-B05",
+    "Confirmacion de siguiente version Flyway libre en el destino autorizado",
+    "Aprobacion del CSV, SQL y hashes finales por Andres",
+    "Autorizacion explicita del equipo para ejecutar la carga en el destino indicado"
+  ]
+}

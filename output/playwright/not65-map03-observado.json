@@ -1,0 +1,27 @@
+{
+  "case": "MAP-03",
+  "permissionBefore": "denied",
+  "denialText": "Permiso de ubicación denegado\n\nNo tenemos permiso para acceder a su ubicación. Puede seleccionar el lugar manualmente en el mapa.\n\nMarcar en el mapa\nVolver a obtener mi ubicación",
+  "pointPreservedAfterDenied": true,
+  "manualPointChanged": true,
+  "manualPointFinite": true,
+  "observed": {
+    "date": "2026-11-07T19:00:22.556Z",
+    "url": "http://127.0.0.1:5173/reportar/ubicacion",
+    "permission": "denied",
+    "busy": false,
+    "visibleDialogs": 0,
+    "markers": 1,
+    "selected": true
+  },
+  "passed": true,
+  "personalCoordinatesIncluded": false,
+  "simulatedPermissions": false,
+  "simulatedCoordinates": false,
+  "status": "APROBADA",
+  "evidence": [
+    "not65-map03-denegado-real.png",
+    "not65-map03-manual-sin-gps.png"
+  ],
+  "scope": "Denegacion real comprobada antes de solicitar GPS. Alternativa manual comprobada dentro de MAP-03, sin repetir los demas casos. Captura del dialogo aislado y mapa oculto en captura de seleccion manual."
+}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { estadoRetornoReporte } from '../auth/retornoReporte'
 import { reenviarVerificacion } from '../api/auth'
 import Aviso from '../componentes/avisos/Aviso'
 import Boton from '../componentes/Boton'
@@ -13,9 +14,11 @@ import './VerificarCorreo.css'
 // El correo viaja en el estado de la navegación; si alguien entra directo a la dirección, vuelve al login.
 export default function VerificarCorreo() {
   const { state } = useLocation()
+  const navigate = useNavigate()
+  const retorno = estadoRetornoReporte(state?.siguiente)
   const [reenviando, setReenviando] = useState(false)
   const [resultado, setResultado] = useState(null) // { tipo: 'exito' | 'error', texto }
-  if (!state?.correo) return <Navigate to="/login" replace />
+  if (!state?.correo) return <Navigate to="/login" state={retorno} replace />
 
   // La API limita a un reenvío por minuto y responde siempre lo mismo exista o no la cuenta.
   async function reenviar() {
@@ -32,7 +35,7 @@ export default function VerificarCorreo() {
 
   return (
     <LayoutAuth>
-      <EncabezadoPantalla atras="/login" />
+      <EncabezadoPantalla alAtras={() => navigate('/login', { state: retorno })} />
 
       <div className="verificar">
         <div className="verificar__sobre" aria-hidden="true">

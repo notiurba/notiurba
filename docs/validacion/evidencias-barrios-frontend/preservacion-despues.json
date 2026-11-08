@@ -1,0 +1,919 @@
+{
+  "date": "2026-11-07T21:00:51.024Z",
+  "prohibitedChanges": [],
+  "allProtectedUnchanged": true,
+  "results": [
+    {
+      "file": "backend/.dockerignore",
+      "unchanged": true
+    },
+    {
+      "file": "backend/.env.validation.example",
+      "unchanged": true
+    },
+    {
+      "file": "backend/.gitignore",
+      "unchanged": true
+    },
+    {
+      "file": "backend/Dockerfile",
+      "unchanged": true
+    },
+    {
+      "file": "backend/README.md",
+      "unchanged": true
+    },
+    {
+      "file": "backend/pom.xml",
+      "unchanged": true
+    },
+    {
+      "file": "backend/scripts/generar-barrios.py",
+      "unchanged": true
+    },
+    {
+      "file": "backend/scripts/generar-capa-comunas.py",
+      "unchanged": true
+    },
+    {
+      "file": "backend/scripts/plantilla-barrios.csv",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/NotiUrbaApplication.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/admin/AdminController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/admin/AdminPingController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/admin/AdminRepositorio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/admin/AdminServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/admin/CambiarEstadoRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/admin/CambioEstadoResponse.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/admin/EstadoReporte.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/admin/SpatialDiagnosticsController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/admin/VigenciaRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/admin/VigenciaResponse.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/AuthController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/LoginRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/LoginResponse.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/ReglaContrasena.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/google/CompletarPerfilRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/google/GoogleAuthController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/google/GoogleAuthServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/google/GoogleLoginRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/google/GoogleTokenVerificador.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/google/PerfilGoogle.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/google/ResultadoGoogle.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/recuperacion/EnviadorEnlaceRecuperacion.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/recuperacion/EnviadorEnlaceRecuperacionCorreo.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/recuperacion/EnviadorEnlaceRecuperacionLog.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/recuperacion/RecuperacionController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/recuperacion/RecuperacionServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/recuperacion/RecuperarRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/recuperacion/RestablecerRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/registro/MensajeResponse.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/registro/ReenviarRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/registro/RegistroController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/registro/RegistroRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/registro/RegistroServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/registro/VerificacionServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/auth/registro/VerificarRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/catalogo/CatalogoController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/categoria/Categoria.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/categoria/CategoriaController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/categoria/CategoriaRepository.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/categoria/CategoriaResponse.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/config/SecurityConfig.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/ColaCorreoConfig.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/CorreoConfig.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/CorreoNoEnviadoException.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/CorreoReporteController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/CorreoSaliente.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/EnrutamientoServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/EnviadorCorreo.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/EnviadorCorreoResend.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/EnvioReporteServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/FirmaWebhook.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/PlantillaReporte.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/ReboteController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/correo/WebhookSecurityConfig.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/foto/AlmacenFotos.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/foto/AlmacenFotosCloudinary.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/foto/AlmacenFotosNoDisponibleException.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/foto/CloudinaryPhotoStore.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/foto/CloudinarySignature.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/foto/FotoGuardada.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/foto/FotosConfig.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/foto/JpegValidator.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/foto/PhotoDiagnosticsController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/foto/PhotoUploadErrors.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/foto/TipoImagen.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/geo/AsignadorDeComuna.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/geo/Comuna.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/geo/ComunaRepository.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/geo/SpatialProbe.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/ActualizacionReporteServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/ActualizarReporteRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/CrearReporteRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/FotoServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/FotoSubidaResponse.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/ListadoReportesController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/ListadoReportesRepositorio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/ListadoReportesServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/ReporteController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/ReporteCreadoResponse.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/ReporteDetalleResponse.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/ReporteRepositorio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/ReporteResumenResponse.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/reporte/ReporteServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/seguridad/JwtFiltro.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/seguridad/JwtProveedor.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/ActualizarPerfilRequest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/CatalogosRegistro.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/EliminacionDatosServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/IdentidadExterna.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/IdentidadExternaRepository.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/PerfilController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/PerfilResponse.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/PerfilServicio.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/ProveedorIdentidad.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/ProveedorIdentidadRepository.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/ReglasPerfil.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/Rol.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/RolRepository.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/TipoToken.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/TipoTokenRepository.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/TokenVerificacion.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/TokenVerificacionRepository.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/Usuario.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/usuario/UsuarioRepository.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/web/HealthController.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/web/error/ApiException.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/web/error/Codigos.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/web/error/ErrorApi.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/web/error/ManejadorErrores.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/java/com/notiurba/web/error/ManejadorSeguridad.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/application-validation.yml",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/application.yml",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V10__columnas_rebotes_de_correo.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V11__identificador_de_foto_en_el_almacen.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V12__aviso_de_privacidad_v3.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V13__asignar_comuna_por_punto.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V14__capa_comunas_experimental.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V15__barrio_interno.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V16__enrutamiento_y_envios.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V1__esquema.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V2__reglas_y_vistas.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V3__catalogos_iniciales.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V4__usuario_admin_semilla.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V5__login_google.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V6__nombres_apellidos.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V7__ajustes_modelo_v8.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V8__categoria_10_y_sedama.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/main/resources/db/migration/V9__quitar_modo_envio_borrador.sql",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/CloudinaryIntegrationTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/DiagnosticsDisabledTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/DiagnosticsSecurityTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/MigrationIntegrationTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/SpatialIntegrationTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/admin/AdminControllerTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/admin/AdminIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/admin/ConfiguracionIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/auth/AuthControllerTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/auth/google/GoogleAuthControllerTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/auth/google/GoogleAuthServicioTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/auth/google/GoogleTokenVerificadorTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/auth/recuperacion/EnviadorEnlaceRecuperacionCorreoTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/auth/recuperacion/RecuperacionControllerTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/auth/recuperacion/RecuperacionServicioTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/auth/registro/RegistroControllerTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/auth/registro/RegistroServicioTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/auth/registro/VerificacionServicioTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/catalogo/CatalogoControllerTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/catalogo/CatalogoIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/config/CorsOrigenesTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/correo/ColaDeshabilitadaTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/correo/DestinoDePruebaTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/correo/EnrutamientoIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/correo/EnviadorCorreoResendRealTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/correo/EnviadorCorreoResendTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/correo/FirmaWebhookTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/correo/MigracionEnrutamientoTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/correo/PlantillaReporteTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/errores/ErroresHttpRealTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/foto/AlmacenFotosCloudinaryRealTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/foto/AlmacenFotosCloudinaryTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/foto/CloudinaryPhotoStoreTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/foto/CloudinarySignatureCheck.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/foto/CloudinarySignatureTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/foto/JpegValidatorCheck.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/foto/JpegValidatorTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/foto/TipoImagenTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/geo/AsignacionDeComunaIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/geo/AsignacionListaNot31IntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/reporte/ActualizacionReporteIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/reporte/BarrioDePrueba.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/reporte/BaseDeDatosTemporal.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/reporte/DatosDePrueba.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/reporte/FotoServicioTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/reporte/ListadoReportesIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/reporte/ReporteCodigoIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/reporte/ReporteConsultaIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/reporte/ReporteFotosIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/reporte/ReporteServicioTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/seguridad/JwtFiltroTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/usuario/AvisoPrivacidadIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/usuario/EliminacionDatosIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/usuario/PerfilIntegracionTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/usuario/UsuariosDePrueba.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/java/com/notiurba/web/HealthControllerTest.java",
+      "unchanged": true
+    },
+    {
+      "file": "backend/src/test/resources/pruebas.properties",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/src/compartido/geo/comunas-tulua-POT2015-candidato.geojson",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/src/compartido/geo/comunas-tulua-dane-2018.geojson",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/src/compartido/geo/comunasTulua.js",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/src/compartido/geo/estiloComunas.js",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/src/compartido/geo/geoUtils.js",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/src/compartido/geo/geoUtils.test.mjs",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/.gitignore",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/android-entorno.json",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/android-probe.cjs",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/build.txt",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/eslint.txt",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/figma-actual-antes-permiso.png",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/figma-actual-denegado.png",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/figma-actual-especificacion.png",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/figma-referencia-error.png",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/figma-referencia-ubicacion.png",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/git-status-inicial.txt",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/hashes-preexistentes.txt",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/MapaUbicacion-antes.jsx",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/PasoUbicacion-antes.jsx",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/preservacion.json",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/privacidad-android.json",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/privacidad-git-verificada.json",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/pruebas-unitarias-gps.txt",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/resultados-antes-continuacion-fisica.json",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/resultados-antes-escritorio.json",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/resultados-antes-map03.json",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/resultados.json",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/evidencias-NOT-65/sockets.txt",
+      "unchanged": true
+    },
+    {
+      "file": "docs/validacion/NOT-65-informe.md",
+      "unchanged": true
+    },
+    {
+      "file": "frontend/src/app/reportar/PasoUbicacion.jsx",
+      "unchanged": false
+    },
+    {
+      "file": "frontend/src/app/reportar/ReportarLayout.jsx",
+      "unchanged": false
+    },
+    {
+      "file": "frontend/src/compartido/api/catalogos.js",
+      "unchanged": true
+    }
+  ]
+}

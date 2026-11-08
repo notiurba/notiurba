@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import AreaTexto from '../../compartido/componentes/formulario/AreaTexto'
 import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
 import Campo from '../../compartido/componentes/formulario/Campo'
+import Casilla from '../../compartido/componentes/formulario/Casilla'
 import EncabezadoPantalla from '../../compartido/componentes/EncabezadoPantalla'
 import FormularioPantalla from '../../compartido/componentes/formulario/FormularioPantalla'
 import HojaInferior from '../../compartido/componentes/avisos/HojaInferior'
@@ -12,11 +13,21 @@ import PasosBarra from '../../compartido/componentes/PasosBarra'
 import BotonIcono from '../../compartido/componentes/BotonIcono'
 import { reducirFoto } from '../../compartido/utilidades/fotos'
 import { LIMITES } from '../../compartido/validaciones/campos'
-import { MAX_DESCRIPCION, MAX_FOTOS, MIN_DESCRIPCION, validarDetalles, validarFoto } from '../../compartido/validaciones/reporte'
+import { MAX_DESCRIPCION, MAX_FOTOS, MIN_DESCRIPCION, validarDetalles, validarFoto, validarUbicacion } from '../../compartido/validaciones/reporte'
 import ResumenCategoria from './ResumenCategoria'
 import { useReporte } from './useReporte'
 import './Reportar.css'
 import './PasoDetalles.css'
+
+function MiniaturaFoto({ foto, numero }) {
+  const imagen = useRef(null)
+  useEffect(() => {
+    const url = URL.createObjectURL(foto)
+    imagen.current.src = url
+    return () => URL.revokeObjectURL(url)
+  }, [foto])
+  return <img ref={imagen} alt={`Vista previa de la foto ${numero}`} />
+}
 
 // Paso 3 de 4: descripción (obligatoria), fotos (opcionales) y matrícula del servicio (opcional).
 export default function PasoDetalles() {
@@ -30,9 +41,9 @@ export default function PasoDetalles() {
 
   const categoria = categorias?.find((c) => String(c.idCategoria) === borrador.idCategoria)
   if (!borrador.idCategoria) return <Navigate to="/reportar" replace />
-  if (!categoria) return <p className="cargando-texto">Cargando…</p>
-  const pideUbicacion = categoria.requiereUbicacion !== false
-  if (pideUbicacion && borrador.latitud == null) return <Navigate to="/reportar/ubicacion" replace />
+  if (!categorias) return <p className="cargando-texto">Cargando…</p>
+  if (!categoria) return <Navigate to="/reportar" replace />
+  if (Object.keys(validarUbicacion(borrador, categoria)).length) return <Navigate to="/reportar/ubicacion" replace />
 
   async function agregarFotos(evento) {
     const elegidas = [...evento.target.files]
@@ -60,6 +71,7 @@ export default function PasoDetalles() {
 
   function continuar(evento) {
     evento.preventDefault()
+    if (reduciendo) return
     const encontrados = validarDetalles(borrador)
     setErrores(encontrados)
     if (Object.keys(encontrados).length === 0) navigate('/reportar/confirmacion')
@@ -67,13 +79,13 @@ export default function PasoDetalles() {
 
   return (
     <>
-      <EncabezadoPantalla titulo="Nuevo reporte" atras={pideUbicacion ? '/reportar/ubicacion' : '/reportar'} />
+      <EncabezadoPantalla titulo="Nuevo reporte" atras="/reportar/ubicacion" />
 
       <FormularioPantalla
         alEnviar={continuar}
-        acciones={<Boton type="submit">Continuar</Boton>}
+        acciones={<Boton type="submit" disabled={reduciendo}>Continuar</Boton>}
       >
-        <PasosBarra paso={3} total={4} etiqueta="Detalles" />
+        <PasosBarra paso={3} total={4} etiqueta="Descripción y fotografías" />
         <ResumenCategoria categoria={categoria} />
         <h2 className="reportar__titulo">Cuéntenos más</h2>
 
@@ -89,7 +101,7 @@ export default function PasoDetalles() {
               setErrores({})
             }}
             error={errores.descripcion}
-            ayuda={`Mínimo ${MIN_DESCRIPCION} caracteres`}
+            ayuda={`Escriba entre ${MIN_DESCRIPCION} y ${MAX_DESCRIPCION} caracteres. No incluya datos personales de terceros.`}
           />
           <p className="detalles__contador" aria-live="polite">
             {borrador.descripcion.length}/{MAX_DESCRIPCION}
@@ -123,7 +135,7 @@ export default function PasoDetalles() {
           {fotos.map((foto, i) => (
             <div key={`${foto.name}-${i}`} className="detalles__foto">
               <span className="detalles__miniatura">
-                <IconoImagen tamano={22} />
+                <MiniaturaFoto foto={foto} numero={i + 1} />
               </span>
               <div>
                 <strong>
@@ -133,6 +145,7 @@ export default function PasoDetalles() {
               </div>
               <BotonIcono
                 variante="peligro"
+                disabled={reduciendo}
                 etiqueta={`Quitar la foto ${i + 1}`}
                 onClick={() => setFotos(fotos.filter((_, posicion) => posicion !== i))}
               >
@@ -145,7 +158,7 @@ export default function PasoDetalles() {
               Preparando foto…
             </p>
           )}
-          <p className="reportar__mensaje">Hasta {MAX_FOTOS} fotos en JPG o PNG.</p>
+          <p className="reportar__mensaje">Hasta {MAX_FOTOS} fotos JPG o PNG. Prepararemos cada foto para que no supere 1 MB.</p>
         </div>
 
         <Aviso variante="alerta" titulo="Sus fotos tendrán un enlace público">
@@ -153,16 +166,19 @@ export default function PasoDetalles() {
           placas de vehículos.
         </Aviso>
 
-        <Campo
+        {categoria.admiteMatricula && <Campo
           id="matricula"
           maxLength={LIMITES.matricula}
           etiqueta="Matrícula o cuenta del servicio"
           opcional
           placeholder="Ej. N.º de contrato o matrícula"
-          ayuda="Solo para reportes de agua, gas o energía."
+          ayuda="Es el número que aparece en su factura."
           value={borrador.matricula}
           onChange={(e) => cambiar({ matricula: e.target.value })}
-        />
+        />}
+        <Casilla id="emergencia" checked={borrador.emergencia === true} onChange={e => cambiar({ emergencia: e.target.checked })}>
+          Es una emergencia o situación de riesgo inmediato. El correo no es un canal de atención urgente.
+        </Casilla>
       </FormularioPantalla>
 
       <HojaInferior

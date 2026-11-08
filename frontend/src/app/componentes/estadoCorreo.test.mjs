@@ -22,6 +22,7 @@ test('canal externo y gas 164 no simulan envío exitoso', () => {
   const ruta = { canal: 'Teléfono', acceso: '164', mensaje: 'Emergencia de gas: llama al 164' }
   assert.equal(enlaceCanal(ruta), 'tel:164')
   assert.equal(presentacionCorreo({ estado: 'NO_ENVIADO_CORREO', ruta }).etiqueta, 'NO_ENVIADO_CORREO')
+  assert.equal(presentacionCorreo({ estado: 'NO_ENVIADO_CORREO' }).titulo, 'Reporte guardado')
 })
 test('los enlaces de canales rechazan scripts, HTTP y credenciales', () => {
   for (const acceso of ['javascript:alert(1)', 'http://celsia.com', 'https://clave@celsia.com']) assert.equal(enlaceCanal({ acceso }), null)
