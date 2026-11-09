@@ -8,7 +8,7 @@ hosting eran «por definir» y quedan como propuesta.
 | Backend | Java 21 + Spring Boot 3.3 (web, data-jpa, security, validation) |
 | Geolocalización | PostgreSQL 16 + PostGIS 3.4 (índice GiST), Hibernate Spatial |
 | Seguridad | Spring Security + JWT (jjwt) |
-| Frontend | React 18 + Vite + vite-plugin-pwa |
+| Frontend | React 19 + Vite 8 + react-router 7 + Leaflet 1.9 + leaflet.heat. **`vite-plugin-pwa` aún no está instalado**: la app todavía no es instalable (NOT-134) |
 | Mapas | Leaflet 1.9 + OpenStreetMap + Leaflet.heat |
 | Correo | Resend (decidido 29/10/2026; plan gratuito 3.000/mes y 100/día). Se envía por la API HTTP de Resend (HTTPS), implementada en `EnviadorCorreoResend`; ver abajo |
 | Contenedores | Docker (postgis/postgis) para desarrollo local |
@@ -18,7 +18,7 @@ hosting eran «por definir» y quedan como propuesta.
 ## Mapas (Leaflet + OpenStreetMap)
 
 - Leaflet 1.9.4 es la versión estable; no usar la 2.0 alpha.
-- `react-leaflet` como envoltura: verificar compatibilidad con React 18 (por verificar).
+- El frontend usa Leaflet directo (sin `react-leaflet`) con React 19.
 - Mapa de calor con el plugin **Leaflet.heat**: `L.heatLayer([[lat, lng, intensidad], ...], {radius, blur, max, gradient})`.
   - Riesgo: Leaflet.heat 0.2.0 es de 2015, sin mantenimiento. Basta para el MVP, pero
     probarlo con Leaflet 1.9.4 antes de comprometerse.
@@ -41,18 +41,19 @@ preferencia sin tarjeta, enlace público estable, sin depender del disco del ser
 
 ## Despliegue actual (28/10/2026)
 
-Verificado de punta a punta el 28/10/2026.
+Despliegue inicial verificado el 28/10/2026; hoy corre con las migraciones V1 a V18 y las variables de abajo.
 
 | Pieza | Servicio | Detalle |
 | --- | --- | --- |
 | Frontend (PWA) | Netlify | https://notiurba.netlify.app · `frontend/public/_redirects` (`/*  /index.html  200`) para el router SPA · variable `VITE_API_URL` |
 | Backend | Render Web Service (Docker, Free, Virginia) | https://notiurba-api.onrender.com · Auto-Deploy «On Commit» · arranque en frío ~2 min |
-| Base de datos | Neon (Ohio, conexión directa) | Flyway aplicó V1–V8; PostGIS se activa en V1 (`CREATE EXTENSION postgis`); admin sembrado por V4 |
+| Base de datos | Neon (Ohio, conexión directa) | Flyway aplica las migraciones al arrancar (hoy V1–V18); PostGIS se activa en V1 (`CREATE EXTENSION postgis`); admin sembrado por V4 |
 | Login con Google | Google Auth Platform (cliente OAuth Web) | En estado «Prueba» con 3 usuarios de prueba; no publicado |
 
-Variables de entorno en Render: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`,
-`ADMIN_DEV_PASSWORD`, `GOOGLE_CLIENT_ID`, `CORS_ORIGINS`, `RECUPERACION_ENLACE`,
-`RECUPERACION_MOSTRAR_ENLACE`, `PORT`. Ningún secreto va en el repo.
+Variables de entorno en Render (lista completa y reglas en [12-estado-actual-y-traspaso.md](12-estado-actual-y-traspaso.md)):
+`DB_*`, `JWT_SECRET`, `ADMIN_DEV_PASSWORD`, `GOOGLE_CLIENT_ID`, `CORS_ORIGINS` (con comodín para las vistas previas),
+`RECUPERACION_ENLACE`, `VERIFICACION_ENLACE`, `RESEND_*` (incluida `RESEND_PRUEBA_DESTINO`, que debe seguir puesta en pruebas),
+`NOTIURBA_ENVIO_REPORTES_HABILITADO`, `CLOUDINARY_*`. Ningún secreto va en el repo.
 
 Pruebas que pasan contra Render (colección Postman en `docs/api/`):
 `GET /api/health` → 200 `{estado, baseDeDatos: ok}`; `POST /api/auth/login` (admin) → 200 con
@@ -85,8 +86,8 @@ Render: `RESEND_API_KEY` y `RESEND_REMITENTE`. Resend también acepta SMTP por 2
 ## Pendientes del stack
 
 - Hosting desplegado y fotos con Cloudinary: el almacén (`AlmacenFotos`) y el endpoint de subida (NOT-52) están hechos. Probado en producción el 01/11/2026: una foto subida desde Render con las variables `CLOUDINARY_*` ya puestas, y su URL pública cargó sin sesión.
-- Probar desde Render el envío con la API HTTP de Resend (ya probado desde local; PostGIS en Neon ya verificado).
-- Ejecutar la prueba mínima del mapa y probar Leaflet.heat con Leaflet 1.9.4 (Linear NOT-9).
-- Confirmar si se usa react-leaflet y su compatibilidad con React 18.
+- Instalar `vite-plugin-pwa` y definir el manifiesto sin guardar teselas de OSM (NOT-134).
+- Conectar el mapa de calor (Leaflet.heat 0.2.0, ya en el panel con datos de prueba) a la API real (NOT-136).
+- Resend desde Render: probado y funcionando; en producción todo sale a la bandeja de pruebas (NOT-131).
 
 Fuente: pestaña «Stack tecnológico» del Google Doc.

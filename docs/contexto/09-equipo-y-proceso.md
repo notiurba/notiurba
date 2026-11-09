@@ -17,15 +17,17 @@ empresas de servicios públicos (informadas), docente.
 - Cambios de alcance: los aprueba además el docente.
 - Seguimiento: reunión semanal e informe por sprint.
 
-## Cronograma (3 sprints + cierre)
+## Cronograma (3 sprints + cierre) — estado al 9 de noviembre de 2026
 
-- **Sprint 1** (planeación): requisitos, diseño técnico, prototipo Figma, comunas,
-  repositorio y entorno. Meta: 18 de octubre de 2026.
-- **Sprint 2** (semanas 4–6): desarrollo del núcleo.
-- **Sprint 3**: envío de correo, estados y consulta del reporte.
-- **Cierre** (desde el 30 de noviembre): pruebas de aceptación.
-- Nota de la planificación: el Sprint 3 carga 62 de 155 puntos frente a 39 del Sprint 2;
-  conviene adelantar el envío (7.6) y los estados (7.4) al Sprint 2.
+- **Sprint 1** (29 sep al 19 oct): planeación (requisitos, diseño técnico, prototipo Figma,
+  comunas, repositorio y entorno). Cerrado: 21 puntos, 9 historias.
+- **Sprint 2** (20 oct al 10 nov): núcleo de la app (registro, login, reporte con foto y GPS,
+  asignación de comuna, estados, correo). Cerrado y presentado al docente: 55 puntos en
+  historias (22 historias; con subtareas Linear cuenta 77 issues).
+- **Sprint 3** (10 al 29 nov): **último**. Pulir y completar el MVP; 14 historias, 65 puntos.
+  Ver [13-sprint-3.md](13-sprint-3.md).
+- Cierre del proyecto en Linear: 30 de noviembre. La materia termina el 13 de diciembre.
+- No habrá ciclos después del Sprint 3 (en Linear solo existen los ciclos 1 a 3).
 
 ## Estimación
 
@@ -35,7 +37,9 @@ presupuesto» y «4. Cronograma y ruta crítica» del Google Doc.
 
 ## Herramientas de gestión
 
-- **Linear**: issues y sprints (ej. NOT-5 empresas, NOT-9 prueba del mapa, NOT-10 requisitos).
+- **Linear**: issues y sprints. Equipo «NotiUrba», proyecto «NotiUrba - mvp», claves `NOT-n`. Historias con puntos
+  Fibonacci (1 punto = 4 horas), criterios Dado–Cuando–Entonces y máximo 5 historias por persona.
+  El Sprint 3 no usa subtareas. Plantilla en [13-sprint-3.md](13-sprint-3.md).
 - **GitHub**: repositorio `notiurba/notiurba`.
 - **Google Doc**: documentación formal de planeación.
 

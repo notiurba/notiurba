@@ -1,6 +1,6 @@
 # ADR-0003 — Fuente cartográfica de las comunas
 
-**Estado:** Aceptada como fuente **provisional**; pendiente de validación administrativa.
+**Estado:** Aceptada como fuente **provisional**. El 9 de noviembre de 2026 el docente aceptó que la capa de comunas y el catálogo de barrios queden provisionales en el MVP; la validación con Planeación ya no es un entregable del equipo.
 
 ## Contexto
 
@@ -24,3 +24,10 @@ en `comunas-tulua-POT2015-candidato.geojson`. Se marca como provisional.
 - La capa tiene huecos y solapamientos (ver `06-comunas-y-territorio.md`); falta una
   regla para los puntos que caen en ellos.
 - Alternativa documentada: capa DANE 2018, pero solo tiene 9 comunas (le falta la 10).
+
+## Actualización (9 de noviembre de 2026)
+
+- La capa instalada hoy no es la del POT: es la **sintética y experimental** de NOT-31 (migración V14), generada con
+  `backend/scripts/generar-capa-comunas.py`, que la aplicación usa para asignar la comuna (`fn_asignar_comuna`, V13).
+- Los barrios son 133 de la fuente histórica PMGR 2020 (V17, `docs/datos/barrios-pmgr-2020.md`), con su comuna.
+- Reemplazar ambos es posible con una migración nueva (V19 en adelante) y los scripts; no hace falta tocar código.
