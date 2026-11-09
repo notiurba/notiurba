@@ -96,7 +96,7 @@ export default function PasoUbicacion() {
         <PasosBarra paso={2} total={4} etiqueta="Ubicación" />
         <ResumenCategoria categoria={categoria} />
         <h2 className="reportar__titulo">{pideUbicacion ? '¿Dónde ocurrió?' : 'Ubicación no requerida'}</h2>
-        {!pideUbicacion && <Aviso>Esta categoría no requiere ubicación. Puede continuar al paso de descripción y fotografías.</Aviso>}
+        {!pideUbicacion && <Aviso>Para este tipo de reporte la ubicación es opcional. Si quiere, márquela en el mapa: ayuda a ubicar el problema. Si no, pase al siguiente paso.</Aviso>}
         {pideUbicacion && <>
         {import.meta.env.DEV && import.meta.env.VITE_USAR_MOCKS === 'true' && (
           <Aviso titulo="Modo demostración">
