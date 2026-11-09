@@ -11,6 +11,7 @@ import NoEncontrada from './compartido/paginas/NoEncontrada'
 import Registro from './compartido/paginas/Registro'
 import VerificarCorreo from './compartido/paginas/VerificarCorreo'
 import RutaProtegida from './compartido/auth/RutaProtegida'
+import SoloSinSesion from './compartido/auth/SoloSinSesion'
 import { AccesoConRetorno, RetornoDesdePerfil } from './compartido/auth/NavegacionAcceso'
 import RutasApp from './app/rutas'
 import EstadoApi from './compartido/paginas/EstadoApi'
@@ -23,9 +24,9 @@ const RutasAdmin = lazy(() => import('./admin/rutas'))
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Bienvenida />} />
-      <Route path="/login" element={<AccesoConRetorno><Login /></AccesoConRetorno>} />
-      <Route path="/registro" element={<AccesoConRetorno><Registro /></AccesoConRetorno>} />
+      <Route path="/" element={<SoloSinSesion><Bienvenida /></SoloSinSesion>} />
+      <Route path="/login" element={<SoloSinSesion><AccesoConRetorno><Login /></AccesoConRetorno></SoloSinSesion>} />
+      <Route path="/registro" element={<SoloSinSesion><AccesoConRetorno><Registro /></AccesoConRetorno></SoloSinSesion>} />
       <Route path="/verificar-correo" element={<VerificarCorreo />} />
       <Route path="/recuperar" element={<RecuperarContrasena />} />
       <Route path="/nueva-contrasena" element={<NuevaContrasena />} />
