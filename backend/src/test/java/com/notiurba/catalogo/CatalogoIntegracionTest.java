@@ -77,7 +77,7 @@ class CatalogoIntegracionTest {
         JsonNode lista = pedir("/api/catalogos/barrios");
         assertThat(lista.size()).isGreaterThanOrEqualTo(3);
         var nombres = lista.findValuesAsText("nombre");
-        assertThat(nombres).isSortedAccordingTo(String.CASE_INSENSITIVE_ORDER.thenComparing(java.util.Comparator.naturalOrder()));
+        assertThat(nombres).isSortedAccordingTo(java.text.Collator.getInstance(new java.util.Locale("es", "CO")));
         assertThat(nombres).contains("Aaa Prueba catálogo", "Zzz Prueba catálogo");
         assertThat(lista.get(0).get("idBarrio").asInt()).isPositive();
         assertThat(lista.get(0).get("idComuna").asInt()).isBetween(1, 10);

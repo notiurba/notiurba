@@ -1,6 +1,10 @@
 package com.notiurba.catalogo;
 
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,12 +37,20 @@ public class CatalogoController {
                         rs.getString("nombre"), rs.getString("codigo")));
     }
 
-    /** Sin los barrios internos (p. ej. el del administrador): no son para elegir. */
+    /**
+     * Sin los barrios internos (p. ej. el del administrador): no son para elegir. Se ordenan aquí con las reglas
+     * del español (Céspedes antes que Chiminangos) y no con la configuración de idioma de la base, que cambia
+     * entre bases y haría que el selector salga distinto en cada una.
+     */
     @GetMapping("/api/catalogos/barrios")
     public List<BarrioResponse> barrios() {
-        return jdbc.query(
-                "SELECT id_barrio, id_comuna, nombre FROM barrio WHERE NOT interno ORDER BY nombre, id_barrio",
+        List<BarrioResponse> barrios = new ArrayList<>(jdbc.query(
+                "SELECT id_barrio, id_comuna, nombre FROM barrio WHERE NOT interno",
                 (rs, n) -> new BarrioResponse(rs.getInt("id_barrio"), rs.getShort("id_comuna"),
-                        rs.getString("nombre")));
+                        rs.getString("nombre"))));
+        Collator español = Collator.getInstance(new Locale("es", "CO"));
+        español.setStrength(Collator.TERTIARY);
+        barrios.sort(Comparator.comparing(BarrioResponse::nombre, español).thenComparingInt(BarrioResponse::idBarrio));
+        return barrios;
     }
 }
