@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
@@ -9,69 +9,78 @@ import HojaInferior from '../../compartido/componentes/avisos/HojaInferior'
 import { IconoSinUbicacion, IconoUbicacion } from '../../compartido/componentes/Iconos'
 import PasosBarra from '../../compartido/componentes/PasosBarra'
 import Selector from '../../compartido/componentes/formulario/Selector'
-import { comunasTulua } from '../../compartido/geo/comunasTulua'
-import { identificarComunaPorCoordenadas } from '../../compartido/geo/geoUtils'
-import { LIMITES } from '../../compartido/validaciones/campos'
 import { validarUbicacion } from '../../compartido/validaciones/reporte'
 import MapaUbicacion from './MapaUbicacion'
 import ResumenCategoria from './ResumenCategoria'
 import { useReporte } from './useReporte'
+import { obtenerPosicionGps, TEXTOS_UBICACION } from './ubicacionGps'
 import './Reportar.css'
 import './PasoUbicacion.css'
 
-const MENSAJE_FUERA_DE_TULUA =
-  'Ese punto está fuera de las comunas de Tuluá. Marque un lugar dentro de la ciudad o acérquese al límite si está justo en el borde.'
-
 // Paso 2 de 4: ¿dónde ocurrió? Punto en el mapa (o GPS), dirección y barrio.
-// La comuna sale del barrio elegido (POT 2015, provisional); la fuente de verdad es el backend.
+// El backend asigna la comuna; una capa de referencia del mapa no decide el rechazo.
 export default function PasoUbicacion() {
   const navigate = useNavigate()
-  const { borrador, cambiar, categorias, barrios } = useReporte()
+  const { borrador, cambiar, categorias, barrios, cargandoBarrios = false, errorBarrios, recargarCatalogos } = useReporte()
   const [errores, setErrores] = useState({})
   const [buscandoGps, setBuscandoGps] = useState(false)
-  const [gpsFallo, setGpsFallo] = useState(false)
+  const [gpsFallo, setGpsFallo] = useState(null)
+  const [gpsIntentado, setGpsIntentado] = useState(false)
+  const solicitudGps = useRef(0)
+
+  // Ignora respuestas que lleguen después de salir o de elegir un punto manualmente.
+  useEffect(() => () => { solicitudGps.current += 1 }, [])
 
   const categoria = categorias?.find((c) => String(c.idCategoria) === borrador.idCategoria)
   if (!borrador.idCategoria) return <Navigate to="/reportar" replace />
-  if (!categoria) return <p className="cargando-texto">Cargando…</p>
+  if (!categorias) return <p className="cargando-texto">Cargando…</p>
+  if (!categoria) return <Navigate to="/reportar" replace />
+  const pideUbicacion = categoria.requiereUbicacion !== false
 
   const barrio = barrios.find((b) => String(b.idBarrio) === borrador.idBarrio)
   const hayPunto = borrador.latitud != null
-  // Comuna según el punto del mapa (capa POT 2015, provisional); null si cae en un límite o fuera de la capa.
-  const comunaDelMapa = hayPunto
-    ? identificarComunaPorCoordenadas({ latitud: borrador.latitud, longitud: borrador.longitud }, comunasTulua).comuna
-    : null
-  const fueraDeTulua = hayPunto && !comunaDelMapa
 
   function elegirPunto(latitud, longitud) {
+    solicitudGps.current += 1
+    setBuscandoGps(false)
+    setGpsFallo(null)
     cambiar({ latitud, longitud })
     setErrores((anteriores) => ({ ...anteriores, punto: '' }))
   }
 
-  function usarGps() {
-    setGpsFallo(false)
-    if (!navigator.geolocation) {
-      setGpsFallo(true)
-      return
-    }
+  async function usarGps() {
+    if (buscandoGps) return
+    const solicitud = ++solicitudGps.current
+    setGpsFallo(null)
+    setGpsIntentado(true)
     setBuscandoGps(true)
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) => {
-        elegirPunto(coords.latitude, coords.longitude)
+    try {
+      const { latitud, longitud } = await obtenerPosicionGps(navigator.geolocation)
+      if (solicitud === solicitudGps.current) elegirPunto(latitud, longitud)
+    } catch (fallo) {
+      if (solicitud === solicitudGps.current) {
         setBuscandoGps(false)
-      },
-      () => {
-        setBuscandoGps(false)
-        setGpsFallo(true)
-      },
-      { enableHighAccuracy: true, timeout: 15000 },
-    )
+        setGpsFallo(fallo)
+      }
+    }
   }
 
   function continuar(evento) {
     evento.preventDefault()
-    const encontrados = validarUbicacion(borrador)
-    if (fueraDeTulua) encontrados.punto = MENSAJE_FUERA_DE_TULUA
+    const encontrados = validarUbicacion(borrador, categoria)
+    if (encontrados.punto && borrador.latitud == null && borrador.longitud == null && !borrador.idBarrio) {
+      encontrados.punto = barrios.length ? TEXTOS_UBICACION.puntoOBarrio : TEXTOS_UBICACION.puntoRequerido
+    }
+    if (pideUbicacion && borrador.idBarrio && !barrios.some(b => String(b.idBarrio) === borrador.idBarrio)) {
+      if (cargandoBarrios) {
+        encontrados.punto = 'Espere a que termine de cargar la lista para comprobar el barrio seleccionado.'
+      } else if (hayPunto && !encontrados.punto) {
+        // Un punto válido permite continuar sin enviar un ID obsoleto del borrador.
+        cambiar({ idBarrio: '' })
+      } else {
+        encontrados.punto = 'Seleccione un barrio disponible o marque el lugar en el mapa.'
+      }
+    }
     setErrores(encontrados)
     if (Object.keys(encontrados).length === 0) navigate('/reportar/detalles')
   }
@@ -82,79 +91,99 @@ export default function PasoUbicacion() {
 
       <FormularioPantalla
         alEnviar={continuar}
-        acciones={<Boton type="submit">Continuar</Boton>}
+        acciones={<Boton type="submit">{pideUbicacion ? 'Continuar' : 'Continuar sin ubicación'}</Boton>}
       >
         <PasosBarra paso={2} total={4} etiqueta="Ubicación" />
         <ResumenCategoria categoria={categoria} />
-        <h2 className="reportar__titulo">¿Dónde ocurrió?</h2>
+        <h2 className="reportar__titulo">{pideUbicacion ? '¿Dónde ocurrió?' : 'Ubicación no requerida'}</h2>
+        {!pideUbicacion && <Aviso>Esta categoría no requiere ubicación. Puede continuar al paso de descripción y fotografías.</Aviso>}
+        {pideUbicacion && <>
+        {import.meta.env.DEV && import.meta.env.VITE_USAR_MOCKS === 'true' && (
+          <Aviso titulo="Modo demostración">
+            La lista contiene barrios de prueba y no representa el catálogo real de Tuluá.
+          </Aviso>
+        )}
+        <p id="ubicacion-explicacion" className="reportar__mensaje">{TEXTOS_UBICACION.antesDelPermiso}</p>
+        <p id="ubicacion-instruccion" className="reportar__mensaje">{TEXTOS_UBICACION.instruccionMapa}</p>
+        <p id="ubicacion-teclado" className="reportar__mensaje">{TEXTOS_UBICACION.ayudaTeclado}</p>
 
-        <MapaUbicacion latitud={borrador.latitud} longitud={borrador.longitud} alElegir={elegirPunto} />
-        {(errores.punto || fueraDeTulua) && (
-          <p className="campo__error" role="alert">
-            {errores.punto || MENSAJE_FUERA_DE_TULUA}
+        <MapaUbicacion latitud={borrador.latitud} longitud={borrador.longitud} alElegir={elegirPunto} error={errores.punto} />
+        {errores.punto && (
+          <p id="ubicacion-error" className="campo__error" role="alert">
+            {errores.punto}
           </p>
         )}
 
-        <Boton variante="secundario" onClick={usarGps} cargando={buscandoGps} textoCargando="Buscando…">
+        <Boton variante="secundario" onClick={usarGps} cargando={buscandoGps} textoCargando="Buscando su ubicación…" aria-describedby="ubicacion-explicacion">
           <IconoUbicacion tamano={20} />
-          Usar mi ubicación actual (GPS)
+          {gpsIntentado || hayPunto ? TEXTOS_UBICACION.volverUbicar : 'Usar mi ubicación actual (GPS)'}
         </Boton>
 
-        {hayPunto && (barrio || comunaDelMapa) && (
-          <Aviso variante="exito" titulo="Ubicación detectada">
-            <strong>
-              {barrio
-                ? `Barrio ${barrio.nombre} · Comuna ${barrio.idComuna}`
-                : `Comuna ${Number(comunaDelMapa.id)} (según el mapa)`}
-            </strong>
-            <br />
-            La comuna se asigna según su ubicación GPS o el barrio seleccionado (POT 2015, provisional).
+        {buscandoGps && (
+          <div className="ubicacion__buscando" role="status" aria-live="polite">
+            <span className="ubicacion__giro" aria-hidden="true" />
+            <p>Buscando su ubicación. Esto puede tardar unos segundos. También puede marcar el lugar en el mapa.</p>
+          </div>
+        )}
+
+        {(hayPunto || barrio) && (
+          <Aviso titulo="Ubicación seleccionada">
+            {hayPunto ? 'Punto marcado en el mapa. ' : `Barrio ${barrio.nombre}. `}
+            El servidor comprobará la cobertura y asignará la comuna al guardar.
           </Aviso>
         )}
+        {hayPunto && <Boton variante="texto" onClick={() => elegirPunto(null, null)}>Quitar punto y elegir barrio</Boton>}
 
         <Campo
           id="direccion"
-          etiqueta="Dirección"
+          etiqueta="Dirección del incidente"
+          opcional
+          ayuda="Agregue una referencia para encontrar el lugar."
           placeholder="Ej. Cra 26 #28-40"
           autoComplete="off"
-          maxLength={LIMITES.direccion}
+          maxLength={300}
           value={borrador.direccion}
           onChange={(e) => cambiar({ direccion: e.target.value })}
         />
 
+        <p className="reportar__mensaje">El mapa no selecciona el barrio automáticamente. Puede elegirlo en la lista; con un punto marcado es opcional.</p>
+        {borrador.idBarrio && !barrio && !cargandoBarrios && (
+          <Aviso titulo="Revise el barrio anterior">
+            No se pudo confirmar el barrio guardado en la lista actual. Puede elegir otro o continuar con el punto del mapa; en ese caso no se enviará el barrio anterior.
+          </Aviso>
+        )}
+        {cargandoBarrios && <p className="cargando-texto" role="status">Cargando barrios…</p>}
         {barrios.length > 0 && (
           <Selector
             id="idBarrio"
             etiqueta="Barrio"
+            opcional={hayPunto}
+            disabled={cargandoBarrios}
             marcador="Seleccione el barrio"
+            ayuda="Si no marcó un lugar, seleccione un barrio disponible."
             opciones={barrios.map((b) => ({ valor: b.idBarrio, texto: b.nombre }))}
             value={borrador.idBarrio}
             onChange={(e) => cambiar({ idBarrio: e.target.value })}
           />
         )}
+        {!cargandoBarrios && !errorBarrios && barrios.length === 0 && <Aviso>No hay barrios disponibles. Marque el lugar en el mapa.</Aviso>}
+        {errorBarrios && <Aviso variante="error" titulo="No pudimos cargar los barrios">
+          Puede marcar el lugar en el mapa. <button type="button" className="enlace-boton" onClick={recargarCatalogos}>Reintentar</button>
+        </Aviso>}
+        </>}
       </FormularioPantalla>
 
-      {buscandoGps && (
-        <div className="ubicacion__buscando" role="status">
-          <div className="ubicacion__tarjeta">
-            <span className="ubicacion__giro" aria-hidden="true" />
-            <strong>Buscando su ubicación…</strong>
-            <span>Esto puede tardar unos segundos.</span>
-          </div>
-        </div>
-      )}
-
       <HojaInferior
-        abierta={gpsFallo}
-        alCerrar={() => setGpsFallo(false)}
+        abierta={Boolean(gpsFallo)}
+        alCerrar={() => setGpsFallo(null)}
         icono={<IconoSinUbicacion tamano={30} />}
         tono="alerta"
-        titulo="No pudimos obtener su ubicación"
-        texto="Active el permiso de ubicación en su teléfono o marque el punto en el mapa y elija su barrio."
+        titulo={gpsFallo?.titulo}
+        texto={gpsFallo?.texto}
       >
-        <Boton onClick={() => setGpsFallo(false)}>Marcar en el mapa</Boton>
+        <Boton onClick={() => setGpsFallo(null)}>Marcar en el mapa</Boton>
         <Boton variante="texto" onClick={usarGps}>
-          Reintentar con GPS
+          {TEXTOS_UBICACION.volverUbicar}
         </Boton>
       </HojaInferior>
     </>

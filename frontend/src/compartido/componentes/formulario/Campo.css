@@ -3,6 +3,8 @@
   flex-direction: column;
   gap: 6px;
   min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .campo__cabecera {
@@ -10,6 +12,8 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .campo__cabecera label {
@@ -31,6 +35,10 @@
   gap: 10px;
   box-sizing: border-box;
   height: 48px;
+  min-height: 48px;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
   padding: 0 var(--nu-esp-14);
   border: 1.5px solid var(--nu-borde-campo);
   border-radius: var(--nu-radio-md);
@@ -55,11 +63,14 @@
   flex: none;
 }
 
-.campo__caja input,
-.campo__caja select {
+.campo .campo__caja input,
+.campo .campo__caja select {
+  box-sizing: border-box;
   flex: 1;
+  width: 0;
+  max-width: 100%;
   min-width: 0;
-  height: 48px;
+  height: 100%;
   padding: 0;
   border: 0;
   outline: 0;
@@ -93,11 +104,21 @@
   flex: none;
   width: 44px;
   height: 44px;
-  margin-right: -10px;
+  padding: 0;
   border: 0;
   background: transparent;
   color: var(--nu-texto-secundario);
   cursor: pointer;
+}
+
+.campo__caja:has(.campo__ojo) {
+  padding-right: 4px;
+}
+
+/* Edge/Chrome: conservar un único control de mostrar contraseña. */
+.campo__caja input::-ms-reveal,
+.campo__caja input::-ms-clear {
+  display: none;
 }
 
 .campo__ojo:focus-visible {

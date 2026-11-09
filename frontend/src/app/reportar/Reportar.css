@@ -25,3 +25,9 @@
   color: var(--nu-texto-secundario);
 }
 
+/* Amplía solo este flujo; conserva los marcos de las demás pantallas. */
+@media (min-width: 1024px) {
+  .reportar-marco .marco-app { --marco-ancho: 960px; }
+  .reportar__lista { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+

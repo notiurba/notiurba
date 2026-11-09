@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { iniciarSesionConGoogle } from '../../api/auth'
-import { RUTA_POR_ROL, guardarToken } from '../../auth/sesion'
+import { guardarToken } from '../../auth/sesion'
+import { destinoTrasAutenticacion, estadoRetornoReporte } from '../../auth/retornoReporte'
 import Aviso from '../avisos/Aviso'
 import Boton from '../Boton'
 import { IconoGoogle } from '../Iconos'
@@ -33,6 +34,8 @@ function cargarScriptGoogle() {
 
 function BotonGoogleReal() {
   const navigate = useNavigate()
+  const { state } = useLocation()
+  const siguiente = estadoRetornoReporte(state?.siguiente ?? null)?.siguiente
   const contenedor = useRef(null)
   const [error, setError] = useState('')
 
@@ -45,11 +48,11 @@ function BotonGoogleReal() {
       try {
         const respuesta = await iniciarSesionConGoogle(credential)
         if (respuesta.estado === 'PERFIL_INCOMPLETO') {
-          navigate('/completar-perfil', { state: respuesta })
+          navigate('/completar-perfil', { state: { ...respuesta, siguiente } })
           return
         }
         guardarToken(respuesta.token)
-        navigate(RUTA_POR_ROL[respuesta.rol] ?? '/app', { replace: true })
+        navigate(destinoTrasAutenticacion(respuesta.rol, siguiente ?? null), { replace: true })
       } catch (fallo) {
         setError(fallo.mensaje ?? 'No pudimos ingresar con Google. Inténtelo de nuevo.')
       }
@@ -72,7 +75,7 @@ function BotonGoogleReal() {
     return () => {
       activo = false
     }
-  }, [navigate])
+  }, [navigate, siguiente])
 
   return (
     <>
@@ -83,16 +86,20 @@ function BotonGoogleReal() {
 }
 
 export default function BotonGoogle() {
+  const { state } = useLocation()
   if (!SIMULANDO && ID_CLIENTE) return <BotonGoogleReal />
 
   const propiedades = SIMULANDO
-    ? { to: '/completar-perfil', state: { correo: 'nombre@gmail.com' } }
-    : { disabled: true, title: 'Próximamente' }
+    ? { to: '/completar-perfil', state: { correo: 'nombre@gmail.com', ...estadoRetornoReporte(state?.siguiente ?? null) } }
+    : { disabled: true, title: 'El ingreso con Google aún no está disponible.', 'aria-describedby': 'google-no-disponible' }
 
   return (
+    <>
     <Boton variante="secundario" {...propiedades}>
       <IconoGoogle />
       Continuar con Google
     </Boton>
+    {!SIMULANDO && <p id="google-no-disponible" className="campo__ayuda">El ingreso con Google aún no está disponible. Puede usar su correo y contraseña.</p>}
+    </>
   )
 }

@@ -132,6 +132,7 @@ export function crearReporte(solicitud) {
     idCategoria: solicitud.idCategoria,
     categoria: categoria.nombre,
     descripcion: solicitud.descripcion,
+    emergencia: solicitud.emergencia === true,
     estado: 'Recibido', // la API real lo deja en «Recibido»; pasa a «Enviado» cuando sale el correo
     barrio: barrio?.nombre ?? '',
     idBarrio: barrio?.idBarrio ?? null,
@@ -163,6 +164,11 @@ export function agregarFoto(codigo) {
 
 // El envío a la entidad: el reporte pasa a «Enviado».
 export const marcarEnviado = (codigo) => cambiarEstado(codigo, 'Enviado')
+
+export function guardarEnvio(codigo, estado) {
+  buscarReporte(codigo).envioSimulado = estado
+  guardar()
+}
 
 // Cambia el estado de un reporte y lo anota en el historial.
 export function cambiarEstado(codigo, estado, observacion = null, radicado = null) {

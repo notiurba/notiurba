@@ -6,7 +6,7 @@ import PasoUbicacion from './PasoUbicacion'
 import ReporteEnviado from './ReporteEnviado'
 import ReportarLayout from './ReportarLayout'
 
-// Flujo «Nuevo reporte» (/reportar/*). Es público hasta el último paso: la sesión solo se pide al enviar.
+// Flujo «Nuevo reporte» (/reportar/*). El layout exige sesión para consultar el catálogo protegido.
 export default function RutasReportar() {
   return (
     <Routes>

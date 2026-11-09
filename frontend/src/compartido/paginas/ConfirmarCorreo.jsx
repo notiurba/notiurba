@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { verificarCorreo } from '../api/auth'
-import { RUTA_POR_ROL, guardarToken } from '../auth/sesion'
+import { guardarToken } from '../auth/sesion'
+import { destinoTrasAutenticacion, estadoRetornoReporte } from '../auth/retornoReporte'
 import Aviso from '../componentes/avisos/Aviso'
 import Boton from '../componentes/Boton'
 import LayoutAuth from '../componentes/acceso/LayoutAuth'
@@ -13,6 +14,7 @@ import './VerificarCorreo.css'
 // usó, lo dice y manda al ingreso (allí, al intentar entrar, se ofrece reenviar el enlace).
 export default function ConfirmarCorreo() {
   const navigate = useNavigate()
+  const retorno = estadoRetornoReporte()
   const [params] = useSearchParams()
   const token = params.get('token')
   const [fallo, setFallo] = useState(token ? null : 'enlace')
@@ -25,7 +27,7 @@ export default function ConfirmarCorreo() {
     verificarCorreo(token)
       .then(({ token: sesion, rol }) => {
         guardarToken(sesion)
-        navigate(RUTA_POR_ROL[rol] ?? '/app', { replace: true })
+        navigate(destinoTrasAutenticacion(rol), { replace: true })
       })
       .catch((error) => setFallo(error.codigo === 'ENLACE_INVALIDO' ? 'enlace' : 'conexion'))
   }, [token, navigate])
@@ -42,7 +44,7 @@ export default function ConfirmarCorreo() {
               El enlace venció o ya se usó. Inicie sesión: si su correo aún no está confirmado, le
               ofreceremos enviar uno nuevo.
             </Aviso>
-            <Boton to="/login">Ir a iniciar sesión</Boton>
+            <Boton to="/login" state={retorno}>Ir a iniciar sesión</Boton>
           </>
         )}
 
@@ -50,7 +52,7 @@ export default function ConfirmarCorreo() {
           <>
             <h1>No pudimos confirmar su correo</h1>
             <Aviso variante="error">Revise su conexión y vuelva a abrir el enlace del correo.</Aviso>
-            <Link to="/login" className="enlace-campo">
+            <Link to="/login" state={retorno} className="enlace-campo">
               Ir a iniciar sesión
             </Link>
           </>

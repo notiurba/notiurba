@@ -17,7 +17,9 @@ export default function CampoPassword(props) {
         <button
           type="button"
           className="campo__ojo"
-          onClick={() => setVisible(!visible)}
+          onMouseDown={(evento) => evento.preventDefault()}
+          onClick={() => setVisible((anterior) => !anterior)}
+          aria-controls={props.id}
           aria-label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
           aria-pressed={visible}
         >

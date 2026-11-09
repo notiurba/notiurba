@@ -11,6 +11,7 @@ import NoEncontrada from './compartido/paginas/NoEncontrada'
 import Registro from './compartido/paginas/Registro'
 import VerificarCorreo from './compartido/paginas/VerificarCorreo'
 import RutaProtegida from './compartido/auth/RutaProtegida'
+import { AccesoConRetorno, RetornoDesdePerfil } from './compartido/auth/NavegacionAcceso'
 import RutasApp from './app/rutas'
 import EstadoApi from './compartido/paginas/EstadoApi'
 
@@ -23,12 +24,12 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Bienvenida />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/registro" element={<Registro />} />
+      <Route path="/login" element={<AccesoConRetorno><Login /></AccesoConRetorno>} />
+      <Route path="/registro" element={<AccesoConRetorno><Registro /></AccesoConRetorno>} />
       <Route path="/verificar-correo" element={<VerificarCorreo />} />
       <Route path="/recuperar" element={<RecuperarContrasena />} />
       <Route path="/nueva-contrasena" element={<NuevaContrasena />} />
-      <Route path="/completar-perfil" element={<CompletarPerfil />} />
+      <Route path="/completar-perfil" element={<AccesoConRetorno perfil><CompletarPerfil /></AccesoConRetorno>} />
       <Route path="/aviso-privacidad" element={<AvisoPrivacidad />} />
       <Route
         path="/reportar/*"
@@ -49,7 +50,7 @@ function App() {
         path="/app/*"
         element={
           <RutaProtegida>
-            <RutasApp />
+            <RetornoDesdePerfil><RutasApp /></RetornoDesdePerfil>
           </RutaProtegida>
         }
       />

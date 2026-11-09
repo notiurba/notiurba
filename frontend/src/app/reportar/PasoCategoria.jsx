@@ -10,7 +10,7 @@ import IconoCategoria from '../../compartido/componentes/IconoCategoria'
 import { IconoAlerta, IconoLlama, IconoTelefono } from '../../compartido/componentes/Iconos'
 import PasosBarra from '../../compartido/componentes/PasosBarra'
 import TarjetaOpcion from '../../compartido/componentes/TarjetaOpcion'
-import { ID_CATEGORIA_GAS, LINEA_EMERGENCIA_GAS, ordenarCategorias } from '../../compartido/utilidades/categorias'
+import { ID_CATEGORIA_GAS, LINEA_EMERGENCIA_GAS } from '../../compartido/utilidades/categorias'
 import { tieneContenido } from './borrador'
 import { useReporte } from './useReporte'
 import './Reportar.css'
@@ -20,6 +20,7 @@ export default function PasoCategoria() {
   const navigate = useNavigate()
   const { borrador, cambiar, fotos, limpiar, categorias, errorCatalogos, recargarCatalogos } = useReporte()
   const [confirmandoSalida, setConfirmandoSalida] = useState(false)
+  const [errorCategoria, setErrorCategoria] = useState('')
   // Solo para gas: '' (sin responder), 'si' (es fuga o emergencia) o 'no'.
   const [respuestaGas, setRespuestaGas] = useState('')
   const esGas = borrador.idCategoria === String(ID_CATEGORIA_GAS)
@@ -43,9 +44,13 @@ export default function PasoCategoria() {
       <FormularioPantalla
         alEnviar={(evento) => {
           evento.preventDefault()
-          // Las categorías que no necesitan ubicación (p. ej. cobros de servicios) saltan del paso 1 al 3.
           const elegida = categorias?.find((c) => String(c.idCategoria) === borrador.idCategoria)
-          navigate(elegida?.requiereUbicacion === false ? '/reportar/detalles' : '/reportar/ubicacion')
+          if (!elegida || errorCatalogos) {
+            setErrorCategoria('Seleccione una categoría disponible para continuar.')
+            return
+          }
+          if (bloqueadoPorGas) return
+          navigate('/reportar/ubicacion')
         }}
         acciones={
           <>
@@ -61,15 +66,18 @@ export default function PasoCategoria() {
                 </Boton>
               </>
             )}
-            <Boton type="submit" disabled={!borrador.idCategoria || bloqueadoPorGas}>
+            <Boton type="submit" disabled={!categorias?.some(c => String(c.idCategoria) === borrador.idCategoria) || Boolean(errorCatalogos) || bloqueadoPorGas}>
               Continuar
             </Boton>
-            <p className="reportar__pie">Deberá iniciar sesión solo al enviar el reporte.</p>
+            <p className="reportar__pie">Su reporte se guardará en su cuenta.</p>
           </>
         }
       >
         <PasosBarra paso={1} total={4} etiqueta="Categoría" />
         <h2 className="reportar__titulo">¿Qué problema desea reportar?</h2>
+        <p className="reportar__mensaje">Seleccione el tipo de problema que desea reportar.</p>
+        {errorCategoria && <p role="alert" className="campo__error">{errorCategoria}</p>}
+        {categorias?.length === 0 && <Aviso titulo="No hay categorías disponibles">Inténtelo más tarde.</Aviso>}
 
         {errorCatalogos && (
           <Aviso variante="error" titulo="No pudimos cargar las categorías">
@@ -84,7 +92,7 @@ export default function PasoCategoria() {
 
         {categorias && (
           <div className="reportar__lista" role="radiogroup" aria-label="Tipo de problema">
-            {ordenarCategorias(categorias).map((categoria) => (
+            {categorias.map((categoria) => (
               <TarjetaOpcion
                 key={categoria.idCategoria}
                 grupo="categoria"
@@ -92,10 +100,11 @@ export default function PasoCategoria() {
                 seleccionada={borrador.idCategoria === String(categoria.idCategoria)}
                 alElegir={(valor) => {
                   setRespuestaGas('') // otra categoría (o gas de nuevo): la pregunta se vuelve a hacer
+                  setErrorCategoria('')
                   cambiar({ idCategoria: valor })
                 }}
                 icono={<IconoCategoria idCategoria={categoria.idCategoria} />}
-                titulo={categoria.nombre}
+                titulo={categoria.etiqueta}
                 descripcion={categoria.descripcion}
               />
             ))}
@@ -103,8 +112,7 @@ export default function PasoCategoria() {
         )}
 
         <Aviso variante="info">
-          ¿No encuentra su caso? Seleccione «Otro»: lo revisaremos y lo enviaremos a la entidad
-          correspondiente.
+          ¿No encuentra su caso? Seleccione «Otro problema»: revisaremos su clasificación.
         </Aviso>
       </FormularioPantalla>
 
