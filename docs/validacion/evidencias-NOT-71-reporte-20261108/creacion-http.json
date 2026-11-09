@@ -1,0 +1,17 @@
+{
+  "fecha": "2026-11-08T22:16:56.612Z",
+  "respuestas": [
+    {
+      "url": "http://127.0.0.1:5175/api/reportes",
+      "status": 201
+    },
+    {
+      "url": "http://127.0.0.1:5175/api/reportes/NU-000001/enviar",
+      "status": 202
+    }
+  ],
+  "codigo": "NU-000001",
+  "rutaTrasGuardar": "http://127.0.0.1:5175/reportar",
+  "fotoEnFormulario": "no seleccionada por permiso de extension; probada luego por HTTP real",
+  "escriturasAdicionales": 0
+}

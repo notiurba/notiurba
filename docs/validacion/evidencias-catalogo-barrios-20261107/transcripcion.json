@@ -1,0 +1,947 @@
+[
+  {
+    "nombre": "Ciudad Campestre",
+    "pagina": 16,
+    "ordenFuente": 1,
+    "numeroEnComuna": 1,
+    "comuna": 1
+  },
+  {
+    "nombre": "El Retiro",
+    "pagina": 16,
+    "ordenFuente": 2,
+    "numeroEnComuna": 2,
+    "comuna": 1
+  },
+  {
+    "nombre": "Fátima",
+    "pagina": 16,
+    "ordenFuente": 3,
+    "numeroEnComuna": 3,
+    "comuna": 1
+  },
+  {
+    "nombre": "El Jazmín",
+    "pagina": 16,
+    "ordenFuente": 4,
+    "numeroEnComuna": 4,
+    "comuna": 1
+  },
+  {
+    "nombre": "Miraflores",
+    "pagina": 16,
+    "ordenFuente": 5,
+    "numeroEnComuna": 5,
+    "comuna": 1
+  },
+  {
+    "nombre": "Panamericano",
+    "pagina": 16,
+    "ordenFuente": 6,
+    "numeroEnComuna": 6,
+    "comuna": 1
+  },
+  {
+    "nombre": "San Benito La Rivera",
+    "pagina": 16,
+    "ordenFuente": 7,
+    "numeroEnComuna": 7,
+    "comuna": 1
+  },
+  {
+    "nombre": "Victoria",
+    "pagina": 16,
+    "ordenFuente": 8,
+    "numeroEnComuna": 8,
+    "comuna": 1
+  },
+  {
+    "nombre": "Villa Campestre",
+    "pagina": 16,
+    "ordenFuente": 9,
+    "numeroEnComuna": 9,
+    "comuna": 1
+  },
+  {
+    "nombre": "Villa del Rio",
+    "pagina": 16,
+    "ordenFuente": 10,
+    "numeroEnComuna": 10,
+    "comuna": 1
+  },
+  {
+    "nombre": "Las Lomas",
+    "pagina": 16,
+    "ordenFuente": 11,
+    "numeroEnComuna": 11,
+    "comuna": 1
+  },
+  {
+    "nombre": "Lomitas",
+    "pagina": 16,
+    "ordenFuente": 12,
+    "numeroEnComuna": 12,
+    "comuna": 1
+  },
+  {
+    "nombre": "Alvernia",
+    "pagina": 16,
+    "ordenFuente": 13,
+    "numeroEnComuna": 1,
+    "comuna": 2
+  },
+  {
+    "nombre": "Céspedes",
+    "pagina": 16,
+    "ordenFuente": 14,
+    "numeroEnComuna": 2,
+    "comuna": 2
+  },
+  {
+    "nombre": "Entre Ríos",
+    "pagina": 16,
+    "ordenFuente": 15,
+    "numeroEnComuna": 3,
+    "comuna": 2
+  },
+  {
+    "nombre": "Franciscanos",
+    "pagina": 16,
+    "ordenFuente": 16,
+    "numeroEnComuna": 4,
+    "comuna": 2
+  },
+  {
+    "nombre": "La Rivera",
+    "pagina": 17,
+    "ordenFuente": 17,
+    "numeroEnComuna": 5,
+    "comuna": 2
+  },
+  {
+    "nombre": "Nuevo Alvernia",
+    "pagina": 17,
+    "ordenFuente": 18,
+    "numeroEnComuna": 6,
+    "comuna": 2
+  },
+  {
+    "nombre": "San Vicente de Paul",
+    "pagina": 17,
+    "ordenFuente": 19,
+    "numeroEnComuna": 7,
+    "comuna": 2
+  },
+  {
+    "nombre": "Santa Lucia",
+    "pagina": 17,
+    "ordenFuente": 20,
+    "numeroEnComuna": 8,
+    "comuna": 2
+  },
+  {
+    "nombre": "Asogrin Santacruz",
+    "pagina": 17,
+    "ordenFuente": 21,
+    "numeroEnComuna": 1,
+    "comuna": 3
+  },
+  {
+    "nombre": "Casas Huertas",
+    "pagina": 17,
+    "ordenFuente": 22,
+    "numeroEnComuna": 2,
+    "comuna": 3
+  },
+  {
+    "nombre": "El Bosque",
+    "pagina": 17,
+    "ordenFuente": 23,
+    "numeroEnComuna": 3,
+    "comuna": 3
+  },
+  {
+    "nombre": "El Condor",
+    "pagina": 17,
+    "ordenFuente": 24,
+    "numeroEnComuna": 4,
+    "comuna": 3
+  },
+  {
+    "nombre": "El Dorado",
+    "pagina": 17,
+    "ordenFuente": 25,
+    "numeroEnComuna": 5,
+    "comuna": 3
+  },
+  {
+    "nombre": "Estambul",
+    "pagina": 17,
+    "ordenFuente": 26,
+    "numeroEnComuna": 6,
+    "comuna": 3
+  },
+  {
+    "nombre": "La Inmaculada",
+    "pagina": 17,
+    "ordenFuente": 27,
+    "numeroEnComuna": 7,
+    "comuna": 3
+  },
+  {
+    "nombre": "La Villa",
+    "pagina": 17,
+    "ordenFuente": 28,
+    "numeroEnComuna": 8,
+    "comuna": 3
+  },
+  {
+    "nombre": "Las Brisas",
+    "pagina": 17,
+    "ordenFuente": 29,
+    "numeroEnComuna": 9,
+    "comuna": 3
+  },
+  {
+    "nombre": "Las Palmas",
+    "pagina": 17,
+    "ordenFuente": 30,
+    "numeroEnComuna": 10,
+    "comuna": 3
+  },
+  {
+    "nombre": "Morales",
+    "pagina": 17,
+    "ordenFuente": 31,
+    "numeroEnComuna": 11,
+    "comuna": 3
+  },
+  {
+    "nombre": "Nuevo Morales",
+    "pagina": 17,
+    "ordenFuente": 32,
+    "numeroEnComuna": 12,
+    "comuna": 3
+  },
+  {
+    "nombre": "Popular",
+    "pagina": 17,
+    "ordenFuente": 33,
+    "numeroEnComuna": 13,
+    "comuna": 3
+  },
+  {
+    "nombre": "San Antonio",
+    "pagina": 17,
+    "ordenFuente": 34,
+    "numeroEnComuna": 14,
+    "comuna": 3
+  },
+  {
+    "nombre": "Santa Rita del Rio",
+    "pagina": 17,
+    "ordenFuente": 35,
+    "numeroEnComuna": 15,
+    "comuna": 3
+  },
+  {
+    "nombre": "Urbanización Peñaranda",
+    "pagina": 17,
+    "ordenFuente": 36,
+    "numeroEnComuna": 16,
+    "comuna": 3
+  },
+  {
+    "nombre": "Villa Nueva",
+    "pagina": 17,
+    "ordenFuente": 37,
+    "numeroEnComuna": 17,
+    "comuna": 3
+  },
+  {
+    "nombre": "El Condor II",
+    "pagina": 17,
+    "ordenFuente": 38,
+    "numeroEnComuna": 18,
+    "comuna": 3
+  },
+  {
+    "nombre": "Moralito",
+    "pagina": 17,
+    "ordenFuente": 39,
+    "numeroEnComuna": 19,
+    "comuna": 3
+  },
+  {
+    "nombre": "Los Pinos",
+    "pagina": 17,
+    "ordenFuente": 40,
+    "numeroEnComuna": 20,
+    "comuna": 3
+  },
+  {
+    "nombre": "Brisas del Morales",
+    "pagina": 17,
+    "ordenFuente": 41,
+    "numeroEnComuna": 21,
+    "comuna": 3
+  },
+  {
+    "nombre": "Centro",
+    "pagina": 18,
+    "ordenFuente": 41,
+    "numeroEnComuna": 1,
+    "comuna": 4
+  },
+  {
+    "nombre": "Escobar",
+    "pagina": 18,
+    "ordenFuente": 42,
+    "numeroEnComuna": 2,
+    "comuna": 4
+  },
+  {
+    "nombre": "Las Olas",
+    "pagina": 18,
+    "ordenFuente": 43,
+    "numeroEnComuna": 3,
+    "comuna": 4
+  },
+  {
+    "nombre": "Palobonito",
+    "pagina": 18,
+    "ordenFuente": 44,
+    "numeroEnComuna": 4,
+    "comuna": 4
+  },
+  {
+    "nombre": "Tomás Uribe",
+    "pagina": 18,
+    "ordenFuente": 45,
+    "numeroEnComuna": 5,
+    "comuna": 4
+  },
+  {
+    "nombre": "Avenida Cali",
+    "pagina": 18,
+    "ordenFuente": 47,
+    "numeroEnComuna": 1,
+    "comuna": 5
+  },
+  {
+    "nombre": "Urbanización Lusitania",
+    "pagina": 18,
+    "ordenFuente": 48,
+    "numeroEnComuna": 2,
+    "comuna": 5
+  },
+  {
+    "nombre": "Doce de Octubre",
+    "pagina": 18,
+    "ordenFuente": 49,
+    "numeroEnComuna": 3,
+    "comuna": 5
+  },
+  {
+    "nombre": "El Lago",
+    "pagina": 18,
+    "ordenFuente": 50,
+    "numeroEnComuna": 4,
+    "comuna": 5
+  },
+  {
+    "nombre": "El Laguito",
+    "pagina": 18,
+    "ordenFuente": 51,
+    "numeroEnComuna": 5,
+    "comuna": 5
+  },
+  {
+    "nombre": "El Principio",
+    "pagina": 18,
+    "ordenFuente": 52,
+    "numeroEnComuna": 6,
+    "comuna": 5
+  },
+  {
+    "nombre": "La Bastilla",
+    "pagina": 18,
+    "ordenFuente": 53,
+    "numeroEnComuna": 7,
+    "comuna": 5
+  },
+  {
+    "nombre": "La Merced",
+    "pagina": 18,
+    "ordenFuente": 54,
+    "numeroEnComuna": 8,
+    "comuna": 5
+  },
+  {
+    "nombre": "Las Acacias",
+    "pagina": 18,
+    "ordenFuente": 55,
+    "numeroEnComuna": 9,
+    "comuna": 5
+  },
+  {
+    "nombre": "Lusitania",
+    "pagina": 18,
+    "ordenFuente": 56,
+    "numeroEnComuna": 10,
+    "comuna": 5
+  },
+  {
+    "nombre": "Sajonia",
+    "pagina": 18,
+    "ordenFuente": 57,
+    "numeroEnComuna": 11,
+    "comuna": 5
+  },
+  {
+    "nombre": "Salesianos",
+    "pagina": 18,
+    "ordenFuente": 58,
+    "numeroEnComuna": 12,
+    "comuna": 5
+  },
+  {
+    "nombre": "San Carlos",
+    "pagina": 18,
+    "ordenFuente": 59,
+    "numeroEnComuna": 13,
+    "comuna": 5
+  },
+  {
+    "nombre": "Quintas de San Felipe",
+    "pagina": 18,
+    "ordenFuente": 60,
+    "numeroEnComuna": 14,
+    "comuna": 5
+  },
+  {
+    "nombre": "Olímpico",
+    "pagina": 18,
+    "ordenFuente": 61,
+    "numeroEnComuna": 15,
+    "comuna": 5
+  },
+  {
+    "nombre": "Nuevo Príncipe",
+    "pagina": 18,
+    "ordenFuente": 62,
+    "numeroEnComuna": 16,
+    "comuna": 5
+  },
+  {
+    "nombre": "350 años",
+    "pagina": 18,
+    "ordenFuente": 63,
+    "numeroEnComuna": 1,
+    "comuna": 6
+  },
+  {
+    "nombre": "Asoagrín Farfán",
+    "pagina": 18,
+    "ordenFuente": 64,
+    "numeroEnComuna": 2,
+    "comuna": 6
+  },
+  {
+    "nombre": "Bolívar",
+    "pagina": 18,
+    "ordenFuente": 65,
+    "numeroEnComuna": 3,
+    "comuna": 6
+  },
+  {
+    "nombre": "El Pinar",
+    "pagina": 19,
+    "ordenFuente": 66,
+    "numeroEnComuna": 4,
+    "comuna": 6
+  },
+  {
+    "nombre": "La Ceiba",
+    "pagina": 19,
+    "ordenFuente": 67,
+    "numeroEnComuna": 5,
+    "comuna": 6
+  },
+  {
+    "nombre": "La Esperanza",
+    "pagina": 19,
+    "ordenFuente": 68,
+    "numeroEnComuna": 6,
+    "comuna": 6
+  },
+  {
+    "nombre": "Las Delicias",
+    "pagina": 19,
+    "ordenFuente": 69,
+    "numeroEnComuna": 7,
+    "comuna": 6
+  },
+  {
+    "nombre": "Comuneros Corazón del Valle",
+    "pagina": 19,
+    "ordenFuente": 70,
+    "numeroEnComuna": 8,
+    "comuna": 6
+  },
+  {
+    "nombre": "Marandúa",
+    "pagina": 19,
+    "ordenFuente": 71,
+    "numeroEnComuna": 9,
+    "comuna": 6
+  },
+  {
+    "nombre": "Playas",
+    "pagina": 19,
+    "ordenFuente": 72,
+    "numeroEnComuna": 10,
+    "comuna": 6
+  },
+  {
+    "nombre": "Primero de Mayo",
+    "pagina": 19,
+    "ordenFuente": 73,
+    "numeroEnComuna": 11,
+    "comuna": 6
+  },
+  {
+    "nombre": "Progresar",
+    "pagina": 19,
+    "ordenFuente": 74,
+    "numeroEnComuna": 12,
+    "comuna": 6
+  },
+  {
+    "nombre": "Pueblo Nuevo",
+    "pagina": 19,
+    "ordenFuente": 75,
+    "numeroEnComuna": 13,
+    "comuna": 6
+  },
+  {
+    "nombre": "San Pedro Claver",
+    "pagina": 19,
+    "ordenFuente": 76,
+    "numeroEnComuna": 14,
+    "comuna": 6
+  },
+  {
+    "nombre": "La Herradura",
+    "pagina": 19,
+    "ordenFuente": 77,
+    "numeroEnComuna": 15,
+    "comuna": 6
+  },
+  {
+    "nombre": "Buenos Aires",
+    "pagina": 19,
+    "ordenFuente": 78,
+    "numeroEnComuna": 16,
+    "comuna": 6
+  },
+  {
+    "nombre": "Departamental",
+    "pagina": 19,
+    "ordenFuente": 79,
+    "numeroEnComuna": 1,
+    "comuna": 7
+  },
+  {
+    "nombre": "Diablos Rojos",
+    "pagina": 19,
+    "ordenFuente": 80,
+    "numeroEnComuna": 2,
+    "comuna": 7
+  },
+  {
+    "nombre": "El Descanso",
+    "pagina": 19,
+    "ordenFuente": 81,
+    "numeroEnComuna": 3,
+    "comuna": 7
+  },
+  {
+    "nombre": "El Porvenir",
+    "pagina": 19,
+    "ordenFuente": 82,
+    "numeroEnComuna": 4,
+    "comuna": 7
+  },
+  {
+    "nombre": "Farfán",
+    "pagina": 19,
+    "ordenFuente": 83,
+    "numeroEnComuna": 5,
+    "comuna": 7
+  },
+  {
+    "nombre": "Guayacanes",
+    "pagina": 19,
+    "ordenFuente": 84,
+    "numeroEnComuna": 6,
+    "comuna": 7
+  },
+  {
+    "nombre": "José Antonio Galán",
+    "pagina": 19,
+    "ordenFuente": 85,
+    "numeroEnComuna": 7,
+    "comuna": 7
+  },
+  {
+    "nombre": "Juan de Lemus y Aguirre",
+    "pagina": 19,
+    "ordenFuente": 86,
+    "numeroEnComuna": 8,
+    "comuna": 7
+  },
+  {
+    "nombre": "La Campiña",
+    "pagina": 19,
+    "ordenFuente": 87,
+    "numeroEnComuna": 9,
+    "comuna": 7
+  },
+  {
+    "nombre": "La Quinta",
+    "pagina": 19,
+    "ordenFuente": 88,
+    "numeroEnComuna": 10,
+    "comuna": 7
+  },
+  {
+    "nombre": "Las Américas",
+    "pagina": 19,
+    "ordenFuente": 89,
+    "numeroEnComuna": 11,
+    "comuna": 7
+  },
+  {
+    "nombre": "Las Nieves",
+    "pagina": 19,
+    "ordenFuente": 90,
+    "numeroEnComuna": 12,
+    "comuna": 7
+  },
+  {
+    "nombre": "Las Veraneras",
+    "pagina": 19,
+    "ordenFuente": 91,
+    "numeroEnComuna": 13,
+    "comuna": 7
+  },
+  {
+    "nombre": "Laureles I y II",
+    "pagina": 20,
+    "ordenFuente": 92,
+    "numeroEnComuna": 14,
+    "comuna": 7
+  },
+  {
+    "nombre": "Los Tolúes",
+    "pagina": 20,
+    "ordenFuente": 93,
+    "numeroEnComuna": 15,
+    "comuna": 7
+  },
+  {
+    "nombre": "Nuevo Farfán",
+    "pagina": 20,
+    "ordenFuente": 94,
+    "numeroEnComuna": 16,
+    "comuna": 7
+  },
+  {
+    "nombre": "Los Olmos",
+    "pagina": 20,
+    "ordenFuente": 95,
+    "numeroEnComuna": 17,
+    "comuna": 7
+  },
+  {
+    "nombre": "Prados del Norte",
+    "pagina": 20,
+    "ordenFuente": 96,
+    "numeroEnComuna": 18,
+    "comuna": 7
+  },
+  {
+    "nombre": "El Rojas",
+    "pagina": 20,
+    "ordenFuente": 97,
+    "numeroEnComuna": 19,
+    "comuna": 7
+  },
+  {
+    "nombre": "Rubén Cruz Vélez",
+    "pagina": 20,
+    "ordenFuente": 98,
+    "numeroEnComuna": 20,
+    "comuna": 7
+  },
+  {
+    "nombre": "Villa del Sur",
+    "pagina": 20,
+    "ordenFuente": 99,
+    "numeroEnComuna": 21,
+    "comuna": 7
+  },
+  {
+    "nombre": "Bosques de Maracaibo",
+    "pagina": 20,
+    "ordenFuente": 100,
+    "numeroEnComuna": 1,
+    "comuna": 8
+  },
+  {
+    "nombre": "Chiminangos",
+    "pagina": 20,
+    "ordenFuente": 101,
+    "numeroEnComuna": 2,
+    "comuna": 8
+  },
+  {
+    "nombre": "Diablos Rojos",
+    "pagina": 20,
+    "ordenFuente": 102,
+    "numeroEnComuna": 3,
+    "comuna": 8
+  },
+  {
+    "nombre": "El Refugio",
+    "pagina": 20,
+    "ordenFuente": 103,
+    "numeroEnComuna": 4,
+    "comuna": 8
+  },
+  {
+    "nombre": "El Horizonte",
+    "pagina": 20,
+    "ordenFuente": 104,
+    "numeroEnComuna": 5,
+    "comuna": 8
+  },
+  {
+    "nombre": "El Limonar",
+    "pagina": 20,
+    "ordenFuente": 105,
+    "numeroEnComuna": 6,
+    "comuna": 8
+  },
+  {
+    "nombre": "Flor de la Campana",
+    "pagina": 20,
+    "ordenFuente": 106,
+    "numeroEnComuna": 7,
+    "comuna": 8
+  },
+  {
+    "nombre": "Horizonte - Santa Isabel",
+    "pagina": 20,
+    "ordenFuente": 107,
+    "numeroEnComuna": 8,
+    "comuna": 8
+  },
+  {
+    "nombre": "Jorge Eliecer Gaitán",
+    "pagina": 20,
+    "ordenFuente": 108,
+    "numeroEnComuna": 9,
+    "comuna": 8
+  },
+  {
+    "nombre": "La Independencia",
+    "pagina": 20,
+    "ordenFuente": 109,
+    "numeroEnComuna": 10,
+    "comuna": 8
+  },
+  {
+    "nombre": "Municipal",
+    "pagina": 20,
+    "ordenFuente": 110,
+    "numeroEnComuna": 11,
+    "comuna": 8
+  },
+  {
+    "nombre": "San Luis",
+    "pagina": 20,
+    "ordenFuente": 111,
+    "numeroEnComuna": 12,
+    "comuna": 8
+  },
+  {
+    "nombre": "Santa Inés",
+    "pagina": 20,
+    "ordenFuente": 112,
+    "numeroEnComuna": 13,
+    "comuna": 8
+  },
+  {
+    "nombre": "Tercer Milenio",
+    "pagina": 20,
+    "ordenFuente": 113,
+    "numeroEnComuna": 14,
+    "comuna": 8
+  },
+  {
+    "nombre": "Urbanización San Luis",
+    "pagina": 20,
+    "ordenFuente": 114,
+    "numeroEnComuna": 15,
+    "comuna": 8
+  },
+  {
+    "nombre": "Villa Liliana",
+    "pagina": 20,
+    "ordenFuente": 115,
+    "numeroEnComuna": 16,
+    "comuna": 8
+  },
+  {
+    "nombre": "Santa Inés - Comfamiliar",
+    "pagina": 20,
+    "ordenFuente": 116,
+    "numeroEnComuna": 17,
+    "comuna": 8
+  },
+  {
+    "nombre": "Sintrasancarlos",
+    "pagina": 20,
+    "ordenFuente": 117,
+    "numeroEnComuna": 18,
+    "comuna": 8
+  },
+  {
+    "nombre": "Alameda I",
+    "pagina": 21,
+    "ordenFuente": 118,
+    "numeroEnComuna": 1,
+    "comuna": 9
+  },
+  {
+    "nombre": "Alameda II",
+    "pagina": 21,
+    "ordenFuente": 119,
+    "numeroEnComuna": 2,
+    "comuna": 9
+  },
+  {
+    "nombre": "El Bosquecito",
+    "pagina": 21,
+    "ordenFuente": 120,
+    "numeroEnComuna": 3,
+    "comuna": 9
+  },
+  {
+    "nombre": "El Jardín",
+    "pagina": 21,
+    "ordenFuente": 121,
+    "numeroEnComuna": 4,
+    "comuna": 9
+  },
+  {
+    "nombre": "El Palmar",
+    "pagina": 21,
+    "ordenFuente": 122,
+    "numeroEnComuna": 5,
+    "comuna": 9
+  },
+  {
+    "nombre": "Internacional",
+    "pagina": 21,
+    "ordenFuente": 123,
+    "numeroEnComuna": 6,
+    "comuna": 9
+  },
+  {
+    "nombre": "Juan XXIII",
+    "pagina": 21,
+    "ordenFuente": 124,
+    "numeroEnComuna": 7,
+    "comuna": 9
+  },
+  {
+    "nombre": "La Graciela",
+    "pagina": 21,
+    "ordenFuente": 125,
+    "numeroEnComuna": 8,
+    "comuna": 9
+  },
+  {
+    "nombre": "La Trinidad",
+    "pagina": 21,
+    "ordenFuente": 126,
+    "numeroEnComuna": 9,
+    "comuna": 9
+  },
+  {
+    "nombre": "Maracaibo",
+    "pagina": 21,
+    "ordenFuente": 127,
+    "numeroEnComuna": 10,
+    "comuna": 9
+  },
+  {
+    "nombre": "Portales del Rio",
+    "pagina": 21,
+    "ordenFuente": 128,
+    "numeroEnComuna": 11,
+    "comuna": 9
+  },
+  {
+    "nombre": "Riopaila",
+    "pagina": 21,
+    "ordenFuente": 129,
+    "numeroEnComuna": 12,
+    "comuna": 9
+  },
+  {
+    "nombre": "Samán del Norte",
+    "pagina": 21,
+    "ordenFuente": 130,
+    "numeroEnComuna": 13,
+    "comuna": 9
+  },
+  {
+    "nombre": "Siete de Agosto",
+    "pagina": 21,
+    "ordenFuente": 131,
+    "numeroEnComuna": 14,
+    "comuna": 9
+  },
+  {
+    "nombre": "Villa Colombia",
+    "pagina": 21,
+    "ordenFuente": 132,
+    "numeroEnComuna": 15,
+    "comuna": 9
+  },
+  {
+    "nombre": "San Francisco",
+    "pagina": 21,
+    "ordenFuente": 133,
+    "numeroEnComuna": 1,
+    "comuna": 10
+  },
+  {
+    "nombre": "Urbanización La Paz",
+    "pagina": 21,
+    "ordenFuente": 134,
+    "numeroEnComuna": 2,
+    "comuna": 10
+  },
+  {
+    "nombre": "El Paraíso",
+    "pagina": 21,
+    "ordenFuente": 135,
+    "numeroEnComuna": 3,
+    "comuna": 10
+  }
+]

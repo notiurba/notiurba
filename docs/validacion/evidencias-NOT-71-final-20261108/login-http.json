@@ -1,0 +1,9 @@
+{
+  "fecha": "2026-11-08T20:56:58.279Z",
+  "status": 403,
+  "body": {
+    "codigo": "CORREO_NO_VERIFICADO",
+    "mensaje": "Confirma tu correo para ingresar. Revisa tu bandeja de entrada o pide un nuevo enlace.",
+    "campo": null
+  }
+}

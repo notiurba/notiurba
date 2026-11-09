@@ -1,0 +1,18 @@
+{
+  "fecha": "2026-11-08T00:17:29.436Z",
+  "url": "http://127.0.0.1:5173/registro",
+  "endpoint": "http://127.0.0.1:5173/api/catalogos/barrios",
+  "http": 200,
+  "barrios": [],
+  "opciones": [
+    {
+      "valor": "",
+      "texto": "Seleccione su barrio"
+    }
+  ],
+  "selectorDeshabilitado": true,
+  "registroDeshabilitado": true,
+  "escriturasHttp": [],
+  "origen": "GET real por proxy Vite a Render; no hay interceptores Playwright ni respuestas fabricadas",
+  "limitacion": "No puede seleccionarse ni verificarse persistencia de un barrio real porque la respuesta real es []"
+}

@@ -1,0 +1,21 @@
+[
+  {
+    "asset": "/assets/index-DtWzeXbA.js",
+    "status": 200,
+    "sha256": "c7abbca3862d81c747dd666358ef35e5bedcdf189bf661d9bb2d9e024540ba11",
+    "urls": [
+      "https://notiurba-api.onrender.com"
+    ],
+    "chunks": [
+      "rutas-fvCRdP7h.js",
+      "rutas-hDm_qM_O.js"
+    ]
+  },
+  {
+    "asset": "/assets/rolldown-runtime-CbXtAM7H.js",
+    "status": 200,
+    "sha256": "bbf7c5086ae414dc3f33777e3eebf16ea8631325b8bb4690d25091c03567f31a",
+    "urls": [],
+    "chunks": []
+  }
+]

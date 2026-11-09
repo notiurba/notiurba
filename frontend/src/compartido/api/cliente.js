@@ -12,7 +12,7 @@ async function leerError(respuesta) {
   const cuerpo = await respuesta.json().catch(() => null)
   // Un error del servidor (500 en adelante) puede traer texto técnico (SQL, nombres de clases): no se muestra.
   if (respuesta.status < 500 && cuerpo && typeof cuerpo.codigo === 'string' && typeof cuerpo.mensaje === 'string') {
-    return new ErrorApi({ estado: respuesta.status, ...cuerpo })
+    return new ErrorApi({ ...cuerpo, estado: respuesta.status })
   }
   // Sin cuerpo del contrato (p. ej. Render despertando, o un proxy): mensaje genérico
   return new ErrorApi({ estado: respuesta.status, codigo: 'RESPUESTA_INESPERADA', mensaje: MENSAJE_RESPUESTA_RARA })
@@ -24,19 +24,27 @@ async function leerError(respuesta) {
  * - publica: true es para llamadas que se hacen SIN sesión (login, registro): no envían el token.
  */
 export async function peticion(ruta, { publica = false, ...opciones } = {}) {
+  const simulacionActiva = import.meta.env.DEV && import.meta.env.VITE_USAR_MOCKS === 'true'
+  // Los selectores ciudadanos nunca reciben los barrios historicos del simulador.
+  // La ruta antigua usa el mismo catalogo publico mientras el resto del flujo sea simulado.
+  const catalogoBarrios = (opciones.method ?? 'GET').toUpperCase() === 'GET'
+    && ['/api/catalogos/barrios', '/api/reportes/opciones/barrios'].includes(ruta.split('?')[0])
+  const catalogoRealEnSimulacion = simulacionActiva && catalogoBarrios
+  const rutaReal = catalogoRealEnSimulacion ? '/api/catalogos/barrios' : ruta
   // Backend simulado: solo en desarrollo con VITE_USAR_MOCKS=true. En el build de producción esta
-  // rama se elimina y la carpeta src/simulacion no viaja al navegador. Si esa carpeta se borra,
-  // import.meta.glob devuelve un objeto vacío y la petición sigue a la API real.
-  if (import.meta.env.VITE_USAR_MOCKS === 'true') {
+  // rama se elimina y la carpeta src/simulacion no viaja al navegador. Los barrios son la
+  // excepción de lectura real; las demás rutas sin simulación fallan sin llamar a la API.
+  if (simulacionActiva && !catalogoRealEnSimulacion) {
     const [cargarSimulacion] = Object.values(import.meta.glob('../../simulacion/index.js'))
     if (cargarSimulacion) {
       const { buscarMock } = await cargarSimulacion()
       const simulada = buscarMock(opciones.method ?? 'GET', ruta, opciones.body)
       if (simulada) return simulada
     }
+    throw new ErrorApi({ estado: 0, codigo: 'MOCK_NO_DISPONIBLE', mensaje: 'Esta operación no está disponible en el simulador local.' })
   }
 
-  const token = publica ? null : obtenerToken()
+  const token = publica || catalogoRealEnSimulacion ? null : obtenerToken()
   const esFormData = typeof FormData !== 'undefined' && opciones.body instanceof FormData
   const encabezados = {
     ...(opciones.body && !esFormData ? { 'Content-Type': 'application/json' } : {}),
@@ -46,7 +54,7 @@ export async function peticion(ruta, { publica = false, ...opciones } = {}) {
 
   let respuesta
   try {
-    respuesta = await fetch(`${URL_BASE}${ruta}`, { ...opciones, headers: encabezados })
+    respuesta = await fetch(`${URL_BASE}${rutaReal}`, { ...opciones, headers: encabezados })
   } catch {
     throw new ErrorApi({ estado: 0, codigo: 'SIN_CONEXION', mensaje: MENSAJE_SIN_CONEXION })
   }
@@ -66,5 +74,9 @@ export async function peticion(ruta, { publica = false, ...opciones } = {}) {
   }
 
   if (respuesta.status === 204) return null
-  return respuesta.json()
+  try {
+    return await respuesta.json()
+  } catch {
+    throw new ErrorApi({ estado: respuesta.status, codigo: 'RESPUESTA_INESPERADA', mensaje: MENSAJE_RESPUESTA_RARA })
+  }
 }

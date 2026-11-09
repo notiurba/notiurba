@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-07T18:49:44.613Z",
+  "url": "http://127.0.0.1:5173/reportar/ubicacion",
+  "permission": "prompt",
+  "busy": false,
+  "dialogs": [],
+  "pendingCases": [
+    "MAP-02",
+    "MAP-03"
+  ],
+  "requiredIntervention": "En el mismo perfil Chrome Playwright not65, permitir Ubicacion para http://127.0.0.1:5173 y avisar. Tras comprobar MAP-02, bloquear Ubicacion en ese mismo perfil para MAP-03.",
+  "computerUseRetried": false,
+  "permissionsOverridden": false,
+  "coordinatesSimulated": false
+}

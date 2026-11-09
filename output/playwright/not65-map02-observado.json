@@ -1,0 +1,21 @@
+{
+  "case": "MAP-02",
+  "permissionBefore": "granted",
+  "observed": {
+    "date": "2026-11-07T18:51:02.866Z",
+    "url": "http://127.0.0.1:5173/reportar/ubicacion",
+    "permission": "granted",
+    "busy": false,
+    "dialogs": [],
+    "markers": 1,
+    "selected": true
+  },
+  "finitePoint": true,
+  "pointChanged": true,
+  "personalCoordinatesIncluded": false,
+  "simulatedPermissions": false,
+  "simulatedCoordinates": false,
+  "status": "APROBADA",
+  "screenshot": "not65-map02-gps-real.png",
+  "scope": "GPS real con permiso granted: solicitud resuelta sin error; punto finito distinto del anterior y un marcador. Coordenadas comparadas solo en memoria, no publicadas."
+}

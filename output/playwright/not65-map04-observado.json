@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-07T18:47:13.877Z",
+  "url": "http://127.0.0.1:5173/reportar/ubicacion",
+  "secureContext": true,
+  "permission": "prompt",
+  "busy": false,
+  "dialogs": [
+    "La búsqueda tardó demasiado\n\nLa búsqueda de ubicación tardó demasiado. Inténtelo nuevamente o seleccione el punto en el mapa.\n\nMarcar en el mapa\nVolver a obtener mi ubicación"
+  ],
+  "buttons": [
+    {
+      "text": "Volver a obtener mi ubicación",
+      "disabled": false
+    },
+    {
+      "text": "Quitar punto y elegir barrio",
+      "disabled": false
+    },
+    {
+      "text": "Continuar",
+      "disabled": false
+    },
+    {
+      "text": "Marcar en el mapa",
+      "disabled": false
+    },
+    {
+      "text": "Volver a obtener mi ubicación",
+      "disabled": false
+    }
+  ],
+  "hasSelectedPoint": true,
+  "case": "MAP-04",
+  "status": "APROBADA",
+  "observation": "Timeout real de la solicitud iniciada en la sesión anterior; permiso todavía prompt, no se atribuye a un GPS desactivado ni a permiso concedido.",
+  "screenshot": "not65-pendientes-consulta.png",
+  "simulatedPermissions": false,
+  "simulatedCoordinates": false
+}

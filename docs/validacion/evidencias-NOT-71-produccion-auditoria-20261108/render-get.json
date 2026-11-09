@@ -1,0 +1,46 @@
+{
+  "fecha": "2026-11-08T23:39:53.164Z",
+  "origin": "https://notiurba.netlify.app",
+  "results": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "error": "TimeoutError"
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalogos/barrios",
+      "error": "TimeoutError"
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalogos/tipos-documento",
+      "error": "TimeoutError"
+    },
+    {
+      "method": "GET",
+      "path": "/api/enrutamiento/categorias",
+      "error": "TimeoutError"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reportes/opciones/barrios",
+      "error": "TimeoutError"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reportes",
+      "error": "TimeoutError"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/login",
+      "error": "TimeoutError"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/registro",
+      "error": "TimeoutError"
+    }
+  ]
+}

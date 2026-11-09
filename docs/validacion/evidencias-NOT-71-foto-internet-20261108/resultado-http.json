@@ -1,0 +1,49 @@
+{
+  "fecha": "2026-11-08T22:42:55.527Z",
+  "api": "http://127.0.0.1:18091",
+  "codigo": "NU-000001",
+  "loginStatus": 200,
+  "beforeStatus": 200,
+  "upload": {
+    "status": 502,
+    "body": {
+      "codigo": "ALMACEN_FOTOS_NO_DISPONIBLE",
+      "mensaje": "No pudimos guardar la foto en este momento. Intenta de nuevo en un momento.",
+      "campo": "foto"
+    }
+  },
+  "afterStatus": 200,
+  "reporte": {
+    "codigoSeguimiento": "NU-000001",
+    "estado": "Recibido",
+    "categoria": {
+      "idCategoria": 1,
+      "nombre": "Vías, huecos, andenes e infraestructura"
+    },
+    "descripcion": "PRUEBA SINTETICA QA NOT-71. Verificacion del recorrido con fotografia y ubicacion de prueba. No representa un incidente real ni debe enviarse a una entidad.",
+    "latitud": 4.084847878371718,
+    "longitud": -76.1953353881836,
+    "comuna": 4,
+    "barrio": {
+      "idBarrio": 43,
+      "nombre": "Centro"
+    },
+    "direccionIncidente": "Punto sintetico QA NOT-71, sin incidente real",
+    "matriculaCuentaServicio": null,
+    "radicadoOficial": null,
+    "fotos": [],
+    "creadoEn": "2026-11-08T22:15:53.097272Z",
+    "vigenteHasta": "2026-12-08T22:15:53.097272Z",
+    "historial": [
+      {
+        "estado": "Recibido",
+        "observacion": "Reporte registrado por el ciudadano.",
+        "cambiadoEn": "2026-11-08T22:15:53.097272Z"
+      }
+    ],
+    "envio": {
+      "estado": "PENDIENTE",
+      "motivo": null
+    }
+  }
+}

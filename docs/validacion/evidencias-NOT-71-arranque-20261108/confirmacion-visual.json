@@ -1,0 +1,11 @@
+{
+  "fecha": "2026-11-08T23:08:30.477Z",
+  "url": "http://127.0.0.1:5175/reportar/enviado/NU-000001",
+  "codigo": "NU-000001",
+  "titulo": "Reporte guardado",
+  "comuna": 4,
+  "barrio": "Centro",
+  "destino": "Alcaldía de Tuluá / Secretaría de Hábitat e Infraestructura",
+  "correo": "PENDIENTE",
+  "alcance": "Apertura directa autenticada; no repite POST ni demuestra navegación automática tras guardar"
+}

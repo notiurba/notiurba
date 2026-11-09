@@ -1,0 +1,47 @@
+{
+  "fecha": "2026-11-08T22:25:51.831Z",
+  "codigo": "NU-000001",
+  "getStatus": 200,
+  "detalle": {
+    "codigoSeguimiento": "NU-000001",
+    "estado": "Recibido",
+    "categoria": {
+      "idCategoria": 1,
+      "nombre": "Vías, huecos, andenes e infraestructura"
+    },
+    "descripcion": "PRUEBA SINTETICA QA NOT-71. Verificacion del recorrido con fotografia y ubicacion de prueba. No representa un incidente real ni debe enviarse a una entidad.",
+    "latitud": 4.084847878371718,
+    "longitud": -76.1953353881836,
+    "comuna": 4,
+    "barrio": {
+      "idBarrio": 43,
+      "nombre": "Centro"
+    },
+    "direccionIncidente": "Punto sintetico QA NOT-71, sin incidente real",
+    "matriculaCuentaServicio": null,
+    "radicadoOficial": null,
+    "fotos": [],
+    "creadoEn": "2026-11-08T22:15:53.097272Z",
+    "vigenteHasta": "2026-12-08T22:15:53.097272Z",
+    "historial": [
+      {
+        "estado": "Recibido",
+        "observacion": "Reporte registrado por el ciudadano.",
+        "cambiadoEn": "2026-11-08T22:15:53.097272Z"
+      }
+    ],
+    "envio": {
+      "estado": "PENDIENTE",
+      "motivo": null
+    }
+  },
+  "photoStatus": 502,
+  "sql": "bloqueado por permission denied en Docker",
+  "confirmacionVisual": "fallo observado: retorno a Categoria; consulta visual posterior bloqueada por conexion Chrome",
+  "almacenLocal": {
+    "clase": "com.notiurba.qa.Not71ServidorQA",
+    "compilacion": "BUILD SUCCESS",
+    "arranque": "no ejecutado: Docker inaccesible"
+  },
+  "produccion": "no modificada; NOT71 pendiente E2E desplegada"
+}

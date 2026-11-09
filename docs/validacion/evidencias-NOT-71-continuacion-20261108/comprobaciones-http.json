@@ -1,0 +1,21 @@
+{
+  "fecha": "2026-11-08T21:14:05.327Z",
+  "tokenInvalido": {
+    "url": "http://127.0.0.1:18091/api/auth/verificar",
+    "status": 400,
+    "body": {
+      "codigo": "ENLACE_INVALIDO",
+      "campo": "token"
+    }
+  },
+  "render": {
+    "url": "https://notiurba-api.onrender.com/api/catalogos/barrios",
+    "status": 200,
+    "body": "[]",
+    "count": 0
+  },
+  "sql": "bloqueado por permiso denegado a Docker",
+  "cuentaVerificadaEnEstaRevision": false,
+  "loginPosterior": "no ejecutado",
+  "reporteConFoto": "no ejecutado"
+}

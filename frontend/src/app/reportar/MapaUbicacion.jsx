@@ -17,7 +17,7 @@ const ICONO = L.divIcon({
 // Mapa (Leaflet + OpenStreetMap) donde la persona toca para marcar el lugar del problema.
 //  - latitud, longitud: números del punto marcado (o null).   - alElegir(latitud, longitud): se llama al tocar el mapa.
 // Se reciben como números (no como objeto) para que el mapa solo se recentre cuando el punto cambia de verdad.
-export default function MapaUbicacion({ latitud, longitud, alElegir }) {
+export default function MapaUbicacion({ latitud, longitud, alElegir, error }) {
   const contenedor = useRef(null)
   const mapa = useRef(null)
   const marcador = useRef(null)
@@ -30,7 +30,8 @@ export default function MapaUbicacion({ latitud, longitud, alElegir }) {
 
   // El mapa se crea una sola vez y se destruye al salir de la pantalla.
   useEffect(() => {
-    mapa.current = L.map(contenedor.current, { center: CENTRO_TULUA, zoom: 13 })
+    mapa.current = L.map(contenedor.current, { center: CENTRO_TULUA, zoom: 13, zoomControl: false })
+    L.control.zoom({ zoomInTitle: 'Acercar mapa', zoomOutTitle: 'Alejar mapa' }).addTo(mapa.current)
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap',
@@ -64,7 +65,13 @@ export default function MapaUbicacion({ latitud, longitud, alElegir }) {
 
   // Cada vez que cambia el punto (toque o GPS) se mueve el marcador y se centra el mapa.
   useEffect(() => {
-    if (latitud == null || longitud == null || !mapa.current) return
+    if (!mapa.current) return
+    if (latitud == null || longitud == null) {
+      marcador.current?.remove()
+      marcador.current = null
+      capaComunas.current?.eachLayer(capa => capa.setStyle(estiloComuna(capa.feature)))
+      return
+    }
     const posicion = [latitud, longitud]
     if (marcador.current) marcador.current.setLatLng(posicion)
     else marcador.current = L.marker(posicion, { icon: ICONO, keyboard: false }).addTo(mapa.current)
@@ -78,12 +85,23 @@ export default function MapaUbicacion({ latitud, longitud, alElegir }) {
     )
   }, [latitud, longitud])
 
+  function elegirConTeclado(evento) {
+    if (evento.target !== contenedor.current || !['Enter', ' '].includes(evento.key)) return
+    evento.preventDefault()
+    const centro = mapa.current?.getCenter()
+    if (centro) alElegirActual.current(centro.lat, centro.lng)
+  }
+
   return (
     <div
       ref={contenedor}
       className="mapa-ubicacion"
       role="application"
-      aria-label="Mapa para marcar el lugar del problema. Toque el mapa para colocar el marcador."
+      tabIndex={0}
+      onKeyDown={elegirConTeclado}
+      aria-label="Mapa para marcar el lugar del problema"
+      aria-describedby={`ubicacion-instruccion ubicacion-teclado${error ? ' ubicacion-error' : ''}`}
+      aria-invalid={error ? true : undefined}
     />
   )
 }

@@ -1,0 +1,10 @@
+{
+  "fecha": "2026-11-07",
+  "comando": "node --test src/compartido/validaciones/registro.test.mjs src/compartido/componentes/formulario/residenciaRegistro.test.mjs src/compartido/api/cliente.test.mjs",
+  "directorio": "frontend",
+  "pruebas": 32,
+  "aprobadas": 32,
+  "fallidas": 0,
+  "omitidas": 0,
+  "exitCode": 0
+}

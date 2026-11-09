@@ -1,0 +1,12 @@
+{
+  "case": "MAP-03",
+  "blocked": true,
+  "permissionBefore": "granted",
+  "reason": "Pendiente bloqueo manual en este mismo perfil",
+  "status": "BLOQUEADA",
+  "date": "2026-11-07T18:53:31.176Z",
+  "actualGpsRequestExecuted": false,
+  "requiredIntervention": "Bloquear Ubicacion para http://127.0.0.1:5173 en el mismo perfil de Chrome Playwright not65, despues avisar. No se debe cambiar el Xiaomi ni usar otro perfil.",
+  "simulatedPermissions": false,
+  "simulatedCoordinates": false
+}

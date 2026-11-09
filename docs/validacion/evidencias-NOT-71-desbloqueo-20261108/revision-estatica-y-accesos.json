@@ -1,0 +1,39 @@
+{
+  "fecha": "2026-11-09T00:05:22.808Z",
+  "github": {
+    "head": "e61c44001231b595fdb2faa8866154fed79559ac",
+    "workflow_runs": [
+      {
+        "id": 42515044651,
+        "name": "EDT 5.1 backend validation",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 19,
+        "jobs_url": "https://api.github.com/repos/notiurba/notiurba/actions/runs/42515044651/jobs",
+        "logs_url": "https://api.github.com/repos/notiurba/notiurba/actions/runs/42515044651/logs",
+        "workflow_id": 398226456
+      }
+    ],
+    "statuses": [
+      {
+        "context": "netlify/notiurba/deploy-preview",
+        "state": "success",
+        "target_url": "https://deploy-preview-27--notiurba.netlify.app"
+      }
+    ]
+  },
+  "render": {
+    "publicGet": "3 timeouts 25s; sin respuesta HTTP",
+    "panel": "CDP focus timeout 10s en pestaña existente",
+    "logsDisponibles": false,
+    "versionIdentificada": false,
+    "causaNoDemostrada": true
+  },
+  "renderStatusPublico": {
+    "url": "https://status.render.com",
+    "observacion": "All Systems Operational en lectura del panel publico; no demuestra salud de este servicio"
+  },
+  "evidenciaNeonConservada": "docs/validacion/evidencias-NOT-71-produccion-auditoria-20261108/auditoria-conectores.json",
+  "qaRepetida": false,
+  "postProductivos": 0
+}

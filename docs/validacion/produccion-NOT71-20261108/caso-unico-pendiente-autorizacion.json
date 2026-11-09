@@ -1,0 +1,77 @@
+{
+  "idCaso": "NOT71-PROD-20261108-01",
+  "estado": "BORRADOR_NO_AUTORIZADO_NO_EJECUTAR",
+  "objetivo": "Una cuenta y un reporte productivos, solo despues de superar gates y permisos",
+  "entorno": {
+    "frontend": "https://notiurba.netlify.app",
+    "api": "https://notiurba-api.onrender.com",
+    "proyectoNeon": "restless-cake-46112011",
+    "ramaNeon": "br-proud-waterfall-b44u8y7p",
+    "base": "neondb"
+  },
+  "limites": {
+    "cuentas": 1,
+    "reportes": 1,
+    "fotos": 1,
+    "correosAEntidades": 0,
+    "postEjecutados": 0
+  },
+  "registroPropuesto": {
+    "nombres": "Prueba",
+    "apellidos": "NotiUrba NOT71",
+    "idTipoDocumento": 1,
+    "numeroDocumento": "9911087101",
+    "idBarrio": "<ID_APROBADO_CENTRO_COMUNA4_NO_USAR_43_POR_SUPOSICION>",
+    "direccionCorrespondencia": "PRUEBA NOT71 - sin correspondencia real",
+    "correo": "<BUZON_DE_PRUEBAS_CONTROLADO_Y_APROBADO>",
+    "telefono": null,
+    "password": "<SECRETO_EFIMERO_FUERA_DEL_REPOSITORIO>",
+    "aceptaPrivacidad": "<ACEPTACION_REAL_DEL_RESPONSABLE>",
+    "declaraMayorEdad": "<DECLARACION_REAL_DEL_RESPONSABLE>"
+  },
+  "reportePropuesto": {
+    "idCategoria": 14,
+    "latitud": 4.084847878371718,
+    "longitud": -76.1953353881836,
+    "idBarrio": "<ID_APROBADO_CENTRO_COMUNA4>",
+    "descripcion": "PRUEBA NOT71-PROD-20261108-01 SIN INCIDENTE REAL. Validacion tecnica autorizada; no contactar ni notificar entidades externas.",
+    "direccionIncidente": "Punto de ensayo NOT71 sin incidente real",
+    "matriculaCuentaServicio": null,
+    "radicadoOficial": null,
+    "autorizaEnvio": "<CONSENTIMIENTO_REAL_TRAS_CONFIRMAR_RUTA_SIN_CORREO>",
+    "emergencia": false
+  },
+  "foto": {
+    "archivo": "Pothole_Small.jpg",
+    "bytes": 84460,
+    "sha256": "761d2113cbbccd6600366f6885f1cc1e656d33476780628150878faf178b6b67",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Pothole_Small.jpg",
+    "licencia": "PD-self; Uncl3dad",
+    "alcance": "Imagen tecnica de prueba; no acredita un incidente real ni obliga a usar categoria1"
+  },
+  "garantiasPrevias": [
+    "Build/SHA Render y flujo de envio deben coincidir con codigo auditado",
+    "Congelar categoria14 y sus canales: permiteCorreo=false, alterno Web",
+    "Aceptacion funcional explicita del caso con canal alterno",
+    "Verificacion de cuenta solo al buzon controlado autorizado; no recuperar ni reenviar",
+    "No abrir enlaces externos de la entidad ni usar endpoints admin/reenviar",
+    "Comprobar EXTERNO/NO_ENVIADO_CORREO y mensaje_json/clave_idempotencia NULL por lectura del caso",
+    "No crear otro reporte si falta respuesta; conciliar primero por marcador y cuenta"
+  ],
+  "autorizaciones": {
+    "lecturaLogsEntornoRender": {
+      "autorizadaPorSolicitudActual": true,
+      "accesoTecnico": "PENDIENTE: timeout de conexion al panel; no requiere repetir permiso de lectura"
+    },
+    "datosB01B05Vigencia": null,
+    "respaldoRestauracionAislada": null,
+    "commitIntegracion": null,
+    "despliegueBackend": null,
+    "despliegueFrontend": null,
+    "migracionNeon": null,
+    "cuentaReporteFotoBuzonYConsentimientos": null,
+    "politicaConservacionLimpieza": null
+  },
+  "codigoSeguimientoProductivo": null,
+  "nota": "NU-000001 es QA; no se reutiliza como identidad productiva. No es un payload ejecutable: contiene placeholders y no incluye secretos."
+}

@@ -20,6 +20,19 @@ test('paso 1: con todo lleno no hay errores', () => {
   assert.deepEqual(validarPasoDatos(completo), {})
 })
 
+test('paso 1 permite avanzar sin barrio, dirección ni credenciales del paso 2', () => {
+  const datos = { ...completo, idBarrio: '', direccionCorrespondencia: '', correo: '', password: '', confirmar: '' }
+  assert.deepEqual(validarPasoDatos(datos), {})
+  assert.ok(validarPasoAcceso(datos).idBarrio)
+})
+
+test('nombres y apellidos: se conserva el límite 60 y se rechazan 61 caracteres', () => {
+  assert.deepEqual(validarPasoDatos({ ...completo, nombres: 'A'.repeat(60), apellidos: 'B'.repeat(60) }), {})
+  const errores = validarPasoDatos({ ...completo, nombres: 'A'.repeat(61), apellidos: 'B'.repeat(61) })
+  assert.match(errores.nombres, /60/)
+  assert.match(errores.apellidos, /60/)
+})
+
 test('paso 1: todo vacío marca cada campo obligatorio, menos el teléfono opcional', () => {
   const errores = validarPasoDatos({ nombres: '', apellidos: '', idTipoDocumento: '', numeroDocumento: '', telefono: '' })
   assert.deepEqual(Object.keys(errores).sort(), ['apellidos', 'idTipoDocumento', 'nombres', 'numeroDocumento'])

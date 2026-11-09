@@ -1,0 +1,19 @@
+{
+  "alto": 800,
+  "ancho": 360,
+  "controles": [
+    {
+      "bottom": 727.640625,
+      "texto": "Ver mis reportes",
+      "top": 681.640625,
+      "visible": true
+    },
+    {
+      "bottom": 783.640625,
+      "texto": "Hacer otro reporte",
+      "top": 737.640625,
+      "visible": true
+    }
+  ],
+  "scrollY": 379
+}

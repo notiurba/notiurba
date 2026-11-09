@@ -1,0 +1,18 @@
+{
+  "fecha": "2026-11-08T22:45:21.529Z",
+  "archivos": [
+    "frontend/src/app/reportar/PasoConfirmacion.jsx",
+    "frontend/src/app/reportar/ReportarLayout.jsx"
+  ],
+  "eslint": {
+    "exitCode": 0
+  },
+  "viteBuild": {
+    "exitCode": 0,
+    "modulos": 237
+  },
+  "pruebaVisual": "BLOQUEADA: conexion Chrome y determinacion URL nativa",
+  "sql": "BLOQUEADO: Docker permission denied",
+  "foto": "NO APROBADA: HTTP 502, fotos vacias",
+  "nuevoReporteCreado": false
+}

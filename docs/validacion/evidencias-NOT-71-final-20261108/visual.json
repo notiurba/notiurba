@@ -1,0 +1,19 @@
+{
+  "fecha": "2026-11-08T20:54:32.172Z",
+  "centroConservado": "43",
+  "alverniaConservado": "14",
+  "privacidadConservado": "43",
+  "measure360": {
+    "ancho": 360,
+    "documento": 345,
+    "opciones": 135,
+    "seleccion": "43"
+  },
+  "measure1366": {
+    "ancho": 1366,
+    "documento": 1351,
+    "opciones": 135,
+    "seleccion": "43"
+  },
+  "obligatorios": "mensajes de nombres,apellidos,tipo y numero visibles"
+}

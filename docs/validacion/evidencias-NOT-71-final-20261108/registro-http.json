@@ -1,0 +1,10 @@
+{
+  "fecha": "2026-11-08T20:55:48.408Z",
+  "url": "http://127.0.0.1:5175/api/auth/registro",
+  "status": 201,
+  "correo": "qa.not71.20261108.2147@example.test",
+  "documento": "9711082147",
+  "idBarrio": 43,
+  "resultadoUI": "Revise su correo",
+  "mocks": false
+}

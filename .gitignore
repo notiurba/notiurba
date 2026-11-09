@@ -16,3 +16,8 @@ baseline-maven.log
 edt51-latency.json
 external-results/
 !**/.env.validation.example
+# Artefactos locales de QA
+/output/.vite-*/
+/output/*.log
+/output/*.timestamp-*.mjs
+/.playwright-cli/

@@ -1,0 +1,98 @@
+{
+  "fecha": "2026-11-07",
+  "project": "restless-cake-46112011",
+  "branch": "br-proud-waterfall-b44u8y7p",
+  "modo": "SET TRANSACTION READ ONLY",
+  "resultados": [
+    [],
+    [
+      {
+        "current_database": "neondb",
+        "current_schema": "public"
+      }
+    ],
+    [
+      {
+        "total": "1",
+        "publicos": "0",
+        "internos": "1"
+      }
+    ],
+    [
+      {
+        "id_barrio": 1,
+        "id_comuna": 1,
+        "nombre": "Administración NotiUrba",
+        "interno": true
+      }
+    ],
+    [
+      {
+        "installed_rank": 16,
+        "version": "16",
+        "script": "V16__enrutamiento_y_envios.sql",
+        "success": true
+      },
+      {
+        "installed_rank": 15,
+        "version": "15",
+        "script": "V15__barrio_interno.sql",
+        "success": true
+      },
+      {
+        "installed_rank": 14,
+        "version": "14",
+        "script": "V14__capa_comunas_experimental.sql",
+        "success": true
+      },
+      {
+        "installed_rank": 13,
+        "version": "13",
+        "script": "V13__asignar_comuna_por_punto.sql",
+        "success": true
+      },
+      {
+        "installed_rank": 12,
+        "version": "12",
+        "script": "V12__aviso_de_privacidad_v3.sql",
+        "success": true
+      },
+      {
+        "installed_rank": 11,
+        "version": "11",
+        "script": "V11__identificador_de_foto_en_el_almacen.sql",
+        "success": true
+      },
+      {
+        "installed_rank": 10,
+        "version": "10",
+        "script": "V10__columnas_rebotes_de_correo.sql",
+        "success": true
+      },
+      {
+        "installed_rank": 9,
+        "version": "9",
+        "script": "V9__quitar_modo_envio_borrador.sql",
+        "success": true
+      },
+      {
+        "installed_rank": 8,
+        "version": "8",
+        "script": "V8__categoria_10_y_sedama.sql",
+        "success": true
+      },
+      {
+        "installed_rank": 7,
+        "version": "7",
+        "script": "V7__ajustes_modelo_v8.sql",
+        "success": true
+      }
+    ],
+    [
+      {
+        "comunas": "10",
+        "barrios_sin_comuna": "0"
+      }
+    ]
+  ]
+}

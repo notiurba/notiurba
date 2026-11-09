@@ -1,0 +1,57 @@
+{
+  "fecha": "2026-11-08T20:59:12.546Z",
+  "candidata": "../V17__catalogo_barrios_pmgr_2020.sql",
+  "sha256Migracion": "e824e2b71011938b8c0666f07b302ac537a81bd27865689055048fb503dd4fec",
+  "sha256Csv": "fce84f32cfcbd1324b5fa9a8c9b6aa199dfe63d36d212c41297f6766a1744ecc",
+  "filas": 135,
+  "paresUnicos": 135,
+  "duplicadosNormalizados": 0,
+  "coincideCsv": true,
+  "coincideApiQa": true,
+  "apiQaStatus": 200,
+  "maxCaracteres": 27,
+  "distribucion": {
+    "1": 12,
+    "2": 8,
+    "3": 21,
+    "4": 5,
+    "5": 16,
+    "6": 16,
+    "7": 21,
+    "8": 18,
+    "9": 15,
+    "10": 3
+  },
+  "aprobadoPor": null,
+  "decisiones": [
+    {
+      "id": "B01",
+      "estado": "PENDIENTE",
+      "decision": null
+    },
+    {
+      "id": "B02",
+      "estado": "PENDIENTE",
+      "decision": null
+    },
+    {
+      "id": "B03",
+      "estado": "PENDIENTE",
+      "decision": null
+    },
+    {
+      "id": "B04",
+      "estado": "PENDIENTE",
+      "decision": null
+    },
+    {
+      "id": "B05",
+      "estado": "PENDIENTE",
+      "decision": null
+    }
+  ],
+  "sqlNuevos": "preparados, NO ejecutados; Docker deniega acceso",
+  "pruebaCargaAnterior": "CatalogoCargaBarriosIT: primera carga 135, repeticion 0; reutilizada",
+  "estado": "CANDIDATA_NO_AUTORIZADA",
+  "originalModificado": false
+}

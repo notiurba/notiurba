@@ -1,0 +1,2731 @@
+{
+  "titulo": "Catálogo candidato documental 2024 para revisión de Andrés y QA",
+  "version": "2026-11-08-propuesta",
+  "estado": "NO_APROBADO_NO_EJECUTABLE",
+  "uso": "Referencia documental y eventual fixture QA aislado autorizado; no catálogo vigente certificado ni sustitución de V17.",
+  "fuentes": {
+    "D": "Documento de proyecto actual: revisión y pestaña indicadas arriba",
+    "C": "docs/validacion/evidencias-catalogo-barrios-20261107/barrios-pmgr-2020.csv",
+    "V": "backend/migraciones-pendientes/barrios-pmgr-2020/V17__catalogo_barrios_pmgr_2020.sql",
+    "S1": {
+      "fecha": "diciembre 2020",
+      "paginas": "16-21, tabla 4",
+      "url": "https://tulua.gov.co/loader.php?lServicio=Tools2&lTipo=descargas&lFuncion=exposeDocument&idFile=12112"
+    },
+    "S2": {
+      "fecha": "diciembre 2024",
+      "paginas": "17-18, sección 3.4",
+      "url": "https://tulua.gov.co/loader.php?lServicio=Tools2&lTipo=descargas&lFuncion=exposeDocument&idFile=22080",
+      "limite": "Texto indexado recuperado; capturas previamente rechazadas con 403. No certificación administrativa 2026."
+    }
+  },
+  "revisionDocs": "AHj4eMT1N3puXjgGmYWBoXZHXNPESSe67EvMvNhgTmOF8L_7fWKClYfG6nz8w4gjEF36lPu8H-kg9_NImA8cqn-oVew_ZFs8E7ZORJxbuM0",
+  "reglas": [
+    "150 entradas con corrección documental única Asogrin la Santa Cruz; los 151 textos originales siguen en la auditoría.",
+    "Mantener el nombre de Docs salvo esa corrección; expansiones Urb./Urbanización, tildes y mayúsculas son editoriales, no equivalencias territoriales.",
+    "No asignar IDs de base de datos ni deducir geometrías o vigencia 2026.",
+    "No unir los 135 históricos a los 150; no renombrar ni trasladar filas productivas."
+  ],
+  "registros": [
+    {
+      "fila": 1,
+      "comuna": 1,
+      "nombre": "Victoria",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 1,
+        "indiceOriginalDocs": 1,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Victoria"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 2,
+      "comuna": 1,
+      "nombre": "Panamericano",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 1,
+        "indiceOriginalDocs": 2,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Panamericano"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 3,
+      "comuna": 1,
+      "nombre": "El Jazmín",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 1,
+        "indiceOriginalDocs": 3,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Jazmín"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 4,
+      "comuna": 1,
+      "nombre": "El Retiro",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 1,
+        "indiceOriginalDocs": 4,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Retiro"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 5,
+      "comuna": 1,
+      "nombre": "Fátima",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 1,
+        "indiceOriginalDocs": 5,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Fátima"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 6,
+      "comuna": 1,
+      "nombre": "Villa del Río",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 1,
+        "indiceOriginalDocs": 6,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Villa del Río"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 7,
+      "comuna": 1,
+      "nombre": "La Rivera",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 1,
+        "indiceOriginalDocs": 7,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Rivera"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 8,
+      "comuna": 1,
+      "nombre": "San Benito",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 1,
+        "indiceOriginalDocs": 8,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "San Benito"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 9,
+      "comuna": 1,
+      "nombre": "Miraflores",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 1,
+        "indiceOriginalDocs": 9,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Miraflores"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 10,
+      "comuna": 1,
+      "nombre": "Ciudad Campestre",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 1,
+        "indiceOriginalDocs": 10,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Ciudad Campestre"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 11,
+      "comuna": 1,
+      "nombre": "Villa Campestre",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 1,
+        "indiceOriginalDocs": 11,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Villa Campestre"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 12,
+      "comuna": 1,
+      "nombre": "Urbanización Lomitas",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 1,
+        "indiceOriginalDocs": 12,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urbanización Lomitas"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 13,
+      "comuna": 2,
+      "nombre": "San Vicente",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 2,
+        "indiceOriginalDocs": 1,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "San Vicente"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 14,
+      "comuna": 2,
+      "nombre": "Franciscanos",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 2,
+        "indiceOriginalDocs": 2,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Franciscanos"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 15,
+      "comuna": 2,
+      "nombre": "Alvernia",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 2,
+        "indiceOriginalDocs": 3,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Alvernia"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 16,
+      "comuna": 2,
+      "nombre": "Céspedes",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 2,
+        "indiceOriginalDocs": 4,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Céspedes"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 17,
+      "comuna": 2,
+      "nombre": "Nuevo Alvernia",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 2,
+        "indiceOriginalDocs": 5,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Nuevo Alvernia"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 18,
+      "comuna": 2,
+      "nombre": "Entrerios",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 2,
+        "indiceOriginalDocs": 6,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Entrerios"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 19,
+      "comuna": 2,
+      "nombre": "Urbanización Santa Lucia",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 2,
+        "indiceOriginalDocs": 7,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urbanización Santa Lucia"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 20,
+      "comuna": 3,
+      "nombre": "Villa Nueva",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 1,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Villa Nueva"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 21,
+      "comuna": 3,
+      "nombre": "Popular",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 2,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Popular"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 22,
+      "comuna": 3,
+      "nombre": "Nuevo Morales",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 3,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Nuevo Morales"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 23,
+      "comuna": 3,
+      "nombre": "Estambul",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 4,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Estambul"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 24,
+      "comuna": 3,
+      "nombre": "La Inmaculada",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 5,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Inmaculada"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 25,
+      "comuna": 3,
+      "nombre": "San Antonio",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 6,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "San Antonio"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 26,
+      "comuna": 3,
+      "nombre": "El Bosque",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 7,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Bosque"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 27,
+      "comuna": 3,
+      "nombre": "Asogrin la Santa Cruz",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 8,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. Reagrupación documental de dos textos de Docs; Google Docs no editado.",
+        "denominacionDeTrabajo": "Asogrin la Santa Cruz"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 28,
+      "comuna": 3,
+      "nombre": "El Dorado",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 10,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Dorado"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 29,
+      "comuna": 3,
+      "nombre": "Urbanización El Cóndor",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 11,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urbanización El Cóndor"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 30,
+      "comuna": 3,
+      "nombre": "Santa Rita del Río",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 12,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Santa Rita del Río"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 31,
+      "comuna": 3,
+      "nombre": "La Villa",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 13,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Villa"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 32,
+      "comuna": 3,
+      "nombre": "Las Brisas",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 14,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Las Brisas"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 33,
+      "comuna": 3,
+      "nombre": "Morales",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 15,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Morales"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 34,
+      "comuna": 3,
+      "nombre": "Los Pinos",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 16,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Los Pinos"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 35,
+      "comuna": 3,
+      "nombre": "Ferias",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 17,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Ferias"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 36,
+      "comuna": 3,
+      "nombre": "Urbanización Peñaranda",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 18,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urbanización Peñaranda"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 37,
+      "comuna": 3,
+      "nombre": "Moralito",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 19,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Moralito"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 38,
+      "comuna": 3,
+      "nombre": "Brisas del Morales",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 20,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Brisas del Morales"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 39,
+      "comuna": 3,
+      "nombre": "El Cóndor 2",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 21,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Cóndor 2"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 40,
+      "comuna": 3,
+      "nombre": "Urbanización San Antonio",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 3,
+        "indiceOriginalDocs": 22,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urbanización San Antonio"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 41,
+      "comuna": 4,
+      "nombre": "Centro",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 4,
+        "indiceOriginalDocs": 1,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Centro"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 42,
+      "comuna": 4,
+      "nombre": "Escobar",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 4,
+        "indiceOriginalDocs": 2,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Escobar"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 43,
+      "comuna": 4,
+      "nombre": "Las Olas",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 4,
+        "indiceOriginalDocs": 3,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Las Olas"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 44,
+      "comuna": 4,
+      "nombre": "Palobonito",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 4,
+        "indiceOriginalDocs": 4,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Palobonito"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 45,
+      "comuna": 4,
+      "nombre": "Tomás Uribe Uribe",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 4,
+        "indiceOriginalDocs": 5,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Tomás Uribe Uribe"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 46,
+      "comuna": 5,
+      "nombre": "Sajonia",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 1,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Sajonia"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 47,
+      "comuna": 5,
+      "nombre": "Salesiano",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 2,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Salesiano"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 48,
+      "comuna": 5,
+      "nombre": "La Merced",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 3,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Merced"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 49,
+      "comuna": 5,
+      "nombre": "Las Acacias",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 4,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Las Acacias"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 50,
+      "comuna": 5,
+      "nombre": "Lusitania",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 5,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Lusitania"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 51,
+      "comuna": 5,
+      "nombre": "12 de Octubre",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 6,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "12 de Octubre"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 52,
+      "comuna": 5,
+      "nombre": "El Príncipe",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 7,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Príncipe"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 53,
+      "comuna": 5,
+      "nombre": "Nuevo Príncipe",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 8,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Nuevo Príncipe"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 54,
+      "comuna": 5,
+      "nombre": "Avenida Cali",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 9,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Avenida Cali"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 55,
+      "comuna": 5,
+      "nombre": "San Carlos",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 10,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "San Carlos"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 56,
+      "comuna": 5,
+      "nombre": "La Bastilla",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 11,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Bastilla"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 57,
+      "comuna": 5,
+      "nombre": "Urbanización El Lago",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 12,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urbanización El Lago"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 58,
+      "comuna": 5,
+      "nombre": "Urbanización El Laguito",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 13,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urbanización El Laguito"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 59,
+      "comuna": 5,
+      "nombre": "Conjunto Residencial Lusitania",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 14,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Conjunto Residencial Lusitania"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 60,
+      "comuna": 5,
+      "nombre": "Quintas de San Felipe",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 15,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Quintas de San Felipe"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 61,
+      "comuna": 5,
+      "nombre": "Olímpico",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 16,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Olímpico"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 62,
+      "comuna": 5,
+      "nombre": "Urbanización El Principito",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 17,
+        "origenSecundario": "D",
+        "comunaDocs": 5,
+        "indiceOriginalDocs": 17,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urbanización El Principito"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 63,
+      "comuna": 6,
+      "nombre": "Pueblo Nuevo",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 1,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Pueblo Nuevo"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 64,
+      "comuna": 6,
+      "nombre": "La Esperanza",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 2,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Esperanza"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 65,
+      "comuna": 6,
+      "nombre": "Las Delicias",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 3,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Las Delicias"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 66,
+      "comuna": 6,
+      "nombre": "Bolívar",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 4,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Bolívar"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 67,
+      "comuna": 6,
+      "nombre": "Playas",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 5,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Playas"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 68,
+      "comuna": 6,
+      "nombre": "San Pedro Claver",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 6,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "San Pedro Claver"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 69,
+      "comuna": 6,
+      "nombre": "Asoagrin",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 7,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Asoagrin"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 70,
+      "comuna": 6,
+      "nombre": "Progresar",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 8,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Progresar"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 71,
+      "comuna": 6,
+      "nombre": "La Ceiba",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 9,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Ceiba"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 72,
+      "comuna": 6,
+      "nombre": "Marandúa",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 10,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Marandúa"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 73,
+      "comuna": 6,
+      "nombre": "El Pinar",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 11,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Pinar"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 74,
+      "comuna": 6,
+      "nombre": "350 Años",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 12,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "350 Años"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 75,
+      "comuna": 6,
+      "nombre": "Comuneros Corazón del Valle",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 13,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Comuneros Corazón del Valle"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 76,
+      "comuna": 6,
+      "nombre": "Primero de Mayo",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 14,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Primero de Mayo"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 77,
+      "comuna": 6,
+      "nombre": "Urbanización Las Palmas",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 15,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urbanización Las Palmas"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 78,
+      "comuna": 6,
+      "nombre": "La Herradura",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 16,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Herradura"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 79,
+      "comuna": 6,
+      "nombre": "Buenos Aires",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 6,
+        "indiceOriginalDocs": 17,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Buenos Aires"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 80,
+      "comuna": 7,
+      "nombre": "Rojas",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 1,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Rojas"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 81,
+      "comuna": 7,
+      "nombre": "Rubén Cruz Vélez",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 2,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Rubén Cruz Vélez"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 82,
+      "comuna": 7,
+      "nombre": "El Porvenir",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 3,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Porvenir"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 83,
+      "comuna": 7,
+      "nombre": "Departamental",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 4,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Departamental"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 84,
+      "comuna": 7,
+      "nombre": "La Quinta",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 5,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Quinta"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 85,
+      "comuna": 7,
+      "nombre": "Nuevo Farfán",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 6,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Nuevo Farfán"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 86,
+      "comuna": 7,
+      "nombre": "La Campiña",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 7,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Campiña"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 87,
+      "comuna": 7,
+      "nombre": "Laureles I",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 8,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Laureles I"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 88,
+      "comuna": 7,
+      "nombre": "Laureles II",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 9,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Laureles II"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 89,
+      "comuna": 7,
+      "nombre": "El Descanso",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 10,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Descanso"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 90,
+      "comuna": 7,
+      "nombre": "Villa del Sur",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 11,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Villa del Sur"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 91,
+      "comuna": 7,
+      "nombre": "Guayacanes",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 12,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Guayacanes"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 92,
+      "comuna": 7,
+      "nombre": "Prados del Norte",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 13,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Prados del Norte"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 93,
+      "comuna": 7,
+      "nombre": "Las Veraneras",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 14,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Las Veraneras"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 94,
+      "comuna": 7,
+      "nombre": "José Antonio Galán",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 15,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "José Antonio Galán"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 95,
+      "comuna": 7,
+      "nombre": "Los Olmos",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 16,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Los Olmos"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 96,
+      "comuna": 7,
+      "nombre": "Juan Lemus Aguirre",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 17,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Juan Lemus Aguirre"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 97,
+      "comuna": 7,
+      "nombre": "Los Tolúes",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 18,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Los Tolúes"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 98,
+      "comuna": 7,
+      "nombre": "Las Nieves",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 19,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Las Nieves"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 99,
+      "comuna": 7,
+      "nombre": "El Limonar",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 20,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Limonar"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 100,
+      "comuna": 7,
+      "nombre": "Villa Liliana",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 21,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Villa Liliana"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 101,
+      "comuna": 7,
+      "nombre": "Villa del Lago",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 22,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Villa del Lago"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 102,
+      "comuna": 7,
+      "nombre": "Las Américas",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 23,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Las Américas"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 103,
+      "comuna": 7,
+      "nombre": "Farfán",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 24,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Farfán"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 104,
+      "comuna": 7,
+      "nombre": "Diablos Rojos I",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 25,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Diablos Rojos I"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 105,
+      "comuna": 7,
+      "nombre": "San Marino",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 26,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "San Marino"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 106,
+      "comuna": 7,
+      "nombre": "Urbanización Senderos de Villa Liliana I",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 27,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urb. Senderos de Villa Liliana I"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 107,
+      "comuna": 7,
+      "nombre": "Senderos de Villa Liliana II",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 28,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Senderos de Villa Liliana II"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 108,
+      "comuna": 7,
+      "nombre": "Urbanización Villa Margarita",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 29,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urb. Villa Margarita"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 109,
+      "comuna": 7,
+      "nombre": "Urbanización Terranova",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 30,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urb. Terranova"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 110,
+      "comuna": 7,
+      "nombre": "Urbanización Portales de San Felipe",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 31,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urb. Portales de San Felipe"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 111,
+      "comuna": 7,
+      "nombre": "Urbanización Portales de Juan de Dios",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 7,
+        "indiceOriginalDocs": 32,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urb. Portales de Juan de Dios"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 112,
+      "comuna": 8,
+      "nombre": "Municipal",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 1,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Municipal"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 113,
+      "comuna": 8,
+      "nombre": "Chiminangos",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 2,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Chiminangos"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 114,
+      "comuna": 8,
+      "nombre": "Horizonte",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 3,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Horizonte"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 115,
+      "comuna": 8,
+      "nombre": "Urbanización Santa Isabel",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 4,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urbanización Santa Isabel"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 116,
+      "comuna": 8,
+      "nombre": "La Independencia",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 5,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Independencia"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 117,
+      "comuna": 8,
+      "nombre": "Bosques de Maracaibo",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 6,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Bosques de Maracaibo"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 118,
+      "comuna": 8,
+      "nombre": "Jorge Eliécer Gaitán",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 7,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Jorge Eliécer Gaitán"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 119,
+      "comuna": 8,
+      "nombre": "San Luis",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 8,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "San Luis"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 120,
+      "comuna": 8,
+      "nombre": "El Refugio",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 9,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Refugio"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 121,
+      "comuna": 8,
+      "nombre": "Los Diablos Rojos II",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 10,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Los Diablos Rojos II"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 122,
+      "comuna": 8,
+      "nombre": "Flor de la Campana",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 11,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Flor de la Campana"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 123,
+      "comuna": 8,
+      "nombre": "Tercer Milenio",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 12,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Tercer Milenio"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 124,
+      "comuna": 8,
+      "nombre": "Comfamiliar",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 13,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Comfamiliar"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 125,
+      "comuna": 8,
+      "nombre": "Santa Inés de Comfamiliar",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 14,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Santa Inés de Comfamiliar"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 126,
+      "comuna": 8,
+      "nombre": "Sintra San Carlos",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 15,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Sintra San Carlos"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 127,
+      "comuna": 8,
+      "nombre": "Santa Inés",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 16,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Santa Inés"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 128,
+      "comuna": 8,
+      "nombre": "Urbanización Ciudad Jardín",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 17,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urb. Ciudad Jardin"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 129,
+      "comuna": 8,
+      "nombre": "Urbanización Mónaco",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 8,
+        "indiceOriginalDocs": 18,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urb. Monaco"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 130,
+      "comuna": 9,
+      "nombre": "El Jardín",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 1,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Jardín"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 131,
+      "comuna": 9,
+      "nombre": "Maracaibo",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 2,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Maracaibo"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 132,
+      "comuna": 9,
+      "nombre": "La Graciela",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 3,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Graciela"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 133,
+      "comuna": 9,
+      "nombre": "Villa Colombia",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 4,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Villa Colombia"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 134,
+      "comuna": 9,
+      "nombre": "El Palmar",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 5,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Palmar"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 135,
+      "comuna": 9,
+      "nombre": "Portales del Río",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 6,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Portales del Río"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 136,
+      "comuna": 9,
+      "nombre": "Juan XXIII",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 7,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Juan XXIII"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 137,
+      "comuna": 9,
+      "nombre": "Alameda I",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 8,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Alameda I"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 138,
+      "comuna": 9,
+      "nombre": "Alameda II",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 9,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Alameda II"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 139,
+      "comuna": 9,
+      "nombre": "El Bosquecito",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 10,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "El Bosquecito"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 140,
+      "comuna": 9,
+      "nombre": "Samán del Norte",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 11,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Samán del Norte"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 141,
+      "comuna": 9,
+      "nombre": "Internacional",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 12,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Internacional"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 142,
+      "comuna": 9,
+      "nombre": "7 de Agosto",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 13,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "7 de Agosto"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 143,
+      "comuna": 9,
+      "nombre": "Urbanización Riopaila",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 14,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urb. Riopaila"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 144,
+      "comuna": 9,
+      "nombre": "La Trinidad",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 9,
+        "indiceOriginalDocs": 15,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "La Trinidad"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 145,
+      "comuna": 10,
+      "nombre": "Aguaclara",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 10,
+        "indiceOriginalDocs": 1,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Aguaclara"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 146,
+      "comuna": 10,
+      "nombre": "Casa Huertas",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 10,
+        "indiceOriginalDocs": 2,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Casa Huertas"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 147,
+      "comuna": 10,
+      "nombre": "Urbanización Acuaviva",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 10,
+        "indiceOriginalDocs": 3,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urb. Acuaviva"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 148,
+      "comuna": 10,
+      "nombre": "Urbanización La Paz",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 10,
+        "indiceOriginalDocs": 4,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urb. La paz"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 149,
+      "comuna": 10,
+      "nombre": "Urbanización Paraíso",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 10,
+        "indiceOriginalDocs": 5,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urb. Paraíso"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    },
+    {
+      "fila": 150,
+      "comuna": 10,
+      "nombre": "Urbanización San Francisco",
+      "fundamento": {
+        "fuentePrincipal": "S2",
+        "fechaDocumento": "2024-12",
+        "seccion": "3.4",
+        "pagina": 18,
+        "origenSecundario": "D",
+        "comunaDocs": 10,
+        "indiceOriginalDocs": 6,
+        "nota": "Referencia de trabajo basada en Docs y lectura previa de S2; abreviaturas y ortografía editoriales no establecen equivalencia con PMGR. ",
+        "denominacionDeTrabajo": "Urb. San francisco"
+      },
+      "vigencia2026": "NO_CONFIRMADA",
+      "aprobacionAndres": "PENDIENTE"
+    }
+  ]
+}

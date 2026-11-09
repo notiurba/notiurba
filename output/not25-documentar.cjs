@@ -1,0 +1,23 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const folder='docs/validacion/NOT-25-final-20261107';
+function result(file){let s=fs.readFileSync(file,'utf16le').replace(/^\uFEFF/,'');if(!s.includes('### Result'))s=fs.readFileSync(file,'utf8');if(!s.includes('### Result'))throw Error('Sin resultado válido: '+file);return JSON.parse(s.split('### Result')[1].trim().split(/\r?\n/)[0]);}
+const failure=result('output/not25-fallo-capturado.log');
+const retry=result('output/not25-reintento-final.log');
+const db=JSON.parse(fs.readFileSync(path.join(folder,'persistencia-postgresql.json'),'utf8').replace(/^\uFEFF/,''));
+const stored=path.join(folder,'almacen-local',path.basename(retry.photoHttp.url));
+const bytes=fs.readFileSync(stored);
+const sha=crypto.createHash('sha256').update(bytes).digest('hex');
+const supplied=fs.readFileSync('docs/validacion/NOT-88-commons-20261108T011359Z/reducidas/foto-1.jpg');
+if(!bytes.equals(supplied)||sha!==path.basename(stored,'.jpg'))throw Error('La imagen almacenada no coincide con la adjuntada');
+if(db.database!=='not25_qa'||db.reports!==1||db.photos!==1||db.association.length!==1||db.association[0].code!==failure.reportCode||db.association[0].url!==retry.photoHttp.url)throw Error('Persistencia o conteos incorrectos');
+if(retry.reportCode!==failure.reportCode||retry.extraCreationsOnRetry!==0||retry.uploadStatus!==201||retry.photoHttp.status!==200)throw Error('Reintento o URL incorrectos');
+const upload=failure.timing.find(t=>t.url.endsWith('/fotos'));
+const captured=fs.statSync(path.join(folder,'01-subida-cargando.png')).mtime;
+if(upload.status!==502||captured<new Date(upload.startUtc)||captured>new Date(upload.endUtc))throw Error('Captura no corresponde a una subida pendiente');
+const output={task:'NOT-25',verdict:'NOT-25 LISTA PARA DONE',date:new Date().toISOString(),environment:{frontend:'http://127.0.0.1:5175',backend:'http://127.0.0.1:19025',database:'PostgreSQL/PostGIS desechable not25_qa',storage:'Almacén real local de archivos y HTTP 19026, reemplazo de infraestructura exclusivamente QA',cloudinaryRetested:false,apiSimulated:false,productionTouched:false,linearQueried:false},criteria:{urlPersisted:{passed:true,code:failure.reportCode,url:retry.photoHttp.url,sql:db,detail:retry.detail,bytes:bytes.length,sha256:sha,exactlyMatchesAttachedPhoto:true},loading:{passed:true,screenshot:'01-subida-cargando.png',capturedAt:captured.toISOString(),uploadWindow:upload,visualObservation:'Guardando… visible en los botones deshabilitados durante el POST de foto pendiente; revisión real del PNG'},failureAndRetry:{passed:true,failureStatus:502,message:failure.message,retryEnabled:failure.retryEnabled,photosAfterFailure:failure.photosAfterFailure,retryStatus:retry.uploadStatus,reportCountAfterRetry:db.reports,photoCountAfterRetry:db.photos,additionalCreationsOnRetry:retry.extraCreationsOnRetry,sameCode:true}},failure,retry,reused:['NOT-23, NOT-34, NOT-20 y NOT-68 Done según confirmación del usuario','NOT-88: JPEG reducido CC0 ya verificado; no se repitió compresión','Pruebas anteriores de formato, vista previa, quitar, sin foto y dos celulares'],limitations:['No es verificación de Cloudinary ni prueba de un despliegue de producción','Se indujo un fallo controlado en el almacén local; no se afirma una caída real de red/proveedor','No se certifica la pantalla final de confirmación con la captura 03 ni renderizado de imagen en el detalle; la URL se acreditó por SQL, GET autenticado y recuperación HTTP del JPEG']};
+fs.writeFileSync(path.join(folder,'resultados.json'),JSON.stringify(output,null,2)+'\n',{flag:'wx'});
+fs.writeFileSync(path.join(folder,'fallo-observado.json'),JSON.stringify(failure,null,2)+'\n',{flag:'wx'});
+fs.writeFileSync(path.join(folder,'reintento-observado.json'),JSON.stringify(retry,null,2)+'\n',{flag:'wx'});
+for(const [from,to] of [['output/playwright/not25-ejecutar-pendientes.js','verificacion-carga-fallo.js'],['output/playwright/not25-capturar-fallo.js','capturar-fallo-sin-repetir.js'],['output/playwright/not25-reintento-persistencia.js','verificacion-reintento.js'],['output/vite-not25-qa.mjs','vite-qa.config.referencia.mjs'],['output/not25-servidor-fotos.cjs','servidor-fotos-qa.cjs']])fs.copyFileSync(from,path.join(folder,to),fs.constants.COPYFILE_EXCL);
+fs.copyFileSync('backend/src/test/java/com/notiurba/qa/Not25ServidorQA.java',path.join(folder,'Not25ServidorQA.java'),fs.constants.COPYFILE_EXCL);
+console.log(JSON.stringify({verdict:output.verdict,code:failure.reportCode,reports:db.reports,photos:db.photos,loadingCapturedDuringUpload:true,storedBytes:bytes.length,sha256:sha}));

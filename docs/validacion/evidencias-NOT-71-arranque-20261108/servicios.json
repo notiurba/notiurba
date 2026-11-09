@@ -1,0 +1,14 @@
+[
+  {
+    "url": "http://127.0.0.1:18092/api/catalogos/tipos-documento",
+    "error": "ECONNREFUSED"
+  },
+  {
+    "url": "http://127.0.0.1:5175/login",
+    "status": 200
+  },
+  {
+    "url": "http://127.0.0.1:18091/api/catalogos/tipos-documento",
+    "status": 200
+  }
+]

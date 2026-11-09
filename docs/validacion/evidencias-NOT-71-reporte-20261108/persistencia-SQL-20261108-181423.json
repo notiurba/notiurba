@@ -1,0 +1,43 @@
+{
+  "codigo": "NU-000001",
+  "fecha": "2026-11-08T18:14:23.8465150-05:00",
+  "fotoHttp": "no comprobado por este script",
+  "fotoUrlPersistida": true,
+  "lecturaSql": true,
+  "NOT71": "NO_APROBADA",
+  "persistencia": {
+    "base": "notiurba_barrios_qa",
+    "usuarioSql": "qa_barrios",
+    "reporte": {
+      "idReporte": 1,
+      "codigo": "NU-000001",
+      "idUsuario": 2,
+      "correo": "qa.not71.20261108.2147@example.test",
+      "idCategoria": 1,
+      "categoria": "V├¡as, huecos, andenes e infraestructura",
+      "latitud": 4.084847878371718,
+      "longitud": -76.1953353881836,
+      "comuna": 4,
+      "origenComuna": "poligono",
+      "entidadId": 1,
+      "entidad": "Alcald├¡a de Tulu├í",
+      "destinoDerivado": "servicioalciudadano@tulua.gov.co",
+      "fotos": [
+        {
+          "idEvidencia": 1,
+          "idUsuario": 2,
+          "url": "http://127.0.0.1:19027/fotos/761d2113cbbccd6600366f6885f1cc1e656d33476780628150878faf178b6b67.jpg",
+          "orden": 1
+        }
+      ],
+      "envios": [
+        {
+          "canal": 1,
+          "destino": "servicioalciudadano@tulua.gov.co",
+          "estado": "PENDIENTE",
+          "enviadoEn": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "case": "MAP-07",
+  "previous": "La búsqueda tardó demasiado\n\nLa búsqueda de ubicación tardó demasiado. Inténtelo nuevamente o seleccione el punto en el mapa.\n\nMarcar en el mapa\nVolver a obtener mi ubicación",
+  "observed": {
+    "date": "2026-11-07T18:48:00.917Z",
+    "url": "http://127.0.0.1:5173/reportar/ubicacion",
+    "permission": "prompt",
+    "busy": true,
+    "busyText": "Buscando su ubicación. Esto puede tardar unos segundos. También puede marcar el lugar en el mapa.",
+    "visibleDialogs": 0
+  },
+  "simulatedPermissions": false,
+  "simulatedCoordinates": false,
+  "status": "APROBADA",
+  "scope": "El reintento inicia otra solicitud GPS real tras timeout, cierra el diálogo y muestra búsqueda. No certifica obtener coordenadas; eso corresponde a MAP-02.",
+  "screenshot": "not65-map07-reintento.png"
+}

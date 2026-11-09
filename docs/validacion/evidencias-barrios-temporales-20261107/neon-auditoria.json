@@ -1,0 +1,61 @@
+{
+  "fecha": "2026-11-07",
+  "project": "restless-cake-46112011",
+  "branch": "br-proud-waterfall-b44u8y7p",
+  "modo": "SET TRANSACTION READ ONLY",
+  "resultados": [
+    [],
+    [
+      {
+        "current_database": "neondb",
+        "current_schema": "public"
+      }
+    ],
+    [
+      {
+        "id_barrio": 1,
+        "id_comuna": 1,
+        "nombre": "Administración NotiUrba",
+        "interno": true,
+        "usuarios": "5",
+        "reportes": "0"
+      }
+    ],
+    [
+      {
+        "tabla": "reporte",
+        "conname": "reporte_id_barrio_fkey",
+        "definicion": "FOREIGN KEY (id_barrio) REFERENCES barrio(id_barrio) ON DELETE RESTRICT"
+      },
+      {
+        "tabla": "usuario",
+        "conname": "usuario_id_barrio_fkey",
+        "definicion": "FOREIGN KEY (id_barrio) REFERENCES barrio(id_barrio) ON DELETE RESTRICT"
+      }
+    ],
+    [
+      {
+        "total": "1",
+        "publicos": "0",
+        "nombres_temporales": "0"
+      }
+    ],
+    [
+      {
+        "version": "16",
+        "script": "V16__enrutamiento_y_envios.sql",
+        "success": true
+      },
+      {
+        "version": "15",
+        "script": "V15__barrio_interno.sql",
+        "success": true
+      },
+      {
+        "version": "14",
+        "script": "V14__capa_comunas_experimental.sql",
+        "success": true
+      }
+    ]
+  ]
+}

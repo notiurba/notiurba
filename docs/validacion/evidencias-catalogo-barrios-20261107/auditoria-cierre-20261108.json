@@ -1,0 +1,2578 @@
+{
+  "propuestaFinalAndres20261108": {
+    "fecha": "2026-11-08",
+    "estado": "PROPUESTA_PENDIENTE_DE_ANDRES_Y_DAPM",
+    "correccionDocs": {
+      "comuna": 3,
+      "antes": [
+        "Asogrin",
+        "La Santa Cruz"
+      ],
+      "propuesto": "Asogrin la Santa Cruz",
+      "fuente": "S2, sección 3.4, p.17",
+      "consecuencia": "22 nombres pasan a 21 en comuna 3; total 151 pasa a 150, sin agregar ni eliminar un barrio real.",
+      "googleDocsEditado": false,
+      "aprobacion": null
+    },
+    "clasificacion": {
+      "nota": "Categorías primarias excluyentes sobre 88 entradas discrepantes, no sobre 88 entidades distintas; casos territoriales y variantes pueden requerir además validación municipal. Altas/bajas son candidatas, nunca movimientos administrativos demostrados.",
+      "resumen": {
+        "asociacion_comuna": 10,
+        "variante_nombre": 43,
+        "alta_candidata": 16,
+        "pendiente_municipal": 10,
+        "urbanizaciones_diferentes": 7,
+        "baja_candidata": 2
+      },
+      "entradas": [
+        {
+          "origen": "Docs",
+          "comuna": 1,
+          "nombre": "La Rivera",
+          "caso": "A01",
+          "categoria": "asociacion_comuna",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 1,
+          "nombre": "San Benito",
+          "caso": "A02",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 1,
+          "nombre": "Urbanización Lomitas",
+          "caso": "A02",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 2,
+          "nombre": "San Vicente",
+          "caso": "A04",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 2,
+          "nombre": "Entrerios",
+          "caso": "A04",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 2,
+          "nombre": "Urbanización Santa Lucia",
+          "caso": "A04",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 3,
+          "nombre": "Asogrin",
+          "caso": "A05",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": false,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 3,
+          "nombre": "La Santa Cruz",
+          "caso": "A05",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": false,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 3,
+          "nombre": "Urbanización El Cóndor",
+          "caso": "A06",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 3,
+          "nombre": "Ferias",
+          "caso": "A07",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 3,
+          "nombre": "El Cóndor 2",
+          "caso": "A06",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 3,
+          "nombre": "Urbanización San Antonio",
+          "caso": "A07",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 4,
+          "nombre": "Tomás Uribe Uribe",
+          "caso": "A10",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 5,
+          "nombre": "Salesiano",
+          "caso": "A13",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 5,
+          "nombre": "12 de Octubre",
+          "caso": "A13",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 5,
+          "nombre": "El Príncipe",
+          "caso": "A11",
+          "categoria": "pendiente_municipal",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 5,
+          "nombre": "Urbanización El Lago",
+          "caso": "A13",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 5,
+          "nombre": "Urbanización El Laguito",
+          "caso": "A13",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 5,
+          "nombre": "Conjunto Residencial Lusitania",
+          "caso": "A12",
+          "categoria": "pendiente_municipal",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 5,
+          "nombre": "Urbanización El Principito",
+          "caso": "A14",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 6,
+          "nombre": "Asoagrin",
+          "caso": "A15",
+          "categoria": "pendiente_municipal",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 6,
+          "nombre": "Urbanización Las Palmas",
+          "caso": "A09",
+          "categoria": "asociacion_comuna",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Rojas",
+          "caso": "A18",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Laureles I",
+          "caso": "A17",
+          "categoria": "urbanizaciones_diferentes",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Laureles II",
+          "caso": "A17",
+          "categoria": "urbanizaciones_diferentes",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Juan Lemus Aguirre",
+          "caso": "A18",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "El Limonar",
+          "caso": "A16",
+          "categoria": "asociacion_comuna",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Villa Liliana",
+          "caso": "A16",
+          "categoria": "asociacion_comuna",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Villa del Lago",
+          "caso": "A20",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Diablos Rojos I",
+          "caso": "A19",
+          "categoria": "urbanizaciones_diferentes",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "San Marino",
+          "caso": "A20",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Urbanización Senderos de Villa Liliana I",
+          "caso": "A20",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Senderos de Villa Liliana II",
+          "caso": "A20",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Urbanización Villa Margarita",
+          "caso": "A20",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Urbanización Terranova",
+          "caso": "A20",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Urbanización Portales de San Felipe",
+          "caso": "A20",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 7,
+          "nombre": "Urbanización Portales de Juan de Dios",
+          "caso": "A20",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 8,
+          "nombre": "Horizonte",
+          "caso": "A21",
+          "categoria": "pendiente_municipal",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 8,
+          "nombre": "Urbanización Santa Isabel",
+          "caso": "A21",
+          "categoria": "pendiente_municipal",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 8,
+          "nombre": "Los Diablos Rojos II",
+          "caso": "A22",
+          "categoria": "urbanizaciones_diferentes",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 8,
+          "nombre": "Comfamiliar",
+          "caso": "A24",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 8,
+          "nombre": "Santa Inés de Comfamiliar",
+          "caso": "A23",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 8,
+          "nombre": "Sintra San Carlos",
+          "caso": "A23",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 8,
+          "nombre": "Urbanización Ciudad Jardín",
+          "caso": "A24",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 8,
+          "nombre": "Urbanización Mónaco",
+          "caso": "A24",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 9,
+          "nombre": "7 de Agosto",
+          "caso": "A26",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 9,
+          "nombre": "Urbanización Riopaila",
+          "caso": "A26",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 10,
+          "nombre": "Aguaclara",
+          "caso": "A27",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 10,
+          "nombre": "Casa Huertas",
+          "caso": "A08",
+          "categoria": "asociacion_comuna",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 10,
+          "nombre": "Urbanización Acuaviva",
+          "caso": "A27",
+          "categoria": "alta_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 10,
+          "nombre": "Urbanización Paraíso",
+          "caso": "A28",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "Docs",
+          "comuna": 10,
+          "nombre": "Urbanización San Francisco",
+          "caso": "A28",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 1,
+          "nombre": "San Benito La Rivera",
+          "caso": "A02",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 1,
+          "nombre": "Las Lomas",
+          "caso": "A03",
+          "categoria": "baja_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 1,
+          "nombre": "Lomitas",
+          "caso": "A02",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 2,
+          "nombre": "Entre Ríos",
+          "caso": "A04",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 2,
+          "nombre": "La Rivera",
+          "caso": "A01",
+          "categoria": "asociacion_comuna",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 2,
+          "nombre": "San Vicente de Paul",
+          "caso": "A04",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 2,
+          "nombre": "Santa Lucia",
+          "caso": "A04",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 3,
+          "nombre": "Asogrin Santacruz",
+          "caso": "A05",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": false,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 3,
+          "nombre": "Casas Huertas",
+          "caso": "A08",
+          "categoria": "asociacion_comuna",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 3,
+          "nombre": "El Condor",
+          "caso": "A06",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 3,
+          "nombre": "Las Palmas",
+          "caso": "A09",
+          "categoria": "asociacion_comuna",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 3,
+          "nombre": "El Condor II",
+          "caso": "A06",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 4,
+          "nombre": "Tomás Uribe",
+          "caso": "A10",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 5,
+          "nombre": "Urbanización Lusitania",
+          "caso": "A12",
+          "categoria": "pendiente_municipal",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 5,
+          "nombre": "Doce de Octubre",
+          "caso": "A13",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 5,
+          "nombre": "El Lago",
+          "caso": "A13",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 5,
+          "nombre": "El Laguito",
+          "caso": "A13",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 5,
+          "nombre": "El Principio",
+          "caso": "A11",
+          "categoria": "pendiente_municipal",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 5,
+          "nombre": "Salesianos",
+          "caso": "A13",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 6,
+          "nombre": "Asoagrín Farfán",
+          "caso": "A15",
+          "categoria": "pendiente_municipal",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 7,
+          "nombre": "Diablos Rojos",
+          "caso": "A19",
+          "categoria": "urbanizaciones_diferentes",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 7,
+          "nombre": "Juan de Lemus y Aguirre",
+          "caso": "A18",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 7,
+          "nombre": "Laureles I y II",
+          "caso": "A17",
+          "categoria": "urbanizaciones_diferentes",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 7,
+          "nombre": "El Rojas",
+          "caso": "A18",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 8,
+          "nombre": "Diablos Rojos",
+          "caso": "A22",
+          "categoria": "urbanizaciones_diferentes",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 8,
+          "nombre": "El Horizonte",
+          "caso": "A21",
+          "categoria": "pendiente_municipal",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 8,
+          "nombre": "El Limonar",
+          "caso": "A16",
+          "categoria": "asociacion_comuna",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 8,
+          "nombre": "Horizonte - Santa Isabel",
+          "caso": "A21",
+          "categoria": "pendiente_municipal",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 8,
+          "nombre": "Urbanización San Luis",
+          "caso": "A25",
+          "categoria": "baja_candidata",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 8,
+          "nombre": "Villa Liliana",
+          "caso": "A16",
+          "categoria": "asociacion_comuna",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 8,
+          "nombre": "Santa Inés - Comfamiliar",
+          "caso": "A23",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 8,
+          "nombre": "Sintrasancarlos",
+          "caso": "A23",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 9,
+          "nombre": "Riopaila",
+          "caso": "A26",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 9,
+          "nombre": "Siete de Agosto",
+          "caso": "A26",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 10,
+          "nombre": "San Francisco",
+          "caso": "A28",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        },
+        {
+          "origen": "V17",
+          "comuna": 10,
+          "nombre": "El Paraíso",
+          "caso": "A28",
+          "categoria": "variante_nombre",
+          "validacionMunicipalPendiente": true,
+          "estado": "PROPUESTA_SIN_APROBACION",
+          "nota": "Categoría de trabajo; ninguna identidad, baja o traslado queda aprobada por esta clasificación."
+        }
+      ]
+    },
+    "matrizDecisiones": [
+      {
+        "comuna": 1,
+        "barrios": "La Rivera (Docs 1) / La Rivera (V17 2)",
+        "hallazgo": "Asignación distinta; San Benito La Rivera también podría implicar segmentación del nombre.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Confirmar DAPM; no mover ni fusionar.",
+        "id": "A01",
+        "categoria": "asociacion_comuna",
+        "consecuencia": "Cambiaría clasificación territorial; no trasladar ni reutilizar IDs sin validar identidad y referencias.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 1,
+        "barrios": "San Benito / San Benito La Rivera; Urbanización Lomitas / Lomitas",
+        "hallazgo": "Posibles variantes, no identidad demostrada.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Aprobar equivalencias y nombres finales.",
+        "id": "A02",
+        "categoria": "variante_nombre",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 1,
+        "barrios": "Las Lomas (solo V17)",
+        "hallazgo": "No enumerada en Docs.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "No borrar por ausencia; confirmar vigencia.",
+        "id": "A03",
+        "categoria": "baja_candidata",
+        "consecuencia": "Eliminar por omisión podría perder una entidad y sus referencias; conservar hasta probar baja o equivalencia.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 2,
+        "barrios": "San Vicente / San Vicente de Paul; Entrerios / Entre Ríos; Urbanización Santa Lucia / Santa Lucia",
+        "hallazgo": "Abreviación, espacio o prefijo; candidatos a equivalencia.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Normalización controlada con aprobación; conservar textos originales.",
+        "id": "A04",
+        "categoria": "variante_nombre",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 3,
+        "barrios": "Asogrin, La Santa Cruz / Asogrin Santacruz",
+        "hallazgo": "Docs divide una entrada en dos frente a S2: Asogrin la Santa Cruz.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Corregir transcripción de Docs previa aprobación, no añadir barrio por esa coma.",
+        "id": "A05",
+        "categoria": "variante_nombre",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "No para corregir fielmente la transcripción de 2024; sí para certificar vigencia administrativa 2026.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 3,
+        "barrios": "Urbanización El Cóndor / El Condor; El Cóndor 2 / El Condor II",
+        "hallazgo": "Variantes candidatas.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Aprobar diccionario; no deduplicación automática.",
+        "id": "A06",
+        "categoria": "variante_nombre",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 3,
+        "barrios": "Ferias; Urbanización San Antonio (solo Docs)",
+        "hallazgo": "San Antonio y Urbanización San Antonio figuran separados.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Validar altas como entidades distintas; no fusionar por prefijo.",
+        "id": "A07",
+        "categoria": "alta_candidata",
+        "consecuencia": "Aumentaría cobertura y conteo; exige aprobar identidad, comuna y vigencia.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 3,
+        "barrios": "Casas Huertas (V17 3) / Casa Huertas (Docs 10)",
+        "hallazgo": "Nombre similar con cambio de comuna.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Confirmar correspondencia territorial y singular/plural.",
+        "id": "A08",
+        "categoria": "asociacion_comuna",
+        "consecuencia": "Cambiaría clasificación territorial; no trasladar ni reutilizar IDs sin validar identidad y referencias.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 3,
+        "barrios": "Las Palmas (V17 3) / Urbanización Las Palmas (Docs 6)",
+        "hallazgo": "Nombre similar con cambio de comuna.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "No deducir traslado solo por similitud.",
+        "id": "A09",
+        "categoria": "asociacion_comuna",
+        "consecuencia": "Cambiaría clasificación territorial; no trasladar ni reutilizar IDs sin validar identidad y referencias.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 4,
+        "barrios": "Tomás Uribe Uribe / Tomás Uribe",
+        "hallazgo": "Posible ampliación del nombre.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Aprobar denominación canónica.",
+        "id": "A10",
+        "categoria": "variante_nombre",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 5,
+        "barrios": "El Príncipe / El Principio",
+        "hallazgo": "Discrepancia B01.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Confirmar equivalencia antes de renombrar.",
+        "id": "A11",
+        "categoria": "pendiente_municipal",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 5,
+        "barrios": "Conjunto Residencial Lusitania / Urbanización Lusitania",
+        "hallazgo": "B02: ambos catálogos también enumeran Lusitania por separado.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Mantener dos entradas; confirmar equivalencia de variantes.",
+        "id": "A12",
+        "categoria": "pendiente_municipal",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 5,
+        "barrios": "Salesiano / Salesianos; 12 de Octubre / Doce de Octubre; Urbanización El Lago / El Lago; Urbanización El Laguito / El Laguito",
+        "hallazgo": "Variantes candidatas.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Aprobar normalización sin reducir barrios.",
+        "id": "A13",
+        "categoria": "variante_nombre",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 5,
+        "barrios": "Urbanización El Principito (solo Docs)",
+        "hallazgo": "También aparece El Príncipe: no son duplicados por semejanza.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Validar alta independiente.",
+        "id": "A14",
+        "categoria": "alta_candidata",
+        "consecuencia": "Aumentaría cobertura y conteo; exige aprobar identidad, comuna y vigencia.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 6,
+        "barrios": "Asoagrin / Asoagrín Farfán",
+        "hallazgo": "Nombre abreviado candidato.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Confirmar denominación; no confundir con el de comuna 3.",
+        "id": "A15",
+        "categoria": "pendiente_municipal",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 7,
+        "barrios": "El Limonar y Villa Liliana (Docs 7 / V17 8)",
+        "hallazgo": "Mismos nombres en comunas distintas.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Revalidar con DAPM; conservar históricos hasta aprobar.",
+        "id": "A16",
+        "categoria": "asociacion_comuna",
+        "consecuencia": "Cambiaría clasificación territorial; no trasladar ni reutilizar IDs sin validar identidad y referencias.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 7,
+        "barrios": "Laureles I, Laureles II / Laureles I y II",
+        "hallazgo": "Dos entradas frente a una agrupada.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Aprobar granularidad; no tratar como duplicados.",
+        "id": "A17",
+        "categoria": "urbanizaciones_diferentes",
+        "consecuencia": "Fusionar etapas o entidades reduciría información; mantener separación documental, revisar granularidad.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 7,
+        "barrios": "Rojas / El Rojas; Juan Lemus Aguirre / Juan de Lemus y Aguirre",
+        "hallazgo": "Variantes candidatas.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Confirmar nombres finales.",
+        "id": "A18",
+        "categoria": "variante_nombre",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 7,
+        "barrios": "Diablos Rojos I / Diablos Rojos",
+        "hallazgo": "B03: S2 diferencia I en 7 de II en 8.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Conservar dos asociaciones; aprobar calificadores.",
+        "id": "A19",
+        "categoria": "urbanizaciones_diferentes",
+        "consecuencia": "Fusionar etapas o entidades reduciría información; mantener separación documental, revisar granularidad.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 7,
+        "barrios": "Villa del Lago; San Marino; Urbanización Senderos de Villa Liliana I; Senderos de Villa Liliana II; Urbanización Villa Margarita; Urbanización Terranova; Urbanización Portales de San Felipe; Urbanización Portales de Juan de Dios (solo Docs)",
+        "hallazgo": "Ocho entradas sin equivalencia propuesta en V17.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Validar altas y alcance temporal; I/II no se fusionan automáticamente.",
+        "id": "A20",
+        "categoria": "alta_candidata",
+        "consecuencia": "Aumentaría cobertura y conteo; exige aprobar identidad, comuna y vigencia.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 8,
+        "barrios": "Horizonte / El Horizonte; Urbanización Santa Isabel / Horizonte - Santa Isabel",
+        "hallazgo": "Posibles variantes o segmentaciones ambiguas.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Confirmar entidades, límites y denominación.",
+        "id": "A21",
+        "categoria": "pendiente_municipal",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 8,
+        "barrios": "Los Diablos Rojos II / Diablos Rojos",
+        "hallazgo": "B03 en comuna 8; no duplicado del I de comuna 7.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Aprobar nombre II sin fusionar con I.",
+        "id": "A22",
+        "categoria": "urbanizaciones_diferentes",
+        "consecuencia": "Fusionar etapas o entidades reduciría información; mantener separación documental, revisar granularidad.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 8,
+        "barrios": "Santa Inés de Comfamiliar / Santa Inés - Comfamiliar; Sintra San Carlos / Sintrasancarlos",
+        "hallazgo": "Variantes candidatas; Santa Inés figura aparte en ambos.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Aprobar denominaciones; mantener Santa Inés separada.",
+        "id": "A23",
+        "categoria": "variante_nombre",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 8,
+        "barrios": "Comfamiliar; Urbanización Ciudad Jardín; Urbanización Mónaco (solo Docs)",
+        "hallazgo": "Entradas sin equivalencia propuesta.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Validar altas; no fusionar Comfamiliar con Santa Inés de Comfamiliar.",
+        "id": "A24",
+        "categoria": "alta_candidata",
+        "consecuencia": "Aumentaría cobertura y conteo; exige aprobar identidad, comuna y vigencia.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 8,
+        "barrios": "Urbanización San Luis (solo V17)",
+        "hallazgo": "B04: San Luis existe en ambos.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "No borrar ni fusionar por omisión; validación municipal.",
+        "id": "A25",
+        "categoria": "baja_candidata",
+        "consecuencia": "Eliminar por omisión podría perder una entidad y sus referencias; conservar hasta probar baja o equivalencia.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 9,
+        "barrios": "7 de Agosto / Siete de Agosto; Urbanización Riopaila / Riopaila",
+        "hallazgo": "Variantes candidatas.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Aprobar equivalencia.",
+        "id": "A26",
+        "categoria": "variante_nombre",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 10,
+        "barrios": "Aguaclara; Urbanización Acuaviva (solo Docs)",
+        "hallazgo": "S1 excluye Aguaclara como corregimiento; Docs/S2 lo enumeran en comuna 10.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Aprobar alcance urbano/rural y vigencia antes de incluir.",
+        "id": "A27",
+        "categoria": "alta_candidata",
+        "consecuencia": "Aumentaría cobertura y conteo; exige aprobar identidad, comuna y vigencia.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      },
+      {
+        "comuna": 10,
+        "barrios": "Urbanización Paraíso / El Paraíso; Urbanización San Francisco / San Francisco",
+        "hallazgo": "Variantes candidatas.",
+        "fuentes": [
+          "D: pestaña y revisión guardadas en comparacionGoogleDocs20261108",
+          "S1: PMGR 2020, tabla 4, pp.16-21",
+          "S2: informe catastral diciembre 2024, sección 3.4, pp.17-18"
+        ],
+        "propuesta": "Aprobar denominación; no asumir por prefijo.",
+        "id": "A28",
+        "categoria": "variante_nombre",
+        "consecuencia": "Cambiar nombre o vincular alias puede ocultar entidades distintas; conservar originales y aprobación explícita.",
+        "confirmaDAPM": "Sí para identidad/relación territorial/alta/baja o vigencia que las fuentes divergentes no demuestran.",
+        "decisionAndres": null,
+        "fuenteDecision": null,
+        "aprobadoEn": null
+      }
+    ],
+    "alcanceRecomendado": {
+      "qa": "Usar el candidato documental de 2024 como fixture versionado solo en base QA autorizada; conservar pruebas históricas 135 como evidencia sin sumar catálogos ni reinterpretar resultados previos.",
+      "mvpDesplegado": "Adoptar una versión conciliada aprobada por Andrés y validada por DAPM en los casos divergentes; usar 2024 como referencia documental más reciente, no como prueba de vigencia 2026.",
+      "pmgr2020": "Conservar CSV135 y V17 originales como archivo histórico pendiente, sin sobreescribir, activar o borrar.",
+      "fecha2026": "No confirmada. La aprobación técnica de Andrés no sustituye el dato municipal; un uso histórico provisional debe declararse y aprobarse con alcance explícito, sin presentarlo como vigente."
+    },
+    "candidato": {
+      "archivo": "backend/migraciones-pendientes/barrios-pmgr-2020/catalogo-candidato-2024-revision.json",
+      "filas": 150,
+      "tipo": "Documental para revisión/QA; no ejecutable",
+      "fundamentoPorRegistro": true,
+      "comunas": "1-10",
+      "aprobado": false,
+      "sustituyeV17": false,
+      "observacion": "No es la unión de 135+150; conserva fuente y fecha, sin IDs de barrio ni cambios territoriales sobre registros existentes.",
+      "sha256": "881A082906CAC8D48E9A49401FEF5E4FDCE5382D3B3E450B9CD66111D569C491"
+    },
+    "dapmPendiente": [
+      "Confirmar nombre y equivalencia El Principio/El Príncipe; Urbanización/Conjunto Residencial Lusitania; San Luis/Urbanización San Luis; Horizonte/Santa Isabel; Asoagrin de comuna 6.",
+      "Confirmar La Rivera (1/2), El Limonar y Villa Liliana (7/8); determinar si Casa/Casas Huertas (10/3) y Las Palmas/Urbanización Las Palmas (3/6) son las mismas entidades o distintas.",
+      "Validar las 16 altas candidatas y la situación de Las Lomas/Urbanización San Luis: omisión no prueba baja.",
+      "Aprobar granularidad de Laureles I/II y denominaciones de Diablos Rojos I/II; mantener entidades distintas que las fuentes listan separadas.",
+      "Confirmar alcance urbano/rural de Aguaclara y fecha/vigencia oficial del catálogo, con fuente y responsable."
+    ],
+    "not71": {
+      "qaAisladaViable": true,
+      "ejecutadaEnEstaTarea": false,
+      "certificaProduccion": false,
+      "requisitosQA": [
+        "Aprobación del fixture documental, comunas y cuentas/fotos sintéticas; instancia PostgreSQL/PostGIS desechable con V1-V16 originales y sin acceso a Neon productivo.",
+        "React y Spring Boot reales con mocks desactivados, configuración separada y secretos QA; no usar endpoints productivos ni IDs reales.",
+        "Correo de verificación capturado en buzón QA, sin enviar a personas o entidades reales. Credenciales o proveedor de fotografías exclusivo QA; almacenamiento local solo demuestra integración local, no Cloudinary productivo.",
+        "Crear exclusivamente casos integrales nuevos necesarios: registro/verificación/consentimiento/login, categoría/ubicación/foto, comuna/entidad, URL persistida y código recuperable sobre el mismo reporte.",
+        "Verificación independiente mediante API/SQL QA, aislamiento de redes/destinos y envío institucional bloqueado; conservar evidencias anteriores sin repetir sus casos."
+      ],
+      "pendienteNetlifyRender": [
+        "Elegir entorno: despliegues de QA con base/buzón/fotos QA, o autorización específica y controles para datos de prueba si se exige recorrer producción; no desplegado aquí.",
+        "Resolver catálogo y aprobar la versión/migración/destino antes de cargarlo; revalidar número Flyway libre, respaldo de base y recuperación.",
+        "Confirmar URLs/configuración/CORS/callbacks y cuentas de ensayo autorizadas; no basta compilar ni probar UI local.",
+        "Demostrar en una sesión real registro y verificación, login, reporte, asignación de comuna, entidad, URL foto accesible/persistida y código/confirmación; revisar geometría experimental sin declararla oficial.",
+        "La autorización de revisión documental no autoriza cargas, despliegues, cuentas/reportes productivos ni correos a entidades."
+      ]
+    },
+    "resumenParaAndres": "Aprobar la corrección documental Asogrin la Santa Cruz y la referencia 2024 como base de revisión/QA. Revisar A01-A28: nombres/alias, entidades y etapas separadas, cambios de comuna y altas/bajas candidatas. Obtener confirmación DAPM de identidad, límites, vigencia urbana/rural y catálogo 2026. Aprobar CSV/SQL definitivo y destino solo después de resolver estas decisiones. V17 no está autorizada; NOT-71 puede ensayarse aisladamente con fixtures autorizados, y su cierre desplegado sigue pendiente.",
+    "acciones": {
+      "googleDocsEditado": false,
+      "csvHistoricoModificado": false,
+      "v17ModificadaOAplicada": false,
+      "produccionConsultadaOModificada": false,
+      "pruebasEjecutadas": false,
+      "linearModificado": false,
+      "backupsModificados": false
+    }
+  },
+  "fecha": "2026-11-08",
+  "estado": "BLOQUEADA_POR_VALIDACION_DE_DATOS",
+  "entorno": {
+    "proyecto": "restless-cake-46112011",
+    "ramaNeon": "br-proud-waterfall-b44u8y7p",
+    "base": "neondb",
+    "modo": "SET TRANSACTION READ ONLY"
+  },
+  "neon": [
+    [],
+    [
+      {
+        "database": "neondb",
+        "schema": "public",
+        "read_only": "on"
+      }
+    ],
+    [
+      {
+        "id_comuna": 1
+      },
+      {
+        "id_comuna": 2
+      },
+      {
+        "id_comuna": 3
+      },
+      {
+        "id_comuna": 4
+      },
+      {
+        "id_comuna": 5
+      },
+      {
+        "id_comuna": 6
+      },
+      {
+        "id_comuna": 7
+      },
+      {
+        "id_comuna": 8
+      },
+      {
+        "id_comuna": 9
+      },
+      {
+        "id_comuna": 10
+      }
+    ],
+    [
+      {
+        "total": "1",
+        "publicos": "0",
+        "internos": "1"
+      }
+    ],
+    [
+      {
+        "id_barrio": 1,
+        "id_comuna": 1,
+        "nombre": "Administración NotiUrba",
+        "interno": true
+      }
+    ],
+    [
+      {
+        "version": "16",
+        "script": "V16__enrutamiento_y_envios.sql",
+        "success": true
+      },
+      {
+        "version": "15",
+        "script": "V15__barrio_interno.sql",
+        "success": true
+      }
+    ],
+    [
+      {
+        "conname": "barrio_id_barrio_not_null",
+        "definicion": "NOT NULL id_barrio"
+      },
+      {
+        "conname": "barrio_id_comuna_not_null",
+        "definicion": "NOT NULL id_comuna"
+      },
+      {
+        "conname": "barrio_nombre_not_null",
+        "definicion": "NOT NULL nombre"
+      },
+      {
+        "conname": "barrio_pkey",
+        "definicion": "PRIMARY KEY (id_barrio)"
+      },
+      {
+        "conname": "uq_barrio_comuna_nombre",
+        "definicion": "UNIQUE (id_comuna, nombre)"
+      },
+      {
+        "conname": "barrio_id_comuna_fkey",
+        "definicion": "FOREIGN KEY (id_comuna) REFERENCES comuna(id_comuna) ON DELETE RESTRICT"
+      },
+      {
+        "conname": "usuario_id_barrio_fkey",
+        "definicion": "FOREIGN KEY (id_barrio) REFERENCES barrio(id_barrio) ON DELETE RESTRICT"
+      },
+      {
+        "conname": "reporte_id_barrio_fkey",
+        "definicion": "FOREIGN KEY (id_barrio) REFERENCES barrio(id_barrio) ON DELETE RESTRICT"
+      },
+      {
+        "conname": "barrio_interno_not_null",
+        "definicion": "NOT NULL interno"
+      }
+    ]
+  ],
+  "artefactos": {
+    "sha256MigracionVerificado": true,
+    "sha256CsvVerificado": true,
+    "dmlIdenticoAPropuestaProbada": true,
+    "barrios": 135,
+    "distribucionComunas": [
+      12,
+      8,
+      21,
+      5,
+      16,
+      16,
+      21,
+      18,
+      15,
+      3
+    ],
+    "duplicadosExactosComunaNombre": 0,
+    "decisionesPendientes": [
+      "B01",
+      "B02",
+      "B03",
+      "B04",
+      "B05"
+    ],
+    "vigenciaActualConfirmada": false
+  },
+  "http": {
+    "endpoint": "https://notiurba-api.onrender.com/api/catalogos/barrios",
+    "resultadoActual": "Dos consultas sin respuesta HTTP: timeout de 25 segundos, dentro y fuera del sandbox. 000 de curl no es un estado HTTP.",
+    "respuestaAnteriorDocumentada": "HTTP 200 []",
+    "produccionCorregida": false
+  },
+  "reutilizacion": {
+    "pruebasBackend": 3,
+    "pruebasFrontend": 32,
+    "chrome": "chrome-resultado.json: 135 opciones, mocks desactivados, selección Centro id43 conservada; entorno QA local, no producción.",
+    "sinReejecucion": true
+  },
+  "accionesProduccion": {
+    "escrituras": false,
+    "migracionAplicada": false,
+    "cuentasOReportesCreados": false
+  },
+  "not71": "Bloqueada: catálogo público ausente; falta aprobación de datos y autorización de carga Flyway. Recorrido en Netlify/Render y persistencia requieren autorización específica para datos de prueba.",
+  "investigacionFocalizada20261108": {
+    "fecha": "2026-11-08",
+    "fuentes": [
+      {
+        "id": "S1",
+        "url": "https://tulua.gov.co/loader.php?lServicio=Tools2&lTipo=descargas&lFuncion=exposeDocument&idFile=12112",
+        "fechaDocumento": "2020-12",
+        "paginas": "18-20"
+      },
+      {
+        "url": "https://tulua.gov.co/loader.php?lServicio=Tools2&lTipo=descargas&lFuncion=exposeDocument&idFile=22080",
+        "fechaDocumento": "2024-12",
+        "acceso": "Texto recuperado/indexado; capturas HTTP 403; sin hash ni vigencia 2026 certificada",
+        "paginas": "17-18, sección 3.4",
+        "id": "S2",
+        "titulo": "Informe final de actualización catastral - Valle Avanza SAS"
+      }
+    ],
+    "aclaradasDocumentalmente": [
+      "B03",
+      "B05"
+    ],
+    "requierenValidacionMunicipal": [
+      "B01",
+      "B02",
+      "B04"
+    ],
+    "requierenAprobacionAndres": [
+      "B01",
+      "B02",
+      "B03",
+      "B04",
+      "B05"
+    ],
+    "tablaDecision": "backend/migraciones-pendientes/barrios-pmgr-2020/README.md, sección Contraste documental focalizado",
+    "cambiosCSVSQL": false,
+    "asociacionesComunaCorregidas": 0,
+    "registrosHistoricosConservados": 135,
+    "vigencia2026Confirmada": false,
+    "verificacionEstatica": {
+      "v17Activas": 0,
+      "sha256SQL": "E824E2B71011938B8C0666F07B302AC537A81BD27865689055048FB503DD4FEC",
+      "duplicadosExactos": 0,
+      "sha256CSV": "FCE84F32CFCBD1324B5FA9A8C9B6AA199DFE63D36D212C41297F6766A1744ECC",
+      "comunasFueraDeRango": 0,
+      "diferencias": 0,
+      "sqlSoloAditivo": true,
+      "paresCSVSQL": 135,
+      "sqlEjecutado": false
+    },
+    "pruebasReutilizadas": [
+      "CatalogoCargaBarriosIT",
+      "32 frontend",
+      "5 preparación",
+      "NOT-20/23 referenciadas por NOT-25",
+      "NOT-21 documentación territorial, no recorrido desplegado",
+      "NOT-25 persistencia QA local",
+      "NOT-59 duplicado 409 QA"
+    ],
+    "respaldoCodigo": "C:\\notiurba\\respaldo-registro-pr20-20261108-120557-9331",
+    "respaldoBaseProduccionVerificado": false,
+    "procedimientoRecuperacion": "README existente: pg_dump y restauración aislada pendientes de ejecución autorizada",
+    "estadoV17": "BLOQUEADA_POR_B01_B02_B04_Y_APROBACION_DE_DATOS",
+    "not71": {
+      "loginExistenteNoIntrinsecamenteBloqueado": true,
+      "nuevosDatosProduccion": false,
+      "nuevoRecorridoEjecutado": false,
+      "lecturasPosibles": "UI y GET públicos, reglas en lectura; no ejecutadas nuevamente",
+      "estado": "PENDIENTE_RECORRIDO_DESPLEGADO",
+      "catalogoBloqueaAlta": true,
+      "pendientes": "Alta/verificación/consentimiento, login de cuenta nueva, reporte con foto, comuna/entidad y persistencia URL/código en el mismo recorrido autorizado"
+    }
+  },
+  "comparacionGoogleDocs20261108": {
+    "fecha": "2026-11-08",
+    "documento": {
+      "url": "https://docs.google.com/document/d/1xKl39QeKhX2CzPWYSgiFIXXROkqOlmi5nzmgD7X5gdA/edit?tab=t.s8k28svk145",
+      "tabId": "t.s8k28svk145",
+      "titulo": "Comunas y cuadrantes de Tuluá",
+      "revisionId": "AHj4eMT1N3puXjgGmYWBoXZHXNPESSe67EvMvNhgTmOF8L_7fWKClYfG6nz8w4gjEF36lPu8H-kg9_NImA8cqn-oVew_ZFs8E7ZORJxbuM0",
+      "modo": "Solo lectura; sin modificaciones en Google Docs"
+    },
+    "metodo": "Separar enumeraciones por coma y conjunción final; preservar Laureles I/II, San Antonio/Urbanización San Antonio y otras urbanizaciones como entradas distintas. Comparación por (comuna,nombre), normalizando exclusivamente tildes, mayúsculas y espacios repetidos; no eliminar prefijos, artículos ni unir alias automáticamente.",
+    "conteos": {
+      "declarados": 150,
+      "enumerados": 151,
+      "csv": 135,
+      "v17": 135,
+      "paresLiteralesCoincidentes": 94,
+      "paresNormalizadosCoincidentes": 99,
+      "soloDocsNormalizados": 52,
+      "soloV17Normalizados": 36,
+      "duplicadosParesNormalizadosDocs": 0,
+      "duplicadosParesNormalizadosCSV": 0
+    },
+    "conteosPorComuna": [
+      {
+        "comuna": 1,
+        "declarados": 12,
+        "enumerados": 12,
+        "csv": 12,
+        "nombresDocs": [
+          "Victoria",
+          "Panamericano",
+          "El Jazmín",
+          "El Retiro",
+          "Fátima",
+          "Villa del Río",
+          "La Rivera",
+          "San Benito",
+          "Miraflores",
+          "Ciudad Campestre",
+          "Villa Campestre",
+          "Urbanización Lomitas"
+        ]
+      },
+      {
+        "comuna": 2,
+        "declarados": 7,
+        "enumerados": 7,
+        "csv": 8,
+        "nombresDocs": [
+          "San Vicente",
+          "Franciscanos",
+          "Alvernia",
+          "Céspedes",
+          "Nuevo Alvernia",
+          "Entrerios",
+          "Urbanización Santa Lucia"
+        ]
+      },
+      {
+        "comuna": 3,
+        "declarados": 21,
+        "enumerados": 22,
+        "csv": 21,
+        "nombresDocs": [
+          "Villa Nueva",
+          "Popular",
+          "Nuevo Morales",
+          "Estambul",
+          "La Inmaculada",
+          "San Antonio",
+          "El Bosque",
+          "Asogrin",
+          "La Santa Cruz",
+          "El Dorado",
+          "Urbanización El Cóndor",
+          "Santa Rita del Río",
+          "La Villa",
+          "Las Brisas",
+          "Morales",
+          "Los Pinos",
+          "Ferias",
+          "Urbanización Peñaranda",
+          "Moralito",
+          "Brisas del Morales",
+          "El Cóndor 2",
+          "Urbanización San Antonio"
+        ]
+      },
+      {
+        "comuna": 4,
+        "declarados": 5,
+        "enumerados": 5,
+        "csv": 5,
+        "nombresDocs": [
+          "Centro",
+          "Escobar",
+          "Las Olas",
+          "Palobonito",
+          "Tomás Uribe Uribe"
+        ]
+      },
+      {
+        "comuna": 5,
+        "declarados": 17,
+        "enumerados": 17,
+        "csv": 16,
+        "nombresDocs": [
+          "Sajonia",
+          "Salesiano",
+          "La Merced",
+          "Las Acacias",
+          "Lusitania",
+          "12 de Octubre",
+          "El Príncipe",
+          "Nuevo Príncipe",
+          "Avenida Cali",
+          "San Carlos",
+          "La Bastilla",
+          "Urbanización El Lago",
+          "Urbanización El Laguito",
+          "Conjunto Residencial Lusitania",
+          "Quintas de San Felipe",
+          "Olímpico",
+          "Urbanización El Principito"
+        ]
+      },
+      {
+        "comuna": 6,
+        "declarados": 17,
+        "enumerados": 17,
+        "csv": 16,
+        "nombresDocs": [
+          "Pueblo Nuevo",
+          "La Esperanza",
+          "Las Delicias",
+          "Bolívar",
+          "Playas",
+          "San Pedro Claver",
+          "Asoagrin",
+          "Progresar",
+          "La Ceiba",
+          "Marandúa",
+          "El Pinar",
+          "350 Años",
+          "Comuneros Corazón del Valle",
+          "Primero de Mayo",
+          "Urbanización Las Palmas",
+          "La Herradura",
+          "Buenos Aires"
+        ]
+      },
+      {
+        "comuna": 7,
+        "declarados": 32,
+        "enumerados": 32,
+        "csv": 21,
+        "nombresDocs": [
+          "Rojas",
+          "Rubén Cruz Vélez",
+          "El Porvenir",
+          "Departamental",
+          "La Quinta",
+          "Nuevo Farfán",
+          "La Campiña",
+          "Laureles I",
+          "Laureles II",
+          "El Descanso",
+          "Villa del Sur",
+          "Guayacanes",
+          "Prados del Norte",
+          "Las Veraneras",
+          "José Antonio Galán",
+          "Los Olmos",
+          "Juan Lemus Aguirre",
+          "Los Tolúes",
+          "Las Nieves",
+          "El Limonar",
+          "Villa Liliana",
+          "Villa del Lago",
+          "Las Américas",
+          "Farfán",
+          "Diablos Rojos I",
+          "San Marino",
+          "Urbanización Senderos de Villa Liliana I",
+          "Senderos de Villa Liliana II",
+          "Urbanización Villa Margarita",
+          "Urbanización Terranova",
+          "Urbanización Portales de San Felipe",
+          "Urbanización Portales de Juan de Dios"
+        ]
+      },
+      {
+        "comuna": 8,
+        "declarados": 18,
+        "enumerados": 18,
+        "csv": 18,
+        "nombresDocs": [
+          "Municipal",
+          "Chiminangos",
+          "Horizonte",
+          "Urbanización Santa Isabel",
+          "La Independencia",
+          "Bosques de Maracaibo",
+          "Jorge Eliécer Gaitán",
+          "San Luis",
+          "El Refugio",
+          "Los Diablos Rojos II",
+          "Flor de la Campana",
+          "Tercer Milenio",
+          "Comfamiliar",
+          "Santa Inés de Comfamiliar",
+          "Sintra San Carlos",
+          "Santa Inés",
+          "Urbanización Ciudad Jardín",
+          "Urbanización Mónaco"
+        ]
+      },
+      {
+        "comuna": 9,
+        "declarados": 15,
+        "enumerados": 15,
+        "csv": 15,
+        "nombresDocs": [
+          "El Jardín",
+          "Maracaibo",
+          "La Graciela",
+          "Villa Colombia",
+          "El Palmar",
+          "Portales del Río",
+          "Juan XXIII",
+          "Alameda I",
+          "Alameda II",
+          "El Bosquecito",
+          "Samán del Norte",
+          "Internacional",
+          "7 de Agosto",
+          "Urbanización Riopaila",
+          "La Trinidad"
+        ]
+      },
+      {
+        "comuna": 10,
+        "declarados": 6,
+        "enumerados": 6,
+        "csv": 3,
+        "nombresDocs": [
+          "Aguaclara",
+          "Casa Huertas",
+          "Urbanización Acuaviva",
+          "Urbanización La Paz",
+          "Urbanización Paraíso",
+          "Urbanización San Francisco"
+        ]
+      }
+    ],
+    "soloDocs": [
+      {
+        "comuna": 1,
+        "name": "La Rivera"
+      },
+      {
+        "comuna": 1,
+        "name": "San Benito"
+      },
+      {
+        "comuna": 1,
+        "name": "Urbanización Lomitas"
+      },
+      {
+        "comuna": 2,
+        "name": "San Vicente"
+      },
+      {
+        "comuna": 2,
+        "name": "Entrerios"
+      },
+      {
+        "comuna": 2,
+        "name": "Urbanización Santa Lucia"
+      },
+      {
+        "comuna": 3,
+        "name": "Asogrin"
+      },
+      {
+        "comuna": 3,
+        "name": "La Santa Cruz"
+      },
+      {
+        "comuna": 3,
+        "name": "Urbanización El Cóndor"
+      },
+      {
+        "comuna": 3,
+        "name": "Ferias"
+      },
+      {
+        "comuna": 3,
+        "name": "El Cóndor 2"
+      },
+      {
+        "comuna": 3,
+        "name": "Urbanización San Antonio"
+      },
+      {
+        "comuna": 4,
+        "name": "Tomás Uribe Uribe"
+      },
+      {
+        "comuna": 5,
+        "name": "Salesiano"
+      },
+      {
+        "comuna": 5,
+        "name": "12 de Octubre"
+      },
+      {
+        "comuna": 5,
+        "name": "El Príncipe"
+      },
+      {
+        "comuna": 5,
+        "name": "Urbanización El Lago"
+      },
+      {
+        "comuna": 5,
+        "name": "Urbanización El Laguito"
+      },
+      {
+        "comuna": 5,
+        "name": "Conjunto Residencial Lusitania"
+      },
+      {
+        "comuna": 5,
+        "name": "Urbanización El Principito"
+      },
+      {
+        "comuna": 6,
+        "name": "Asoagrin"
+      },
+      {
+        "comuna": 6,
+        "name": "Urbanización Las Palmas"
+      },
+      {
+        "comuna": 7,
+        "name": "Rojas"
+      },
+      {
+        "comuna": 7,
+        "name": "Laureles I"
+      },
+      {
+        "comuna": 7,
+        "name": "Laureles II"
+      },
+      {
+        "comuna": 7,
+        "name": "Juan Lemus Aguirre"
+      },
+      {
+        "comuna": 7,
+        "name": "El Limonar"
+      },
+      {
+        "comuna": 7,
+        "name": "Villa Liliana"
+      },
+      {
+        "comuna": 7,
+        "name": "Villa del Lago"
+      },
+      {
+        "comuna": 7,
+        "name": "Diablos Rojos I"
+      },
+      {
+        "comuna": 7,
+        "name": "San Marino"
+      },
+      {
+        "comuna": 7,
+        "name": "Urbanización Senderos de Villa Liliana I"
+      },
+      {
+        "comuna": 7,
+        "name": "Senderos de Villa Liliana II"
+      },
+      {
+        "comuna": 7,
+        "name": "Urbanización Villa Margarita"
+      },
+      {
+        "comuna": 7,
+        "name": "Urbanización Terranova"
+      },
+      {
+        "comuna": 7,
+        "name": "Urbanización Portales de San Felipe"
+      },
+      {
+        "comuna": 7,
+        "name": "Urbanización Portales de Juan de Dios"
+      },
+      {
+        "comuna": 8,
+        "name": "Horizonte"
+      },
+      {
+        "comuna": 8,
+        "name": "Urbanización Santa Isabel"
+      },
+      {
+        "comuna": 8,
+        "name": "Los Diablos Rojos II"
+      },
+      {
+        "comuna": 8,
+        "name": "Comfamiliar"
+      },
+      {
+        "comuna": 8,
+        "name": "Santa Inés de Comfamiliar"
+      },
+      {
+        "comuna": 8,
+        "name": "Sintra San Carlos"
+      },
+      {
+        "comuna": 8,
+        "name": "Urbanización Ciudad Jardín"
+      },
+      {
+        "comuna": 8,
+        "name": "Urbanización Mónaco"
+      },
+      {
+        "comuna": 9,
+        "name": "7 de Agosto"
+      },
+      {
+        "comuna": 9,
+        "name": "Urbanización Riopaila"
+      },
+      {
+        "comuna": 10,
+        "name": "Aguaclara"
+      },
+      {
+        "comuna": 10,
+        "name": "Casa Huertas"
+      },
+      {
+        "comuna": 10,
+        "name": "Urbanización Acuaviva"
+      },
+      {
+        "comuna": 10,
+        "name": "Urbanización Paraíso"
+      },
+      {
+        "comuna": 10,
+        "name": "Urbanización San Francisco"
+      }
+    ],
+    "soloV17": [
+      {
+        "comuna": 1,
+        "name": "San Benito La Rivera"
+      },
+      {
+        "comuna": 1,
+        "name": "Las Lomas"
+      },
+      {
+        "comuna": 1,
+        "name": "Lomitas"
+      },
+      {
+        "comuna": 2,
+        "name": "Entre Ríos"
+      },
+      {
+        "comuna": 2,
+        "name": "La Rivera"
+      },
+      {
+        "comuna": 2,
+        "name": "San Vicente de Paul"
+      },
+      {
+        "comuna": 2,
+        "name": "Santa Lucia"
+      },
+      {
+        "comuna": 3,
+        "name": "Asogrin Santacruz"
+      },
+      {
+        "comuna": 3,
+        "name": "Casas Huertas"
+      },
+      {
+        "comuna": 3,
+        "name": "El Condor"
+      },
+      {
+        "comuna": 3,
+        "name": "Las Palmas"
+      },
+      {
+        "comuna": 3,
+        "name": "El Condor II"
+      },
+      {
+        "comuna": 4,
+        "name": "Tomás Uribe"
+      },
+      {
+        "comuna": 5,
+        "name": "Urbanización Lusitania"
+      },
+      {
+        "comuna": 5,
+        "name": "Doce de Octubre"
+      },
+      {
+        "comuna": 5,
+        "name": "El Lago"
+      },
+      {
+        "comuna": 5,
+        "name": "El Laguito"
+      },
+      {
+        "comuna": 5,
+        "name": "El Principio"
+      },
+      {
+        "comuna": 5,
+        "name": "Salesianos"
+      },
+      {
+        "comuna": 6,
+        "name": "Asoagrín Farfán"
+      },
+      {
+        "comuna": 7,
+        "name": "Diablos Rojos"
+      },
+      {
+        "comuna": 7,
+        "name": "Juan de Lemus y Aguirre"
+      },
+      {
+        "comuna": 7,
+        "name": "Laureles I y II"
+      },
+      {
+        "comuna": 7,
+        "name": "El Rojas"
+      },
+      {
+        "comuna": 8,
+        "name": "Diablos Rojos"
+      },
+      {
+        "comuna": 8,
+        "name": "El Horizonte"
+      },
+      {
+        "comuna": 8,
+        "name": "El Limonar"
+      },
+      {
+        "comuna": 8,
+        "name": "Horizonte - Santa Isabel"
+      },
+      {
+        "comuna": 8,
+        "name": "Urbanización San Luis"
+      },
+      {
+        "comuna": 8,
+        "name": "Villa Liliana"
+      },
+      {
+        "comuna": 8,
+        "name": "Santa Inés - Comfamiliar"
+      },
+      {
+        "comuna": 8,
+        "name": "Sintrasancarlos"
+      },
+      {
+        "comuna": 9,
+        "name": "Riopaila"
+      },
+      {
+        "comuna": 9,
+        "name": "Siete de Agosto"
+      },
+      {
+        "comuna": 10,
+        "name": "San Francisco"
+      },
+      {
+        "comuna": 10,
+        "name": "El Paraíso"
+      }
+    ],
+    "advertenciaAusencias": "52/36 son diferencias de texto-comuna tras normalización mínima; incluyen alias candidatos, agrupaciones y cambios territoriales. No equivalen a 52 barrios nuevos ni a 36 bajas.",
+    "tablaDiferencias": [
+      {
+        "comuna": 1,
+        "barrios": "La Rivera (Docs 1) / La Rivera (V17 2)",
+        "hallazgo": "Asignación distinta; San Benito La Rivera también podría implicar segmentación del nombre.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Confirmar DAPM; no mover ni fusionar."
+      },
+      {
+        "comuna": 1,
+        "barrios": "San Benito / San Benito La Rivera; Urbanización Lomitas / Lomitas",
+        "hallazgo": "Posibles variantes, no identidad demostrada.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Aprobar equivalencias y nombres finales."
+      },
+      {
+        "comuna": 1,
+        "barrios": "Las Lomas (solo V17)",
+        "hallazgo": "No enumerada en Docs.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "No borrar por ausencia; confirmar vigencia."
+      },
+      {
+        "comuna": 2,
+        "barrios": "San Vicente / San Vicente de Paul; Entrerios / Entre Ríos; Urbanización Santa Lucia / Santa Lucia",
+        "hallazgo": "Abreviación, espacio o prefijo; candidatos a equivalencia.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Normalización controlada con aprobación; conservar textos originales."
+      },
+      {
+        "comuna": 3,
+        "barrios": "Asogrin, La Santa Cruz / Asogrin Santacruz",
+        "hallazgo": "Docs divide una entrada en dos frente a S2: Asogrin la Santa Cruz.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Corregir transcripción de Docs previa aprobación, no añadir barrio por esa coma."
+      },
+      {
+        "comuna": 3,
+        "barrios": "Urbanización El Cóndor / El Condor; El Cóndor 2 / El Condor II",
+        "hallazgo": "Variantes candidatas.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Aprobar diccionario; no deduplicación automática."
+      },
+      {
+        "comuna": 3,
+        "barrios": "Ferias; Urbanización San Antonio (solo Docs)",
+        "hallazgo": "San Antonio y Urbanización San Antonio figuran separados.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Validar altas como entidades distintas; no fusionar por prefijo."
+      },
+      {
+        "comuna": 3,
+        "barrios": "Casas Huertas (V17 3) / Casa Huertas (Docs 10)",
+        "hallazgo": "Nombre similar con cambio de comuna.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Confirmar correspondencia territorial y singular/plural."
+      },
+      {
+        "comuna": 3,
+        "barrios": "Las Palmas (V17 3) / Urbanización Las Palmas (Docs 6)",
+        "hallazgo": "Nombre similar con cambio de comuna.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "No deducir traslado solo por similitud."
+      },
+      {
+        "comuna": 4,
+        "barrios": "Tomás Uribe Uribe / Tomás Uribe",
+        "hallazgo": "Posible ampliación del nombre.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Aprobar denominación canónica."
+      },
+      {
+        "comuna": 5,
+        "barrios": "El Príncipe / El Principio",
+        "hallazgo": "Discrepancia B01.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Confirmar equivalencia antes de renombrar."
+      },
+      {
+        "comuna": 5,
+        "barrios": "Conjunto Residencial Lusitania / Urbanización Lusitania",
+        "hallazgo": "B02: ambos catálogos también enumeran Lusitania por separado.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Mantener dos entradas; confirmar equivalencia de variantes."
+      },
+      {
+        "comuna": 5,
+        "barrios": "Salesiano / Salesianos; 12 de Octubre / Doce de Octubre; Urbanización El Lago / El Lago; Urbanización El Laguito / El Laguito",
+        "hallazgo": "Variantes candidatas.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Aprobar normalización sin reducir barrios."
+      },
+      {
+        "comuna": 5,
+        "barrios": "Urbanización El Principito (solo Docs)",
+        "hallazgo": "También aparece El Príncipe: no son duplicados por semejanza.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Validar alta independiente."
+      },
+      {
+        "comuna": 6,
+        "barrios": "Asoagrin / Asoagrín Farfán",
+        "hallazgo": "Nombre abreviado candidato.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Confirmar denominación; no confundir con el de comuna 3."
+      },
+      {
+        "comuna": 7,
+        "barrios": "El Limonar y Villa Liliana (Docs 7 / V17 8)",
+        "hallazgo": "Mismos nombres en comunas distintas.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Revalidar con DAPM; conservar históricos hasta aprobar."
+      },
+      {
+        "comuna": 7,
+        "barrios": "Laureles I, Laureles II / Laureles I y II",
+        "hallazgo": "Dos entradas frente a una agrupada.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Aprobar granularidad; no tratar como duplicados."
+      },
+      {
+        "comuna": 7,
+        "barrios": "Rojas / El Rojas; Juan Lemus Aguirre / Juan de Lemus y Aguirre",
+        "hallazgo": "Variantes candidatas.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Confirmar nombres finales."
+      },
+      {
+        "comuna": 7,
+        "barrios": "Diablos Rojos I / Diablos Rojos",
+        "hallazgo": "B03: S2 diferencia I en 7 de II en 8.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Conservar dos asociaciones; aprobar calificadores."
+      },
+      {
+        "comuna": 7,
+        "barrios": "Villa del Lago; San Marino; Urbanización Senderos de Villa Liliana I; Senderos de Villa Liliana II; Urbanización Villa Margarita; Urbanización Terranova; Urbanización Portales de San Felipe; Urbanización Portales de Juan de Dios (solo Docs)",
+        "hallazgo": "Ocho entradas sin equivalencia propuesta en V17.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Validar altas y alcance temporal; I/II no se fusionan automáticamente."
+      },
+      {
+        "comuna": 8,
+        "barrios": "Horizonte / El Horizonte; Urbanización Santa Isabel / Horizonte - Santa Isabel",
+        "hallazgo": "Posibles variantes o segmentaciones ambiguas.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Confirmar entidades, límites y denominación."
+      },
+      {
+        "comuna": 8,
+        "barrios": "Los Diablos Rojos II / Diablos Rojos",
+        "hallazgo": "B03 en comuna 8; no duplicado del I de comuna 7.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Aprobar nombre II sin fusionar con I."
+      },
+      {
+        "comuna": 8,
+        "barrios": "Santa Inés de Comfamiliar / Santa Inés - Comfamiliar; Sintra San Carlos / Sintrasancarlos",
+        "hallazgo": "Variantes candidatas; Santa Inés figura aparte en ambos.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Aprobar denominaciones; mantener Santa Inés separada."
+      },
+      {
+        "comuna": 8,
+        "barrios": "Comfamiliar; Urbanización Ciudad Jardín; Urbanización Mónaco (solo Docs)",
+        "hallazgo": "Entradas sin equivalencia propuesta.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Validar altas; no fusionar Comfamiliar con Santa Inés de Comfamiliar."
+      },
+      {
+        "comuna": 8,
+        "barrios": "Urbanización San Luis (solo V17)",
+        "hallazgo": "B04: San Luis existe en ambos.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "No borrar ni fusionar por omisión; validación municipal."
+      },
+      {
+        "comuna": 9,
+        "barrios": "7 de Agosto / Siete de Agosto; Urbanización Riopaila / Riopaila",
+        "hallazgo": "Variantes candidatas.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Aprobar equivalencia."
+      },
+      {
+        "comuna": 10,
+        "barrios": "Aguaclara; Urbanización Acuaviva (solo Docs)",
+        "hallazgo": "S1 excluye Aguaclara como corregimiento; Docs/S2 lo enumeran en comuna 10.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Aprobar alcance urbano/rural y vigencia antes de incluir."
+      },
+      {
+        "comuna": 10,
+        "barrios": "Urbanización Paraíso / El Paraíso; Urbanización San Francisco / San Francisco",
+        "hallazgo": "Variantes candidatas.",
+        "fuentes": "D (Docs actual), C/V (CSV y V17); S1 PMGR 2020; S2 informe catastral 2024, según corresponda",
+        "propuesta": "Aprobar denominación; no asumir por prefijo."
+      }
+    ],
+    "inconsistenciasDocumento": [
+      "Comuna 3: declara 21 y enumera 22; causa localizada en Asogrin, La Santa Cruz. S2 enumera Asogrin la Santa Cruz como una sola entrada: propuesta de corregir la transcripción, no cambiar solo el encabezado a 22.",
+      "Encabezados suman 150; enumeraciones 151. Tras corregir únicamente esa separación serían 150 entradas; sigue sin probarse vigencia en 2026.",
+      "Fuente de barrios citada genéricamente como informe catastral sin año, páginas ni URL exacta en la pestaña. El contenido coincide ampliamente con S2; no consta acreditación de que ese sea exactamente el documento usado por el autor.",
+      "El alcance de 150 tampoco coincide con los 135 históricos: distintas fechas, agrupaciones y asociaciones requieren conciliación, no sumar automáticamente nombres.",
+      "No hay duplicados reales demostrados por pares normalizados. Similaridad, prefijos y etapas I/II no acreditan identidad ni son motivo de borrado."
+    ],
+    "fuentes": {
+      "D": "Documento de proyecto actual: revisión y pestaña indicadas arriba",
+      "C": "docs/validacion/evidencias-catalogo-barrios-20261107/barrios-pmgr-2020.csv",
+      "V": "backend/migraciones-pendientes/barrios-pmgr-2020/V17__catalogo_barrios_pmgr_2020.sql",
+      "S1": {
+        "fecha": "diciembre 2020",
+        "paginas": "16-21, tabla 4",
+        "url": "https://tulua.gov.co/loader.php?lServicio=Tools2&lTipo=descargas&lFuncion=exposeDocument&idFile=12112"
+      },
+      "S2": {
+        "fecha": "diciembre 2024",
+        "paginas": "17-18, sección 3.4",
+        "url": "https://tulua.gov.co/loader.php?lServicio=Tools2&lTipo=descargas&lFuncion=exposeDocument&idFile=22080",
+        "limite": "Texto indexado recuperado; capturas previamente rechazadas con 403. No certificación administrativa 2026."
+      }
+    },
+    "decisionesAndres": [
+      "Aprobar corrección de transcripción Asogrin/La Santa Cruz y referencia bibliográfica exacta de Docs; no editado aquí.",
+      "Elegir alcance temporal: 135 históricos, relación catastral 2024 conciliada u otro catálogo validado; no imponer 150/151 como objetivo SQL.",
+      "Confirmar reasignaciones de La Rivera, El Limonar, Villa Liliana y posibles correspondencias Casa/Casas Huertas y Las Palmas.",
+      "Aprobar nombres/alias, separación Laureles I/II, cinco discrepancias B01-B05, altas candidatas y conservación de entradas antiguas sin equivalente.",
+      "Obtener validación DAPM sobre vigencia urbana/rural de Aguaclara y demás asociaciones; aprobar CSV/SQL definitivo antes de cualquier carga."
+    ],
+    "estadoV17": "BLOQUEADA_POR_CONCILIACION_AMPLIADA_DEL_CATALOGO",
+    "csvModificado": false,
+    "sqlModificado": false,
+    "produccionConsultadaOModificada": false,
+    "docsModificado": false,
+    "sha256CSV": "FCE84F32CFCBD1324B5FA9A8C9B6AA199DFE63D36D212C41297F6766A1744ECC",
+    "sha256V17": "E824E2B71011938B8C0666F07B302AC537A81BD27865689055048FB503DD4FEC",
+    "diferenciasSoloOrtografia": [
+      {
+        "comuna": 1,
+        "docs": "Villa del Río",
+        "v17": "Villa del Rio"
+      },
+      {
+        "comuna": 3,
+        "docs": "Santa Rita del Río",
+        "v17": "Santa Rita del Rio"
+      },
+      {
+        "comuna": 6,
+        "docs": "350 Años",
+        "v17": "350 años"
+      },
+      {
+        "comuna": 8,
+        "docs": "Jorge Eliécer Gaitán",
+        "v17": "Jorge Eliecer Gaitán"
+      },
+      {
+        "comuna": 9,
+        "docs": "Portales del Río",
+        "v17": "Portales del Rio"
+      }
+    ]
+  }
+}

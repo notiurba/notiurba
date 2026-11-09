@@ -1,0 +1,28 @@
+CREATE SCHEMA
+SET
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+INSERT 0 3
+INSERT 0 1
+INSERT 0 1
+INSERT 0 8
+DO
+BEGIN
+SET
+psql:/tmp/temporales-qa.sql:15: NOTICE:  PASS: nuevos ejemplos internos; identidades existentes conservadas
+SET
+CREATE TABLE
+INSERT 0 1
+DO
+ id_barrio | id_comuna |      nombre      | interno | usuarios | reportes 
+-----------+-----------+------------------+---------+----------+----------
+         3 |         3 | Barrio ejemplo 3 | f       |        1 |        1
+(1 row)
+
+UPDATE 1
+psql:/tmp/temporales-qa.sql:69: NOTICE:  PASS: exclusion, opcion valida intacta, usuario/reporte/FK preservados e idempotencia
+DO
+ROLLBACK
+psql:/tmp/temporales-qa.sql:75: NOTICE:  PASS: plantilla termina en rollback sin cambios persistidos
+DO

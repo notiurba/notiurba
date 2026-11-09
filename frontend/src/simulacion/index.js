@@ -6,7 +6,6 @@
 // busca con import.meta.glob y, si no existe, simplemente habla con la API real.
 import { ErrorApi } from '../compartido/api/errorApi'
 import * as almacen from './almacen'
-import barrios from './datos/catalogos/barrios.json'
 import categorias from './datos/catalogos/categorias.json'
 import tiposDocumento from './datos/catalogos/tipos-documento.json'
 import loginAdmin from './datos/auth/login.ok.admin.json'
@@ -44,6 +43,29 @@ const CUENTAS = {
 // Cuenta que aún no confirmó su correo: el login responde 403 CORREO_NO_VERIFICADO (contrato 3.2).
 const CORREO_SIN_VERIFICAR = 'sinverificar@correo.com'
 
+// Adaptador del catálogo existente al flujo actual. Son destinos ficticios, no contactos oficiales.
+// V16 conserva ID 15 en el catálogo general, pero no configura una ruta para ella.
+const categoriasEnrutamiento = categorias.filter(c => c.idCategoria !== 15).map(c => ({
+  ...c, categoria: c.nombre, codigo: `SIM-${c.idCategoria}`,
+  esGas: c.idCategoria === 12, admiteMatricula: [11, 12, 13, 14].includes(c.idCategoria),
+}))
+
+function resolverRuta(id, emergencia = false) {
+  const categoria = categoriasEnrutamiento.find(c => c.idCategoria === Number(id))
+  if (!categoria) throw crearErrorApi(400, { codigo: 'VALIDACION', mensaje: 'Categoría sin ruta disponible', campo: 'idCategoria' })
+  return { ...categoria, idCanal: categoria.idCategoria, entidad: 'Entidad de prueba (simulación local)',
+    dependencia: 'Sin conexión con entidades reales', canal: 'Simulación', acceso: '',
+    permiteCorreo: !emergencia, revisionClasificacion: categoria.idCategoria === 10,
+    mensaje: 'Prueba simulada: no se enviarán correos ni se generará un radicado oficial.' }
+}
+
+function estadoEnvio(codigo) {
+  const reporte = almacen.buscarReporte(codigo)
+  if (!reporte) throw crearErrorApi(404, { mensaje: 'No se encontró ese reporte' })
+  return { estado: reporte.envioSimulado ?? 'SIN_SOLICITAR', reintentable: false,
+    ruta: resolverRuta(reporte.idCategoria, reporte.emergencia === true) }
+}
+
 // Datos de prueba que provocan errores, para poder ver esas pantallas:
 //   correo repetido@correo.com  → registro: error de correo
 //   documento 1098765432        → registro: error de documento (también en «Completar perfil»)
@@ -52,7 +74,9 @@ const CORREO_SIN_VERIFICAR = 'sinverificar@correo.com'
 //   token «vencido» en /nueva-contrasena?token=vencido o /app/verificar-correo?token=vencido → «el enlace venció»
 // Cada ruta: [método, patrón, manejador(cuerpo, params, ruta)]. `:codigo` es un parámetro de la ruta.
 const RUTAS = [
-  ['GET', '/api/catalogos/barrios', () => barrios],
+  ['GET', '/api/enrutamiento/categorias', () => categoriasEnrutamiento],
+  ['GET', '/api/enrutamiento/categorias/:id', (_c, { id }, ruta) => resolverRuta(id, new URL(ruta, 'http://localhost').searchParams.get('emergencia') === 'true')],
+  // Barrios: cliente.js consulta siempre el catalogo publico real, sin token simulado.
   ['GET', '/api/catalogos/tipos-documento', () => tiposDocumento],
   ['GET', '/api/categorias', () => categorias],
 
@@ -119,13 +143,18 @@ const RUTAS = [
   }],
   // Propuesto en el contrato (sección 4): envía el reporte a la entidad; responde 202 sin cuerpo útil.
   ['POST', '/api/reportes/:codigo/enviar', (_c, { codigo }) => {
-    almacen.marcarEnviado(codigo)
-    return null
+    const envio = estadoEnvio(codigo)
+    // No se contacta un proveedor: PENDIENTE solo representa la pantalla de prueba.
+    almacen.guardarEnvio(codigo, envio.ruta.permiteCorreo ? 'PENDIENTE' : 'NO_ENVIADO_CORREO')
+    return estadoEnvio(codigo)
   }],
+  ['GET', '/api/reportes/:codigo/envio', (_c, { codigo }) => estadoEnvio(codigo)],
   ['GET', '/api/reportes/:codigo', (_c, { codigo }, ruta) => {
     const reporte = almacen.buscarReporte(codigo)
     if (!reporte) throw crearErrorApi(404, { mensaje: 'No se encontró ese reporte' }, ruta)
-    return reporte
+    return { ...reporte, categoria: { idCategoria: reporte.idCategoria, nombre: reporte.categoria },
+      barrio: reporte.idBarrio ? { idBarrio: reporte.idBarrio, nombre: reporte.barrio } : null,
+      comuna: reporte.idComuna }
   }],
   // La persona avisa que la entidad respondió o que ya se resolvió (pantalla «Actualizar mi reporte»).
   ['PATCH', '/api/reportes/:codigo/actualizacion', (cuerpo, { codigo }) => {
@@ -151,11 +180,11 @@ function coincide(patron, ruta) {
   return Object.fromEntries(nombres.map((nombre, i) => [nombre, decodeURIComponent(resultado[i + 1])]))
 }
 
-// Devuelve una promesa con la respuesta simulada, o null si esa ruta no tiene simulación
-// (entonces la petición va a la API real).
+// Devuelve una promesa con la respuesta simulada, o null si esa ruta no tiene simulación.
+// Con mocks activos cliente.js bloquea las rutas ausentes sin llamar a la API real.
 export function buscarMock(metodo, ruta, cuerpo) {
   for (const [metodoRuta, patron, manejador] of RUTAS) {
-    const params = metodoRuta === metodo ? coincide(patron, ruta) : null
+    const params = metodoRuta === metodo ? coincide(patron, ruta.split('?')[0]) : null
     if (!params) continue
 
     return new Promise((resolver, rechazar) => {
