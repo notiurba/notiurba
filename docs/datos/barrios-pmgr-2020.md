@@ -1,6 +1,6 @@
 # Catálogo de barrios (V17) — fuente histórica provisional
 
-**Qué es.** 132 barrios de Tuluá con su comuna, tomados de la tabla 4 «División político administrativa» del
+**Qué es.** 133 barrios de Tuluá con su comuna, tomados de la tabla 4 «División político administrativa» del
 *Plan Municipal de Gestión del Riesgo V3, diciembre de 2020* (Alcaldía de Tuluá, pp. 16-21), con 5 decisiones de
 nombres resueltas por Andrés López el 2026-11-08 (abajo). Los preparó y verificó Luz Amelia (NOT-71) como 135 filas.
 El mismo contenido está en `barrios-pmgr-2020.csv` y en la migración
@@ -8,7 +8,7 @@ El mismo contenido está en `barrios-pmgr-2020.csv` y en la migración
 
 | Comuna | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | Total |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Barrios | 12 | 8 | 21 | 5 | 15 | 16 | 21 | 16 | 15 | 3 | 132 |
+| Barrios | 12 | 8 | 21 | 5 | 15 | 16 | 21 | 17 | 15 | 3 | 133 |
 
 **Qué NO es.** No es un catálogo vigente confirmado: es una fuente municipal de 2020 y no acredita la cobertura
 administrativa de 2026. Igual que la capa de comunas (V14), se usa como aproximación hasta que el municipio
@@ -26,10 +26,7 @@ diciembre 2024, publicado por la Alcaldía; sección 3.4, p. 18 del PDF). El PDF
 | B02 | «Urbanización Lusitania» y «Lusitania» (5) | Se deja solo **Lusitania**. | `5, Lusitania` |
 | B03 | «Diablos Rojos» (7 y 8) | Son **dos barrios distintos** y cada uno está en una sola comuna: I en la 7 y II en la 8 (el de la 8 es vecino de Chiminangos). | `7, Diablos Rojos I` y `8, Diablos Rojos II` |
 | B04 | «San Luis» y «Urbanización San Luis» (8) | Se deja solo **San Luis**. | `8, San Luis` |
-| B05 | «Santa Inés» y «Santa Inés - Comfamiliar» (8) | Se deja solo **Santa Inés**. | `8, Santa Inés` |
-
-Nota: el catastro 2024 lista «Santa Inés de Comfamiliar» como barrio aparte de «Santa Inés»; con B05 quedó fuera
-del selector y sus habitantes elegirán «Santa Inés». Se puede reponer con una migración si se necesita.
+| B05 | «Santa Inés» y «Santa Inés - Comfamiliar» (8) | Son **dos barrios distintos** en la comuna 8 (confirmado por Andrés). El segundo se escribe como en el catastro 2024. | `8, Santa Inés` y `8, Santa Inés de Comfamiliar` |
 
 ## Cómo corregir después
 Los usuarios y reportes referencian el barrio por su id, así que **no se borra ni se reemplaza**: se escribe una

@@ -3,9 +3,9 @@
 -- Tabla 4, paginas 16-21. NO acredita vigencia administrativa en 2026: es una fuente historica provisional
 -- (las decisiones B01-B05 las resolvio Andres Lopez el 2026-11-08, ver docs/datos/barrios-pmgr-2020.md).
 -- PDF SHA256: 106135a48a81848c0b1804284550114eacdac9b91f13b03e2adbbfc221d88b10
--- CSV SHA256: 0c20046d1d02a81575fe07183535920b9e103f8cf742acfe35898bd5ceb5f02e (docs/datos/barrios-pmgr-2020.csv, ya con las decisiones de Andres)
+-- CSV SHA256: 69e3f252b63e34575166c516d4b74f943510979c996836921b6c33b5e58943c6 (docs/datos/barrios-pmgr-2020.csv, ya con las decisiones de Andres)
 -- Solo AGREGA: no renombra, borra ni habilita barrios internos (el del administrador, V15, sigue oculto).
--- El INSERT parte del validado por Amelia con 3 nombres corregidos y 3 variantes quitadas (B01-B05); es repetible (ON CONFLICT DO NOTHING). Para corregir un nombre
+-- El INSERT parte del validado por Amelia con 3 nombres corregidos y 2 variantes quitadas (B01-B05); es repetible (ON CONFLICT DO NOTHING). Para corregir un nombre
 -- o una comuna hay que escribir una migracion nueva con UPDATE: los usuarios y reportes referencian el barrio.
 INSERT INTO barrio (id_comuna, nombre) VALUES
   (1, 'Ciudad Campestre'),
@@ -119,6 +119,7 @@ INSERT INTO barrio (id_comuna, nombre) VALUES
   (8, 'Municipal'),
   (8, 'San Luis'),
   (8, 'Santa Inés'),
+  (8, 'Santa Inés de Comfamiliar'),
   (8, 'Tercer Milenio'),
   (8, 'Villa Liliana'),
   (8, 'Sintrasancarlos'),
