@@ -67,7 +67,7 @@ Rama `feat/login-google`: migraciones V5 (Google), V6 (nombres/apellidos) y V7 (
 - **Validación jurídica del aviso de privacidad**: la versión 3 ya es la vigente (V12, 01/11/2026), pero su texto legal sigue sin validar con el docente o un asesor jurídico (puntos en ADR-0008).
 - **Barrios reales y polígonos de comunas (NOT-54)** (los polígonos experimentales ya están en V14 y los scripts
   `backend/scripts/generar-capa-comunas.py` y `generar-barrios.py` dejan la carga lista; falta el CSV de barrios
-  de Amelia y la capa oficial): sin barrios nadie completa el perfil, y
+  de Amelia y la capa oficial; V17 ya carga 133 barrios históricos del PMGR 2020, pendientes de confirmar con el municipio): sin barrios nadie completa el perfil, y
   sin polígonos un reporte con solo GPS (B3) no deriva comuna ni barrio.
 - **Registro con correo y contraseña**: aún no existe en el backend. Cuando se haga, usa
   `nombres`/`apellidos` y la regla de `auth/ReglaContrasena` (8+ caracteres, letras y números).
