@@ -138,7 +138,7 @@ Errores: 400 VALIDACION, 401, 404 NO_ENCONTRADO. Un reporte que no existe y uno 
 
 ## 4. Endpoints complementarios (todos *propuestos*)
 
-Fuera de los 6, pero necesarios para que ninguna pantalla del Figma quede sin datos. Todos FALTA.
+Fuera de los 6, pero necesarios para que ninguna pantalla del Figma quede sin datos. Cada uno lleva su estado (EXISTE o FALTA); al 9 de nov de 2026 solo faltan los del panel de mapa y estadísticas (sección 5) y el secreto del webhook de rebotes.
 
 - `GET /api/reportes` — EXISTE. «Mis reportes». Exige sesión. Solo los del ciudadano, los más recientes primero (hasta 100). Filtro opcional `estado` (`Recibido`, `Enviado`, `En trámite`, `Resuelto`, o `RECIBIDO`, `ENVIADO`, `EN_TRAMITE`, `RESUELTO`; otro valor → 400 VALIDACION con `campo` estado). Salida: `[ { codigoSeguimiento, estado, categoria { idCategoria, nombre }, direccionIncidente, barrio { idBarrio, nombre } | null, creadoEn, vigenteHasta, envio { estado, motivo } | null } ]`. El reporte completo está en `GET /api/reportes/{codigo}`.
 - `PATCH /api/reportes/{codigo}/actualizacion` — EXISTE. «Actualizar mi reporte». Solo el autor (404 si es de otra persona; 401 sin sesión). Entrada `{ tipo, radicado? }`: `tipo` es `RESPUESTA` («Me respondieron») o `RESUELTO` («Ya se resolvió»); `radicado` es opcional (máx. 50; vacío = no cambia el que ya había). **No cambia el estado oficial**: el aviso queda como una nota en el historial con el mismo estado que ya tenía (a nombre del ciudadano) y el administrador la confirma. Si hay radicado, se guarda en `radicadoOficial`. Devuelve el reporte completo (como `GET /api/reportes/{codigo}`). Errores: 400 VALIDACION (`campo` tipo o radicado), 401, 404.
@@ -150,7 +150,7 @@ Verificación de correo (EXISTEN):
 - Las cuentas con Google ya llegan verificadas. Las cuentas que ya existen (el administrador sembrado en V4) ya nacieron con el correo verificado, así que siguen ingresando sin cambios. El enlace del correo apunta a una página del frontend (`VERIFICACION_ENLACE`, por defecto `/app/verificar-correo`) que aún no existe.
 
 Aviso de rebotes:
-- `POST /api/webhooks/resend` — FALTA, público (sin JWT) pero protegido: se valida la firma del evento con un secreto (`RESEND_WEBHOOK_SECRET`) y se rechaza lo que no esté firmado. Si Resend avisa de un rebote o de una queja, el envío pasa a FALLIDO con su motivo y se avisa al ciudadano (decisión 3). Los nombres exactos de los eventos se confirman en la documentación de Resend al implementar. Requiere guardar el identificador que Resend da a cada envío: hoy `registro_envio_correo` no tiene columna para eso (migración nueva).
+- `POST /api/webhooks/resend` — EXISTE (`ReboteController`, V16), pero rechaza todo mientras `RESEND_WEBHOOK_SECRET` no esté puesta en Render. Público (sin JWT) pero protegido: se valida la firma del evento con un secreto (`RESEND_WEBHOOK_SECRET`) y se rechaza lo que no esté firmado. Si Resend avisa de un rebote o de una queja, el envío pasa a FALLIDO con su motivo y se avisa al ciudadano (decisión 3). Los nombres exactos de los eventos se confirman en la documentación de Resend al implementar. Requiere guardar el identificador que Resend da a cada envío: hoy `registro_envio_correo` no tiene columna para eso (migración nueva).
 
 Ya implementados (EXISTEN):
 - `GET /api/catalogos/tipos-documento` — público. 200 lista `[ { idTipoDocumento, nombre, codigo } ]` ordenada por id (hoy CC, CE, PPT y PAS).
@@ -173,8 +173,8 @@ Todos bajo `/api/admin/...`, rol ADMIN. Los tres endpoints de estados y vigencia
 - `GET /api/admin/reportes/{codigo}`.
 - `PATCH /api/admin/reportes/{codigo}/estado` - EXISTE. Estado y observación (RF-20); ver 5.1.
 - `GET` y `PUT /api/admin/configuracion/vigencia` - EXISTEN (RF-21); ver 5.1.
-- `GET /api/admin/mapa` y `GET /api/admin/mapa/calor` (RF-22, RF-23).
-- `GET /api/admin/estadisticas` (RF-24).
+- `GET /api/admin/mapa` y `GET /api/admin/mapa/calor` (RF-22, RF-23) — FALTA; es la historia NOT-129 del Sprint 3.
+- `GET /api/admin/estadisticas` (RF-24) — FALTA; NOT-129.
 - `PUT /api/admin/categorias/{id}/correo-destino` (RF-25).
 
 ### 5.1 Estados y vigencia — IMPLEMENTADOS (RN-19, RN-20, RF-20, RF-21)
@@ -293,14 +293,14 @@ no recalculan su vigencia. No se agregó ninguna migración.
 - **Postman**: la colección oficial (`docs/api/NotiUrba API`, ver `docs/api/README.md`) cubre login, categorías, crear y consultar reporte (NOT-89) y subir foto (NOT-52). Falta anotar la ejecución en Postman de los casos de consulta (200, 404, 400 y 401); el caso de «otra persona» queda omitido hasta tener `tokenOtraPersona`.
 - **Código de seguimiento (NOT-69)**: la tarea hablaba de máximo 10 caracteres, pero la columna es `VARCHAR(20)`. El código mide 9 hasta el reporte 999 999 y 10 hasta el 9 999 999. Lo asigna el trigger `fn_reporte_antes_insertar` y `uq_reporte_codigo` lo hace único; ambos están probados contra PostGIS.
 - **Estado «Enviado» y rebotes**: falta implementar el webhook, la columna del identificador de envío y la notificación al ciudadano (decisión 3). Confirmar con el equipo que RF-16 y los webhooks pasan a ser necesarios en el MVP.
-- **Verificación de correo**: el backend está hecho; falta la página del frontend `/app/verificar-correo` y la de «reenviar enlace».
+- **Verificación de correo**: hecha de punta a punta (backend y página `/app/verificar-correo`, `ConfirmarCorreo.jsx`).
 - **Endpoint `enviar`**: hecho (PR #18). Falta encender la cola en Render (`NOTIURBA_ENVIO_REPORTES_HABILITADO=true`, con `RESEND_PRUEBA_DESTINO` puesta) y la prueba de punta a punta con una cuenta real.
 - **Aviso de privacidad**: la versión 3 ya es la vigente en la base (V12) y en el frontend; su **validación jurídica sigue pendiente** (ADR-0008). El aviso promete cosas que todavía no existen: Ajustes (editar datos, eliminar datos y cuenta, volver a leer el aviso), «Mis reportes» (`GET /api/reportes`, propuesto en la sección 4), el aviso al ciudadano cuando un correo rebota (webhook), el borrado de sus fotos en Cloudinary al eliminar sus datos y volver a aceptar el aviso si sube de versión. Hay que implementarlas antes de abrir el servicio al público.
 - **Paso 4 del Figma**: si muestra dos casillas de autorización, debe quedar una sola (`autorizaEnvio`). Avisar a Amelia (diseño).
-- **La capa de comunas es experimental y los barrios son de una fuente histórica provisional.** V14 instala la capa sintética y no oficial de NOT-31 en `comuna.geom` (la fuente queda en `configuracion.comunas_capa_fuente`); la regla de la comuna y `FUERA_DE_COBERTURA` (NOT-55, V13) ya actúan con ella. Para cambiarla por la oficial basta regenerar la migración con `backend/scripts/generar-capa-comunas.py` (V16). V17 carga 133 barrios del PMGR 2020 (fuente municipal histórica; no acredita vigencia en 2026 y sus 5 nombres dudosos B01-B05 los resolvió Andrés el 2026-11-08, ver `docs/datos/barrios-pmgr-2020.md`).
+- **La capa de comunas es experimental y los barrios son de una fuente histórica provisional.** V14 instala la capa sintética y no oficial de NOT-31 en `comuna.geom` (la fuente queda en `configuracion.comunas_capa_fuente`); la regla de la comuna y `FUERA_DE_COBERTURA` (NOT-55, V13) ya actúan con ella. Para cambiarla por la oficial basta regenerar la migración con `backend/scripts/generar-capa-comunas.py` (migración V19 o la que siga). V17 carga 133 barrios del PMGR 2020 (fuente municipal histórica; no acredita vigencia en 2026 y sus 5 nombres dudosos B01-B05 los resolvió Andrés el 2026-11-08, ver `docs/datos/barrios-pmgr-2020.md`).
 - **Código sin escribir**: conectar `EnviadorCorreo` a la recuperación de contraseña y el borrado de fotos y datos a pedido del ciudadano (la columna del identificador ya lo permite). El almacén de fotos (NOT-51) y el endpoint de subida (NOT-52) están hechos; se probaron en producción el 01/11/2026: una foto subida desde Render a Cloudinary, con su URL pública cargando sin sesión (las migraciones V10 y V11 ya estaban aplicadas en Neon; V11 se comprobó porque la subida guarda el identificador en esa columna). En Render también se verificó el rechazo de un archivo de 1,5 MB (413) y de un `.jpg` que no es imagen (415).
 - **Prueba de Resend desde Render**: el 01/11/2026 se probó la API HTTP desde la máquina de Andrés (respuesta 200 con el subdominio verificado, enviando a una dirección de pruebas de Resend). El 01/11/2026 también se envió un correo real con `EnviadorCorreoResend` a una bandeja de Andrés. Falta probarlo desde Render: hay que desplegar y poner `RESEND_API_KEY` y `RESEND_REMITENTE` en sus variables. El SMTP por 2587 no se usa.
-- **Rutas del frontend**: `RutaProtegida` aún no envuelve `/admin/*`; el panel sigue abierto con datos de prueba.
+- **Rutas del frontend**: `RutaProtegida rol="ADMIN"` ya envuelve `/admin/*`; el mapa por comunas sigue con datos de prueba hasta NOT-135.
 - **Linear**: NOT-69 («Generar el código único, guardarlo con restricción de unicidad y devolverlo al crear el reporte») ya lo hace el trigger `fn_reporte_antes_insertar` más `uq_reporte_codigo`: queda solo devolverlo en el 201. NOT-89 («consultar un reporte propio por código, con URL de foto nula si no tiene y 404 si no es suyo») habla de una sola foto: ahora son hasta 3, así que debe decir «lista de fotos vacía si no tiene».
 
 ## 8. Cambios al modelo de datos (para actualizar el diagrama ER)

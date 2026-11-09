@@ -5,7 +5,7 @@ Sirve para cambiar la capa sin tocar código: cuando llegue la capa oficial (o u
 
     python3 backend/scripts/generar-capa-comunas.py capa-nueva.geojson \
         --fuente "Alcaldía de Tuluá, Planeación, 2026" \
-        > backend/src/main/resources/db/migration/V16__capa_comunas_oficial.sql
+        > backend/src/main/resources/db/migration/V19__capa_comunas_oficial.sql
 
 El SQL generado reemplaza la geometría de las 10 comunas (UPDATE por id_comuna, repetible) y
 anota la fuente en configuracion.comunas_capa_fuente. También se puede ejecutar a mano con psql.

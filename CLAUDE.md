@@ -8,7 +8,9 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
 
 ## Cómo usar este repositorio con Claude Code
 
-1. Lee siempre primero `docs/README.md` y el contexto en `docs/contexto/`.
+1. Lee siempre primero `docs/contexto/12-estado-actual-y-traspaso.md` (qué funciona, qué falta, cómo se corre y
+   se prueba, cómo se trabaja con Andrés), luego `docs/README.md` y el resto de `docs/contexto/`. El sprint en
+   curso está en `docs/contexto/13-sprint-3.md`.
 2. Las decisiones cerradas están en `docs/decisiones/` (ADR). No las revivas.
 3. Lo que está **sin decidir** está marcado como *pendiente* o *propuesto*. No lo
    cierres por tu cuenta: pregunta o déjalo señalado.
@@ -32,7 +34,7 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
 - **Backend:** Java 21 + Spring Boot 3.3 (web, data-jpa, security, validation).
 - **Geo:** PostgreSQL 16 + PostGIS 3.4 (índice GiST), Hibernate Spatial.
 - **Seguridad:** Spring Security + JWT (jjwt).
-- **Frontend:** React + Vite + vite-plugin-pwa. Gestor de paquetes: **pnpm** (no usar npm; no subir `package-lock.json`).
+- **Frontend:** React 19 + Vite 8 + react-router 7 (`vite-plugin-pwa` todavía no está instalado: la app aún no es instalable, NOT-134). Gestor de paquetes: **pnpm** (no usar npm; no subir `package-lock.json`).
 - **Mapas:** Leaflet 1.9 + OpenStreetMap + Leaflet.heat.
 - **Fotos:** Cloudinary (plan Free), decidido el 29/10/2026 (ADR-0006). Mega descartado. Integrado por su API HTTP detrás de la interfaz `AlmacenFotos` (paquete `foto/`); probado con una subida real el 01/11/2026.
 - **Hosting:** Netlify (frontend) + Render (backend) + Neon (PostgreSQL/PostGIS).
@@ -45,7 +47,7 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
       `GOOGLE_CLIENT_ID`, `CORS_ORIGINS`, `RECUPERACION_ENLACE`, `RESEND_API_KEY`,
       `RESEND_REMITENTE`, `VERIFICACION_ENLACE`, `CLOUDINARY_CLOUD_NAME`,
       `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (solo la dirección, p. ej. del subdominio `reportes.notiurba.com`).
-- **Correo:** Resend (decidido el 29/10/2026, ADR-0002). Requiere dominio verificado; plan gratuito 100 correos/día. Se descartó el borrador que el ciudadano enviaba. Dominio `notiurba.com` comprado el 31/10/2026 (a nombre de Andrés Mauricio Peña López, ADR-0007); se envía desde el subdominio `reportes.notiurba.com`, verificado en Resend. El envío está implementado con la API HTTP de Resend (`EnviadorCorreo` / `EnviadorCorreoResend`) y se probó con un correo real el 01/11/2026 desde local; falta probarlo desde Render.
+- **Correo:** Resend (decidido el 29/10/2026, ADR-0002). Requiere dominio verificado; plan gratuito 100 correos/día. Se descartó el borrador que el ciudadano enviaba. Dominio `notiurba.com` comprado el 31/10/2026 (a nombre de Andrés Mauricio Peña López, ADR-0007); se envía desde el subdominio `reportes.notiurba.com`, verificado en Resend. El envío está implementado con la API HTTP de Resend (`EnviadorCorreo` / `EnviadorCorreoResend`) y se probó con un correo real el 01/11/2026 desde local; ya se probó desde Render. Mientras dure la etapa de pruebas, `RESEND_PRUEBA_DESTINO` debe seguir puesta (el correo sale a la bandeja de pruebas de Andrés, no a la entidad real).
 
 ## Equipo
 
@@ -54,8 +56,22 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
 - **Luz Amelia Ibarguen** — UX/UI y pruebas.
 - Docente y aprobador de alcance: **Jairo Rodríguez Martínez**.
 
+## Reglas de colaboración (aprendidas con Andrés)
+
+- Español claro y frases cortas, también en las preguntas.
+- Ramas `feature/*` o `docs/*` y PR hacia `develop`; **sin líneas de coautoría de Claude** en commits ni PR.
+  Prefiera PR pequeños y separados. No mezcle nada que cambie datos de producción sin su aprobación.
+- Lo que toca pantallas de Katherine se señala expresamente para su revisión.
+- Nunca imprima secretos. No cree historias en Linear sin su visto bueno (formato en `docs/contexto/13-sprint-3.md`;
+  skill global `linear-historias-sprint`).
+- Pruebas y despliegue: skill del repo `.claude/skills/notiurba-pruebas-y-despliegue/`.
+- Al cerrar una sesión larga: skill global `traspaso-de-sesion`.
+
 ## Decisiones abiertas (no cerrar sin el equipo)
 
-- Categorías 8 (riesgo de desastres) y 9 (vivienda): por validar con la Alcaldía.
-- Fuente cartográfica definitiva de las comunas: por validar con Planeación (ADR-0003).
 - Validación jurídica del aviso de privacidad v3 (ya es el vigente; puntos por validar en ADR-0008).
+- Valores del límite diario de reportes, intentos de login y distancia de duplicados (NOT-132).
+- Cuándo y con qué autorización se activa el envío real a las entidades (NOT-131).
+
+Ya decididas (no reabrir): categorías 8 y 9 y la consulta de la Ley 1581 están validadas por el equipo; el docente
+aceptó que los barrios (PMGR 2020, V17) y la capa de comunas (V14) queden provisionales (ADR-0003).
