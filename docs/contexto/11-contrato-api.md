@@ -63,14 +63,14 @@ Cualquier otro error HTTP sin código propio se convierte así: 404 en NO_ENCONT
 Público. Crea siempre rol CIUDADANO.
 
 Entrada (en este orden):
-- `nombres`, `apellidos`: obligatorios, 1–255, no solo espacios.
+- `nombres`, `apellidos`: obligatorios, de 2 a 60 caracteres; empiezan con una letra y solo llevan letras (con tilde o ñ), espacios, apóstrofo, punto o guion. Los espacios sobrantes se recortan. Es la misma regla del frontend (`ReglasPerfil`); la usan el registro, el alta con Google y «Editar mis datos». Mensajes: «… son obligatorios», «… deben tener al menos 2 letras», «… no pueden pasar de 60 caracteres», «… solo pueden llevar letras, espacios, apóstrofo, punto o guion» (campo `nombres` o `apellidos`).
 - `idTipoDocumento`: obligatorio, existente (1 CC, 2 CE, 3 PPT, 4 PAS).
 - `numeroDocumento`: obligatorio, máx. 30; único junto con el tipo.
 - `idBarrio`: obligatorio, existente.
 - `direccionCorrespondencia`: obligatoria, máx. 300.
 - `correo`: obligatorio, formato de correo, máx. 254, único sin distinguir mayúsculas.
 - `telefono`: opcional, máx. 30.
-- `password`: obligatoria, mínimo 8 caracteres con al menos una letra y un número, máx. 72 bytes UTF-8 (regla real en `ReglaContrasena`). Mensaje: «La contraseña debe tener al menos 8 caracteres, con letras y números».
+- `password`: obligatoria, mínimo 8 caracteres con al menos una letra y un número, máx. 72 bytes UTF-8 (regla real en `ReglaContrasena`); si es demasiado larga el mensaje lo dice («La contraseña es demasiado larga: use como máximo 72 caracteres»). Mensaje: «La contraseña debe tener al menos 8 caracteres, con letras y números».
 - `aceptaPrivacidad`: obligatorio, `true`. El servidor guarda el aviso vigente (hoy la versión 3, migración V12) y la fecha-hora, igual que `POST /api/auth/google/completar`.
 - `declaraMayorEdad`: obligatorio, `true`; si falta o es `false` responde 400 VALIDACION con `campo: "declaraMayorEdad"` (implementado en NOT-75, también en `POST /api/auth/google/completar`). En pantalla es la misma casilla del aviso, de un solo clic: «Soy mayor de 18 años y acepto el tratamiento de mis datos personales (Ley 1581). Ver aviso de privacidad» (también en «completar perfil» de Google). La base no guarda un campo aparte para esta declaración: queda en la fecha y la versión del aviso aceptado (`acepto_privacidad_en`, `id_aviso_privacidad`).
 - «Confirmar contraseña» se valida solo en el frontend.
