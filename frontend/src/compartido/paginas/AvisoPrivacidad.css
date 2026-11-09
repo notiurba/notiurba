@@ -9,6 +9,7 @@
   display: flex;
   gap: var(--nu-esp-8);
   margin: 0;
+  flex-wrap: wrap;
 }
 
 .aviso-privacidad__ley,

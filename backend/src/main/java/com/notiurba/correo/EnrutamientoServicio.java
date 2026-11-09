@@ -41,9 +41,9 @@ public class EnrutamientoServicio {
                 rs.getBoolean("revision_clasificacion"), rs.getInt(permite ? "correo_id" : "alterno_id"),
                 permite ? "Correo" : rs.getString("tipo"), rs.getString(permite ? "referencia" : "alterno"),
                 rs.getString("referencia"), permite,
-                !competencia ? "Competencia propuesta, pendiente de validación. El correo no atiende emergencias."
-                    : permite ? "El envío no equivale a entrega ni a radicación oficial."
-                    : "Utiliza el canal oficial. No se enviará correo automáticamente ni se simulará radicación.");
+                !competencia ? "Todavía confirmamos qué entidad atiende este tipo de reportes. El correo no es para emergencias."
+                    : permite ? "Enviar el reporte no asegura que lo lean de inmediato; el radicado oficial lo asigna la entidad."
+                    : "Esta entidad atiende por otro canal. Use el que se indica aquí; NotiUrba no le enviará correo.");
         });
     }
 
@@ -56,8 +56,8 @@ public class EnrutamientoServicio {
             ruta.requiereUbicacion(), ruta.admiteMatricula(), ruta.esGas(), ruta.competenciaConfirmada(),
             ruta.revisionClasificacion(), ruta.esGas() ? canalEmergencia(ruta.idCategoria()) : alterno(ruta.idCategoria()),
             ruta.esGas() ? "Teléfono" : "Canal oficial", ruta.esGas() ? "164" : accesoAlterno(ruta.idCategoria()),
-            ruta.correoReferencia(), false, ruta.esGas() ? "Emergencia de gas: llama al 164"
-                : "El correo no es un canal de atención inmediata. Usa los canales de emergencia oficiales.");
+            ruta.correoReferencia(), false, ruta.esGas() ? "Emergencia de gas: llame al 164"
+                : "Para una emergencia, llame al canal de emergencias: el correo no es inmediato.");
     }
     private Integer canalEmergencia(int id) { return jdbc.queryForObject("SELECT id_canal_emergencia FROM configuracion_enrutamiento WHERE id_categoria=?", Integer.class, id); }
     private Integer alterno(int id) { return jdbc.queryForObject("SELECT id_canal_alterno FROM configuracion_enrutamiento WHERE id_categoria=?", Integer.class, id); }

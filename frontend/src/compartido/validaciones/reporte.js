@@ -6,11 +6,17 @@ export const MAX_FOTOS = 3
 export const MAX_BYTES_FOTO = 1024 * 1024 // 1 MB por foto (contrato propuesto en simulacion/README.md)
 export const TIPOS_FOTO = ['image/jpeg', 'image/png']
 
-// Paso 2: hace falta un punto (GPS o marcado en el mapa). El barrio y la dirección son opcionales
-// (contrato 3.4: la comuna sale del GPS o, si no hay, del barrio).
-export function validarUbicacion(d) {
+// Paso 2: GPS o barrio si la categoría requiere ubicación; el servidor decide la cobertura.
+export function validarUbicacion(d, { requiereUbicacion = true } = {}) {
+  if (!requiereUbicacion) return {}
+  const lat = d.latitud != null && d.latitud !== ''
+  const lon = d.longitud != null && d.longitud !== ''
+  let punto = ''
+  if (lat !== lon) punto = 'Indique la ubicación completa.'
+  else if (lat && (!Number.isFinite(d.latitud) || !Number.isFinite(d.longitud) || Math.abs(d.latitud) > 90 || Math.abs(d.longitud) > 180)) punto = 'Indique una ubicación válida.'
+  else if (!lat && !d.idBarrio) punto = 'Marque una ubicación o seleccione un barrio para continuar.'
   return soloErrores({
-    punto: d.latitud == null || d.longitud == null ? 'Marque el punto en el mapa o use su ubicación actual.' : '',
+    punto,
   })
 }
 
@@ -18,7 +24,8 @@ export function validarUbicacion(d) {
 export function validarDetalles(d) {
   const largo = d.descripcion.trim().length
   let error = ''
-  if (largo < MIN_DESCRIPCION) error = `Escriba al menos ${MIN_DESCRIPCION} caracteres`
+  if (largo === 0) error = 'Escriba una descripción del problema.'
+  else if (largo < MIN_DESCRIPCION) error = `Escriba al menos ${MIN_DESCRIPCION} caracteres`
   else if (largo > MAX_DESCRIPCION) error = `Máximo ${MAX_DESCRIPCION} caracteres`
   return soloErrores({ descripcion: error })
 }
@@ -33,18 +40,31 @@ export function validarFoto(archivo, fotosActuales) {
 
 // Cuerpo que espera POST /api/reportes (contrato 3.4). Las fotos se suben aparte, una por una.
 // Sin punto en el mapa (categorías que no piden ubicación) se omiten latitud y longitud.
-export function armarSolicitudReporte(b) {
+export function armarSolicitudReporte(b, { autorizaEnvio = false, emergencia = false, categoria } = {}) {
   const solicitud = {
     idCategoria: Number(b.idCategoria),
     descripcion: b.descripcion.trim(),
-    autorizaEnvio: true,
+    autorizaEnvio: autorizaEnvio === true,
+    emergencia: emergencia === true,
   }
-  if (b.latitud != null && b.longitud != null) {
+  const pideUbicacion = categoria?.requiereUbicacion !== false
+  if (pideUbicacion && b.latitud != null && b.longitud != null) {
     solicitud.latitud = b.latitud
     solicitud.longitud = b.longitud
   }
-  if (b.idBarrio) solicitud.idBarrio = Number(b.idBarrio)
-  if (b.direccion.trim()) solicitud.direccionIncidente = b.direccion.trim()
-  if (b.matricula.trim()) solicitud.matriculaCuentaServicio = b.matricula.trim()
+  if (pideUbicacion && b.idBarrio) solicitud.idBarrio = Number(b.idBarrio)
+  if (pideUbicacion && b.direccion.trim()) solicitud.direccionIncidente = b.direccion.trim()
+  if (categoria?.admiteMatricula !== false && b.matricula.trim()) solicitud.matriculaCuentaServicio = b.matricula.trim()
   return solicitud
+}
+
+export function validarConfirmacionReporte(b, categoria, autorizaEnvio) {
+  return {
+    ...validarUbicacion(b, { requiereUbicacion: categoria?.requiereUbicacion !== false }),
+    ...validarDetalles(b),
+    ...soloErrores({
+      idCategoria: categoria && String(categoria.idCategoria) === String(b.idCategoria) ? '' : 'Esta categoría ya no está disponible. Elija otra.',
+      autorizaEnvio: autorizaEnvio === true ? '' : 'Autorice el envío de este reporte para continuar.',
+    }),
+  }
 }

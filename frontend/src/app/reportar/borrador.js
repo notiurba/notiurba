@@ -10,6 +10,7 @@ const BORRADOR_VACIO = {
   idBarrio: '',
   descripcion: '',
   matricula: '',
+  emergencia: false,
 }
 
 export function leerBorrador() {
@@ -40,3 +41,15 @@ export function borrarBorrador() {
 // ¿La persona ya escribió o eligió algo? Decide si al salir se pide confirmación.
 export const tieneContenido = (borrador, cantidadFotos) =>
   Boolean(borrador.idCategoria || borrador.descripcion || cantidadFotos > 0)
+
+// El código ya creado se conserva separado: recargar nunca debe provocar otro POST de creación.
+const CLAVE_GUARDADO = 'notiurba.reporteGuardado'
+export function leerGuardado() {
+  try { return JSON.parse(sessionStorage.getItem(CLAVE_GUARDADO)) || null } catch { return null }
+}
+export function guardarAvance(guardado) {
+  try {
+    if (guardado) sessionStorage.setItem(CLAVE_GUARDADO, JSON.stringify(guardado))
+    else sessionStorage.removeItem(CLAVE_GUARDADO)
+  } catch { /* Sin almacenamiento, la recuperación permanece en memoria durante la sesión. */ }
+}

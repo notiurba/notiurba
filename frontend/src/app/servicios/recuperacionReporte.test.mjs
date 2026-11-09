@@ -53,3 +53,35 @@ test('fallar el encolado conserva el mismo reporte y sus fotografías', async ()
   await assert.rejects(guardarConEvidencias({ datos: {}, fotos: ['foto'], api, conservar: r => { guardado = r } }), /Sin conexión/)
   assert.equal(guardado.codigoSeguimiento, 'NU-000043')
 })
+
+test('expone el estado real de solicitud y comunica cada foto confirmada antes de un fallo', async () => {
+  let guardado
+  const confirmadas = []
+  const api = {
+    async guardarReporte() { return { codigoSeguimiento: 'NU-000044' } },
+    async subirFoto(codigo, foto) { if (foto === 'segunda') throw new Error('Fallo foto'); assert.equal(codigo, 'NU-000044') },
+    async enviar() { return { estado: 'NO_ENVIADO_CORREO', ruta: { permiteCorreo: false } } },
+  }
+  await assert.rejects(guardarConEvidencias({ datos: {}, fotos: ['primera', 'segunda'], api, conservar: r => { guardado = r }, alSubirFoto: f => confirmadas.push(f) }), /Fallo foto/)
+  assert.deepEqual(confirmadas, ['primera'])
+  api.subirFoto = async () => {}
+  api.guardarReporte = async () => { throw new Error('No debe crear de nuevo') }
+  const resultado = await guardarConEvidencias({ datos: {}, fotos: ['segunda'], guardado, api, conservar() {}, alSubirFoto: f => confirmadas.push(f) })
+  assert.equal(resultado.codigoSeguimiento, 'NU-000044')
+  assert.equal(resultado.envio.estado, 'NO_ENVIADO_CORREO')
+  assert.deepEqual(confirmadas, ['primera', 'segunda'])
+})
+
+test('una subida guardada cuya respuesta se perdió no se vuelve a subir al reintentar', async () => {
+  let confirmadas = 0, subidas = 0
+  const api = {
+    async guardarReporte() { throw new Error('No debe crear de nuevo') },
+    async consultar() { return { fotos: [{ orden: 1 }] } },
+    async subirFoto() { subidas++ },
+    async enviar() { return { estado: 'PENDIENTE' } },
+  }
+  const resultado = await guardarConEvidencias({ datos: {}, fotos: ['respuesta perdida', 'pendiente'], guardado: { codigoSeguimiento: 'NU-000045', fotosSubidas: 0 }, api, conservar() {}, alSubirFoto() { confirmadas++ } })
+  assert.equal(resultado.envio.estado, 'PENDIENTE')
+  assert.equal(subidas, 1)
+  assert.equal(confirmadas, 2)
+})

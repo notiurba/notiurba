@@ -2,6 +2,8 @@
   display: flex;
   flex: 1;
   flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .formulario-pantalla__campos {
@@ -10,6 +12,7 @@
   flex-direction: column;
   gap: var(--nu-esp-16);
   padding: var(--nu-esp-16) 0 var(--nu-esp-24);
+  min-width: 0;
 }
 
 .formulario-pantalla__acciones {
@@ -33,7 +36,10 @@
 
 /* Barra compacta: botones de 48 px en lugar de 52 px. */
 .formulario-pantalla__acciones .boton {
-  height: 48px;
+  min-height: 48px;
+  height: auto;
+  white-space: normal;
+  box-sizing: border-box;
 }
 
 /* Pantalla baja (por ejemplo, con el teclado abierto): la barra deja de ir pegada abajo para no tapar

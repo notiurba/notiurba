@@ -7,11 +7,11 @@ import Aviso from '../componentes/avisos/Aviso'
 import EstadoCarga from '../componentes/avisos/EstadoCarga'
 import Boton from '../componentes/Boton'
 import { CamposIdentidad, CamposResidencia } from '../componentes/formulario/CamposPerfil'
-import Casilla from '../componentes/formulario/Casilla'
+import ConsentimientoRegistro from '../componentes/formulario/ConsentimientoRegistro'
 import EncabezadoPantalla from '../componentes/EncabezadoPantalla'
 import FormularioPantalla from '../componentes/formulario/FormularioPantalla'
 import LayoutAuth from '../componentes/acceso/LayoutAuth'
-import NotaPrivacidad, { EnlacePrivacidad } from '../componentes/avisos/NotaPrivacidad'
+import NotaPrivacidad from '../componentes/avisos/NotaPrivacidad'
 import '../estilos/marca.css'
 import useCargar from '../hooks/useCargar'
 import useFormulario from '../hooks/useFormulario'
@@ -47,8 +47,8 @@ export default function CompletarPerfil() {
         // Lo entrega la API al entrar con Google; con la simulación no existe y no se envía.
         ...(state?.tokenRegistro ? { tokenRegistro: state.tokenRegistro } : {}),
         ...armarDatosPerfil(datos),
-        aceptaPrivacidad: true,
-        declaraMayorEdad: true, // misma casilla que acepta el aviso
+        aceptaPrivacidad: datos.aceptaPrivacidad,
+        declaraMayorEdad: datos.aceptaPrivacidad, // misma casilla que acepta el aviso
       })
       guardarToken(token)
       navigate(RUTA_POR_ROL[rol] ?? '/app', { replace: true })
@@ -97,14 +97,7 @@ export default function CompletarPerfil() {
             <NotaPrivacidad />
             <CamposIdentidad datos={datos} errores={errores} cambiar={cambiar} tiposDocumento={tipos.datos} />
             <CamposResidencia datos={datos} errores={errores} cambiar={cambiar} barrios={barrios.datos} />
-            <Casilla
-              id="aceptaPrivacidad"
-              checked={datos.aceptaPrivacidad}
-              onChange={cambiar('aceptaPrivacidad')}
-              error={errores.aceptaPrivacidad}
-            >
-              Soy mayor de 18 años y acepto el tratamiento de mis datos personales (Ley 1581). <EnlacePrivacidad />
-            </Casilla>
+            <ConsentimientoRegistro datos={datos} errores={errores} cambiar={cambiar} />
           </>
         )}
       </FormularioPantalla>

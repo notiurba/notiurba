@@ -1,10 +1,11 @@
+// Textos que ve la persona después de enviar el reporte. Se habla de «usted», sin nombres de proveedor ni códigos técnicos.
 export function presentacionCorreo(envio) {
-  if (envio?.rebote) return { clase: 'rebote', titulo: 'Aviso de fallo de correo', etiqueta: 'FALLIDO (rebote)', subtitulo: 'Correo no entregado a la entidad', mensaje: 'El correo no pudo entregarse a la entidad. Tu reporte sigue guardado y conserva su estado de seguimiento.' }
-  if (envio?.estado === 'ENVIADO') return { clase: 'enviado', titulo: 'Reporte enviado', etiqueta: 'ENVIADO', subtitulo: 'Envío aceptado por Resend', mensaje: 'El servicio de correo aceptó el mensaje dirigido a la entidad. Puedes seguir el avance desde Mis reportes.' }
-  if (envio?.estado === 'FALLIDO') return { clase: 'fallido', titulo: 'Reporte guardado · Envío fallido', etiqueta: 'FALLIDO', subtitulo: 'No pudimos entregar el correo', mensaje: 'Tu reporte está guardado, pero no pudimos entregar el correo a la entidad. Puedes reintentar cuando esté disponible.' }
-  if (envio?.estado === 'NO_ENVIADO_CORREO') return { clase: 'externo', titulo: 'Reporte guardado', etiqueta: 'NO_ENVIADO_CORREO', subtitulo: 'Utiliza el canal oficial', mensaje: envio.ruta.mensaje }
-  if (envio?.estado === 'PENDIENTE') return { clase: 'pendiente', titulo: 'Reporte guardado', etiqueta: 'PENDIENTE', subtitulo: 'El correo está pendiente', mensaje: 'Tu reporte se guardó correctamente. Estamos preparando el envío del correo a la entidad.' }
-  return { clase: 'pendiente', titulo: 'Reporte guardado', etiqueta: 'SIN SOLICITAR', subtitulo: 'Envío sin solicitar', mensaje: 'El reporte se conserva con su código. Completa las evidencias antes de solicitar el envío.' }
+  if (envio?.rebote) return { clase: 'rebote', titulo: 'El correo no llegó', etiqueta: 'No entregado', subtitulo: 'El correo no llegó a la entidad', mensaje: 'Su reporte sigue guardado y conserva su seguimiento. El correo no pudo entregarse a la entidad.' }
+  if (envio?.estado === 'ENVIADO') return { clase: 'enviado', titulo: 'Reporte enviado', etiqueta: 'Enviado', subtitulo: 'Su reporte ya salió hacia la entidad', mensaje: 'Enviamos su reporte a la entidad. Puede seguir el avance desde Mis reportes.' }
+  if (envio?.estado === 'FALLIDO') return { clase: 'fallido', titulo: 'Reporte guardado', etiqueta: 'No enviado', subtitulo: 'No pudimos enviar el correo', mensaje: 'Su reporte quedó guardado, pero el correo no salió. Puede intentarlo de nuevo.' }
+  if (envio?.estado === 'NO_ENVIADO_CORREO') return { clase: 'externo', titulo: 'Reporte guardado', etiqueta: 'Otro canal', subtitulo: 'Siga por el canal oficial', mensaje: envio.ruta?.mensaje ?? 'Su reporte quedó guardado. Esta entidad atiende por otro canal: use el que se indica abajo.' }
+  if (envio?.estado === 'PENDIENTE') return { clase: 'pendiente', titulo: 'Reporte guardado', etiqueta: 'En camino', subtitulo: 'Estamos enviando su reporte', mensaje: 'Su reporte quedó guardado y lo estamos enviando a la entidad.' }
+  return { clase: 'pendiente', titulo: 'Reporte guardado', etiqueta: 'Sin enviar', subtitulo: 'Falta enviarlo', mensaje: 'Su reporte quedó guardado. Falta enviarlo a la entidad.' }
 }
 
 export function enlaceCanal(ruta) {

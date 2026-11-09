@@ -59,7 +59,7 @@ class EnrutamientoIntegracionTest {
         assertThat(jdbc.queryForObject("SELECT count(*) FROM categoria WHERE id_categoria=15",Integer.class)).isEqualTo(1);
     }
     @Test void gasEmergenteYCanalesAlternosNoLlamanProveedor() {
-        assertThat(rutas.resolver(12,true).mensaje()).isEqualTo("Emergencia de gas: llama al 164");
+        assertThat(rutas.resolver(12,true).mensaje()).isEqualTo("Emergencia de gas: llame al 164");
         assertThat(rutas.resolver(12,true).permiteCorreo()).isFalse();
         for(int id:new int[]{11,13,14})assertThat(rutas.resolver(id,false).permiteCorreo()).isFalse();
         assertThat(rutas.resolver(13,false).canal()).isEqualTo("Web");

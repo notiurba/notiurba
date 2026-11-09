@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { iniciarSesion } from '../api/auth'
-import { RUTA_POR_ROL, guardarToken } from '../auth/sesion'
+import { mensajeErrorLogin } from '../auth/errorLogin'
+import { guardarToken } from '../auth/sesion'
+import { destinoTrasAutenticacion, estadoRetornoReporte } from '../auth/retornoReporte'
 import Aviso from '../componentes/avisos/Aviso'
 import Boton from '../componentes/Boton'
 import CabeceraAuth from '../componentes/acceso/CabeceraAuth'
@@ -20,15 +22,10 @@ import { LIMITES, soloErrores, validarCorreo, validarObligatorio } from '../vali
 // El error se muestra en rojo bajo la casilla que falló. Si el servidor dice cuál (campo), solo esa;
 // si no lo dice (hoy responde igual para correo y contraseña, para no revelar qué cuentas existen),
 // se marcan las dos casillas con un mensaje que invita a revisar ambas.
-const MENSAJE_POR_CAMPO = {
-  correo: 'No encontramos una cuenta con ese correo. Revíselo o regístrese.',
-  password: 'La contraseña no es correcta. Inténtelo de nuevo.',
-}
 const ERRORES_SIN_CAMPO = {
   correo: 'Revise que su correo esté bien escrito.',
   password: 'Revise su contraseña o pulse «¿Olvidó su contraseña?».',
 }
-const MENSAJE_SIN_CONEXION = 'No pudimos conectar. Inténtelo de nuevo en un momento.'
 const MENSAJE_SIN_VERIFICAR = 'Falta confirmar su correo. Abra el enlace que le enviamos al registrarse.'
 const MENSAJE_RESTABLECIDA = 'Contraseña actualizada. Inicie sesión con la nueva.'
 const MENSAJE_SESION_VENCIDA = 'Su sesión terminó. Inicie sesión de nuevo.'
@@ -42,6 +39,7 @@ export default function Login() {
   const [sinVerificar, setSinVerificar] = useState(false)
   const navigate = useNavigate()
   const { state } = useLocation()
+  const retorno = estadoRetornoReporte(state?.siguiente ?? null)
   const [params] = useSearchParams()
   const sesionVencida = params.get('motivo') === 'vencida'
   const contrasenaRestablecida = params.get('motivo') === 'restablecida'
@@ -64,20 +62,17 @@ export default function Login() {
       guardarToken(token)
       // Cada rol aterriza en su zona: el ciudadano en la PWA y el administrador en el panel.
       // Quien venía de «Inicie sesión para enviar» vuelve a su reporte (state.siguiente).
-      const destino = rol === 'ADMIN' ? RUTA_POR_ROL.ADMIN : (state?.siguiente ?? RUTA_POR_ROL.CIUDADANO)
+      const destino = destinoTrasAutenticacion(rol, state?.siguiente ?? null)
       navigate(destino, { replace: true })
     } catch (error) {
       if (error.codigo === 'CORREO_NO_VERIFICADO') {
         // La contraseña era correcta, pero falta abrir el enlace del correo: se ofrece reenviarlo.
         setSinVerificar(true)
-      } else if (error.estado === 401 && MENSAJE_POR_CAMPO[error.campo]) {
-        // El servidor dijo cuál casilla falló: el mensaje va bajo esa casilla.
-        setErrores({ [error.campo]: error.mensaje ?? MENSAJE_POR_CAMPO[error.campo] })
-      } else if (error.codigo === 'CREDENCIALES_INVALIDAS' || error.estado === 401) {
+      } else if (error.estado === 401 && error.codigo === 'CREDENCIALES_INVALIDAS') {
         // La API no dice cuál dato falló (RF-02): se marcan las dos casillas.
         setErrores(ERRORES_SIN_CAMPO)
       } else {
-        setErrorGeneral(error.mensaje ?? MENSAJE_SIN_CONEXION)
+        setErrorGeneral(mensajeErrorLogin(error))
       }
       setEnviando(false)
     }
@@ -100,7 +95,7 @@ export default function Login() {
         {sinVerificar && (
           <Aviso variante="alerta" titulo="Confirme su correo">
             {MENSAJE_SIN_VERIFICAR}{' '}
-            <Link to="/verificar-correo" state={{ correo: correo.trim() }} className="enlace-campo">
+            <Link to="/verificar-correo" state={{ correo: correo.trim(), ...retorno }} className="enlace-campo">
               Reenviar enlace
             </Link>
           </Aviso>
@@ -142,7 +137,7 @@ export default function Login() {
 
         <BotonGoogle />
 
-        <PieAuth texto="¿Aún no tiene cuenta?" enlace="Regístrese" to="/registro" />
+        <PieAuth texto="¿Aún no tiene cuenta?" enlace="Regístrese" to="/registro" state={retorno} />
       </form>
     </LayoutAuth>
   )

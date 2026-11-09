@@ -1,4 +1,6 @@
+import { useContext } from 'react'
 import { LIMITES, documentoEsNumerico, limpiarNumeroDocumento } from '../../validaciones/campos'
+import { LimiteDireccionContexto } from './limiteDireccionContexto'
 import Campo from './Campo'
 import { IconoCorreo, IconoTelefono } from '../Iconos'
 import Selector from './Selector'
@@ -28,6 +30,7 @@ export function CamposIdentidad({ datos, errores, cambiar, tiposDocumento, corre
           placeholder="Ej. María Camila"
           autoComplete="given-name"
           maxLength={LIMITES.nombre}
+          ayuda={`Máximo ${LIMITES.nombre} caracteres (${datos.nombres.length}/${LIMITES.nombre}).`}
           value={datos.nombres}
           onChange={cambiar('nombres')}
           error={errores.nombres}
@@ -38,6 +41,7 @@ export function CamposIdentidad({ datos, errores, cambiar, tiposDocumento, corre
           placeholder="Ej. Gómez Rojas"
           autoComplete="family-name"
           maxLength={LIMITES.nombre}
+          ayuda={`Máximo ${LIMITES.nombre} caracteres (${datos.apellidos.length}/${LIMITES.nombre}).`}
           value={datos.apellidos}
           onChange={cambiar('apellidos')}
           error={errores.apellidos}
@@ -98,12 +102,15 @@ export function CamposIdentidad({ datos, errores, cambiar, tiposDocumento, corre
 
 // Dónde vive: barrio de residencia y dirección de correspondencia.
 export function CamposResidencia({ datos, errores, cambiar, barrios }) {
+  const limiteRegistro = useContext(LimiteDireccionContexto)
   return (
     <>
       <Selector
         id="idBarrio"
         etiqueta="Barrio de residencia"
         marcador="Seleccione su barrio"
+        disabled={barrios.length === 0}
+        ayuda={barrios.length === 0 ? 'No hay barrios disponibles para seleccionar. El registro estará disponible cuando se habilite este catálogo.' : undefined}
         opciones={barrios.map((b) => ({ valor: b.idBarrio, texto: b.nombre }))}
         value={datos.idBarrio}
         onChange={cambiar('idBarrio')}
@@ -114,11 +121,15 @@ export function CamposResidencia({ datos, errores, cambiar, barrios }) {
         etiqueta="Dirección de correspondencia"
         placeholder="Ej. Cra 26 #28-40"
         autoComplete="street-address"
-        maxLength={LIMITES.direccion}
-        ayuda="Donde podría llegar correspondencia oficial."
+        maxLength={limiteRegistro ?? LIMITES.direccion}
+        ayuda={limiteRegistro
+          ? `Donde podría llegar correspondencia oficial. Máximo ${limiteRegistro} caracteres (${datos.direccionCorrespondencia.length}/${limiteRegistro}).`
+          : 'Donde podría llegar correspondencia oficial.'}
         value={datos.direccionCorrespondencia}
         onChange={cambiar('direccionCorrespondencia')}
-        error={errores.direccionCorrespondencia}
+        error={errores.direccionCorrespondencia || (limiteRegistro && datos.direccionCorrespondencia.length > limiteRegistro
+          ? `Use máximo ${limiteRegistro} caracteres (${datos.direccionCorrespondencia.length}/${limiteRegistro}). Revise la dirección; no se ha recortado.`
+          : undefined)}
       />
     </>
   )

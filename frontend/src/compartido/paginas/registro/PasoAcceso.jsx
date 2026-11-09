@@ -2,9 +2,8 @@ import Aviso from '../../componentes/avisos/Aviso'
 import Campo from '../../componentes/formulario/Campo'
 import { CamposResidencia } from '../../componentes/formulario/CamposPerfil'
 import CampoPassword from '../../componentes/formulario/CampoPassword'
-import Casilla from '../../componentes/formulario/Casilla'
+import ConsentimientoRegistro from '../../componentes/formulario/ConsentimientoRegistro'
 import { IconoCorreo } from '../../componentes/Iconos'
-import { EnlacePrivacidad } from '../../componentes/avisos/NotaPrivacidad'
 import { LIMITES } from '../../validaciones/campos'
 
 // Paso 2 de 2: dónde vive y con qué correo y contraseña entra.
@@ -52,14 +51,7 @@ export default function PasoAcceso({ datos, errores, cambiar, barrios }) {
         reportes.
       </Aviso>
 
-      <Casilla
-        id="aceptaPrivacidad"
-        checked={datos.aceptaPrivacidad}
-        onChange={cambiar('aceptaPrivacidad')}
-        error={errores.aceptaPrivacidad}
-      >
-        Soy mayor de 18 años y acepto el tratamiento de mis datos personales (Ley 1581). <EnlacePrivacidad />
-      </Casilla>
+      <ConsentimientoRegistro datos={datos} errores={errores} cambiar={cambiar} />
     </>
   )
 }

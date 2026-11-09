@@ -18,7 +18,8 @@ test('el aviso del frontend y el que guarda la migración V12 dicen exactamente 
   const sql = readFileSync(MIGRACION, 'utf8')
   const guardado = sql.match(/\$aviso\$([\s\S]*?)\$aviso\$/)
   assert.ok(guardado, 'la migración no trae el texto entre $aviso$ ... $aviso$')
-  assert.equal(guardado[1], avisoComoTextoPlano())
+  // Git puede materializar SQL con CRLF en Windows; el contenido debe coincidir íntegramente.
+  assert.equal(guardado[1].replace(/\r\n/g, '\n'), avisoComoTextoPlano())
   assert.match(sql, new RegExp(`'${VERSION_AVISO}',\\s*\\$aviso\\$`), 'la versión de la migración no es la del frontend')
 })
 
@@ -52,10 +53,10 @@ test('el aviso no promete copia al ciudadano y dice que su correo va como direcc
   assert.match(texto, /dirección de respuesta/)
 })
 
-test('los textos de las casillas son los acordados el 01/11/2026', () => {
+test('el registro conserva la mayoría de edad y la autorización expresa; el envío conserva su texto', () => {
   assert.equal(
     TEXTO_CASILLA_REGISTRO,
-    'Soy mayor de 18 años y acepto el tratamiento de mis datos personales (Ley 1581). Ver aviso de privacidad',
+    'Soy mayor de 18 años. He leído el aviso de privacidad y autorizo el tratamiento de mis datos personales para las finalidades informadas.',
   )
   assert.equal(
     TEXTO_CASILLA_ENVIO,

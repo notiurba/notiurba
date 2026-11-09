@@ -1,188 +1,175 @@
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { publicarReporte } from '../../compartido/api/reportes'
-import { obtenerPerfil } from '../../compartido/api/usuario'
-import { estadoSesion } from '../../compartido/auth/sesion'
+import * as api from '../servicios/correoReportes'
+import { claveRuta, rutaActual, guardarConEvidencias } from '../servicios/recuperacionReporte'
+import { CanalOficial } from '../componentes/ResultadoCorreo'
 import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
 import Casilla from '../../compartido/componentes/formulario/Casilla'
 import EncabezadoPantalla from '../../compartido/componentes/EncabezadoPantalla'
 import FormularioPantalla from '../../compartido/componentes/formulario/FormularioPantalla'
 import HojaConfirmacion from '../../compartido/componentes/avisos/HojaConfirmacion'
-import HojaInferior from '../../compartido/componentes/avisos/HojaInferior'
-import { IconoCorreo, IconoUsuario } from '../../compartido/componentes/Iconos'
+import { IconoCorreo } from '../../compartido/componentes/Iconos'
+import { EnlacePrivacidad } from '../../compartido/componentes/avisos/NotaPrivacidad'
 import PasosBarra from '../../compartido/componentes/PasosBarra'
 import useCargar from '../../compartido/hooks/useCargar'
-import { armarSolicitudReporte, MIN_DESCRIPCION } from '../../compartido/validaciones/reporte'
+import { armarSolicitudReporte, validarConfirmacionReporte, validarFoto, validarUbicacion, validarDetalles } from '../../compartido/validaciones/reporte'
+import { reducirFoto } from '../../compartido/utilidades/fotos'
+import { esEmergencia } from './catalogo'
 import { useReporte } from './useReporte'
 import './Reportar.css'
 import './PasoConfirmacion.css'
+import '../paginas/CorreoReportes.css'
 
-// Una fila del resumen: etiqueta, valor y enlace «Cambiar» al paso donde se edita.
 function FilaResumen({ etiqueta, children, a }) {
-  return (
-    <div className="confirmacion__fila">
-      <div>
-        <span>{etiqueta}</span>
-        <strong>{children}</strong>
-      </div>
-      <Link to={a}>Cambiar</Link>
-    </div>
-  )
+  return <div className="confirmacion__fila"><div><span>{etiqueta}</span><strong>{children}</strong></div>
+    {a && <Link to={a}>Cambiar</Link>}</div>
 }
 
-const sinSesion = () => Promise.resolve(null)
-
-// Paso 4 de 4: resumen, autorizaciones y envío. Solo aquí se pide la sesión.
 export default function PasoConfirmacion() {
   const navigate = useNavigate()
-  const { borrador, fotos, limpiar, categorias, barrios } = useReporte()
-  const conSesion = estadoSesion() === 'activa'
-  // Con sesión se muestra «Sesión iniciada como…». Sin sesión, la función fija devuelve null.
-  const { datos: perfil } = useCargar(conSesion ? obtenerPerfil : sinSesion)
-  const [autorizaEnvio, setAutorizaEnvio] = useState(false)
-  const [hoja, setHoja] = useState(null) // 'enviar' | 'sesion' | null
+  const { borrador, fotos, setFotos, categorias, barrios, guardado, conservarGuardado } = useReporte()
+  const categoria = categorias?.find(c => String(c.idCategoria) === borrador.idCategoria)
+  const idCategoria = String(borrador.idCategoria)
+  const emergencia = Boolean(esEmergencia(borrador, categoria))
+  const clave = String(claveRuta(idCategoria, emergencia))
+  const cargarRuta = useCallback(async () => {
+    if (!idCategoria) return null
+    return { clave, ruta: await api.resolver(idCategoria, emergencia) }
+  }, [idCategoria, emergencia, clave])
+  const consulta = useCargar(cargarRuta)
+  const ruta = guardado?.ruta ?? rutaActual(consulta.datos, clave)
+  const [aceptacion, setAceptacion] = useState(null)
+  const [hoja, setHoja] = useState(false)
   const [enviando, setEnviando] = useState(false)
-  const [errorEnvio, setErrorEnvio] = useState('')
-  const [enviado, setEnviado] = useState(false)
+  const [error, setError] = useState('')
+  const [errorAutorizacion, setErrorAutorizacion] = useState('')
+  const [preparando, setPreparando] = useState(false)
+  const ocupado = useRef(false)
+  // Se invalida al cambiar la selección/ruta; consentimiento de registro no interviene aquí.
+  const claveAceptacion = JSON.stringify([clave, ruta?.idCanal, ruta?.acceso, ruta?.permiteCorreo])
+  const autorizaEnvio = aceptacion === claveAceptacion
+  const faltanFotos = guardado ? Math.max(0, guardado.totalFotos - guardado.fotosSubidas) : 0
+  const archivosListos = !guardado || fotos.length === faltanFotos
 
-  const categoria = categorias?.find((c) => String(c.idCategoria) === borrador.idCategoria)
-  const barrio = barrios?.find((b) => String(b.idBarrio) === borrador.idBarrio)
-  const pideUbicacion = categoria?.requiereUbicacion !== false
-  // Ya se envió: el borrador se vació y no hay nada que mostrar mientras se abre la pantalla final.
-  if (enviado) return null
-  if (!borrador.idCategoria) return <Navigate to="/reportar" replace />
-  if (!categoria) return <p className="cargando-texto">Cargando…</p>
-  if (pideUbicacion && borrador.latitud == null) return <Navigate to="/reportar/ubicacion" replace />
-  if (borrador.descripcion.trim().length < MIN_DESCRIPCION) return <Navigate to="/reportar/detalles" replace />
+  if (!guardado) {
+    if (!borrador.idCategoria) return <Navigate to="/reportar" replace />
+    if (!categorias) return <p className="cargando-texto">Cargando…</p>
+    if (!categoria) return <Navigate to="/reportar" replace />
+    if (Object.keys(validarUbicacion(borrador, categoria)).length) return <Navigate to="/reportar/ubicacion" replace />
+    if (Object.keys(validarDetalles(borrador)).length) return <Navigate to="/reportar/detalles" replace />
+  }
+
+  function comprobar() {
+    if (!ruta || (!guardado && (consulta.cargando || consulta.error))) {
+      setError('Espere un momento a que confirmemos a dónde va su reporte, o inténtelo de nuevo.')
+      return false
+    }
+    if (!autorizaEnvio) {
+      setErrorAutorizacion('Autorice el envío de este reporte para continuar.')
+      return false
+    }
+    if (!archivosListos) {
+      setError('Vuelva a seleccionar únicamente las fotos pendientes antes de reintentar.')
+      return false
+    }
+    if (!guardado) {
+      const errores = validarConfirmacionReporte(borrador, { ...categoria, ...ruta }, autorizaEnvio)
+      if (Object.keys(errores).length) { setError(Object.values(errores)[0]); return false }
+    }
+    return true
+  }
 
   function pedirEnvio(evento) {
     evento.preventDefault()
-    setHoja(conSesion ? 'enviar' : 'sesion')
+    if (ocupado.current || preparando) return
+    setError('')
+    if (comprobar()) setHoja(true)
+  }
+
+  async function recuperarFotos(evento) {
+    const elegidas = [...evento.target.files]
+    evento.target.value = ''
+    if (elegidas.length !== faltanFotos) {
+      setError('Seleccione las ' + faltanFotos + ' fotos que faltan. Las fotos ya subidas se conservan.')
+      return
+    }
+    setPreparando(true)
+    try {
+      const recuperadas = []
+      for (const archivo of elegidas) {
+        const motivo = validarFoto(archivo, guardado.fotosSubidas + recuperadas.length)
+        if (motivo) throw new Error(motivo)
+        recuperadas.push(await reducirFoto(archivo))
+      }
+      setFotos(recuperadas)
+      setError('')
+    } catch (e) { setError(e.message) } finally { setPreparando(false) }
   }
 
   async function enviar() {
+    if (ocupado.current || preparando || !comprobar()) return
+    ocupado.current = true
     setEnviando(true)
-    setErrorEnvio('')
+    setError('')
+    let avance = guardado
     try {
-      // Una categoría sin ubicación no lleva punto ni barrio, aunque la persona haya marcado uno antes de cambiarla.
-      const datos = pideUbicacion ? borrador : { ...borrador, latitud: null, longitud: null, idBarrio: '' }
-      const { codigoSeguimiento, fotosFallidas } = await publicarReporte(armarSolicitudReporte(datos), fotos)
-      setEnviado(true)
-      limpiar()
-      navigate(`/reportar/enviado/${codigoSeguimiento}`, { replace: true, state: { fotosFallidas } })
-    } catch (error) {
-      setErrorEnvio(error.mensaje ?? 'No pudimos enviar su reporte. Su información sigue aquí; inténtelo de nuevo.')
-      setHoja(null)
-      setEnviando(false)
-    }
+      const resultado = await guardarConEvidencias({
+        datos: armarSolicitudReporte(borrador, { autorizaEnvio, emergencia, categoria: { ...categoria, ...ruta } }),
+        fotos, guardado, api,
+        conservar: creado => {
+          avance = avance ?? { ...creado, totalFotos: fotos.length, fotosSubidas: 0, ruta }
+          conservarGuardado(avance)
+        },
+        alSubirFoto: () => {
+          avance = { ...avance, fotosSubidas: avance.fotosSubidas + 1 }
+          conservarGuardado(avance)
+          setFotos(pendientes => pendientes.slice(1))
+        },
+      })
+      navigate('/reportar/enviado/' + resultado.codigoSeguimiento, { replace: true, state: { envio: resultado.envio } })
+    } catch (e) {
+      setError(e.codigo === 'FUERA_DE_COBERTURA'
+        ? 'El punto está fuera de la cobertura disponible. Vuelva al paso de ubicación y elija otro lugar.'
+        : avance
+          ? 'Su reporte está guardado. No se completaron las fotos o la solicitud de envío. Reintente sobre este mismo código.'
+          : e.mensaje ?? 'No pudimos guardar su reporte. Sus datos siguen aquí; revise su conexión e inténtelo de nuevo.')
+      setHoja(false)
+    } finally { ocupado.current = false; setEnviando(false) }
   }
 
-  const lugar = pideUbicacion
-    ? [borrador.direccion.trim(), barrio && `Barrio ${barrio.nombre} · Comuna ${barrio.idComuna}`].filter(Boolean)
-    : []
-  if (pideUbicacion && lugar.length === 0) lugar.push('Punto marcado en el mapa')
+  const barrio = barrios.find(b => String(b.idBarrio) === borrador.idBarrio)
+  const lugar = categoria?.requiereUbicacion === false ? 'No requerida'
+    : [borrador.direccion, barrio?.nombre, borrador.latitud != null && 'Punto marcado en el mapa'].filter(Boolean).join(' · ')
+  const accion = guardado ? 'Reintentar' : ruta?.permiteCorreo ? 'Guardar y enviar' : 'Guardar reporte'
 
-  return (
-    <>
-      <EncabezadoPantalla titulo="Nuevo reporte" atras="/reportar/detalles" />
-
-      <FormularioPantalla
-        alEnviar={pedirEnvio}
-        acciones={
-          <Boton type="submit" disabled={!autorizaEnvio}>
-            <IconoCorreo tamano={20} />
-            Enviar reporte
-          </Boton>
-        }
-      >
-        <PasosBarra paso={4} total={4} etiqueta="Confirmación" />
-        <h2 className="reportar__titulo">Revise su reporte</h2>
-
-        <div className="confirmacion__resumen">
-          <FilaResumen etiqueta="Tipo de problema" a="/reportar">
-            {categoria.nombre}
-          </FilaResumen>
-          {pideUbicacion && (
-            <FilaResumen etiqueta="Lugar" a="/reportar/ubicacion">
-              {lugar.map((linea) => (
-                <span key={linea}>{linea}</span>
-              ))}
-            </FilaResumen>
-          )}
-          <FilaResumen etiqueta="Descripción" a="/reportar/detalles">
-            «{borrador.descripcion.trim()}»
-          </FilaResumen>
-          <FilaResumen etiqueta="Fotos" a="/reportar/detalles">
-            {fotos.length === 0 ? 'Sin fotos' : `${fotos.length} ${fotos.length === 1 ? 'foto adjunta' : 'fotos adjuntas'}`}
-          </FilaResumen>
-        </div>
-
-        <Aviso variante="info" titulo="¿Cómo se envía?">
-          NotiUrba envía el reporte por usted a la Alcaldía de Tuluá (CAIC) con su correo como dirección
-          de respuesta. La entidad le responderá directamente a ese correo.
-        </Aviso>
-
-        {conSesion ? (
-          <Aviso variante="exito" titulo="Sesión iniciada como">
-            {perfil?.correo ?? '…'}
-          </Aviso>
-        ) : (
-          <Aviso variante="alerta" titulo="Falta iniciar sesión">
-            Necesitamos su correo para que la entidad pueda responderle. Se lo pediremos al enviar.
-          </Aviso>
-        )}
-
-        {errorEnvio && (
-          <Aviso variante="error" titulo="No pudimos enviar el reporte">
-            {errorEnvio}
-          </Aviso>
-        )}
-
-        <Casilla id="autorizaEnvio" checked={autorizaEnvio} onChange={(e) => setAutorizaEnvio(e.target.checked)}>
-          Autorizo a NotiUrba a enviar este reporte a la entidad competente, a mi nombre y con mis datos,
-          ubicación y fotos (con enlace público). La entidad podrá responderme a mi correo.
-        </Casilla>
-
-        <p className="reportar__mensaje">
-          NotiUrba no radica en sistemas oficiales ni reemplaza los canales de la Alcaldía. El código de
-          seguimiento es de NotiUrba.
-        </p>
-      </FormularioPantalla>
-
-      <HojaConfirmacion
-        abierta={hoja === 'enviar'}
-        alCancelar={() => setHoja(null)}
-        alConfirmar={enviar}
-        icono={<IconoCorreo tamano={30} />}
-        tono="info"
-        titulo="¿Enviar el reporte?"
-        texto="NotiUrba lo envía a la Alcaldía de Tuluá (CAIC) con su correo como dirección de respuesta. La entidad le responderá directamente a usted."
-        textoConfirmar="Sí, enviar"
-        textoCancelar="Volver"
-        cargando={enviando}
-        textoCargando="Enviando…"
-      />
-
-      <HojaInferior
-        abierta={hoja === 'sesion'}
-        alCerrar={() => setHoja(null)}
-        icono={<IconoUsuario tamano={30} />}
-        tono="info"
-        titulo="Inicie sesión para enviar"
-        texto="Necesitamos su correo para que la entidad pueda responderle."
-      >
-        <Boton to="/login" state={{ siguiente: '/reportar/confirmacion' }}>
-          Iniciar sesión
-        </Boton>
-        <Boton to="/registro" variante="secundario">
-          Crear cuenta
-        </Boton>
-        <Boton variante="texto" onClick={() => setHoja(null)}>
-          Volver
-        </Boton>
-      </HojaInferior>
-    </>
-  )
+  return <>
+    <EncabezadoPantalla titulo="Nuevo reporte" atras={guardado ? '/app/reportes' : '/reportar/detalles'} />
+    <FormularioPantalla alEnviar={pedirEnvio} acciones={<Boton type="submit" disabled={!ruta || !autorizaEnvio || !archivosListos || preparando || (!guardado && (consulta.cargando || Boolean(consulta.error)))} cargando={enviando} textoCargando="Guardando…"><IconoCorreo tamano={20} />{accion}</Boton>}>
+      <PasosBarra paso={4} total={4} etiqueta="Revisar y confirmar" />
+      <h2 className="reportar__titulo">{guardado ? 'Su reporte está guardado' : 'Revise su reporte'}</h2>
+      {guardado ? <>
+        <Aviso titulo={'Código ' + guardado.codigoSeguimiento}>No vuelva a registrar este reporte. Se conservan {guardado.fotosSubidas} de {guardado.totalFotos} fotos.</Aviso>
+        {!archivosListos && <label>Fotografías pendientes ({faltanFotos})<input type="file" accept="image/jpeg,image/png" multiple disabled={preparando || enviando} onChange={recuperarFotos} /></label>}
+        <Boton to={'/app/reportes/' + guardado.codigoSeguimiento} variante="texto">Consultar este reporte</Boton>
+      </> : <div className="confirmacion__resumen">
+        <FilaResumen etiqueta="Tipo de problema" a="/reportar">{categoria.nombre}</FilaResumen>
+        <FilaResumen etiqueta="Lugar" a="/reportar/ubicacion">{lugar}</FilaResumen>
+        <FilaResumen etiqueta="Descripción" a="/reportar/detalles">{borrador.descripcion.trim()}</FilaResumen>
+        <FilaResumen etiqueta="Fotos" a="/reportar/detalles">{fotos.length ? fotos.length + ' fotos adjuntas' : 'Sin fotos'}</FilaResumen>
+      </div>}
+      {!guardado && consulta.cargando && <p role="status">Buscando a qué entidad va su reporte…</p>}
+      {!guardado && consulta.error && <Aviso variante="error" titulo="No pudimos confirmar la entidad"><button type="button" className="enlace-boton" onClick={consulta.recargar}>Reintentar</button></Aviso>}
+      <CanalOficial ruta={ruta} />
+      {ruta?.competenciaConfirmada === false && <Aviso variante="alerta">Todavía estamos confirmando qué entidad atiende este tipo de reportes. Si es urgente, no espere: llame a la línea de emergencias.</Aviso>}
+      {ruta && <Aviso>{ruta.permiteCorreo ? 'Enviaremos su reporte por correo a la entidad indicada. Eso no asegura que lo lean de inmediato.' : 'Guardaremos su reporte. Esta entidad atiende por otro canal: el que ve arriba.'}</Aviso>}
+      {error && <Aviso variante="error" titulo={guardado ? 'Su reporte quedó guardado; falta terminar' : 'No pudimos guardar el reporte'}>{error}</Aviso>}
+      <Casilla id="autorizaEnvio" checked={autorizaEnvio} disabled={enviando} error={errorAutorizacion} onChange={e => { setAceptacion(e.target.checked ? claveAceptacion : null); setErrorAutorizacion('') }}>
+        Autorizo a NotiUrba a enviar este reporte a la entidad, a mi nombre y con mis datos, la ubicación y las fotos (las fotos van como enlace público). La entidad podrá responderme a mi correo. <EnlacePrivacidad nuevaPestana />
+      </Casilla>
+      <p className="reportar__mensaje">Este código es de NotiUrba para su seguimiento. El radicado oficial lo asigna la entidad.</p>
+    </FormularioPantalla>
+    <HojaConfirmacion abierta={hoja} alCancelar={() => !ocupado.current && setHoja(false)} alConfirmar={enviar} icono={<IconoCorreo tamano={30} />} tono="info" titulo={accion} texto={ruta?.permiteCorreo ? 'Guardaremos su reporte y lo enviaremos a ' + ruta.entidad + '. Verá el resultado en la siguiente pantalla.' : 'Guardaremos su reporte. Esta entidad atiende por otro canal; en la siguiente pantalla verá cuál.'} textoConfirmar="Confirmar" textoCancelar="Volver" cargando={enviando} textoCargando="Guardando…" />
+  </>
 }
 

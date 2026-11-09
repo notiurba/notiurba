@@ -1,14 +1,15 @@
 -- =====================================================================
 -- NotiUrba · v5 · DATOS DE EJEMPLO (solo desarrollo y pruebas; NO es migración)
--- Requiere V1 a V8. Equivale a los ejemplos de la hoja "v5" del Google Sheet.
+-- Barrios de prueba: requiere ademas V15 (columna interno); nunca ejecutar en produccion.
+-- Conserva los ejemplos historicos de la hoja "v5" del Google Sheet.
 -- Correos @ejemplo.com y hashes son marcadores ficticios.
 -- =====================================================================
 
 -- V4 ya sembró el barrio 1 («Administración NotiUrba», comuna 1) y el admin de desarrollo con id 1.
 -- El barrio 1 se conserva (también es de la comuna 1) y el admin se corre al id 1000 para que
 -- los ejemplos mantengan sus ids fijos (las pruebas los usan).
-INSERT INTO barrio (id_barrio, id_comuna, nombre)
-SELECT g, g, 'Barrio ejemplo ' || g FROM generate_series(1,10) g
+INSERT INTO barrio (id_barrio, id_comuna, nombre, interno)
+SELECT g, g, 'Barrio ejemplo ' || g, TRUE FROM generate_series(1,10) g
 ON CONFLICT (id_barrio) DO NOTHING;
 SELECT setval(pg_get_serial_sequence('barrio','id_barrio'), 10);
 
