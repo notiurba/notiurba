@@ -8,6 +8,8 @@ let ErrorApi
 let guardarToken
 let obtenerToken
 let iniciarSesion
+let iniciarSesionConGoogle
+let completarPerfilGoogle
 let obtenerBarrios
 let llamadas
 
@@ -31,7 +33,7 @@ before(async () => {
   const sesion = await server.ssrLoadModule('/src/compartido/auth/sesion.js')
   guardarToken = sesion.guardarToken
   obtenerToken = sesion.obtenerToken
-  ;({ iniciarSesion } = await server.ssrLoadModule('/src/compartido/api/auth.js'))
+  ;({ iniciarSesion, iniciarSesionConGoogle, completarPerfilGoogle } = await server.ssrLoadModule('/src/compartido/api/auth.js'))
   ;({ obtenerBarrios } = await server.ssrLoadModule('/src/compartido/api/catalogos.js'))
 })
 
@@ -143,4 +145,34 @@ test('login válido es público y mantiene correo/password del contrato', async 
     return respuestaJson(200, { token: 'token-sintetico', rol: 'CIUDADANO' })
   }
   assert.equal((await iniciarSesion('qa@example.invalid', 'solo-prueba-local')).rol, 'CIUDADANO')
+})
+
+
+test('Google rechaza respuestas vacías y sesiones incompletas sin guardar tokens', async () => {
+  for (const cuerpo of [{}, null, { token: '', rol: 'CIUDADANO' },
+    { token: 'sesion', rol: '' }, { estado: 'PERFIL_INCOMPLETO', correo: 'qa@example.test' }]) {
+    globalThis.fetch = async () => respuestaJson(200, cuerpo)
+    await assert.rejects(() => iniciarSesionConGoogle('credencial-prueba'), e => e.codigo === 'RESPUESTA_INESPERADA')
+    assert.equal(obtenerToken(), null)
+  }
+})
+
+test('Google distingue sesión de perfil incompleto y no almacena credenciales Google', async () => {
+  const perfil = { estado: 'PERFIL_INCOMPLETO', tokenRegistro: 'registro-prueba', correo: 'qa@example.test' }
+  globalThis.fetch = async () => respuestaJson(200, perfil)
+  assert.deepEqual(await iniciarSesionConGoogle('credencial-prueba'), perfil)
+  assert.equal(obtenerToken(), null)
+  const sesion = { token: 'sesion-prueba', rol: 'CIUDADANO' }
+  globalThis.fetch = async () => respuestaJson(200, sesion)
+  assert.deepEqual(await iniciarSesionConGoogle('credencial-prueba'), sesion)
+  assert.deepEqual(await completarPerfilGoogle({}), sesion)
+  globalThis.fetch = async () => respuestaJson(200, {})
+  await assert.rejects(() => completarPerfilGoogle({}), e => e.codigo === 'RESPUESTA_INESPERADA')
+})
+
+test('Google conserva el error de asociación y nunca redirige por un 409 público', async () => {
+  globalThis.fetch = async () => respuestaJson(409, { codigo: 'CONFLICTO', mensaje: 'Confirme su cuenta existente' })
+  await assert.rejects(() => iniciarSesionConGoogle('credencial-prueba'), e => e.estado === 409)
+  assert.equal(llamadas.redireccion, null)
+  assert.equal(obtenerToken(), null)
 })

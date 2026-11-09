@@ -46,14 +46,32 @@ export function restablecerPassword(token, password) {
 
 // POST /api/auth/google: el botón de Google entrega un `credential` (ID token) y la API responde
 // { token, rol } si la cuenta ya existe, o { estado: 'PERFIL_INCOMPLETO', tokenRegistro, correo, nombres, apellidos }.
-export function iniciarSesionConGoogle(credential) {
-  return peticion('/api/auth/google', { method: 'POST', body: JSON.stringify({ credential }), publica: true })
+export async function iniciarSesionConGoogle(credential) {
+  const respuesta = await peticion('/api/auth/google', { method: 'POST', body: JSON.stringify({ credential }), publica: true })
+  if (respuesta?.estado === 'PERFIL_INCOMPLETO') {
+    if (typeof respuesta.tokenRegistro !== 'string' || !respuesta.tokenRegistro.trim()
+        || typeof respuesta.correo !== 'string' || !respuesta.correo.trim()) throw respuestaGoogleInvalida()
+    return respuesta
+  }
+  return validarSesionGoogle(respuesta)
 }
 
 // POST /api/auth/google/completar: completa el perfil de una cuenta creada con Google → { token, rol }.
 // La API real pide `tokenRegistro` (lo entrega POST /api/auth/google; dura 15 min) y `declaraMayorEdad`.
-export function completarPerfilGoogle(datos) {
-  return peticion('/api/auth/google/completar', { method: 'POST', body: JSON.stringify(datos), publica: true })
+export async function completarPerfilGoogle(datos) {
+  const respuesta = await peticion('/api/auth/google/completar', { method: 'POST', body: JSON.stringify(datos), publica: true })
+  return validarSesionGoogle(respuesta)
+}
+
+function respuestaGoogleInvalida() {
+  return new ErrorApi({ estado: 200, codigo: 'RESPUESTA_INESPERADA',
+    mensaje: 'No pudimos completar el ingreso con Google. Inténtelo de nuevo.' })
+}
+
+function validarSesionGoogle(respuesta) {
+  if (typeof respuesta?.token !== 'string' || !respuesta.token.trim()
+      || typeof respuesta.rol !== 'string' || !respuesta.rol.trim()) throw respuestaGoogleInvalida()
+  return respuesta
 }
 
 // POST /api/auth/verificar: confirma el correo con el token del enlace y devuelve la sesión → { token, rol }.

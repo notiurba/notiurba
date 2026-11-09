@@ -1,0 +1,72 @@
+{
+  "fechaUTC": "2026-11-09T03:19:00.585Z",
+  "rama": "fix/registro-pr20",
+  "headAuditado": "46bf1b26353f29d838203d2b049fa4fc5d878382",
+  "configuracionVite": [
+    {
+      "puerto": 5175,
+      "http": 200,
+      "entornoDetectado": true,
+      "googleClientIdConfigurado": false,
+      "mocks": "false",
+      "api": "",
+      "codigoNuevo": true
+    },
+    {
+      "puerto": 5176,
+      "http": 200,
+      "entornoDetectado": true,
+      "googleClientIdConfigurado": false,
+      "mocks": "false",
+      "api": "",
+      "codigoNuevo": true
+    }
+  ],
+  "backend": {
+    "maven": "BUILD SUCCESS",
+    "suite": [
+      {
+        "clase": "com.notiurba.auth.AuthControllerTest",
+        "tests": 2,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "modificado": "2026-11-09T03:17:45.836Z"
+      },
+      {
+        "clase": "com.notiurba.auth.google.GoogleAuthControllerTest",
+        "tests": 4,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "modificado": "2026-11-09T03:17:47.434Z"
+      },
+      {
+        "clase": "com.notiurba.auth.google.GoogleAuthServicioTest",
+        "tests": 13,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "modificado": "2026-11-09T03:17:48.358Z"
+      },
+      {
+        "clase": "com.notiurba.auth.google.GoogleTokenVerificadorTest",
+        "tests": 11,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "modificado": "2026-11-09T03:17:49.331Z"
+      }
+    ],
+    "agentePruebas": "Byte Buddy cargado al arrancar; el attach dinámico falló por acceso denegado"
+  },
+  "chrome": {
+    "resultado": "BLOQUEADO",
+    "motivo": "cua.getState agotó tiempo de espera; no hay nueva evidencia visual"
+  },
+  "googleReal": {
+    "resultado": "PENDIENTE",
+    "motivo": "Sin Client ID público configurado en Vite; backend QA configurado con qa.apps.googleusercontent.com"
+  },
+  "produccionModificada": false
+}

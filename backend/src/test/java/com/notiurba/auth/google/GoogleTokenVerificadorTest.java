@@ -127,4 +127,20 @@ class GoogleTokenVerificadorTest {
         String token = token(otrasClaves, c -> { });
         assertThatThrownBy(() -> verificador().verificar(token)).isInstanceOf(JwtException.class);
     }
+
+    @Test
+    void rechazaSinIdentidadEstable() throws Exception {
+        for (String sub : new String[] { null, "", "   " }) {
+            String credencial = token(c -> c.subject(sub));
+            assertThatThrownBy(() -> verificador().verificar(credencial)).isInstanceOf(JwtException.class);
+        }
+    }
+
+    @Test
+    void rechazaCorreoVacioYSinExpiracion() throws Exception {
+        String sinCorreo = token(c -> c.claim("email", "   "));
+        String sinExpiracion = token(c -> c.expirationTime(null));
+        assertThatThrownBy(() -> verificador().verificar(sinCorreo)).isInstanceOf(JwtException.class);
+        assertThatThrownBy(() -> verificador().verificar(sinExpiracion)).isInstanceOf(JwtException.class);
+    }
 }

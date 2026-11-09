@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { completarPerfilGoogle } from '../api/auth'
 import { obtenerBarrios, obtenerTiposDocumento } from '../api/catalogos'
-import { RUTA_POR_ROL, guardarToken } from '../auth/sesion'
+import { guardarToken } from '../auth/sesion'
+import { destinoTrasAutenticacion, estadoRetornoReporte } from '../auth/retornoReporte'
 import Aviso from '../componentes/avisos/Aviso'
 import EstadoCarga from '../componentes/avisos/EstadoCarga'
 import Boton from '../componentes/Boton'
@@ -51,7 +52,7 @@ export default function CompletarPerfil() {
         declaraMayorEdad: datos.aceptaPrivacidad, // misma casilla que acepta el aviso
       })
       guardarToken(token)
-      navigate(RUTA_POR_ROL[rol] ?? '/app', { replace: true })
+      navigate(destinoTrasAutenticacion(rol, state?.siguiente), { replace: true })
     } catch (error) {
       if (!errorDeCampo(error)) {
         setErrorGeneral(error.mensaje ?? 'No pudimos guardar sus datos. Inténtelo de nuevo en un momento.')
@@ -60,12 +61,18 @@ export default function CompletarPerfil() {
     }
   }
 
+  const retorno = estadoRetornoReporte(state?.siguiente)
+  const simulando = import.meta.env.DEV && import.meta.env.VITE_USAR_MOCKS === 'true'
+  if (!simulando && !state?.tokenRegistro) {
+    return <Navigate to="/login" replace state={retorno} />
+  }
+
   const listos = tipos.datos && barrios.datos
   const fallaron = tipos.error || barrios.error
 
   return (
     <LayoutAuth>
-      <EncabezadoPantalla titulo="Complete su perfil" atras="/login" />
+      <EncabezadoPantalla titulo="Complete su perfil" alAtras={() => navigate("/login", { state: retorno })} />
 
       <FormularioPantalla
         alEnviar={guardar}
@@ -74,7 +81,7 @@ export default function CompletarPerfil() {
             <Boton type="submit" disabled={!listos} cargando={enviando} textoCargando="Guardando…">
               Guardar y continuar
             </Boton>
-            <Boton to="/login" variante="texto">
+            <Boton to="/login" state={retorno} variante="texto">
               Cancelar
             </Boton>
           </>

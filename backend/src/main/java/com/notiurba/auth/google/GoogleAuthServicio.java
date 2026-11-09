@@ -68,31 +68,15 @@ public class GoogleAuthServicio {
             return sesion(identidad.get().getUsuario());
         }
 
-        // Caso 2: ya hay una cuenta con ese correo → se vincula (PROPUESTA, ver vincularPorCorreo)
+        // Una coincidencia de correo no demuestra la titularidad de la cuenta local.
         var porCorreo = usuarioRepository.findByCorreoIgnoreCase(perfil.correo());
         if (porCorreo.isPresent()) {
-            return sesion(vincularPorCorreo(porCorreo.get(), google, perfil));
+            throw new ApiException(HttpStatus.CONFLICT, Codigos.CONFLICTO,
+                    "Ya existe una cuenta con este correo. Ingresa con tu contraseña; vincular Google requiere confirmar esa cuenta.");
         }
 
         // Caso 3: no hay cuenta → no se crea nada; el frontend pide el resto del perfil
         return perfilIncompleto(perfil);
-    }
-
-    /**
-     * PROPUESTA pendiente de confirmar con Andrés: vincular la cuenta de Google a la cuenta
-     * existente con el mismo correo. Es segura porque Google garantiza email_verified = true.
-     * Para quitarla, borrar este método y su llamada: la persona caería en el caso 3 y
-     * /completar respondería 409 por correo repetido.
-     */
-    private Usuario vincularPorCorreo(Usuario usuario, ProveedorIdentidad google, PerfilGoogle perfil) {
-        if (identidadRepository.existsByUsuarioAndProveedor(usuario, google)) {
-            throw new ApiException(HttpStatus.CONFLICT, Codigos.CONFLICTO,
-                    "Esta cuenta ya está vinculada a otra cuenta de Google");
-        }
-        OffsetDateTime ahora = OffsetDateTime.now();
-        identidadRepository.save(new IdentidadExterna(usuario, google, perfil.sub(), ahora));
-        usuario.marcarCorreoVerificado(ahora);
-        return usuario;
     }
 
     /** nombres = given_name y apellidos = family_name; sin given_name, nombres = name. Nunca bloquea. */

@@ -47,7 +47,8 @@ public class GoogleTokenVerificador {
                         iss -> iss != null && EMISORES.contains(iss.toString())),
                 new JwtClaimValidator<List<String>>(JwtClaimNames.AUD,
                         aud -> aud != null && aud.contains(clientId)),
-                new JwtClaimValidator<Object>("email", Objects::nonNull),
+                new JwtClaimValidator<String>(JwtClaimNames.SUB, sub -> sub != null && !sub.isBlank()),
+                new JwtClaimValidator<String>("email", email -> email != null && !email.isBlank()),
                 // Google lo envía como booleano; se acepta también el texto "true"
                 new JwtClaimValidator<Object>("email_verified",
                         verificado -> Boolean.TRUE.equals(verificado) || "true".equals(verificado)));

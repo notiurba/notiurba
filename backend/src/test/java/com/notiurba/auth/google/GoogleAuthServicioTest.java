@@ -85,21 +85,19 @@ class GoogleAuthServicioTest {
     }
 
     @Test
-    void caso2CuentaConElMismoCorreoSeVinculaYQuedaVerificada() {
-        googleDevuelve("Ana", "Gómez", "Ana Gómez");
+    void correoCoincidenteNoVinculaNiVerificaLaCuentaLocal() {
+        googleDevuelve("Ana", "Gomez", "Ana Gomez");
         Usuario existente = UsuariosDePrueba.conContrasena(CORREO, "$2a$10$hash", Rol.CIUDADANO);
         ReflectionTestUtils.setField(existente, "correoVerificadoEn", null);
         when(identidadRepository.findByProveedorAndIdentificadorExterno(google, SUB)).thenReturn(Optional.empty());
         when(usuarioRepository.findByCorreoIgnoreCase(CORREO)).thenReturn(Optional.of(existente));
-
-        var resultado = servicio.autenticar(CREDENTIAL);
-
-        assertThat(resultado).isInstanceOf(ResultadoGoogle.Sesion.class);
-        ArgumentCaptor<IdentidadExterna> identidad = ArgumentCaptor.forClass(IdentidadExterna.class);
-        verify(identidadRepository).save(identidad.capture());
-        assertThat(identidad.getValue().getUsuario()).isSameAs(existente);
-        assertThat(identidad.getValue().getIdentificadorExterno()).isEqualTo(SUB);
-        assertThat(existente.getCorreoVerificadoEn()).isNotNull();
+        assertThatThrownBy(() -> servicio.autenticar(CREDENTIAL))
+                .isInstanceOfSatisfying(ResponseStatusException.class,
+                        e -> assertThat(e.getStatusCode()).isEqualTo(HttpStatus.CONFLICT));
+        verify(identidadRepository, never()).save(any());
+        verify(identidadRepository, never()).saveAndFlush(any());
+        verify(usuarioRepository, never()).save(any());
+        assertThat(existente.getCorreoVerificadoEn()).isNull();
         assertThat(existente.getPasswordHash()).isEqualTo("$2a$10$hash");
     }
 

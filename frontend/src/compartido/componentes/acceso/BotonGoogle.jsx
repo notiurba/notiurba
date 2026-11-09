@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { iniciarSesionConGoogle } from '../../api/auth'
 import { guardarToken } from '../../auth/sesion'
+import { googleSdk } from '../../auth/googleSdk'
 import { destinoTrasAutenticacion, estadoRetornoReporte } from '../../auth/retornoReporte'
 import Aviso from '../avisos/Aviso'
 import Boton from '../Boton'
@@ -12,25 +13,8 @@ import { IconoGoogle } from '../Iconos'
 //  - Real: si hay VITE_GOOGLE_CLIENT_ID, muestra el botón oficial de Google (Google Identity Services).
 //    Google entrega un «credential» (ID token) y se manda a POST /api/auth/google.
 //  - Sin ID de cliente: el botón queda apagado con «Próximamente».
-const SIMULANDO = import.meta.env.VITE_USAR_MOCKS === 'true'
-const ID_CLIENTE = import.meta.env.VITE_GOOGLE_CLIENT_ID
-
-// Carga el script de Google una sola vez.
-function cargarScriptGoogle() {
-  return new Promise((resolver, rechazar) => {
-    if (window.google?.accounts?.id) return resolver()
-    const existente = document.querySelector('script[data-google-gsi]')
-    const script = existente ?? document.createElement('script')
-    script.addEventListener('load', resolver)
-    script.addEventListener('error', rechazar)
-    if (!existente) {
-      script.src = 'https://accounts.google.com/gsi/client'
-      script.async = true
-      script.dataset.googleGsi = 'true'
-      document.head.appendChild(script)
-    }
-  })
-}
+const SIMULANDO = import.meta.env.DEV && import.meta.env.VITE_USAR_MOCKS === 'true'
+const ID_CLIENTE = import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim()
 
 function BotonGoogleReal() {
   const navigate = useNavigate()
@@ -41,12 +25,17 @@ function BotonGoogleReal() {
 
   useEffect(() => {
     let activo = true
+    let procesando = false
+    let desconectar = () => {}
 
     // Google devuelve el credential; la API responde la sesión o «PERFIL_INCOMPLETO» (cuenta nueva).
-    async function alRecibirCredencial({ credential }) {
+    async function alRecibirCredencial({ credential } = {}) {
+      if (!activo || procesando || !credential) return
+      procesando = true
       setError('')
       try {
         const respuesta = await iniciarSesionConGoogle(credential)
+        if (!activo) return
         if (respuesta.estado === 'PERFIL_INCOMPLETO') {
           navigate('/completar-perfil', { state: { ...respuesta, siguiente } })
           return
@@ -54,14 +43,17 @@ function BotonGoogleReal() {
         guardarToken(respuesta.token)
         navigate(destinoTrasAutenticacion(respuesta.rol, siguiente ?? null), { replace: true })
       } catch (fallo) {
-        setError(fallo.mensaje ?? 'No pudimos ingresar con Google. Inténtelo de nuevo.')
+        if (activo) setError(fallo.mensaje ?? 'No pudimos ingresar con Google. Inténtelo de nuevo.')
+      } finally {
+        procesando = false
       }
     }
 
-    cargarScriptGoogle()
+    googleSdk().cargar()
       .then(() => {
         if (!activo || !contenedor.current) return
-        window.google.accounts.id.initialize({ client_id: ID_CLIENTE, callback: alRecibirCredencial })
+        desconectar = googleSdk().conectar(ID_CLIENTE, alRecibirCredencial)
+        contenedor.current.replaceChildren()
         window.google.accounts.id.renderButton(contenedor.current, {
           theme: 'outline',
           size: 'large',
@@ -74,12 +66,13 @@ function BotonGoogleReal() {
 
     return () => {
       activo = false
+      desconectar()
     }
   }, [navigate, siguiente])
 
   return (
     <>
-      <div ref={contenedor} style={{ display: 'flex', justifyContent: 'center' }} />
+      <div ref={contenedor} style={{ display: 'flex', justifyContent: 'center', width: '100%' }} />
       {error && <Aviso variante="error">{error}</Aviso>}
     </>
   )
