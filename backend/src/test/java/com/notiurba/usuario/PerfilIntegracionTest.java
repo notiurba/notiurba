@@ -184,17 +184,25 @@ class PerfilIntegracionTest {
 
     @Test
     void noSePuedeElegirUnBarrioInternoPeroSiConservarlo() throws Exception {
-        int interno = jdbc.queryForObject("SELECT id_barrio FROM barrio WHERE interno LIMIT 1", Integer.class);
+        int interno = jdbc.queryForObject("""
+                INSERT INTO barrio (id_comuna, nombre, interno) VALUES (1, 'Barrio interno de prueba', TRUE)
+                RETURNING id_barrio""", Integer.class);
 
         MvcResult elegirlo = guardar(token, cuerpo("Ana", 1, documento, interno, "Cra 1", null));
         assertThat(elegirlo.getResponse().getStatus()).isEqualTo(400);
         assertThat(leer(elegirlo).get("campo").asText()).isEqualTo("idBarrio");
 
-        // el administrador vive en el barrio interno: puede guardar su perfil sin cambiarlo
-        String admin = jdbc.queryForObject("SELECT correo FROM usuario WHERE id_barrio = ? LIMIT 1", String.class, interno);
-        String tokenAdmin = jwt.generar(admin, "ADMIN");
-        JsonNode suyo = leer(mvc.perform(get("/api/usuarios/me").header("Authorization", "Bearer " + tokenAdmin)).andReturn());
-        MvcResult conservar = guardar(tokenAdmin, cuerpo(suyo.get("nombres").asText(), suyo.get("idTipoDocumento").asInt(),
+        // quien ya vive en un barrio interno puede guardar su perfil sin cambiarlo
+        String otro = "interno-" + UUID.randomUUID() + "@prueba.com";
+        jdbc.update("""
+                INSERT INTO usuario (nombres, apellidos, id_tipo_documento, numero_documento, id_barrio,
+                                     direccion_correspondencia, correo, correo_verificado_en, password_hash,
+                                     id_rol, id_aviso_privacidad, acepto_privacidad_en)
+                VALUES ('Luis', 'Pérez', 1, ?, ?, 'Cra 9', ?, now(), 'hash', 2, 1, now())""",
+                UUID.randomUUID().toString().substring(0, 12), interno, otro);
+        String tokenOtro = jwt.generar(otro, "ADMIN");
+        JsonNode suyo = leer(mvc.perform(get("/api/usuarios/me").header("Authorization", "Bearer " + tokenOtro)).andReturn());
+        MvcResult conservar = guardar(tokenOtro, cuerpo(suyo.get("nombres").asText(), suyo.get("idTipoDocumento").asInt(),
                 suyo.get("numeroDocumento").asText(), interno, suyo.get("direccionCorrespondencia").asText(), null));
         assertThat(conservar.getResponse().getStatus()).isEqualTo(200);
     }

@@ -84,11 +84,12 @@ class CatalogoIntegracionTest {
     }
 
     @Test
-    void elBarrioInternoDelAdministradorNoSaleNiSePuedeElegir() throws Exception {
-        int idInterno = jdbc.queryForObject(
-                "SELECT id_barrio FROM barrio WHERE nombre = 'Administración NotiUrba'", Integer.class);
+    void unBarrioInternoNoSaleEnElCatalogoNiSePuedeElegir() throws Exception {
+        int idInterno = jdbc.queryForObject("""
+                INSERT INTO barrio (id_comuna, nombre, interno) VALUES (1, 'Barrio interno de prueba', TRUE)
+                RETURNING id_barrio""", Integer.class);
 
-        assertThat(pedir("/api/catalogos/barrios").findValuesAsText("nombre")).doesNotContain("Administración NotiUrba");
+        assertThat(pedir("/api/catalogos/barrios").findValuesAsText("nombre")).doesNotContain("Barrio interno de prueba");
         assertThat(catalogos.existeBarrio(idInterno)).isFalse();
         assertThat(catalogos.existeBarrio(BarrioDePrueba.id(jdbc))).isTrue();
     }

@@ -20,6 +20,9 @@ Java 21 · Spring Boot 3.3 · Maven · PostgreSQL 16 + PostGIS 3.4 · Flyway.
 | `V13__asignar_comuna_por_punto.sql` | `fn_asignar_comuna` (contiene, solape, hueco cercano, fuera de cobertura), la distancia máxima en `configuracion` y la vista `v_reporte_comuna` con esas reglas (NOT-55). |
 | `V14__capa_comunas_experimental.sql` | Carga la capa de comunas SINTÉTICA y no oficial de NOT-31 en `comuna.geom` y anota la fuente en `configuracion`. Se reemplaza generando una migración nueva con `scripts/generar-capa-comunas.py`. |
 | `V15__barrio_interno.sql` | Columna `barrio.interno`: marca como interno el barrio «Administración NotiUrba» para que no salga en el catálogo ni se pueda elegir. |
+| `V16__enrutamiento_y_envios.sql` | Enrutamiento de cada categoría a su entidad y canal, cola persistente de envíos de correo y eventos de rebote (Amelia, NOT-71). |
+| `V17__catalogo_barrios_pmgr_2020.sql` | Carga 133 barrios históricos de Tuluá (PMGR 2020) con su comuna; ver `docs/datos/barrios-pmgr-2020.md`. |
+| `V18__eliminar_barrio_administracion.sql` | Asigna al administrador un barrio real y elimina el barrio «Administración NotiUrba» de V4. |
 
 - Las migraciones aplicadas **no se editan**: los cambios van en `V4__…`, `V5__…`.
 - Pendientes de datos: barrios, polígonos de `comuna.geom` y la validación jurídica del aviso de privacidad (la versión 3 ya es la vigente, V12).
