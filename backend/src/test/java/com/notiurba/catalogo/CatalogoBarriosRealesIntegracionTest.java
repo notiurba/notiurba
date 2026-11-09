@@ -132,10 +132,12 @@ class CatalogoBarriosRealesIntegracionTest {
     }
 
     @Test
-    void elBarrioInternoDelAdministradorSigueOculto() {
-        assertThat(jdbc.queryForObject(
-                "SELECT count(*) FROM barrio WHERE interno AND nombre = 'Administración NotiUrba'", Integer.class)).isEqualTo(1);
-        assertThat(jdbc.queryForObject("SELECT count(*) FROM barrio WHERE interno", Integer.class)).isEqualTo(1);
+    void elBarrioAdministrativoYaNoExisteYElAdministradorTieneUnoReal() {
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM barrio WHERE nombre = 'Administración NotiUrba'", Integer.class)).isZero();
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM barrio WHERE interno", Integer.class)).isZero();
+        assertThat(jdbc.queryForObject("""
+                SELECT count(*) FROM usuario u JOIN rol r ON r.id_rol = u.id_rol JOIN barrio b ON b.id_barrio = u.id_barrio
+                 WHERE r.nombre = 'ADMIN' AND NOT b.interno""", Integer.class)).isEqualTo(1);
     }
 
     @Test
