@@ -1,11 +1,11 @@
 -- V17: catalogo HISTORICO de barrios (PMGR municipal, diciembre de 2020). Preparado por Luz Amelia (NOT-71).
 -- Fuente: https://tulua.gov.co/loader.php?lServicio=Tools2&lTipo=descargas&lFuncion=exposeDocument&idFile=12112
 -- Tabla 4, paginas 16-21. NO acredita vigencia administrativa en 2026: es una fuente historica provisional
--- (las decisiones B01-B05 sobre nombres dudosos siguen abiertas, ver docs/datos/barrios-pmgr-2020.md).
+-- (las decisiones B01-B05 las resolvio Andres Lopez el 2026-11-08, ver docs/datos/barrios-pmgr-2020.md).
 -- PDF SHA256: 106135a48a81848c0b1804284550114eacdac9b91f13b03e2adbbfc221d88b10
--- CSV SHA256: fce84f32cfcbd1324b5fa9a8c9b6aa199dfe63d36d212c41297f6766a1744ecc (docs/datos/barrios-pmgr-2020.csv)
+-- CSV SHA256: 0c20046d1d02a81575fe07183535920b9e103f8cf742acfe35898bd5ceb5f02e (docs/datos/barrios-pmgr-2020.csv, ya con las decisiones de Andres)
 -- Solo AGREGA: no renombra, borra ni habilita barrios internos (el del administrador, V15, sigue oculto).
--- El INSERT es el mismo ya validado por Amelia; es repetible (ON CONFLICT DO NOTHING). Para corregir un nombre
+-- El INSERT parte del validado por Amelia con 3 nombres corregidos y 3 variantes quitadas (B01-B05); es repetible (ON CONFLICT DO NOTHING). Para corregir un nombre
 -- o una comuna hay que escribir una migracion nueva con UPDATE: los usuarios y reportes referencian el barrio.
 INSERT INTO barrio (id_comuna, nombre) VALUES
   (1, 'Ciudad Campestre'),
@@ -55,11 +55,10 @@ INSERT INTO barrio (id_comuna, nombre) VALUES
   (4, 'Palobonito'),
   (4, 'Tomás Uribe'),
   (5, 'Avenida Cali'),
-  (5, 'Urbanización Lusitania'),
   (5, 'Doce de Octubre'),
   (5, 'El Lago'),
   (5, 'El Laguito'),
-  (5, 'El Principio'),
+  (5, 'El Príncipe'),
   (5, 'La Bastilla'),
   (5, 'La Merced'),
   (5, 'Las Acacias'),
@@ -87,7 +86,7 @@ INSERT INTO barrio (id_comuna, nombre) VALUES
   (6, 'La Herradura'),
   (6, 'Buenos Aires'),
   (7, 'Departamental'),
-  (7, 'Diablos Rojos'),
+  (7, 'Diablos Rojos I'),
   (7, 'El Descanso'),
   (7, 'El Porvenir'),
   (7, 'Farfán'),
@@ -109,7 +108,7 @@ INSERT INTO barrio (id_comuna, nombre) VALUES
   (7, 'Villa del Sur'),
   (8, 'Bosques de Maracaibo'),
   (8, 'Chiminangos'),
-  (8, 'Diablos Rojos'),
+  (8, 'Diablos Rojos II'),
   (8, 'El Refugio'),
   (8, 'El Horizonte'),
   (8, 'El Limonar'),
@@ -121,9 +120,7 @@ INSERT INTO barrio (id_comuna, nombre) VALUES
   (8, 'San Luis'),
   (8, 'Santa Inés'),
   (8, 'Tercer Milenio'),
-  (8, 'Urbanización San Luis'),
   (8, 'Villa Liliana'),
-  (8, 'Santa Inés - Comfamiliar'),
   (8, 'Sintrasancarlos'),
   (9, 'Alameda I'),
   (9, 'Alameda II'),

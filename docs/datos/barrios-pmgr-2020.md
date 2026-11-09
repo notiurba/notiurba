@@ -1,28 +1,35 @@
 # Catálogo de barrios (V17) — fuente histórica provisional
 
-**Qué es.** 135 barrios de Tuluá con su comuna, transcritos de la tabla 4 «División político administrativa» del
-*Plan Municipal de Gestión del Riesgo V3, diciembre de 2020* (Alcaldía de Tuluá, pp. 16-21). Los preparó y
-verificó Luz Amelia (NOT-71). El mismo contenido está en `barrios-pmgr-2020.csv` y en la migración
+**Qué es.** 132 barrios de Tuluá con su comuna, tomados de la tabla 4 «División político administrativa» del
+*Plan Municipal de Gestión del Riesgo V3, diciembre de 2020* (Alcaldía de Tuluá, pp. 16-21), con 5 decisiones de
+nombres resueltas por Andrés López el 2026-11-08 (abajo). Los preparó y verificó Luz Amelia (NOT-71) como 135 filas.
+El mismo contenido está en `barrios-pmgr-2020.csv` y en la migración
 `backend/src/main/resources/db/migration/V17__catalogo_barrios_pmgr_2020.sql`.
 
 | Comuna | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | Total |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Barrios | 12 | 8 | 21 | 5 | 16 | 16 | 21 | 18 | 15 | 3 | 135 |
+| Barrios | 12 | 8 | 21 | 5 | 15 | 16 | 21 | 16 | 15 | 3 | 132 |
 
 **Qué NO es.** No es un catálogo vigente confirmado: es una fuente municipal de 2020 y no acredita la cobertura
 administrativa de 2026. Igual que la capa de comunas (V14), se usa como aproximación hasta que el municipio
 entregue datos oficiales. El barrio interno «Administración NotiUrba» (V15) no forma parte del catálogo y no se muestra.
+Regla: **un barrio pertenece a una sola comuna**.
 
-## Nombres que siguen abiertos (B01-B05)
-Se cargaron **tal como aparecen en la fuente**; no se corrigió ninguno por intuición.
+## Decisiones sobre los nombres dudosos (B01-B05)
+Resueltas por Andrés López el 2026-11-08 con apoyo en el *Informe final de actualización catastral* (Valle Avanza SAS,
+diciembre 2024, publicado por la Alcaldía; sección 3.4, p. 18 del PDF). El PDF lista, por comuna: «Diablos Rojos I»
+(comuna 7); «Chiminangos» y «Los Diablos Rojos II» (comuna 8); «El Príncipe» (comuna 5).
 
-| ID | Barrio (comuna) | Duda |
-|---|---|---|
-| B01 | «El Principio» (5) | Otra fuente (catastro 2024) dice «El Príncipe». Posible error de denominación. |
-| B02 | «Urbanización Lusitania» y «Lusitania» (5) | ¿Son dos barrios o uno con alias? |
-| B03 | «Diablos Rojos» (7 y 8) | Documentalmente son dos (I en la 7, II en la 8). Se conservan ambos. |
-| B04 | «San Luis» y «Urbanización San Luis» (8) | ¿Entidades distintas? No es un duplicado demostrado. |
-| B05 | «Santa Inés» y «Santa Inés - Comfamiliar» (8) | Documentalmente son dos. Se conservan ambos. |
+| ID | Fuente 2020 | Decisión | Resultado en el catálogo |
+|---|---|---|---|
+| B01 | «El Principio» (5) | El barrio se llama **El Príncipe** (así lo trae también el catastro 2024). | `5, El Príncipe` |
+| B02 | «Urbanización Lusitania» y «Lusitania» (5) | Se deja solo **Lusitania**. | `5, Lusitania` |
+| B03 | «Diablos Rojos» (7 y 8) | Son **dos barrios distintos** y cada uno está en una sola comuna: I en la 7 y II en la 8 (el de la 8 es vecino de Chiminangos). | `7, Diablos Rojos I` y `8, Diablos Rojos II` |
+| B04 | «San Luis» y «Urbanización San Luis» (8) | Se deja solo **San Luis**. | `8, San Luis` |
+| B05 | «Santa Inés» y «Santa Inés - Comfamiliar» (8) | Se deja solo **Santa Inés**. | `8, Santa Inés` |
+
+Nota: el catastro 2024 lista «Santa Inés de Comfamiliar» como barrio aparte de «Santa Inés»; con B05 quedó fuera
+del selector y sus habitantes elegirán «Santa Inés». Se puede reponer con una migración si se necesita.
 
 ## Cómo corregir después
 Los usuarios y reportes referencian el barrio por su id, así que **no se borra ni se reemplaza**: se escribe una

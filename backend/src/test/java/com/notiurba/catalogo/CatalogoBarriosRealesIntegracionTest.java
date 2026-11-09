@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.notiurba.reporte.BaseDeDatosTemporal;
 
 /**
- * V17 carga el catálogo histórico de barrios (PMGR 2020, 135 barrios). Se comprueba contra el CSV de origen
+ * V17 carga el catálogo histórico de barrios (PMGR 2020, con las decisiones B01-B05 de Andrés: 132 barrios). Se comprueba contra el CSV de origen
  * (docs/datos/barrios-pmgr-2020.csv) y contra el catálogo público que ve el selector del registro.
  */
 @SpringBootTest
@@ -81,7 +81,7 @@ class CatalogoBarriosRealesIntegracionTest {
         List<String> cargados = jdbc.queryForList(
                 "SELECT id_comuna || '|' || nombre FROM barrio WHERE NOT interno", String.class);
 
-        assertThat(delCsv()).hasSize(135);
+        assertThat(delCsv()).hasSize(132);
         assertThat(cargados).containsExactlyInAnyOrderElementsOf(delCsv());
     }
 
@@ -92,22 +92,42 @@ class CatalogoBarriosRealesIntegracionTest {
                 rs -> { porComuna.put(rs.getInt(1), rs.getInt(2)); });
 
         assertThat(porComuna).containsExactly(
-                Map.entry(1, 12), Map.entry(2, 8), Map.entry(3, 21), Map.entry(4, 5), Map.entry(5, 16),
-                Map.entry(6, 16), Map.entry(7, 21), Map.entry(8, 18), Map.entry(9, 15), Map.entry(10, 3));
+                Map.entry(1, 12), Map.entry(2, 8), Map.entry(3, 21), Map.entry(4, 5), Map.entry(5, 15),
+                Map.entry(6, 16), Map.entry(7, 21), Map.entry(8, 16), Map.entry(9, 15), Map.entry(10, 3));
     }
 
     @Test
-    void elCatalogoPublicoDevuelveLos135OrdenadosYSinElBarrioInterno() throws Exception {
+    void elCatalogoPublicoDevuelveLos132OrdenadosYSinElBarrioInterno() throws Exception {
         JsonNode lista = json.readTree(mvc.perform(get("/api/catalogos/barrios")).andReturn().getResponse()
                 .getContentAsString(StandardCharsets.UTF_8));
 
-        assertThat(lista).hasSize(135);
+        assertThat(lista).hasSize(132);
         assertThat(lista.findValuesAsText("nombre")).doesNotContain("Administración NotiUrba")
                 .isSortedAccordingTo(java.text.Collator.getInstance(new java.util.Locale("es", "CO")));
         for (JsonNode b : lista) {
             assertThat(b.get("idBarrio").asInt()).isPositive();
             assertThat(b.get("idComuna").asInt()).isBetween(1, 10);
         }
+    }
+
+    @Test
+    void ningunBarrioEstaEnDosComunas() {
+        List<String> repetidos = jdbc.queryForList("""
+                SELECT nombre FROM barrio WHERE NOT interno GROUP BY nombre HAVING count(*) > 1""", String.class);
+
+        assertThat(repetidos).as("un barrio pertenece a una sola comuna").isEmpty();
+    }
+
+    @Test
+    void lasDecisionesDeAndresSobreLosNombresDudososQuedaronAplicadas() {
+        List<String> nombres = jdbc.queryForList("SELECT nombre FROM barrio WHERE NOT interno", String.class);
+
+        assertThat(nombres).contains("El Príncipe", "Lusitania", "Diablos Rojos I", "Diablos Rojos II", "San Luis", "Santa Inés")
+                .doesNotContain("El Principio", "Urbanización Lusitania", "Diablos Rojos", "Urbanización San Luis",
+                        "Santa Inés - Comfamiliar");
+        assertThat(jdbc.queryForObject("SELECT id_comuna FROM barrio WHERE nombre = 'Diablos Rojos I'", Integer.class)).isEqualTo(7);
+        assertThat(jdbc.queryForObject("SELECT id_comuna FROM barrio WHERE nombre = 'Diablos Rojos II'", Integer.class)).isEqualTo(8);
+        assertThat(jdbc.queryForObject("SELECT id_comuna FROM barrio WHERE nombre = 'Chiminangos'", Integer.class)).isEqualTo(8);
     }
 
     @Test
