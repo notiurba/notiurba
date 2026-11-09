@@ -54,8 +54,9 @@ const FORMATO_NOMBRE = /^\p{L}[\p{L} '’.-]*$/u
 export function validarNombre(valor, mensajeVacio) {
   const nombre = String(valor ?? '').trim()
   if (!nombre) return mensajeVacio
+  if (nombre.length < 2) return 'Escriba al menos 2 letras.'
   if (nombre.length > LIMITES.nombre) return `Use máximo ${LIMITES.nombre} caracteres.`
-  return FORMATO_NOMBRE.test(nombre) ? '' : 'Use solo letras y espacios.'
+  return FORMATO_NOMBRE.test(nombre) ? '' : 'Use solo letras, espacios, apóstrofo, punto o guion.'
 }
 
 export function validarDireccion(valor) {
@@ -88,7 +89,8 @@ export function validarPasswordNueva(valor) {
   const password = String(valor ?? '')
   if (!password) return 'Cree una contraseña'
   if (new TextEncoder().encode(password).length > LIMITES.password) return `Use máximo ${LIMITES.password} caracteres.`
-  const cumple = password.length >= 8 && /[A-Za-z]/.test(password) && /\d/.test(password)
+  // Letras de cualquier idioma (con tilde o ñ) y números, igual que el backend
+  const cumple = password.length >= 8 && /\p{L}/u.test(password) && /\p{Nd}/u.test(password)
   return cumple ? '' : 'Use mínimo 8 caracteres, con letras y números.'
 }
 

@@ -43,6 +43,7 @@ test('contraseña nueva: 8+ caracteres con letra y número', () => {
   assert.notEqual(validarPasswordNueva('12345678'), '') // sin letra
   assert.equal(validarPasswordNueva('Clave1234'), '')
   assert.equal(validarPasswordNueva('clave-1234!'), '') // admite símbolos
+  assert.equal(validarPasswordNueva('Contraseña1'), '') // letras con tilde o ñ cuentan, igual que en el backend
 })
 
 test('confirmación: debe coincidir', () => {
@@ -89,6 +90,9 @@ test('nombre: letras con tildes y ñ; sin números ni exceso de largo', () => {
   assert.equal(validarNombre('  ', 'Falta'), 'Falta')
   assert.notEqual(validarNombre('Ana123', 'Falta'), '')
   assert.notEqual(validarNombre('A'.repeat(61), 'Falta'), '')
+  assert.notEqual(validarNombre('A', 'Falta'), '') // al menos 2 letras
+  assert.equal(validarNombre('Jo', 'Falta'), '')
+  assert.notEqual(validarNombre('Ana@correo.com', 'Falta'), '')
 })
 
 test('dirección: de 5 a 150 caracteres', () => {

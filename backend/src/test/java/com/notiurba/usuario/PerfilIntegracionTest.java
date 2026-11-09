@@ -163,6 +163,19 @@ class PerfilIntegracionTest {
     }
 
     @Test
+    void losNombresSoloAdmitenLetrasYHastaSesentaCaracteres() throws Exception {
+        for (String malo : new String[] { "Ana123", "Ana@correo.com", "A", "A".repeat(61), "<script>x</script>" }) {
+            MvcResult r = guardar(token, cuerpo(malo, 1, documento, idBarrio, "Cra 1", null));
+            assertThat(r.getResponse().getStatus()).as(malo).isEqualTo(400);
+            assertThat(leer(r).get("campo").asText()).isEqualTo("nombres");
+        }
+        // un nombre válido con espacios de más se guarda ordenado
+        MvcResult ok = guardar(token, cuerpo("  María   José ", 1, documento, idBarrio, "Cra 1", null));
+        assertThat(ok.getResponse().getStatus()).isEqualTo(200);
+        assertThat(leer(ok).get("nombres").asText()).isEqualTo("María José");
+    }
+
+    @Test
     void unDocumentoDeOtraCuentaDa409() throws Exception {
         String otroDoc = UUID.randomUUID().toString().substring(0, 12);
         jdbc.update("""
