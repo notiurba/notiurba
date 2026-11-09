@@ -62,7 +62,7 @@ export default function PasoConfirmacion() {
 
   function comprobar() {
     if (!ruta || (!guardado && (consulta.cargando || consulta.error))) {
-      setError('Espere a que se confirme el canal de atención o vuelva a intentarlo.')
+      setError('Espere un momento a que confirmemos a dónde va su reporte, o inténtelo de nuevo.')
       return false
     }
     if (!autorizaEnvio) {
@@ -141,7 +141,7 @@ export default function PasoConfirmacion() {
   const barrio = barrios.find(b => String(b.idBarrio) === borrador.idBarrio)
   const lugar = categoria?.requiereUbicacion === false ? 'No requerida'
     : [borrador.direccion, barrio?.nombre, borrador.latitud != null && 'Punto marcado en el mapa'].filter(Boolean).join(' · ')
-  const accion = guardado ? 'Reintentar sobre este código' : ruta?.permiteCorreo ? 'Guardar y solicitar envío' : 'Guardar reporte'
+  const accion = guardado ? 'Reintentar' : ruta?.permiteCorreo ? 'Guardar y enviar' : 'Guardar reporte'
 
   return <>
     <EncabezadoPantalla titulo="Nuevo reporte" atras={guardado ? '/app/reportes' : '/reportar/detalles'} />
@@ -158,18 +158,18 @@ export default function PasoConfirmacion() {
         <FilaResumen etiqueta="Descripción" a="/reportar/detalles">{borrador.descripcion.trim()}</FilaResumen>
         <FilaResumen etiqueta="Fotos" a="/reportar/detalles">{fotos.length ? fotos.length + ' fotos adjuntas' : 'Sin fotos'}</FilaResumen>
       </div>}
-      {!guardado && consulta.cargando && <p role="status">Comprobando canal de atención…</p>}
-      {!guardado && consulta.error && <Aviso variante="error" titulo="No pudimos confirmar el canal"><button type="button" className="enlace-boton" onClick={consulta.recargar}>Reintentar</button></Aviso>}
+      {!guardado && consulta.cargando && <p role="status">Buscando a qué entidad va su reporte…</p>}
+      {!guardado && consulta.error && <Aviso variante="error" titulo="No pudimos confirmar la entidad"><button type="button" className="enlace-boton" onClick={consulta.recargar}>Reintentar</button></Aviso>}
       <CanalOficial ruta={ruta} />
-      {ruta?.competenciaConfirmada === false && <Aviso variante="alerta">La competencia de esta categoría está pendiente de validación. No es un canal de atención inmediata.</Aviso>}
-      {ruta && <Aviso>{ruta.permiteCorreo ? 'Se solicitará el envío a la entidad indicada. La aceptación del proveedor no confirma entrega, lectura ni radicación.' : 'Se guardará el reporte sin correo automático. Continúe por el canal oficial indicado.'}</Aviso>}
-      {error && <Aviso variante="error" titulo={guardado ? 'Reporte guardado; operación pendiente' : 'No pudimos guardar el reporte'}>{error}</Aviso>}
+      {ruta?.competenciaConfirmada === false && <Aviso variante="alerta">Todavía estamos confirmando qué entidad atiende este tipo de reportes. Si es urgente, no espere: llame a la línea de emergencias.</Aviso>}
+      {ruta && <Aviso>{ruta.permiteCorreo ? 'Enviaremos su reporte por correo a la entidad indicada. Eso no asegura que lo lean de inmediato.' : 'Guardaremos su reporte. Esta entidad atiende por otro canal: el que ve arriba.'}</Aviso>}
+      {error && <Aviso variante="error" titulo={guardado ? 'Su reporte quedó guardado; falta terminar' : 'No pudimos guardar el reporte'}>{error}</Aviso>}
       <Casilla id="autorizaEnvio" checked={autorizaEnvio} disabled={enviando} error={errorAutorizacion} onChange={e => { setAceptacion(e.target.checked ? claveAceptacion : null); setErrorAutorizacion('') }}>
-        Autorizo a NotiUrba a enviar este reporte a la entidad competente, a mi nombre y con mis datos, ubicación y fotos (con enlace público). La entidad podrá responderme a mi correo. <EnlacePrivacidad nuevaPestana />
+        Autorizo a NotiUrba a enviar este reporte a la entidad, a mi nombre y con mis datos, la ubicación y las fotos (las fotos van como enlace público). La entidad podrá responderme a mi correo. <EnlacePrivacidad nuevaPestana />
       </Casilla>
-      <p className="reportar__mensaje">El código de NotiUrba no es un radicado oficial. El consentimiento de registro no sustituye esta autorización de envío.</p>
+      <p className="reportar__mensaje">Este código es de NotiUrba para su seguimiento. El radicado oficial lo asigna la entidad.</p>
     </FormularioPantalla>
-    <HojaConfirmacion abierta={hoja} alCancelar={() => !ocupado.current && setHoja(false)} alConfirmar={enviar} icono={<IconoCorreo tamano={30} />} tono="info" titulo={accion} texto={ruta?.permiteCorreo ? 'Se guardará y solicitará el envío a ' + ruta.entidad + '. Puede quedar pendiente o fallar; consulte el resultado.' : 'El reporte se guardará sin envío automático de correo. Use el canal oficial indicado.'} textoConfirmar="Confirmar" textoCancelar="Volver" cargando={enviando} textoCargando="Guardando…" />
+    <HojaConfirmacion abierta={hoja} alCancelar={() => !ocupado.current && setHoja(false)} alConfirmar={enviar} icono={<IconoCorreo tamano={30} />} tono="info" titulo={accion} texto={ruta?.permiteCorreo ? 'Guardaremos su reporte y lo enviaremos a ' + ruta.entidad + '. Verá el resultado en la siguiente pantalla.' : 'Guardaremos su reporte. Esta entidad atiende por otro canal; en la siguiente pantalla verá cuál.'} textoConfirmar="Confirmar" textoCancelar="Volver" cargando={enviando} textoCargando="Guardando…" />
   </>
 }
 

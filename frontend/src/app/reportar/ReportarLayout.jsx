@@ -75,7 +75,7 @@ export default function ReportarLayout() {
   if (estadoSesion() !== 'activa') {
     return <MarcoApp>
       <Aviso titulo="Inicie sesión para crear un reporte">
-        El catálogo de categorías requiere una cuenta. Su borrador se conserva.
+        Para crear un reporte necesita una cuenta. Lo que ya escribió se conserva.
       </Aviso>
       <Boton to="/login" state={{ siguiente: pathname }}>Iniciar sesión</Boton>
       <Boton to="/registro" state={{ siguiente: pathname }} variante="secundario">Crear cuenta</Boton>

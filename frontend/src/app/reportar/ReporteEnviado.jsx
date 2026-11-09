@@ -51,7 +51,7 @@ export default function ReporteEnviado() {
       <p className="enviado__texto">
         {presentacion.mensaje}
       </p>
-      <Aviso titulo={presentacion.subtitulo}>{presentacion.etiqueta}. Guardar el reporte o aceptar una solicitud de envío no confirma entrega ni lectura.</Aviso>
+      <Aviso titulo={presentacion.subtitulo}>Enviar el reporte no asegura que la entidad lo lea de inmediato. Si le responden, lo harán a su correo.</Aviso>
       {consultaEnvio.error && <Aviso variante="error" titulo="No pudimos actualizar el estado del correo">El reporte sigue guardado. Inténtelo de nuevo.</Aviso>}
       <Boton variante="secundario" onClick={consultaEnvio.recargar} cargando={consultaEnvio.cargando} textoCargando="Consultando…">Actualizar estado del correo</Boton>
       {envio?.ruta && <CanalOficial ruta={envio.ruta} />}

@@ -65,7 +65,7 @@ export default function Registro() {
   async function crearCuenta(evento) {
     evento.preventDefault()
     if (!barrios.datos?.length) {
-      setErrorGeneral('No hay barrios disponibles para seleccionar. No es posible crear la cuenta hasta que se habilite el catálogo.')
+      setErrorGeneral('No pudimos cargar la lista de barrios. Inténtelo de nuevo en un momento.')
       return
     }
     const encontrados = { ...validarPasoDatos(datos), ...validarPasoAcceso(datos) }

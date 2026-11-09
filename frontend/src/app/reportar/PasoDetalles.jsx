@@ -177,7 +177,7 @@ export default function PasoDetalles() {
           onChange={(e) => cambiar({ matricula: e.target.value })}
         />}
         <Casilla id="emergencia" checked={borrador.emergencia === true} onChange={e => cambiar({ emergencia: e.target.checked })}>
-          Es una emergencia o situación de riesgo inmediato. El correo no es un canal de atención urgente.
+          Es una emergencia o hay peligro ahora mismo. En una emergencia es mejor llamar: el correo no es inmediato.
         </Casilla>
       </FormularioPantalla>
 
