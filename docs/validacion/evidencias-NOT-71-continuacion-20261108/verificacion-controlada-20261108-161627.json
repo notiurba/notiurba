@@ -1,0 +1,23 @@
+{
+  "fecha": "2026-11-08T16:16:27.4977470-05:00",
+  "container": "notiurba-barrios-qa-20261108-153240-458c80",
+  "api": "http://127.0.0.1:18091",
+  "tokenFixtureEmitido": true,
+  "verificacionHttp": 200,
+  "reutilizacionHttp": 400,
+  "loginHttp": 200,
+  "persistenciaSql": {
+    "base": "notiurba_barrios_qa",
+    "usuarioSql": "qa_barrios",
+    "idUsuario": 2,
+    "correo": "qa.not71.20261108.2147@example.test",
+    "idBarrio": 43,
+    "correoVerificadoEn": "2026-11-08T16:16:25.541511-05:00",
+    "cantidadReportes": 0,
+    "cantidadFotos": 0
+  },
+  "tokensGuardados": false,
+  "correoExterno": false,
+  "estadoNOT71": "NO_APROBADA",
+  "alcance": "Cuenta sintetica QA; no prueba entrega de correo ni subida de fotos"
+}

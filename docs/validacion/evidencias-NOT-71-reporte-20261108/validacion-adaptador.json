@@ -1,0 +1,12 @@
+{
+  "fecha": "2026-11-08T22:27:01.599Z",
+  "comando": "mvn -s C:/notiurba/validation-tools/maven-settings.xml -o -B -ntp -f backend/pom.xml -DskipTests test-compile",
+  "resultado": "BUILD SUCCESS",
+  "exitCode": 0,
+  "finishedAt": "2026-11-08T17:21:19-05:00",
+  "suitesEjecutadas": false,
+  "launcherSintaxis": "correcta",
+  "consultaSqlSintaxis": "correcta",
+  "arranque": "detenido antes de iniciar servicios: Docker inaccesible",
+  "almacenFuncionalProbado": false
+}

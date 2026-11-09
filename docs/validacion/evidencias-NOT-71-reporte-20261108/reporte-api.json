@@ -1,0 +1,62 @@
+{
+  "fecha": "2026-11-08T22:16:17.921Z",
+  "getStatus": 200,
+  "detalle": {
+    "codigoSeguimiento": "NU-000001",
+    "estado": "Recibido",
+    "categoria": {
+      "idCategoria": 1,
+      "nombre": "Vías, huecos, andenes e infraestructura"
+    },
+    "descripcion": "PRUEBA SINTETICA QA NOT-71. Verificacion del recorrido con fotografia y ubicacion de prueba. No representa un incidente real ni debe enviarse a una entidad.",
+    "latitud": 4.084847878371718,
+    "longitud": -76.1953353881836,
+    "comuna": 4,
+    "barrio": {
+      "idBarrio": 43,
+      "nombre": "Centro"
+    },
+    "direccionIncidente": "Punto sintetico QA NOT-71, sin incidente real",
+    "matriculaCuentaServicio": null,
+    "radicadoOficial": null,
+    "fotos": [],
+    "creadoEn": "2026-11-08T22:15:53.097272Z",
+    "vigenteHasta": "2026-12-08T22:15:53.097272Z",
+    "historial": [
+      {
+        "estado": "Recibido",
+        "observacion": "Reporte registrado por el ciudadano.",
+        "cambiadoEn": "2026-11-08T22:15:53.097272Z"
+      }
+    ],
+    "envio": {
+      "estado": "PENDIENTE",
+      "motivo": null
+    }
+  },
+  "envioStatus": 200,
+  "envio": {
+    "estado": "PENDIENTE",
+    "motivo": null,
+    "reintentable": false,
+    "rebote": false,
+    "ruta": {
+      "idCategoria": 1,
+      "codigo": "A01",
+      "categoria": "Vías, huecos, andenes e infraestructura",
+      "entidad": "Alcaldía de Tuluá",
+      "dependencia": "Secretaría de Hábitat e Infraestructura",
+      "requiereUbicacion": true,
+      "admiteMatricula": false,
+      "esGas": false,
+      "competenciaConfirmada": true,
+      "revisionClasificacion": false,
+      "idCanal": 1,
+      "canal": "Correo",
+      "acceso": "servicioalciudadano@tulua.gov.co",
+      "correoReferencia": "servicioalciudadano@tulua.gov.co",
+      "permiteCorreo": true,
+      "mensaje": "El envío no equivale a entrega ni a radicación oficial."
+    }
+  }
+}

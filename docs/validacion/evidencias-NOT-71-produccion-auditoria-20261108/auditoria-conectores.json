@@ -1,0 +1,296 @@
+{
+  "fecha": "2026-11-08T23:46:56.117Z",
+  "site": {
+    "id": "0356024d-e4e2-4c3e-9a8e-2ca0dfc245ea",
+    "name": "notiurba"
+  },
+  "production": {
+    "id": "6aeeca108ce1404128b3e366",
+    "site_id": "0356024d-e4e2-4c3e-9a8e-2ca0dfc245ea",
+    "build_id": "6aeeca108ce1404128b3e364",
+    "state": "ready",
+    "name": "notiurba",
+    "url": "http://notiurba.netlify.app",
+    "admin_url": "https://app.netlify.com/projects/notiurba",
+    "deploy_url": "http://develop--notiurba.netlify.app",
+    "deploy_ssl_url": "https://develop--notiurba.netlify.app",
+    "created_at": "2026-11-07T06:49:52.047Z",
+    "updated_at": "2026-11-08T19:26:37.684Z",
+    "commit_ref": "5e438067fd6088016e098517c4c8cd479cfa396a",
+    "review_id": null,
+    "skipped": null,
+    "locked": null,
+    "branch": "develop",
+    "commit_url": "https://github.com/notiurba/notiurba/commit/5e438067fd6088016e098517c4c8cd479cfa396a",
+    "title": "Merge pull request #20 from notiurba/feature/frontend-sesion-y-contrato\n\nfeat(frontend): PWA de ciudadano y panel admin conectados al contrato de la API",
+    "review_url": null,
+    "published_at": "2026-11-07T06:50:01.487Z",
+    "context": "production",
+    "deploy_time": 8,
+    "public": true,
+    "summary": {
+      "status": "ready",
+      "messages": [
+        {
+          "type": "info",
+          "title": "All files already uploaded",
+          "description": "All files already uploaded by a previous deploy with the same commits.",
+          "details": null
+        },
+        {
+          "type": "info",
+          "title": "1 redirect rule processed",
+          "description": "All redirect rules deployed without errors.",
+          "details": ""
+        },
+        {
+          "type": "info",
+          "title": "No header rules processed",
+          "description": "This deploy did not include any header rules. [Learn more about headers](https://docs.netlify.com/routing/headers/)",
+          "details": ""
+        },
+        {
+          "type": "info",
+          "title": "No functions deployed",
+          "description": "This deploy did not include any functions. [Learn more about Netlify Functions](https://docs.netlify.com/functions/overview/)",
+          "details": null
+        },
+        {
+          "type": "info",
+          "title": "No edge functions deployed",
+          "description": "This deploy did not include any edge functions. [Learn more about Edge Functions](https://docs.netlify.com/edge-functions/overview/)",
+          "details": null
+        }
+      ]
+    },
+    "plugin_state": "none"
+  },
+  "pr": {
+    "number": 27,
+    "state": "open",
+    "draft": true,
+    "head": "e61c44001231b595fdb2faa8866154fed79559ac",
+    "base": "e5d73c43da8331f3e6f524eda0724652471c4f83"
+  },
+  "preview": {
+    "deployId": "6af0ccdee968e3c8aa8a239c",
+    "head": "e61c44001231b595fdb2faa8866154fed79559ac",
+    "context": "deploy-preview",
+    "publishedProduction": false
+  },
+  "envAccess": {
+    "verified": false,
+    "message": "El lector de variables no expone este sitio/equipo; no se guardaron valores"
+  },
+  "renderPanelAccess": {
+    "verified": false,
+    "message": "La conexion del navegador al panel expiro; sin valores de configuracion observados"
+  },
+  "neon": {
+    "projectId": "restless-cake-46112011",
+    "branchId": "br-proud-waterfall-b44u8y7p",
+    "database": "neondb",
+    "readOnly": true,
+    "results": [
+      [],
+      [
+        {
+          "base": "neondb",
+          "esquema": "public",
+          "solo_lectura": "on",
+          "barrios_publicos": "0",
+          "barrios_internos": "1",
+          "comunas": "10"
+        }
+      ],
+      [
+        {
+          "version": "16",
+          "script": "V16__enrutamiento_y_envios.sql",
+          "checksum": 658202370,
+          "success": true
+        },
+        {
+          "version": "15",
+          "script": "V15__barrio_interno.sql",
+          "checksum": -2102919762,
+          "success": true
+        },
+        {
+          "version": "14",
+          "script": "V14__capa_comunas_experimental.sql",
+          "checksum": 112048611,
+          "success": true
+        },
+        {
+          "version": "13",
+          "script": "V13__asignar_comuna_por_punto.sql",
+          "checksum": 1073748536,
+          "success": true
+        },
+        {
+          "version": "12",
+          "script": "V12__aviso_de_privacidad_v3.sql",
+          "checksum": -1876295070,
+          "success": true
+        }
+      ],
+      [
+        {
+          "id_barrio": 1,
+          "id_comuna": 1,
+          "nombre": "Administración NotiUrba",
+          "interno": true
+        }
+      ],
+      [
+        {
+          "fallidas": "0"
+        }
+      ]
+    ],
+    "sequence": [
+      [],
+      [
+        {
+          "secuencia": "public.barrio_id_barrio_seq",
+          "max_id": 1
+        }
+      ],
+      [
+        {
+          "schemaname": "public",
+          "sequencename": "barrio_id_barrio_seq",
+          "increment_by": "1",
+          "last_value": "1"
+        }
+      ]
+    ],
+    "mail": [
+      [],
+      [
+        {
+          "last_value": "1",
+          "is_called": true
+        }
+      ],
+      [
+        {
+          "id_categoria": 1,
+          "nombre": "Vías, huecos, andenes e infraestructura",
+          "requiere_ubicacion": true,
+          "correo_confirmado": true,
+          "prioriza_alterno": false
+        },
+        {
+          "id_categoria": 2,
+          "nombre": "Alumbrado, espacio público y convivencia",
+          "requiere_ubicacion": true,
+          "correo_confirmado": true,
+          "prioriza_alterno": false
+        },
+        {
+          "id_categoria": 3,
+          "nombre": "Basuras, árboles y afectaciones ambientales",
+          "requiere_ubicacion": true,
+          "correo_confirmado": true,
+          "prioriza_alterno": false
+        },
+        {
+          "id_categoria": 4,
+          "nombre": "Señalización vial, semáforos y movilidad",
+          "requiere_ubicacion": true,
+          "correo_confirmado": true,
+          "prioriza_alterno": false
+        },
+        {
+          "id_categoria": 5,
+          "nombre": "Riesgos sanitarios y salud pública",
+          "requiere_ubicacion": true,
+          "correo_confirmado": true,
+          "prioriza_alterno": false
+        },
+        {
+          "id_categoria": 6,
+          "nombre": "Uso del suelo y licencias urbanas",
+          "requiere_ubicacion": false,
+          "correo_confirmado": true,
+          "prioriza_alterno": false
+        },
+        {
+          "id_categoria": 7,
+          "nombre": "Infraestructura y servicios educativos",
+          "requiere_ubicacion": false,
+          "correo_confirmado": true,
+          "prioriza_alterno": false
+        },
+        {
+          "id_categoria": 8,
+          "nombre": "Desastres, inundaciones y deslizamientos",
+          "requiere_ubicacion": true,
+          "correo_confirmado": true,
+          "prioriza_alterno": false
+        },
+        {
+          "id_categoria": 9,
+          "nombre": "Vivienda",
+          "requiere_ubicacion": false,
+          "correo_confirmado": true,
+          "prioriza_alterno": false
+        },
+        {
+          "id_categoria": 10,
+          "nombre": "Otro / no clasificado",
+          "requiere_ubicacion": false,
+          "correo_confirmado": true,
+          "prioriza_alterno": false
+        },
+        {
+          "id_categoria": 11,
+          "nombre": "Acueducto y alcantarillado",
+          "requiere_ubicacion": true,
+          "correo_confirmado": false,
+          "prioriza_alterno": false
+        },
+        {
+          "id_categoria": 12,
+          "nombre": "Gas natural",
+          "requiere_ubicacion": true,
+          "correo_confirmado": true,
+          "prioriza_alterno": false
+        },
+        {
+          "id_categoria": 13,
+          "nombre": "Energía eléctrica",
+          "requiere_ubicacion": true,
+          "correo_confirmado": false,
+          "prioriza_alterno": true
+        },
+        {
+          "id_categoria": 14,
+          "nombre": "Recolección de basuras y barrido",
+          "requiere_ubicacion": true,
+          "correo_confirmado": false,
+          "prioriza_alterno": false
+        }
+      ],
+      []
+    ],
+    "safeRoute": [
+      [],
+      [
+        {
+          "id_categoria": 14,
+          "nombre": "Recolección de basuras y barrido",
+          "requiere_ubicacion": true,
+          "entidad": "Veolia Aseo Tuluá S.A.S. E.S.P.",
+          "dependencia": "Aseo",
+          "permite_correo": false,
+          "tipo_canal_alterno": "Web"
+        }
+      ]
+    ]
+  },
+  "writesProduction": 0,
+  "qaRepeated": false
+}

@@ -28,7 +28,7 @@ function FilaResumen({ etiqueta, children, a }) {
 
 export default function PasoConfirmacion() {
   const navigate = useNavigate()
-  const { borrador, fotos, setFotos, limpiar, categorias, barrios, guardado, conservarGuardado } = useReporte()
+  const { borrador, fotos, setFotos, categorias, barrios, guardado, conservarGuardado } = useReporte()
   const categoria = categorias?.find(c => String(c.idCategoria) === borrador.idCategoria)
   const idCategoria = String(borrador.idCategoria)
   const emergencia = Boolean(esEmergencia(borrador, categoria))
@@ -127,7 +127,6 @@ export default function PasoConfirmacion() {
           setFotos(pendientes => pendientes.slice(1))
         },
       })
-      limpiar()
       navigate('/reportar/enviado/' + resultado.codigoSeguimiento, { replace: true, state: { envio: resultado.envio } })
     } catch (e) {
       setError(e.codigo === 'FUERA_DE_COBERTURA'

@@ -1,0 +1,13 @@
+{
+  "fecha": "2026-11-08T22:16:43.797Z",
+  "codigo": "NU-000001",
+  "status": 502,
+  "body": {
+    "codigo": "ALMACEN_FOTOS_NO_DISPONIBLE",
+    "mensaje": "No pudimos guardar la foto en este momento. Intenta de nuevo en un momento.",
+    "campo": "foto"
+  },
+  "archivo": "foto-sintetica-NOT71.png",
+  "bytes": 222890,
+  "interceptado": false
+}

@@ -1,0 +1,98 @@
+{
+  "reporteHttp": {
+    "codigoSeguimiento": "NU-000001",
+    "estado": "Recibido",
+    "categoria": {
+      "idCategoria": 1,
+      "nombre": "Vías, huecos, andenes e infraestructura"
+    },
+    "descripcion": "PRUEBA SINTETICA QA NOT-71. Verificacion del recorrido con fotografia y ubicacion de prueba. No representa un incidente real ni debe enviarse a una entidad.",
+    "latitud": 4.084847878371718,
+    "longitud": -76.1953353881836,
+    "comuna": 4,
+    "barrio": {
+      "idBarrio": 43,
+      "nombre": "Centro"
+    },
+    "direccionIncidente": "Punto sintetico QA NOT-71, sin incidente real",
+    "matriculaCuentaServicio": null,
+    "radicadoOficial": null,
+    "fotos": [
+      {
+        "orden": 1,
+        "url": "http://127.0.0.1:19027/fotos/761d2113cbbccd6600366f6885f1cc1e656d33476780628150878faf178b6b67.jpg"
+      }
+    ],
+    "creadoEn": "2026-11-08T22:15:53.097272Z",
+    "vigenteHasta": "2026-12-08T22:15:53.097272Z",
+    "historial": [
+      {
+        "estado": "Recibido",
+        "observacion": "Reporte registrado por el ciudadano.",
+        "cambiadoEn": "2026-11-08T22:15:53.097272Z"
+      }
+    ],
+    "envio": {
+      "estado": "PENDIENTE",
+      "motivo": null
+    }
+  },
+  "api": "http://127.0.0.1:18092",
+  "sql": {
+    "codigo": "NU-000001",
+    "fecha": "2026-11-08T18:14:23.8465150-05:00",
+    "fotoHttp": "no comprobado por este script",
+    "fotoUrlPersistida": true,
+    "lecturaSql": true,
+    "NOT71": "NO_APROBADA",
+    "persistencia": {
+      "base": "notiurba_barrios_qa",
+      "usuarioSql": "qa_barrios",
+      "reporte": {
+        "idReporte": 1,
+        "codigo": "NU-000001",
+        "idUsuario": 2,
+        "correo": "qa.not71.20261108.2147@example.test",
+        "idCategoria": 1,
+        "categoria": "V├¡as, huecos, andenes e infraestructura",
+        "latitud": 4.084847878371718,
+        "longitud": -76.1953353881836,
+        "comuna": 4,
+        "origenComuna": "poligono",
+        "entidadId": 1,
+        "entidad": "Alcald├¡a de Tulu├í",
+        "destinoDerivado": "servicioalciudadano@tulua.gov.co",
+        "fotos": [
+          {
+            "idEvidencia": 1,
+            "idUsuario": 2,
+            "url": "http://127.0.0.1:19027/fotos/761d2113cbbccd6600366f6885f1cc1e656d33476780628150878faf178b6b67.jpg",
+            "orden": 1
+          }
+        ],
+        "envios": [
+          {
+            "canal": 1,
+            "destino": "servicioalciudadano@tulua.gov.co",
+            "estado": "PENDIENTE",
+            "enviadoEn": null
+          }
+        ]
+      }
+    }
+  },
+  "NOT71": "NO_APROBADA",
+  "uploadStatus": 201,
+  "hashRecuperado": "761d2113cbbccd6600366f6885f1cc1e656d33476780628150878faf178b6b67",
+  "urlRecuperable": "http://127.0.0.1:19027/fotos/761d2113cbbccd6600366f6885f1cc1e656d33476780628150878faf178b6b67.jpg",
+  "fecha": "2026-11-08T18:14:19.9194173-05:00",
+  "codigo": "NU-000001",
+  "foto": {
+    "licencia": "PD-self; Uncl3dad",
+    "sha256": "761d2113cbbccd6600366f6885f1cc1e656d33476780628150878faf178b6b67",
+    "bytes": 84460,
+    "source": "https://commons.wikimedia.org/wiki/File:Pothole_Small.jpg"
+  },
+  "loginStatus": 200,
+  "estado": "APROBADO_FOTO_Y_PERSISTENCIA_QA"
+}

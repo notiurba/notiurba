@@ -1,0 +1,39 @@
+{
+  "fecha": "2026-11-09T00:02:50.190Z",
+  "sqlFilas": 135,
+  "csvFilas": 135,
+  "correspondenciaExacta": true,
+  "sha256": "e824e2b71011938b8c0666f07b302ac537a81bd27865689055048fb503dd4fec",
+  "aprobadoPor": null,
+  "aprobadoEn": null,
+  "decisiones": [
+    {
+      "id": "B01",
+      "estado": "PENDIENTE",
+      "decision": null
+    },
+    {
+      "id": "B02",
+      "estado": "PENDIENTE",
+      "decision": null
+    },
+    {
+      "id": "B03",
+      "estado": "PENDIENTE",
+      "decision": null
+    },
+    {
+      "id": "B04",
+      "estado": "PENDIENTE",
+      "decision": null
+    },
+    {
+      "id": "B05",
+      "estado": "PENDIENTE",
+      "decision": null
+    }
+  ],
+  "ejecucionSQL": false,
+  "qaRepetida": false,
+  "hashRegistroPrevioCoincide": true
+}

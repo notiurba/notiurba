@@ -1,0 +1,53 @@
+{
+  "estado": "APROBADA_UI_AISLADA",
+  "alcance": "Componentes reales; fetch y almacenamiento en memoria; CSP connect-src none. No integracion HTTP.",
+  "verificaciones": {
+    "iniciaEnCrearReporte": true,
+    "recuperaConfirmacion": true,
+    "destinoFinal": true,
+    "limpiaAvance": true,
+    "limpiaBorrador": true,
+    "ceroCreaciones": true,
+    "ceroSubidas": true,
+    "confirmaUnaVez": true,
+    "codigoVisible": true
+  },
+  "visitas": [
+    "/reportar",
+    "/reportar/confirmacion",
+    "/reportar/enviado/NU-000001"
+  ],
+  "llamadas": [
+    {
+      "metodo": "GET",
+      "path": "/api/enrutamiento/categorias",
+      "simulada": true
+    },
+    {
+      "metodo": "GET",
+      "path": "/api/catalogos/barrios",
+      "simulada": true
+    },
+    {
+      "metodo": "GET",
+      "path": "/api/reportes/NU-000001",
+      "simulada": true
+    },
+    {
+      "metodo": "POST",
+      "path": "/api/reportes/NU-000001/enviar",
+      "simulada": true
+    },
+    {
+      "metodo": "GET",
+      "path": "/api/reportes/NU-000001",
+      "simulada": true
+    },
+    {
+      "metodo": "GET",
+      "path": "/api/reportes/NU-000001/envio",
+      "simulada": true
+    }
+  ],
+  "escriturasRed": 0
+}

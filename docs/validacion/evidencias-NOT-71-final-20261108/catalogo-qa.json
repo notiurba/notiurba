@@ -1,0 +1,682 @@
+{
+  "fecha": "2026-11-08T20:59:08.575Z",
+  "url": "http://127.0.0.1:18091/api/catalogos/barrios",
+  "status": 200,
+  "barrios": [
+    {
+      "idBarrio": 64,
+      "idComuna": 6,
+      "nombre": "350 años"
+    },
+    {
+      "idBarrio": 119,
+      "idComuna": 9,
+      "nombre": "Alameda I"
+    },
+    {
+      "idBarrio": 120,
+      "idComuna": 9,
+      "nombre": "Alameda II"
+    },
+    {
+      "idBarrio": 14,
+      "idComuna": 2,
+      "nombre": "Alvernia"
+    },
+    {
+      "idBarrio": 65,
+      "idComuna": 6,
+      "nombre": "Asoagrín Farfán"
+    },
+    {
+      "idBarrio": 22,
+      "idComuna": 3,
+      "nombre": "Asogrin Santacruz"
+    },
+    {
+      "idBarrio": 48,
+      "idComuna": 5,
+      "nombre": "Avenida Cali"
+    },
+    {
+      "idBarrio": 66,
+      "idComuna": 6,
+      "nombre": "Bolívar"
+    },
+    {
+      "idBarrio": 101,
+      "idComuna": 8,
+      "nombre": "Bosques de Maracaibo"
+    },
+    {
+      "idBarrio": 42,
+      "idComuna": 3,
+      "nombre": "Brisas del Morales"
+    },
+    {
+      "idBarrio": 79,
+      "idComuna": 6,
+      "nombre": "Buenos Aires"
+    },
+    {
+      "idBarrio": 23,
+      "idComuna": 3,
+      "nombre": "Casas Huertas"
+    },
+    {
+      "idBarrio": 43,
+      "idComuna": 4,
+      "nombre": "Centro"
+    },
+    {
+      "idBarrio": 15,
+      "idComuna": 2,
+      "nombre": "Céspedes"
+    },
+    {
+      "idBarrio": 102,
+      "idComuna": 8,
+      "nombre": "Chiminangos"
+    },
+    {
+      "idBarrio": 2,
+      "idComuna": 1,
+      "nombre": "Ciudad Campestre"
+    },
+    {
+      "idBarrio": 71,
+      "idComuna": 6,
+      "nombre": "Comuneros Corazón del Valle"
+    },
+    {
+      "idBarrio": 80,
+      "idComuna": 7,
+      "nombre": "Departamental"
+    },
+    {
+      "idBarrio": 81,
+      "idComuna": 7,
+      "nombre": "Diablos Rojos"
+    },
+    {
+      "idBarrio": 103,
+      "idComuna": 8,
+      "nombre": "Diablos Rojos"
+    },
+    {
+      "idBarrio": 50,
+      "idComuna": 5,
+      "nombre": "Doce de Octubre"
+    },
+    {
+      "idBarrio": 24,
+      "idComuna": 3,
+      "nombre": "El Bosque"
+    },
+    {
+      "idBarrio": 121,
+      "idComuna": 9,
+      "nombre": "El Bosquecito"
+    },
+    {
+      "idBarrio": 25,
+      "idComuna": 3,
+      "nombre": "El Condor"
+    },
+    {
+      "idBarrio": 39,
+      "idComuna": 3,
+      "nombre": "El Condor II"
+    },
+    {
+      "idBarrio": 82,
+      "idComuna": 7,
+      "nombre": "El Descanso"
+    },
+    {
+      "idBarrio": 26,
+      "idComuna": 3,
+      "nombre": "El Dorado"
+    },
+    {
+      "idBarrio": 105,
+      "idComuna": 8,
+      "nombre": "El Horizonte"
+    },
+    {
+      "idBarrio": 122,
+      "idComuna": 9,
+      "nombre": "El Jardín"
+    },
+    {
+      "idBarrio": 5,
+      "idComuna": 1,
+      "nombre": "El Jazmín"
+    },
+    {
+      "idBarrio": 51,
+      "idComuna": 5,
+      "nombre": "El Lago"
+    },
+    {
+      "idBarrio": 52,
+      "idComuna": 5,
+      "nombre": "El Laguito"
+    },
+    {
+      "idBarrio": 106,
+      "idComuna": 8,
+      "nombre": "El Limonar"
+    },
+    {
+      "idBarrio": 123,
+      "idComuna": 9,
+      "nombre": "El Palmar"
+    },
+    {
+      "idBarrio": 136,
+      "idComuna": 10,
+      "nombre": "El Paraíso"
+    },
+    {
+      "idBarrio": 67,
+      "idComuna": 6,
+      "nombre": "El Pinar"
+    },
+    {
+      "idBarrio": 83,
+      "idComuna": 7,
+      "nombre": "El Porvenir"
+    },
+    {
+      "idBarrio": 53,
+      "idComuna": 5,
+      "nombre": "El Principio"
+    },
+    {
+      "idBarrio": 104,
+      "idComuna": 8,
+      "nombre": "El Refugio"
+    },
+    {
+      "idBarrio": 3,
+      "idComuna": 1,
+      "nombre": "El Retiro"
+    },
+    {
+      "idBarrio": 98,
+      "idComuna": 7,
+      "nombre": "El Rojas"
+    },
+    {
+      "idBarrio": 16,
+      "idComuna": 2,
+      "nombre": "Entre Ríos"
+    },
+    {
+      "idBarrio": 44,
+      "idComuna": 4,
+      "nombre": "Escobar"
+    },
+    {
+      "idBarrio": 27,
+      "idComuna": 3,
+      "nombre": "Estambul"
+    },
+    {
+      "idBarrio": 84,
+      "idComuna": 7,
+      "nombre": "Farfán"
+    },
+    {
+      "idBarrio": 4,
+      "idComuna": 1,
+      "nombre": "Fátima"
+    },
+    {
+      "idBarrio": 107,
+      "idComuna": 8,
+      "nombre": "Flor de la Campana"
+    },
+    {
+      "idBarrio": 17,
+      "idComuna": 2,
+      "nombre": "Franciscanos"
+    },
+    {
+      "idBarrio": 85,
+      "idComuna": 7,
+      "nombre": "Guayacanes"
+    },
+    {
+      "idBarrio": 108,
+      "idComuna": 8,
+      "nombre": "Horizonte - Santa Isabel"
+    },
+    {
+      "idBarrio": 124,
+      "idComuna": 9,
+      "nombre": "Internacional"
+    },
+    {
+      "idBarrio": 109,
+      "idComuna": 8,
+      "nombre": "Jorge Eliecer Gaitán"
+    },
+    {
+      "idBarrio": 86,
+      "idComuna": 7,
+      "nombre": "José Antonio Galán"
+    },
+    {
+      "idBarrio": 87,
+      "idComuna": 7,
+      "nombre": "Juan de Lemus y Aguirre"
+    },
+    {
+      "idBarrio": 125,
+      "idComuna": 9,
+      "nombre": "Juan XXIII"
+    },
+    {
+      "idBarrio": 54,
+      "idComuna": 5,
+      "nombre": "La Bastilla"
+    },
+    {
+      "idBarrio": 88,
+      "idComuna": 7,
+      "nombre": "La Campiña"
+    },
+    {
+      "idBarrio": 68,
+      "idComuna": 6,
+      "nombre": "La Ceiba"
+    },
+    {
+      "idBarrio": 69,
+      "idComuna": 6,
+      "nombre": "La Esperanza"
+    },
+    {
+      "idBarrio": 126,
+      "idComuna": 9,
+      "nombre": "La Graciela"
+    },
+    {
+      "idBarrio": 78,
+      "idComuna": 6,
+      "nombre": "La Herradura"
+    },
+    {
+      "idBarrio": 110,
+      "idComuna": 8,
+      "nombre": "La Independencia"
+    },
+    {
+      "idBarrio": 28,
+      "idComuna": 3,
+      "nombre": "La Inmaculada"
+    },
+    {
+      "idBarrio": 55,
+      "idComuna": 5,
+      "nombre": "La Merced"
+    },
+    {
+      "idBarrio": 89,
+      "idComuna": 7,
+      "nombre": "La Quinta"
+    },
+    {
+      "idBarrio": 18,
+      "idComuna": 2,
+      "nombre": "La Rivera"
+    },
+    {
+      "idBarrio": 56,
+      "idComuna": 5,
+      "nombre": "Las Acacias"
+    },
+    {
+      "idBarrio": 90,
+      "idComuna": 7,
+      "nombre": "Las Américas"
+    },
+    {
+      "idBarrio": 30,
+      "idComuna": 3,
+      "nombre": "Las Brisas"
+    },
+    {
+      "idBarrio": 70,
+      "idComuna": 6,
+      "nombre": "Las Delicias"
+    },
+    {
+      "idBarrio": 12,
+      "idComuna": 1,
+      "nombre": "Las Lomas"
+    },
+    {
+      "idBarrio": 91,
+      "idComuna": 7,
+      "nombre": "Las Nieves"
+    },
+    {
+      "idBarrio": 45,
+      "idComuna": 4,
+      "nombre": "Las Olas"
+    },
+    {
+      "idBarrio": 31,
+      "idComuna": 3,
+      "nombre": "Las Palmas"
+    },
+    {
+      "idBarrio": 92,
+      "idComuna": 7,
+      "nombre": "Las Veraneras"
+    },
+    {
+      "idBarrio": 127,
+      "idComuna": 9,
+      "nombre": "La Trinidad"
+    },
+    {
+      "idBarrio": 93,
+      "idComuna": 7,
+      "nombre": "Laureles I y II"
+    },
+    {
+      "idBarrio": 29,
+      "idComuna": 3,
+      "nombre": "La Villa"
+    },
+    {
+      "idBarrio": 13,
+      "idComuna": 1,
+      "nombre": "Lomitas"
+    },
+    {
+      "idBarrio": 96,
+      "idComuna": 7,
+      "nombre": "Los Olmos"
+    },
+    {
+      "idBarrio": 41,
+      "idComuna": 3,
+      "nombre": "Los Pinos"
+    },
+    {
+      "idBarrio": 94,
+      "idComuna": 7,
+      "nombre": "Los Tolúes"
+    },
+    {
+      "idBarrio": 57,
+      "idComuna": 5,
+      "nombre": "Lusitania"
+    },
+    {
+      "idBarrio": 128,
+      "idComuna": 9,
+      "nombre": "Maracaibo"
+    },
+    {
+      "idBarrio": 72,
+      "idComuna": 6,
+      "nombre": "Marandúa"
+    },
+    {
+      "idBarrio": 6,
+      "idComuna": 1,
+      "nombre": "Miraflores"
+    },
+    {
+      "idBarrio": 32,
+      "idComuna": 3,
+      "nombre": "Morales"
+    },
+    {
+      "idBarrio": 40,
+      "idComuna": 3,
+      "nombre": "Moralito"
+    },
+    {
+      "idBarrio": 111,
+      "idComuna": 8,
+      "nombre": "Municipal"
+    },
+    {
+      "idBarrio": 19,
+      "idComuna": 2,
+      "nombre": "Nuevo Alvernia"
+    },
+    {
+      "idBarrio": 95,
+      "idComuna": 7,
+      "nombre": "Nuevo Farfán"
+    },
+    {
+      "idBarrio": 33,
+      "idComuna": 3,
+      "nombre": "Nuevo Morales"
+    },
+    {
+      "idBarrio": 63,
+      "idComuna": 5,
+      "nombre": "Nuevo Príncipe"
+    },
+    {
+      "idBarrio": 62,
+      "idComuna": 5,
+      "nombre": "Olímpico"
+    },
+    {
+      "idBarrio": 46,
+      "idComuna": 4,
+      "nombre": "Palobonito"
+    },
+    {
+      "idBarrio": 7,
+      "idComuna": 1,
+      "nombre": "Panamericano"
+    },
+    {
+      "idBarrio": 73,
+      "idComuna": 6,
+      "nombre": "Playas"
+    },
+    {
+      "idBarrio": 34,
+      "idComuna": 3,
+      "nombre": "Popular"
+    },
+    {
+      "idBarrio": 129,
+      "idComuna": 9,
+      "nombre": "Portales del Rio"
+    },
+    {
+      "idBarrio": 97,
+      "idComuna": 7,
+      "nombre": "Prados del Norte"
+    },
+    {
+      "idBarrio": 74,
+      "idComuna": 6,
+      "nombre": "Primero de Mayo"
+    },
+    {
+      "idBarrio": 75,
+      "idComuna": 6,
+      "nombre": "Progresar"
+    },
+    {
+      "idBarrio": 76,
+      "idComuna": 6,
+      "nombre": "Pueblo Nuevo"
+    },
+    {
+      "idBarrio": 61,
+      "idComuna": 5,
+      "nombre": "Quintas de San Felipe"
+    },
+    {
+      "idBarrio": 130,
+      "idComuna": 9,
+      "nombre": "Riopaila"
+    },
+    {
+      "idBarrio": 99,
+      "idComuna": 7,
+      "nombre": "Rubén Cruz Vélez"
+    },
+    {
+      "idBarrio": 58,
+      "idComuna": 5,
+      "nombre": "Sajonia"
+    },
+    {
+      "idBarrio": 59,
+      "idComuna": 5,
+      "nombre": "Salesianos"
+    },
+    {
+      "idBarrio": 131,
+      "idComuna": 9,
+      "nombre": "Samán del Norte"
+    },
+    {
+      "idBarrio": 35,
+      "idComuna": 3,
+      "nombre": "San Antonio"
+    },
+    {
+      "idBarrio": 8,
+      "idComuna": 1,
+      "nombre": "San Benito La Rivera"
+    },
+    {
+      "idBarrio": 60,
+      "idComuna": 5,
+      "nombre": "San Carlos"
+    },
+    {
+      "idBarrio": 134,
+      "idComuna": 10,
+      "nombre": "San Francisco"
+    },
+    {
+      "idBarrio": 112,
+      "idComuna": 8,
+      "nombre": "San Luis"
+    },
+    {
+      "idBarrio": 77,
+      "idComuna": 6,
+      "nombre": "San Pedro Claver"
+    },
+    {
+      "idBarrio": 113,
+      "idComuna": 8,
+      "nombre": "Santa Inés"
+    },
+    {
+      "idBarrio": 117,
+      "idComuna": 8,
+      "nombre": "Santa Inés - Comfamiliar"
+    },
+    {
+      "idBarrio": 21,
+      "idComuna": 2,
+      "nombre": "Santa Lucia"
+    },
+    {
+      "idBarrio": 36,
+      "idComuna": 3,
+      "nombre": "Santa Rita del Rio"
+    },
+    {
+      "idBarrio": 20,
+      "idComuna": 2,
+      "nombre": "San Vicente de Paul"
+    },
+    {
+      "idBarrio": 132,
+      "idComuna": 9,
+      "nombre": "Siete de Agosto"
+    },
+    {
+      "idBarrio": 118,
+      "idComuna": 8,
+      "nombre": "Sintrasancarlos"
+    },
+    {
+      "idBarrio": 114,
+      "idComuna": 8,
+      "nombre": "Tercer Milenio"
+    },
+    {
+      "idBarrio": 47,
+      "idComuna": 4,
+      "nombre": "Tomás Uribe"
+    },
+    {
+      "idBarrio": 135,
+      "idComuna": 10,
+      "nombre": "Urbanización La Paz"
+    },
+    {
+      "idBarrio": 49,
+      "idComuna": 5,
+      "nombre": "Urbanización Lusitania"
+    },
+    {
+      "idBarrio": 37,
+      "idComuna": 3,
+      "nombre": "Urbanización Peñaranda"
+    },
+    {
+      "idBarrio": 115,
+      "idComuna": 8,
+      "nombre": "Urbanización San Luis"
+    },
+    {
+      "idBarrio": 9,
+      "idComuna": 1,
+      "nombre": "Victoria"
+    },
+    {
+      "idBarrio": 10,
+      "idComuna": 1,
+      "nombre": "Villa Campestre"
+    },
+    {
+      "idBarrio": 133,
+      "idComuna": 9,
+      "nombre": "Villa Colombia"
+    },
+    {
+      "idBarrio": 11,
+      "idComuna": 1,
+      "nombre": "Villa del Rio"
+    },
+    {
+      "idBarrio": 100,
+      "idComuna": 7,
+      "nombre": "Villa del Sur"
+    },
+    {
+      "idBarrio": 116,
+      "idComuna": 8,
+      "nombre": "Villa Liliana"
+    },
+    {
+      "idBarrio": 38,
+      "idComuna": 3,
+      "nombre": "Villa Nueva"
+    }
+  ]
+}

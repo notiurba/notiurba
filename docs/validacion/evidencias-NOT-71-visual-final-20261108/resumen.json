@@ -1,0 +1,39 @@
+{
+  "mobile": {
+    "viewport": 360,
+    "controlesAccesiblesPorScroll": true,
+    "clientWidth": 345,
+    "scrollWidth": 345,
+    "aprobada": true
+  },
+  "api": "http://127.0.0.1:18092",
+  "desktop": {
+    "viewport": 1366,
+    "clientWidth": 1351,
+    "scrollWidth": 1351,
+    "aprobada": true
+  },
+  "evidenciaFotoReutilizada": "foto-local-20261108-181419.json",
+  "comuna": 4,
+  "codigo": "NU-000001",
+  "evidenciaSqlReutilizada": "persistencia-SQL-20261108-181423.json",
+  "NOT71": "IN_REVIEW_NO_APROBADA_EN_PRODUCCION",
+  "fecha": "2026-11-08T18:25:55.5765055-05:00",
+  "rama": "fix/registro-pr20",
+  "navegacion": {
+    "comprobaciones": 9,
+    "escriturasBackend": 0,
+    "alcance": "Recuperacion del reporte existente, componentes reales y dependencias simuladas, sin conexion de escritura",
+    "estado": "APROBADA_UI_AISLADA",
+    "rutas": [
+      "/reportar",
+      "/reportar/confirmacion",
+      "/reportar/enviado/NU-000001"
+    ]
+  },
+  "url": "http://127.0.0.1:5176/reportar/enviado/NU-000001",
+  "lintQaExit": 0,
+  "destino": "Alcald├¡a de Tulu├í",
+  "fotoAsociadaSql": 1,
+  "fotoSqlReejecutados": false
+}

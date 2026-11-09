@@ -1,0 +1,45 @@
+{
+  "alto": 800,
+  "ancho": 360,
+  "cliente": 345,
+  "codigo": "NU-000001",
+  "controles": [
+    {
+      "alto": 40,
+      "ancho": 40,
+      "derecha": 329,
+      "izquierda": 289,
+      "texto": "Cerrar"
+    },
+    {
+      "alto": 46,
+      "ancho": 313,
+      "derecha": 329,
+      "izquierda": 16,
+      "texto": "Actualizar estado del correo"
+    },
+    {
+      "alto": 40,
+      "ancho": 40,
+      "derecha": 312,
+      "izquierda": 272,
+      "texto": "Copiar el código"
+    },
+    {
+      "alto": 46,
+      "ancho": 313,
+      "derecha": 329,
+      "izquierda": 16,
+      "texto": "Ver mis reportes"
+    },
+    {
+      "alto": 46,
+      "ancho": 313,
+      "derecha": 329,
+      "izquierda": 16,
+      "texto": "Hacer otro reporte"
+    }
+  ],
+  "documento": 345,
+  "titulo": "Reporte guardado"
+}

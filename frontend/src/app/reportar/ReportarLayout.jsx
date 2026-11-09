@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { obtenerBarrios } from '../../compartido/api/catalogos'
 import { estadoSesion } from '../../compartido/auth/sesion'
@@ -25,6 +25,20 @@ export default function ReportarLayout() {
 
   useEffect(() => guardarBorrador(borrador), [borrador])
 
+  const limpiar = useCallback(() => {
+    borrarBorrador()
+    setBorrador(leerBorrador())
+    setFotos([])
+    guardarAvance(null)
+    setGuardado(null)
+  }, [])
+
+  // Sincronizar el borrador con la navegacion ya completada, nunca antes de salir del paso 4.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- La URL confirma el fin del flujo; el guardado se consume una sola vez.
+    if (guardado && pathname === '/reportar/enviado/' + guardado.codigoSeguimiento) limpiar()
+  }, [pathname, guardado, limpiar])
+
   function conservarGuardado(valor) {
     guardarAvance(valor)
     setGuardado(valor)
@@ -45,12 +59,7 @@ export default function ReportarLayout() {
     guardado,
     conservarGuardado,
     // Después de enviar o cancelar, el borrador queda vacío.
-    limpiar: () => {
-      borrarBorrador()
-      setBorrador(leerBorrador())
-      setFotos([])
-      conservarGuardado(null)
-    },
+    limpiar,
     categorias: categorias.datos,
     // Si no hay barrios disponibles se conserva la alternativa del punto en el mapa.
     barrios: barrios.datos ?? [],

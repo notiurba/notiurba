@@ -1,0 +1,23 @@
+{
+  "fecha": "2026-11-08T23:59:13.490Z",
+  "resultados": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "ms": 25046,
+      "error": "TimeoutError"
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalogos/barrios",
+      "ms": 25011,
+      "error": "TimeoutError"
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalogos/tipos-documento",
+      "ms": 25010,
+      "error": "TimeoutError"
+    }
+  ]
+}

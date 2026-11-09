@@ -1,0 +1,16 @@
+Extracto de stdout obtenido en la reproduccion local del 8 de noviembre de 2026,
+17:52 America/Bogota, con loader.path apuntando a target/test-classes completo.
+Credencial ficticia de diagnostico, no credencial real. Salida Java: 1.
+Se conserva este extracto de la salida observada de la herramienta; el directorio
+temporal de esa ejecucion aislada no fue recuperable en una llamada posterior.
+No corresponde al archivo inexistente de la ejecucion historica del usuario.
+
+APPLICATION FAILED TO START
+
+Description:
+
+Parameter 0 of constructor in com.notiurba.admin.AdminRepositorio required a bean of type 'org.springframework.jdbc.core.JdbcTemplate' that could not be found.
+
+Action:
+
+Consider defining a bean of type 'org.springframework.jdbc.core.JdbcTemplate' in your configuration.

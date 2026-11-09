@@ -1,0 +1,10 @@
+{
+  "fecha": "2026-11-08T20:57:18.448Z",
+  "registro": 201,
+  "login": 403,
+  "codigo": "CORREO_NO_VERIFICADO",
+  "reporte": "bloqueado sin sesion verificada",
+  "correoExterno": "no habilitado por configuracion QA informada; no se solicito reenvio",
+  "sqlPersistencia": "pendiente: Docker sin permisos y sin conexion SQL disponible",
+  "foto": "no probada en este recorrido"
+}

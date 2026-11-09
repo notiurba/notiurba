@@ -1,0 +1,16 @@
+{
+  "reporteExistente": "NU-000001",
+  "correoHabilitado": false,
+  "fotos": "http://127.0.0.1:19027/fotos/",
+  "storage": "C:\\Users\\Usuario\\AppData\\Local\\Temp\\not71-fotos-20261108-181341-b3315b",
+  "fecha": "2026-11-08T18:14:19.8308513-05:00",
+  "vitePid": 47284,
+  "database": "notiurba_barrios_qa",
+  "flywayHabilitado": false,
+  "estadoNOT71": "NO_APROBADA",
+  "container": "notiurba-barrios-qa-20261108-153240-458c80",
+  "apiPid": 39992,
+  "api": "http://127.0.0.1:18092",
+  "frontend": "http://127.0.0.1:5176/login",
+  "fotoSubidaProbada": false
+}

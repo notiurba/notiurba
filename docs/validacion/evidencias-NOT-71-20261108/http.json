@@ -1,0 +1,49 @@
+{
+  "fecha": "2026-11-08T19:58:08.042Z",
+  "checks": [
+    {
+      "url": "http://127.0.0.1:5174/api/catalogos/barrios",
+      "status": 200,
+      "body": "[]",
+      "headers": {
+        "content-type": "application/json",
+        "server": "cloudflare",
+        "x-render-origin-server": "Render"
+      }
+    },
+    {
+      "url": "https://notiurba-api.onrender.com/api/catalogos/barrios",
+      "status": 200,
+      "body": "[]",
+      "headers": {
+        "content-type": "application/json",
+        "server": "cloudflare",
+        "x-render-origin-server": "Render"
+      }
+    },
+    {
+      "url": "https://notiurba.netlify.app/registro",
+      "status": 200,
+      "headers": {
+        "content-type": "text/html; charset=UTF-8",
+        "server": "Netlify"
+      },
+      "scripts": [
+        "/assets/index-DtWzeXbA.js",
+        "/.netlify/scripts/hud?variant=public"
+      ],
+      "apiRender": true
+    }
+  ],
+  "entornoLocal": {
+    "VITE_USAR_MOCKS": "false",
+    "VITE_API_URL": "",
+    "fuente": "modulo servido /src/compartido/api/cliente.js",
+    "api": "/api/catalogos/barrios",
+    "proxy": "Respuesta con x-render-origin-server: Render; frontend/vite.config.js apunta a https://notiurba-api.onrender.com"
+  },
+  "backendQaAnterior": {
+    "url": "http://127.0.0.1:18090/api/catalogos/barrios",
+    "error": "ECONNREFUSED"
+  }
+}
