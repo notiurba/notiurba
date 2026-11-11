@@ -31,13 +31,13 @@ if (new Set(entries.map(e => e.comuna + ':' + e.nombre)).size !== 135) throw new
 const csv = 'comuna,barrio\n' + entries.map(e => e.comuna + ',' + e.nombre).join('\n') + '\n';
 fs.writeFileSync(dir + '/barrios-pmgr-2020.csv', csv);
 fs.writeFileSync(dir + '/transcripcion.json', JSON.stringify(entries, null, 2) + '\n');
-fs.copyFileSync('output/pmgr-tulua-2020.pdf', dir + '/fuente-pmgr-2020.pdf');
+// El PDF fuente canonico ya esta versionado; no duplicarlo en output.
 const source = {
   url: 'https://tulua.gov.co/loader.php?lServicio=Tools2&lTipo=descargas&lFuncion=exposeDocument&idFile=12112',
   titulo: 'Actualización Plan Municipal de Gestión del Riesgo V3 diciembre 2020',
   emisor: 'Alcaldía de Tuluá, Secretaría de Gobierno; tabla atribuida a DAPM Tuluá',
   tabla: '4. División Político Administrativa de Tuluá', paginas: [16,17,18,19,20,21],
-  sha256: crypto.createHash('sha256').update(fs.readFileSync('output/pmgr-tulua-2020.pdf')).digest('hex'),
+  sha256: crypto.createHash('sha256').update(fs.readFileSync('docs/validacion/evidencias-catalogo-barrios-20261107/fuente-pmgr-2020.pdf')).digest('hex'),
   filas: entries.length, conteosPorComuna: counts,
   alcance: 'Fuente oficial histórica de 2020; no acredita vigencia administrativa en 2026. Preparación para revisión, no aplicada a producción.',
   incidencias: ['La fuente repite el ordinal global 41 y omite 46: se usa la columna Comuna y la numeración local, no el ordinal como id_barrio.', 'Cgto. Aguaclara no se incluye: la fuente lo identifica como corregimiento.', 'Se conservan los nombres tal como aparecen, incluido El Principio y Urbanización Lusitania/Lusitania (comuna 5). Validar esos nombres y la vigencia con DAPM antes de producción.']

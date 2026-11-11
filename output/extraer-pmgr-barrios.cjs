@@ -3,7 +3,7 @@ const fs = require('node:fs');
   const cv = require('C:/Users/Usuario/AppData/Local/Temp/not68-pdf-render/node_modules/@napi-rs/canvas');
   Object.assign(globalThis, { DOMMatrix: cv.DOMMatrix, ImageData: cv.ImageData, Path2D: cv.Path2D });
   const pdf = await import('file:///C:/Users/Usuario/AppData/Local/Temp/not68-pdf-render/node_modules/pdfjs-dist/legacy/build/pdf.mjs');
-  const d = await pdf.getDocument({ data: new Uint8Array(fs.readFileSync('output/pmgr-tulua-2020.pdf')), useSystemFonts: true }).promise;
+  const d = await pdf.getDocument({ data: new Uint8Array(fs.readFileSync('docs/validacion/evidencias-catalogo-barrios-20261107/fuente-pmgr-2020.pdf')), useSystemFonts: true }).promise;
   const result = [];
   for (let i = 16; i <= 21; i++) {
     const p = await d.getPage(i);

@@ -101,3 +101,8 @@ del usuario sin su intervención y autorización para esa cuenta de prueba.
 
 No se considera que Google funcione de punta a punta todavía. Las aprobaciones anteriores de NOT-71
 se conservan; este trabajo no autoriza cerrar NOT-71 ni cambia su estado de In Review.
+
+
+## Conservacion tras limpieza del 11 de noviembre de 2026
+
+Los logs completos, intentos fallidos provisionales y copias de builds remotos se retiraron del seguimiento. Las menciones anteriores describen el ensayo historico, no dependencias de ejecucion ni enlaces de descarga actuales. Se conservan los resultados resumidos, capturas unicas, hashes y scripts vigentes. El inventario exacto y la recuperacion historica estan en [el informe de limpieza](2026-11-11-limpieza-repositorio.md).

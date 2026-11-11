@@ -136,3 +136,8 @@ La capa comuna desplegada proviene de V14 experimental. Verificar la asignacion 
 Carpeta `evidencias-NOT-71-produccion-auditoria-20261108/`: metadatos conectores sanitizados, lecturas Neon, manifest/bytes de bundle publico, chunks y fragmento de navegacion, GET Render/timeouts y reintento limitado, inventario de diferencias. No contiene claves ni tokens.
 
 Los hechos suficientes para bloquear el inicio productivo son: catalogo sin filas publicas y sin autorizacion de V17, frontend publicado anterior a las correcciones, disponibilidad API no acreditada en esta auditoria y configuracion runtime de correo/fotos/conexion aun sin verificar. El respaldo recuperable, la ventana y el caso productivo con escritura tambien requieren aprobacion. **Mantener NOT-71 en In Review.**
+
+
+## Conservacion tras limpieza del 11 de noviembre de 2026
+
+Los logs completos, intentos fallidos provisionales y copias de builds remotos se retiraron del seguimiento. Las menciones anteriores describen el ensayo historico, no dependencias de ejecucion ni enlaces de descarga actuales. Se conservan los resultados resumidos, capturas unicas, hashes y scripts vigentes. El inventario exacto y la recuperacion historica estan en [el informe de limpieza](2026-11-11-limpieza-repositorio.md).

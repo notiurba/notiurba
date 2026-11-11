@@ -65,3 +65,8 @@ Carpeta `evidencias-NOT-71-arranque-20261108/`: script original respaldado, extr
 ![Confirmacion con codigo, comuna y destino](evidencias-NOT-71-arranque-20261108/confirmacion-codigo-comuna.png)
 
 **NOT-71 permanece In Review/no aprobada.** Falta ejecutar la subida local recuperable y SQL sobre el adaptador corregido, verificar la transicion automatica de confirmacion y demostrar por separado la E2E autorizada en Netlify/Render/Neon. Este trabajo no acredita Cloudinary productivo ni modifica el bloqueo productivo del catalogo.
+
+
+## Conservacion tras limpieza del 11 de noviembre de 2026
+
+Los logs completos, intentos fallidos provisionales y copias de builds remotos se retiraron del seguimiento. Las menciones anteriores describen el ensayo historico, no dependencias de ejecucion ni enlaces de descarga actuales. Se conservan los resultados resumidos, capturas unicas, hashes y scripts vigentes. El inventario exacto y la recuperacion historica estan en [el informe de limpieza](2026-11-11-limpieza-repositorio.md).
