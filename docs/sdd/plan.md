@@ -6,9 +6,9 @@
 
 | Campo | Valor |
 | --- | --- |
-| Estado | **En revisión** (Borrador → En revisión → Aprobado) |
+| Estado | **Aprobado** (Borrador → En revisión → Aprobado) |
 | Especificación | [spec.md](spec.md) (aprobada el 2026-11-12 y modificada ese día con el atajo, opción A) |
-| Aprobado por / fecha | _(pendiente)_ |
+| Aprobado por / fecha | Andrés, 2026-11-12 |
 | Última actualización | 2026-11-12 |
 
 ## 1. Enfoque general
@@ -136,7 +136,7 @@ Incluye entradas hostiles (HTML en la descripción, enlaces de foto no seguros) 
 
 ## 8. Aprobación
 
-- [ ] Cada criterio de `spec.md` tiene un cambio técnico y una prueba.
-- [ ] No introduce otro framework ni otra base de datos.
-- [ ] Contrato de API y migración revisados.
-- [ ] **Aprobado por el usuario** → se puede pasar a `tasks.md`.
+- [x] Cada criterio de `spec.md` tiene un cambio técnico y una prueba.
+- [x] No introduce otro framework ni otra base de datos.
+- [x] Contrato de API y migración revisados (endpoints agregados como PLANEADO en `docs/contexto/11-contrato-api.md` §4).
+- [x] **Aprobado por el usuario** (2026-11-12) → se puede pasar a `tasks.md`.
