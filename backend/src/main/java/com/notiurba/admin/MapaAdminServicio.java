@@ -2,7 +2,6 @@ package com.notiurba.admin;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -13,10 +12,11 @@ import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.notiurba.admin.MapaAdminRepositorio.ConteoComuna;
-import com.notiurba.reporte.ListadoReportesServicio;
+import com.notiurba.reporte.FiltroPanel;
 import com.notiurba.reporte.ReporteDetalleResponse;
 import com.notiurba.web.error.ApiException;
 import com.notiurba.web.error.Codigos;
@@ -33,14 +33,13 @@ public class MapaAdminServicio {
     }
 
     @Transactional(readOnly = true)
-    public MapaResponse mapa(String estado, Integer idCategoria, Integer comuna, LocalDate desde, LocalDate hasta) {
-        return repositorio.mapa(filtro(estado, idCategoria, comuna, desde, hasta));
+    public MapaResponse mapa(FiltroPanel f) {
+        return repositorio.mapa(f);
     }
 
-    @Transactional(readOnly = true)
-    public CalorResponse calor(String estado, Integer idCategoria, Integer comuna, LocalDate desde, LocalDate hasta,
-            int pagina, int tamano) {
-        FiltroMapa f = filtro(estado, idCategoria, comuna, desde, hasta);
+    /** REPEATABLE_READ: puntos y comunas salen de dos consultas y deben ver los mismos reportes. */
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
+    public CalorResponse calor(FiltroPanel f, int pagina, int tamano) {
         validarPaginacion(pagina, tamano);
         MapaAdminRepositorio.DatosCalor datos = repositorio.calor(f);
         long sinComuna = datos.comunas().stream().filter(c -> c.comuna() == null).mapToLong(ConteoComuna::total).sum();
@@ -49,24 +48,10 @@ public class MapaAdminServicio {
                 paginar(datos.comunas(), pagina, tamano));
     }
 
-    @Transactional(readOnly = true)
-    public EstadisticasResponse estadisticas(String estado, Integer idCategoria, Integer comuna, LocalDate desde,
-            LocalDate hasta, String vigencia) {
-        FiltroMapa f = filtro(estado, idCategoria, comuna, desde, hasta);
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
+    public EstadisticasResponse estadisticas(FiltroPanel f, String vigencia) {
         FiltroVigencia v = vigencia(vigencia);
-        return armar(v, repositorio.estadisticas(f, v), repositorio.categoriasActivas());
-    }
-
-    /** Mismas reglas y mensajes que el listado del panel. Una categoría que no existe da una lista vacía. */
-    static FiltroMapa filtro(String estado, Integer idCategoria, Integer comuna, LocalDate desde, LocalDate hasta) {
-        if (comuna != null && (comuna < 1 || comuna > 10)) {
-            throw error("La comuna es un número de 1 a 10", "comuna");
-        }
-        if (desde != null && hasta != null && desde.isAfter(hasta)) {
-            throw error("La fecha «desde» no puede ser posterior a «hasta»", "desde");
-        }
-        return new FiltroMapa(ListadoReportesServicio.nombreDeEstado(estado).orElse(null), idCategoria, comuna,
-                desde, hasta);
+        return armar(v, f.idCategoria(), repositorio.estadisticas(f, v), repositorio.categoriasActivas());
     }
 
     static void validarPaginacion(int pagina, int tamano) {
@@ -109,10 +94,11 @@ public class MapaAdminServicio {
 
     /**
      * Completa con ceros los 4 estados, las 10 comunas y las categorías activas, para que las tablas del panel
-     * salgan completas. Las categorías van de más a menos reportes.
+     * salgan completas. Con filtro de categoría solo aparece esa, para no mostrar ceros que no son reales.
+     * Las categorías van de más a menos reportes.
      */
-    static EstadisticasResponse armar(FiltroVigencia vigencia, List<MapaAdminRepositorio.ConteoEstadistica> filas,
-            List<ReporteDetalleResponse.Categoria> catalogo) {
+    static EstadisticasResponse armar(FiltroVigencia vigencia, Integer categoriaFiltrada,
+            List<MapaAdminRepositorio.ConteoEstadistica> filas, List<ReporteDetalleResponse.Categoria> catalogo) {
         Map<String, Long> porEstado = new LinkedHashMap<>();
         for (EstadoReporte e : EstadoReporte.values()) {
             porEstado.put(e.nombre(), 0L);
@@ -120,8 +106,10 @@ public class MapaAdminServicio {
         Map<Integer, String> nombres = new LinkedHashMap<>();
         Map<Integer, Long> porCategoria = new HashMap<>();
         for (ReporteDetalleResponse.Categoria c : catalogo) {
-            nombres.put(c.idCategoria(), c.nombre());
-            porCategoria.put(c.idCategoria(), 0L);
+            if (categoriaFiltrada == null || categoriaFiltrada.equals(c.idCategoria())) {
+                nombres.put(c.idCategoria(), c.nombre());
+                porCategoria.put(c.idCategoria(), 0L);
+            }
         }
         long[] porComuna = new long[10];
         long total = 0;

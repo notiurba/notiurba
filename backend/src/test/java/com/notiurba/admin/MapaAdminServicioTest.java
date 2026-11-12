@@ -3,7 +3,6 @@ package com.notiurba.admin;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -21,49 +20,6 @@ class MapaAdminServicioTest {
             assertThat(e.getCampo()).isEqualTo(campo);
             assertThat(e.getReason()).isNotBlank();
         });
-    }
-
-    @Test
-    void sinFiltrosTodoQuedaVacio() {
-        FiltroMapa f = MapaAdminServicio.filtro(null, null, null, null, null);
-
-        assertThat(f).isEqualTo(new FiltroMapa(null, null, null, null, null));
-    }
-
-    @Test
-    void elEstadoSeAceptaPorNombreOPorIdentificadorYSeGuardaConElNombreDelCatalogo() {
-        assertThat(MapaAdminServicio.filtro("EN_TRAMITE", null, null, null, null).estado()).isEqualTo("En trámite");
-        assertThat(MapaAdminServicio.filtro("en trámite", null, null, null, null).estado()).isEqualTo("En trámite");
-        assertThat(MapaAdminServicio.filtro("  ", null, null, null, null).estado()).isNull();
-    }
-
-    @Test
-    void conservaLosFiltrosValidos() {
-        LocalDate desde = LocalDate.of(2026, 11, 1);
-        LocalDate hasta = LocalDate.of(2026, 11, 10);
-
-        FiltroMapa f = MapaAdminServicio.filtro("Resuelto", 3, 10, desde, hasta);
-
-        assertThat(f).isEqualTo(new FiltroMapa("Resuelto", 3, 10, desde, hasta));
-        assertThat(MapaAdminServicio.filtro(null, null, 1, desde, desde).comuna()).isEqualTo(1);
-    }
-
-    @Test
-    void rechazaUnEstadoDesconocido() {
-        rechaza(() -> MapaAdminServicio.filtro("Cancelado", null, null, null, null), "estado");
-    }
-
-    @Test
-    void rechazaUnaComunaFueraDe1A10() {
-        rechaza(() -> MapaAdminServicio.filtro(null, null, 0, null, null), "comuna");
-        rechaza(() -> MapaAdminServicio.filtro(null, null, 11, null, null), "comuna");
-        rechaza(() -> MapaAdminServicio.filtro(null, null, -3, null, null), "comuna");
-    }
-
-    @Test
-    void rechazaDesdePosteriorAHasta() {
-        rechaza(() -> MapaAdminServicio.filtro(null, null, null, LocalDate.of(2026, 11, 10), LocalDate.of(2026, 11, 1)),
-                "desde");
     }
 
     private static MapaAdminRepositorio.ConteoComuna conteo(Integer comuna, long total) {
@@ -140,7 +96,7 @@ class MapaAdminServicioTest {
                 new ReporteDetalleResponse.Categoria(2, "Categoría 2"),
                 new ReporteDetalleResponse.Categoria(3, "Categoría 3"));
 
-        EstadisticasResponse e = MapaAdminServicio.armar(FiltroVigencia.TODOS, filas, catalogo);
+        EstadisticasResponse e = MapaAdminServicio.armar(FiltroVigencia.TODOS, null, filas, catalogo);
 
         assertThat(e.vigencia()).isEqualTo("todos");
         assertThat(e.total()).isEqualTo(12);
@@ -167,18 +123,32 @@ class MapaAdminServicioTest {
     void elPorcentajeDeAtendidosLlevaUnDecimalYEsCeroSinReportes() {
         var catalogo = List.of(new ReporteDetalleResponse.Categoria(1, "Categoría 1"));
 
-        assertThat(MapaAdminServicio.armar(FiltroVigencia.TODOS,
+        assertThat(MapaAdminServicio.armar(FiltroVigencia.TODOS, null,
                 List.of(fila("Resuelto", 1, 1, 1), fila("Recibido", 1, 1, 2)), catalogo).porcentajeAtendidos())
                 .isEqualByComparingTo("33.3");
-        assertThat(MapaAdminServicio.armar(FiltroVigencia.TODOS,
+        assertThat(MapaAdminServicio.armar(FiltroVigencia.TODOS, null,
                 List.of(fila("Resuelto", 1, 1, 2), fila("Recibido", 1, 1, 1)), catalogo).porcentajeAtendidos())
                 .isEqualByComparingTo("66.7");
 
-        EstadisticasResponse vacia = MapaAdminServicio.armar(FiltroVigencia.VIGENTES, List.of(), catalogo);
+        EstadisticasResponse vacia = MapaAdminServicio.armar(FiltroVigencia.VIGENTES, null, List.of(), catalogo);
         assertThat(vacia.total()).isZero();
         assertThat(vacia.porcentajeAtendidos()).isEqualByComparingTo("0");
         assertThat(vacia.porEstado()).extracting(EstadisticasResponse.PorEstado::total).containsOnly(0L);
         assertThat(vacia.porCategoria()).extracting(EstadisticasResponse.PorCategoria::total).containsExactly(0L);
         assertThat(vacia.vigencia()).isEqualTo("vigentes");
+    }
+
+    @Test
+    void conFiltroDeCategoriaSoloApareceEsaCategoria() {
+        var catalogo = List.of(new ReporteDetalleResponse.Categoria(1, "Categoría 1"),
+                new ReporteDetalleResponse.Categoria(2, "Categoría 2"));
+
+        EstadisticasResponse e = MapaAdminServicio.armar(FiltroVigencia.TODOS, 2, List.of(fila("Recibido", 2, 4, 3)),
+                catalogo);
+        assertThat(e.porCategoria()).extracting(EstadisticasResponse.PorCategoria::idCategoria).containsExactly(2);
+
+        EstadisticasResponse sinReportes = MapaAdminServicio.armar(FiltroVigencia.TODOS, 1, List.of(), catalogo);
+        assertThat(sinReportes.porCategoria()).extracting(EstadisticasResponse.PorCategoria::total).containsExactly(0L);
+        assertThat(MapaAdminServicio.armar(FiltroVigencia.TODOS, 99, List.of(), catalogo).porCategoria()).isEmpty();
     }
 }

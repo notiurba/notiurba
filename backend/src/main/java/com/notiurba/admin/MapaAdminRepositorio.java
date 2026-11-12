@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.notiurba.reporte.FiltroPanel;
 import com.notiurba.reporte.ReporteDetalleResponse;
 
 /** La comuna no se guarda en el reporte: se deriva de la vista {@code v_reporte_comuna}. */
@@ -30,9 +31,9 @@ public class MapaAdminRepositorio {
         this.jdbc = jdbc;
     }
 
-    public MapaResponse mapa(FiltroMapa f) {
+    public MapaResponse mapa(FiltroPanel f) {
         var p = new MapSqlParameterSource("limite", MAXIMO_PUNTOS);
-        String filtros = filtros(f, p);
+        String filtros = f.condiciones(p);
         long[] totales = new long[2]; // total y sinComuna: vienen iguales en cada fila
         List<MapaResponse.Marcador> marcadores = jdbc.query("""
                 SELECT r.codigo_seguimiento, est.nombre AS estado, c.id_categoria, c.nombre AS categoria,
@@ -67,9 +68,9 @@ public class MapaAdminRepositorio {
             List<ConteoComuna> comunas) {
     }
 
-    public DatosCalor calor(FiltroMapa f) {
+    public DatosCalor calor(FiltroPanel f) {
         var p = new MapSqlParameterSource("limite", MAXIMO_PUNTOS);
-        String filtros = filtros(f, p);
+        String filtros = f.condiciones(p);
         long[] totales = new long[2]; // totalPuntos y totalReportes
         List<CalorResponse.Punto> puntos = jdbc.query("""
                 SELECT ST_Y(r.ubicacion) AS latitud, ST_X(r.ubicacion) AS longitud, count(*) AS peso,
@@ -109,7 +110,7 @@ public class MapaAdminRepositorio {
     }
 
     /** Cuenta todos los reportes, con o sin ubicación. */
-    public List<ConteoEstadistica> estadisticas(FiltroMapa f, FiltroVigencia vigencia) {
+    public List<ConteoEstadistica> estadisticas(FiltroPanel f, FiltroVigencia vigencia) {
         var p = new MapSqlParameterSource();
         String condicionVigencia = switch (vigencia) {
             case VIGENTES -> " AND r.vigente_hasta > now()";
@@ -122,7 +123,7 @@ public class MapaAdminRepositorio {
                   JOIN categoria c ON c.id_categoria = r.id_categoria
                   JOIN estado_reporte est ON est.id_estado_reporte = r.id_estado_reporte
                   LEFT JOIN v_reporte_comuna vc ON vc.id_reporte = r.id_reporte
-                 WHERE TRUE""" + condicionVigencia + filtros(f, p) + """
+                 WHERE TRUE""" + condicionVigencia + f.condiciones(p) + """
 
                  GROUP BY est.nombre, c.id_categoria, c.nombre, vc.id_comuna""", p, (rs, i) -> new ConteoEstadistica(
                         rs.getString("estado"), rs.getInt("id_categoria"), rs.getString("categoria"),
@@ -134,29 +135,4 @@ public class MapaAdminRepositorio {
                 (rs, i) -> new ReporteDetalleResponse.Categoria(rs.getInt("id_categoria"), rs.getString("nombre")));
     }
 
-    /** Fechas de creación en hora de Colombia, ambas inclusive, igual que el listado del panel. */
-    static String filtros(FiltroMapa f, MapSqlParameterSource p) {
-        var sql = new StringBuilder();
-        if (f.estado() != null) {
-            sql.append(" AND est.nombre = :estado");
-            p.addValue("estado", f.estado());
-        }
-        if (f.idCategoria() != null) {
-            sql.append(" AND c.id_categoria = :categoria");
-            p.addValue("categoria", f.idCategoria());
-        }
-        if (f.comuna() != null) {
-            sql.append(" AND vc.id_comuna = :comuna");
-            p.addValue("comuna", f.comuna());
-        }
-        if (f.desde() != null) {
-            sql.append(" AND (r.creado_en AT TIME ZONE 'America/Bogota')::date >= :desde");
-            p.addValue("desde", f.desde());
-        }
-        if (f.hasta() != null) {
-            sql.append(" AND (r.creado_en AT TIME ZONE 'America/Bogota')::date <= :hasta");
-            p.addValue("hasta", f.hasta());
-        }
-        return sql.toString();
-    }
 }

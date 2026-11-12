@@ -1,6 +1,5 @@
 package com.notiurba.reporte;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,10 +16,6 @@ public class ListadoReportesRepositorio {
 
     static final int MAXIMO_PROPIOS = 100;
     static final int MAXIMO_ADMIN = 500;
-
-    /** Filtros del panel (RF-19); todos opcionales. {@code estado} ya viene con el nombre del catálogo. */
-    public record FiltroAdmin(String estado, Integer idCategoria, Integer comuna, LocalDate desde, LocalDate hasta) {
-    }
 
     private final NamedParameterJdbcTemplate jdbc;
 
@@ -69,29 +64,9 @@ public class ListadoReportesRepositorio {
      * Todos los reportes (los más recientes primero, hasta {@value #MAXIMO_ADMIN}) con la misma forma que el
      * detalle. Fotos, historial y último envío se piden en lote (3 consultas), no una vez por reporte.
      */
-    public List<ReporteDetalleResponse> listarParaAdmin(FiltroAdmin f) {
+    public List<ReporteDetalleResponse> listarParaAdmin(FiltroPanel f) {
         var p = new MapSqlParameterSource();
-        var donde = new StringBuilder(" WHERE TRUE");
-        if (f.estado() != null) {
-            donde.append(" AND est.nombre = :estado");
-            p.addValue("estado", f.estado());
-        }
-        if (f.idCategoria() != null) {
-            donde.append(" AND c.id_categoria = :categoria");
-            p.addValue("categoria", f.idCategoria());
-        }
-        if (f.comuna() != null) {
-            donde.append(" AND vc.id_comuna = :comuna");
-            p.addValue("comuna", f.comuna());
-        }
-        if (f.desde() != null) {
-            donde.append(" AND (r.creado_en AT TIME ZONE 'America/Bogota')::date >= :desde");
-            p.addValue("desde", f.desde());
-        }
-        if (f.hasta() != null) {
-            donde.append(" AND (r.creado_en AT TIME ZONE 'America/Bogota')::date <= :hasta");
-            p.addValue("hasta", f.hasta());
-        }
+        String donde = " WHERE TRUE" + f.condiciones(p);
 
         record Fila(long idReporte, ReporteDetalleResponse base) {
         }

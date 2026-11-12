@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.notiurba.reporte.FiltroPanel;
+
 @RestController
 @RequestMapping("/api/admin")
 public class MapaAdminController {
@@ -25,7 +27,7 @@ public class MapaAdminController {
             @RequestParam(required = false) Integer comuna,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
-        return servicio.mapa(estado, idCategoria, comuna, desde, hasta);
+        return servicio.mapa(FiltroPanel.de(estado, idCategoria, comuna, desde, hasta));
     }
 
     /** {@code pagina} y {@code tamano} paginan solo el ranking de comunas críticas. */
@@ -38,7 +40,7 @@ public class MapaAdminController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
             @RequestParam(defaultValue = "1") int pagina,
             @RequestParam(defaultValue = "5") int tamano) {
-        return servicio.calor(estado, idCategoria, comuna, desde, hasta, pagina, tamano);
+        return servicio.calor(FiltroPanel.de(estado, idCategoria, comuna, desde, hasta), pagina, tamano);
     }
 
     /** {@code vigencia}: vigentes, fuera_de_plazo o todos (por defecto). */
@@ -50,6 +52,6 @@ public class MapaAdminController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
             @RequestParam(required = false) String vigencia) {
-        return servicio.estadisticas(estado, idCategoria, comuna, desde, hasta, vigencia);
+        return servicio.estadisticas(FiltroPanel.de(estado, idCategoria, comuna, desde, hasta), vigencia);
     }
 }
