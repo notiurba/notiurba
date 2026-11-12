@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.Assert;
 
 import com.notiurba.reporte.FiltroPanel;
 import com.notiurba.reporte.ReporteDetalleResponse;
@@ -66,7 +68,15 @@ public class MapaAdminRepositorio {
             List<ConteoComuna> comunas) {
     }
 
+    /**
+     * Puntos y comunas salen de dos consultas que deben ver los mismos reportes. El aislamiento se pide
+     * con SQL dentro de la transacción y no por JDBC, que lo cambia en la sesión (y detrás del pooler de
+     * Neon esa orden puede caer en otra conexión).
+     */
     public DatosCalor calor(FiltroPanel f) {
+        Assert.state(TransactionSynchronizationManager.isActualTransactionActive(),
+                "El calor debe correr dentro de una transacción");
+        jdbc.getJdbcOperations().execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
         var p = new MapSqlParameterSource("limite", MAXIMO_PUNTOS);
         String filtros = f.condiciones(p);
         long[] totales = new long[2]; // totalPuntos y totalReportes

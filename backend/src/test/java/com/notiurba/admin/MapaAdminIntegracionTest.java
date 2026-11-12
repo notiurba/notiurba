@@ -1,6 +1,7 @@
 package com.notiurba.admin;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.nio.charset.StandardCharsets;
@@ -24,6 +25,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +34,7 @@ import com.notiurba.reporte.BarrioDePrueba;
 import com.notiurba.reporte.BaseDeDatosTemporal;
 import com.notiurba.reporte.DatosDePrueba;
 import com.notiurba.reporte.DatosDePrueba.Reporte;
+import com.notiurba.reporte.FiltroPanel;
 import com.notiurba.seguridad.JwtProveedor;
 
 /** Contra PostgreSQL + PostGIS real. Cada prueba empieza sin reportes para que los totales sean exactos. */
@@ -65,6 +69,8 @@ class MapaAdminIntegracionTest {
     @Autowired private JdbcTemplate jdbc;
     @Autowired private JwtProveedor jwt;
     @Autowired private ObjectMapper json;
+    @Autowired private MapaAdminRepositorio mapaRepositorio;
+    @Autowired private PlatformTransactionManager transacciones;
 
     private int idBarrio;
     private long idAna;
@@ -613,5 +619,22 @@ class MapaAdminIntegracionTest {
         assertThat(sumaComunas + e.get("sinComuna").asLong()).isEqualTo(1000);
         assertThat(milisegundos).as("GET /api/admin/estadisticas con 1.000 reportes tardó %d ms", milisegundos)
                 .isLessThanOrEqualTo(2000);
+    }
+
+    /** Pedirlo por JDBC cambia la sesión, y detrás de un pooler esa orden puede caer en otra conexión. */
+    @Test
+    void elCalorPideRepeatableReadDentroDeSuTransaccionYNoEnLaSesion() {
+        var sinFiltro = new FiltroPanel(null, null, null, null, null);
+        var tx = new TransactionTemplate(transacciones);
+        tx.setReadOnly(true);
+
+        String aislamiento = tx.execute(estado -> {
+            mapaRepositorio.calor(sinFiltro);
+            return jdbc.queryForObject("SHOW transaction_isolation", String.class);
+        });
+
+        assertThat(aislamiento).isEqualTo("repeatable read");
+        assertThat(jdbc.queryForObject("SHOW default_transaction_isolation", String.class)).isEqualTo("read committed");
+        assertThatThrownBy(() -> mapaRepositorio.calor(sinFiltro)).hasMessageContaining("dentro de una transacción");
     }
 }

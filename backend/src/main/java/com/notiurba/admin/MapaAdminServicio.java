@@ -12,7 +12,6 @@ import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.notiurba.admin.MapaAdminRepositorio.ConteoComuna;
@@ -37,8 +36,7 @@ public class MapaAdminServicio {
         return repositorio.mapa(f);
     }
 
-    /** REPEATABLE_READ: puntos y comunas salen de dos consultas y deben ver los mismos reportes. */
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(readOnly = true)
     public CalorResponse calor(FiltroPanel f, int pagina, int tamano) {
         validarPaginacion(pagina, tamano);
         MapaAdminRepositorio.DatosCalor datos = repositorio.calor(f);
@@ -48,7 +46,8 @@ public class MapaAdminServicio {
                 paginar(datos.comunas(), pagina, tamano));
     }
 
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
+    /** Los conteos salen de una sola consulta: no hace falta otro aislamiento. */
+    @Transactional(readOnly = true)
     public EstadisticasResponse estadisticas(FiltroPanel f, String vigencia) {
         FiltroVigencia v = vigencia(vigencia);
         return armar(v, f.idCategoria(), repositorio.estadisticas(f, v), repositorio.categoriasActivas());
