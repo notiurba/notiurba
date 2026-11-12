@@ -9,20 +9,13 @@ import org.springframework.stereotype.Repository;
 
 import com.notiurba.reporte.ReporteDetalleResponse;
 
-/**
- * Consultas del mapa, del mapa de calor y de las estadísticas del panel (NOT-129). La comuna no se guarda en
- * el reporte: sale de la vista {@code v_reporte_comuna} (la misma regla que al crear el reporte).
- */
+/** La comuna no se guarda en el reporte: se deriva de la vista {@code v_reporte_comuna}. */
 @Repository
 public class MapaAdminRepositorio {
 
-    /** Tope de filas por consulta: con más reportes el mapa se vuelve ilegible y lento. */
     static final int MAXIMO_PUNTOS = 1000;
 
-    /**
-     * Uniones comunes. El mapa y el calor solo muestran reportes con ubicación y vigentes: el mismo criterio de
-     * la vista {@code v_reporte_mapa} (RN-20). Los vencidos siguen en el listado del panel.
-     */
+    /** Mismo criterio de vigencia que la vista {@code v_reporte_mapa}. */
     private static final String DESDE_VIGENTES_CON_UBICACION = """
               FROM reporte r
               JOIN categoria c ON c.id_categoria = r.id_categoria
@@ -37,11 +30,10 @@ public class MapaAdminRepositorio {
         this.jdbc = jdbc;
     }
 
-    /** Reportes vigentes con ubicación, los más recientes primero, hasta {@value #MAXIMO_PUNTOS}. */
     public MapaResponse mapa(FiltroMapa f) {
         var p = new MapSqlParameterSource("limite", MAXIMO_PUNTOS);
         String filtros = filtros(f, p);
-        long[] totales = new long[2]; // [total, sinComuna]: iguales en todas las filas (funciones de ventana)
+        long[] totales = new long[2]; // total y sinComuna: vienen iguales en cada fila
         List<MapaResponse.Marcador> marcadores = jdbc.query("""
                 SELECT r.codigo_seguimiento, est.nombre AS estado, c.id_categoria, c.nombre AS categoria,
                        b.id_barrio, b.nombre AS barrio, vc.id_comuna,
@@ -67,10 +59,52 @@ public class MapaAdminRepositorio {
         return new MapaResponse(totales[0], totales[1], totales[0] > marcadores.size(), marcadores);
     }
 
-    /**
-     * Condiciones de los filtros comunes, en el mismo formato que el listado del panel (RF-19): fechas de
-     * creación en hora de Colombia y ambas inclusive.
-     */
+    /** {@code comuna} es {@code null} en la fila de los reportes sin comuna. */
+    public record ConteoComuna(Integer comuna, long total, ReporteDetalleResponse.Categoria categoriaPrincipal) {
+    }
+
+    public record DatosCalor(List<CalorResponse.Punto> puntos, long totalPuntos, long totalReportes,
+            List<ConteoComuna> comunas) {
+    }
+
+    public DatosCalor calor(FiltroMapa f) {
+        var p = new MapSqlParameterSource("limite", MAXIMO_PUNTOS);
+        String filtros = filtros(f, p);
+        long[] totales = new long[2]; // totalPuntos y totalReportes
+        List<CalorResponse.Punto> puntos = jdbc.query("""
+                SELECT ST_Y(r.ubicacion) AS latitud, ST_X(r.ubicacion) AS longitud, count(*) AS peso,
+                       count(*) OVER () AS total_puntos, sum(count(*)) OVER () AS total_reportes
+                """ + DESDE_VIGENTES_CON_UBICACION + filtros + """
+
+                 GROUP BY ST_Y(r.ubicacion), ST_X(r.ubicacion)
+                 ORDER BY peso DESC, latitud, longitud
+                 LIMIT :limite""", p, (rs, i) -> {
+                    totales[0] = rs.getLong("total_puntos");
+                    totales[1] = rs.getLong("total_reportes");
+                    return new CalorResponse.Punto(rs.getDouble("latitud"), rs.getDouble("longitud"), rs.getLong("peso"));
+                });
+
+        // categoría principal: la de más reportes; en empate, la de menor número
+        List<ConteoComuna> comunas = jdbc.query("""
+                WITH base AS (
+                    SELECT vc.id_comuna, c.id_categoria, c.nombre AS categoria
+                """ + DESDE_VIGENTES_CON_UBICACION + filtros + """
+
+                ), conteo AS (
+                    SELECT id_comuna, id_categoria, categoria, count(*) AS n
+                      FROM base GROUP BY id_comuna, id_categoria, categoria
+                )
+                SELECT id_comuna, sum(n) AS total,
+                       (array_agg(id_categoria ORDER BY n DESC, id_categoria))[1] AS id_categoria,
+                       (array_agg(categoria ORDER BY n DESC, id_categoria))[1] AS categoria
+                  FROM conteo
+                 GROUP BY id_comuna""", p, (rs, i) -> new ConteoComuna(
+                        (Integer) rs.getObject("id_comuna"), rs.getLong("total"),
+                        new ReporteDetalleResponse.Categoria(rs.getInt("id_categoria"), rs.getString("categoria"))));
+        return new DatosCalor(puntos, totales[0], totales[1], comunas);
+    }
+
+    /** Fechas de creación en hora de Colombia, ambas inclusive, igual que el listado del panel. */
     static String filtros(FiltroMapa f, MapSqlParameterSource p) {
         var sql = new StringBuilder();
         if (f.estado() != null) {

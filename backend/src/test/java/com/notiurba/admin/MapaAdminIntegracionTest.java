@@ -33,10 +33,7 @@ import com.notiurba.reporte.DatosDePrueba;
 import com.notiurba.reporte.DatosDePrueba.Reporte;
 import com.notiurba.seguridad.JwtProveedor;
 
-/**
- * NOT-129: GET /api/admin/mapa contra PostgreSQL + PostGIS real. Cada prueba empieza sin reportes
- * para que los totales sean exactos.
- */
+/** Contra PostgreSQL + PostGIS real. Cada prueba empieza sin reportes para que los totales sean exactos. */
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:pruebas.properties")
@@ -135,7 +132,6 @@ class MapaAdminIntegracionTest {
                 (rs, i) -> new Reporte(rs.getLong(1), rs.getString(2)), idAna, idBarrio);
     }
 
-    // ---------------------------------------------------------------- CA-01, CA-02
 
     @Test
     void elMapaTraeSoloReportesVigentesConUbicacionYLosDatosDelMarcador() throws Exception {
@@ -162,11 +158,11 @@ class MapaAdminIntegracionTest {
         assertThat(marcador.get("creadoEn").asText()).isNotBlank();
         assertThat(marcador.get("vigenteHasta").asText()).isNotBlank();
 
-        // Ley 1581: el marcador no trae datos del ciudadano ni la descripción
+        // sin datos del ciudadano ni descripción
         assertThat(campos(marcador)).containsExactlyInAnyOrder("codigoSeguimiento", "estado", "categoria", "barrio",
                 "comuna", "latitud", "longitud", "creadoEn", "vigenteHasta");
 
-        // El vencido sale del mapa pero sigue en el listado del panel
+        // el vencido sale del mapa pero sigue en el listado
         JsonNode listado = leer(pedir("/api/admin/reportes", tokenAdmin));
         assertThat(listado.findValuesAsText("codigoSeguimiento")).contains(vencido.codigo(), vigente.codigo());
     }
@@ -199,7 +195,6 @@ class MapaAdminIntegracionTest {
         assertThat(codigos(leer(pedir("/api/admin/mapa?idCategoria=1&estado=EN_TRAMITE", tokenAdmin)))).isEmpty();
     }
 
-    // ---------------------------------------------------------------- CA-11, CA-12
 
     @Test
     void unReporteSinComunaApareceConComunaNulaYSeCuentaAparte() throws Exception {
@@ -226,7 +221,6 @@ class MapaAdminIntegracionTest {
         assertThat(mapa.get("truncado").asBoolean()).isFalse();
     }
 
-    // ---------------------------------------------------------------- CA-07, CA-10
 
     @Test
     void elMapaValidaLosFiltrosConElFormatoDelContrato() throws Exception {
@@ -259,11 +253,10 @@ class MapaAdminIntegracionTest {
         }
     }
 
-    // ---------------------------------------------------------------- CA-08, CA-13
 
     @Test
     void conMasDeMilReportesDevuelveMilAvisaQueEstaTruncadoYRespondeEnMenosDeDosSegundos() throws Exception {
-        // 1.001 reportes vigentes repartidos en una cuadrícula de unos 800 m alrededor del punto de prueba
+        // cuadrícula de unos 800 m alrededor del punto de prueba
         jdbc.update("""
                 INSERT INTO reporte (id_usuario, id_categoria, id_barrio, descripcion, ubicacion,
                                      autorizacion_envio_en, creado_en)
@@ -282,6 +275,198 @@ class MapaAdminIntegracionTest {
         assertThat(mapa.get("reportes")).hasSize(1000);
         assertThat(mapa.get("truncado").asBoolean()).isTrue();
         assertThat(milisegundos).as("GET /api/admin/mapa con 1.001 reportes tardó %d ms", milisegundos)
+                .isLessThanOrEqualTo(2000);
+    }
+
+    // GET /api/admin/mapa/calor
+
+    /** Punto en la parte de la comuna que no se solapa con otras, para que la comuna asignada sea esa. */
+    private Reporte reporteEnComuna(int comuna, int idCategoria) {
+        Reporte r = jdbc.queryForObject("""
+                INSERT INTO reporte (id_usuario, id_categoria, id_barrio, descripcion, ubicacion,
+                                     autorizacion_envio_en, creado_en)
+                SELECT ?, ?, ?, 'Reporte para el mapa de calor',
+                       ST_PointOnSurface(ST_Difference(c.geom,
+                           (SELECT ST_Union(o.geom) FROM comuna o WHERE o.id_comuna <> c.id_comuna AND o.geom IS NOT NULL))),
+                       now() - interval '1 hour', now() - interval '1 hour'
+                  FROM comuna c WHERE c.id_comuna = ?
+                RETURNING id_reporte, codigo_seguimiento""",
+                (rs, i) -> new Reporte(rs.getLong(1), rs.getString(2)), idAna, idCategoria, idBarrio, comuna);
+        Integer asignada = jdbc.queryForObject(
+                "SELECT id_comuna FROM v_reporte_comuna WHERE id_reporte = ?", Integer.class, r.id());
+        assertThat(asignada).as("el punto de prueba debe caer en la comuna %d", comuna).isEqualTo(comuna);
+        return r;
+    }
+
+    /** 9 reportes en 6 comunas: 5 (3), 2 (2), 3 (2), 1 (1), 4 (1), 7 (1). */
+    private void sembrarSeisComunas() {
+        reporteEnComuna(5, 2);
+        reporteEnComuna(5, 2);
+        reporteEnComuna(5, 1);
+        reporteEnComuna(3, 1);
+        reporteEnComuna(3, 1);
+        reporteEnComuna(2, 3);
+        reporteEnComuna(2, 1);
+        reporteEnComuna(1, 1);
+        reporteEnComuna(4, 1);
+        reporteEnComuna(7, 1);
+    }
+
+    private static List<Integer> comunas(JsonNode calor) {
+        List<Integer> lista = new ArrayList<>();
+        calor.get("comunasCriticas").get("items").forEach(i -> lista.add(i.get("comuna").asInt()));
+        return lista;
+    }
+
+
+    @Test
+    void cadaReportePesaUnoYLosDelMismoPuntoSeSuman() throws Exception {
+        DatosDePrueba.reporte(jdbc, idAna, 1, idBarrio, 1);
+        DatosDePrueba.reporte(jdbc, idAna, 2, idBarrio, 2);
+        DatosDePrueba.reporte(jdbc, idAna, 1, idBarrio, 3);
+        DatosDePrueba.reporte(jdbc, idAna, 1, idBarrio, 40); // vencido: no cuenta
+        reporteSinUbicacion(); // sin punto: no cuenta
+        jdbc.update("""
+                INSERT INTO reporte (id_usuario, id_categoria, id_barrio, descripcion, ubicacion, autorizacion_envio_en, creado_en)
+                VALUES (?, 1, ?, 'Otro punto cercano del mapa', ST_SetSRID(ST_MakePoint(-76.1952, 4.0869), 4326),
+                        now() - interval '1 hour', now() - interval '1 hour')""", idAna, idBarrio);
+
+        JsonNode calor = leer(pedir("/api/admin/mapa/calor", tokenAdmin));
+
+        assertThat(calor.get("totalReportes").asLong()).isEqualTo(4);
+        assertThat(calor.get("totalPuntos").asLong()).isEqualTo(2);
+        assertThat(calor.get("truncado").asBoolean()).isFalse();
+        JsonNode puntos = calor.get("puntos");
+        assertThat(puntos).hasSize(2);
+        assertThat(puntos.get(0).get("latitud").asDouble()).isEqualTo(4.0867);
+        assertThat(puntos.get(0).get("longitud").asDouble()).isEqualTo(-76.1950);
+        assertThat(puntos.get(0).get("peso").asLong()).isEqualTo(3);
+        assertThat(puntos.get(1).get("peso").asLong()).isEqualTo(1);
+        assertThat(campos(puntos.get(0))).containsExactlyInAnyOrder("latitud", "longitud", "peso");
+    }
+
+
+    @Test
+    void lasComunasCriticasVanDeMasAMenosConSuTotalYSuCategoriaPrincipalDe5En5() throws Exception {
+        sembrarSeisComunas();
+
+        JsonNode calor = leer(pedir("/api/admin/mapa/calor", tokenAdmin));
+
+        JsonNode criticas = calor.get("comunasCriticas");
+        assertThat(criticas.get("pagina").asInt()).isEqualTo(1);
+        assertThat(criticas.get("tamano").asInt()).isEqualTo(5);
+        assertThat(criticas.get("totalComunas").asInt()).isEqualTo(6);
+        assertThat(criticas.get("totalPaginas").asInt()).isEqualTo(2);
+        assertThat(comunas(calor)).containsExactly(5, 2, 3, 1, 4);
+
+        JsonNode primera = criticas.get("items").get(0);
+        assertThat(primera.get("posicion").asInt()).isEqualTo(1);
+        assertThat(primera.get("total").asLong()).isEqualTo(3);
+        assertThat(primera.get("categoriaPrincipal").get("idCategoria").asInt()).isEqualTo(2);
+        assertThat(primera.get("categoriaPrincipal").get("nombre").asText()).isNotBlank();
+        // empate de categorías en la comuna 2 (una de la 3 y una de la 1): gana la de menor número
+        JsonNode segunda = criticas.get("items").get(1);
+        assertThat(segunda.get("total").asLong()).isEqualTo(2);
+        assertThat(segunda.get("categoriaPrincipal").get("idCategoria").asInt()).isEqualTo(1);
+
+        JsonNode pagina2 = leer(pedir("/api/admin/mapa/calor?pagina=2", tokenAdmin));
+        assertThat(comunas(pagina2)).containsExactly(7);
+        assertThat(pagina2.get("comunasCriticas").get("items").get(0).get("posicion").asInt()).isEqualTo(6);
+
+        JsonNode todas = leer(pedir("/api/admin/mapa/calor?tamano=10", tokenAdmin));
+        assertThat(comunas(todas)).containsExactly(5, 2, 3, 1, 4, 7);
+        assertThat(todas.get("comunasCriticas").get("totalPaginas").asInt()).isEqualTo(1);
+
+        JsonNode fueraDeRango = leer(pedir("/api/admin/mapa/calor?pagina=3", tokenAdmin));
+        assertThat(fueraDeRango.get("comunasCriticas").get("items")).isEmpty();
+        assertThat(fueraDeRango.get("comunasCriticas").get("totalComunas").asInt()).isEqualTo(6);
+        assertThat(fueraDeRango.get("puntos")).isNotEmpty();
+    }
+
+    @Test
+    void elCalorUsaLosMismosFiltrosQueElMapa() throws Exception {
+        sembrarSeisComunas();
+
+        JsonNode categoria2 = leer(pedir("/api/admin/mapa/calor?idCategoria=2", tokenAdmin));
+        assertThat(categoria2.get("totalReportes").asLong()).isEqualTo(2);
+        assertThat(comunas(categoria2)).containsExactly(5);
+
+        JsonNode comuna3 = leer(pedir("/api/admin/mapa/calor?comuna=3", tokenAdmin));
+        assertThat(comuna3.get("totalReportes").asLong()).isEqualTo(2);
+        assertThat(comunas(comuna3)).containsExactly(3);
+
+        assertThat(leer(pedir("/api/admin/mapa/calor?estado=RESUELTO", tokenAdmin)).get("totalReportes").asLong())
+                .isZero();
+    }
+
+
+    @Test
+    void losReportesSinComunaNoEntranAlRankingPeroSeCuentan() throws Exception {
+        reporteEnComuna(5, 1);
+        reporteSinComuna();
+
+        JsonNode calor = leer(pedir("/api/admin/mapa/calor", tokenAdmin));
+
+        assertThat(calor.get("totalReportes").asLong()).isEqualTo(2);
+        assertThat(calor.get("sinComuna").asLong()).isEqualTo(1);
+        assertThat(comunas(calor)).containsExactly(5);
+        assertThat(calor.get("comunasCriticas").get("totalComunas").asInt()).isEqualTo(1);
+    }
+
+    @Test
+    void sinReportesElCalorRespondeVacioYSinError() throws Exception {
+        JsonNode calor = leer(pedir("/api/admin/mapa/calor", tokenAdmin));
+
+        assertThat(calor.get("puntos")).isEmpty();
+        assertThat(calor.get("totalReportes").asLong()).isZero();
+        assertThat(calor.get("totalPuntos").asLong()).isZero();
+        assertThat(calor.get("sinComuna").asLong()).isZero();
+        assertThat(calor.get("truncado").asBoolean()).isFalse();
+        JsonNode criticas = calor.get("comunasCriticas");
+        assertThat(criticas.get("items")).isEmpty();
+        assertThat(criticas.get("totalComunas").asInt()).isZero();
+        assertThat(criticas.get("totalPaginas").asInt()).isZero();
+        assertThat(criticas.get("pagina").asInt()).isEqualTo(1);
+    }
+
+
+    @Test
+    void elCalorValidaFiltrosYPaginacionYSoloLoVeElAdministrador() throws Exception {
+        assertError(pedir("/api/admin/mapa/calor?pagina=0", tokenAdmin), 400, "VALIDACION", "pagina");
+        assertError(pedir("/api/admin/mapa/calor?tamano=0", tokenAdmin), 400, "VALIDACION", "tamano");
+        assertError(pedir("/api/admin/mapa/calor?tamano=11", tokenAdmin), 400, "VALIDACION", "tamano");
+        assertError(pedir("/api/admin/mapa/calor?comuna=11", tokenAdmin), 400, "VALIDACION", "comuna");
+        assertThat(pedir("/api/admin/mapa/calor?pagina=uno", tokenAdmin).getResponse().getStatus()).isEqualTo(400);
+
+        assertError(pedir("/api/admin/mapa/calor", tokenAna), 403, "SIN_PERMISO", null);
+        assertError(pedir("/api/admin/mapa/calor", null), 401, "NO_AUTENTICADO", null);
+    }
+
+
+    @Test
+    void conMasDeMilPuntosDevuelveLosMilDeMasPesoYRespondeEnMenosDeDosSegundos() throws Exception {
+        // 1.201 puntos distintos (cuadrícula de 40 x 31) y uno de ellos repetido para que tenga más peso
+        jdbc.update("""
+                INSERT INTO reporte (id_usuario, id_categoria, id_barrio, descripcion, ubicacion,
+                                     autorizacion_envio_en, creado_en)
+                SELECT ?, 1 + g % 3, ?, 'Reporte de carga para medir el calor',
+                       ST_SetSRID(ST_MakePoint(-76.1950 + (g % 40) * 0.0002, 4.0867 + (g / 40) * 0.0002), 4326),
+                       now() - interval '1 hour', now() - interval '1 hour'
+                  FROM generate_series(0, 1200) AS g""", idAna, idBarrio);
+        DatosDePrueba.reporte(jdbc, idAna, 1, idBarrio, 1); // mismo punto que g = 0: peso 2
+
+        pedir("/api/admin/mapa/calor?comuna=1", tokenAdmin); // calentamiento
+        long inicio = System.nanoTime();
+        MvcResult r = pedir("/api/admin/mapa/calor", tokenAdmin);
+        long milisegundos = (System.nanoTime() - inicio) / 1_000_000;
+
+        JsonNode calor = leer(r);
+        assertThat(calor.get("totalReportes").asLong()).isEqualTo(1202);
+        assertThat(calor.get("totalPuntos").asLong()).isEqualTo(1201);
+        assertThat(calor.get("puntos")).hasSize(1000);
+        assertThat(calor.get("truncado").asBoolean()).isTrue();
+        assertThat(calor.get("puntos").get(0).get("peso").asLong()).isEqualTo(2);
+        assertThat(milisegundos).as("GET /api/admin/mapa/calor con 1.202 reportes tardó %d ms", milisegundos)
                 .isLessThanOrEqualTo(2000);
     }
 }

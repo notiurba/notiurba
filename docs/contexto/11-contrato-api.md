@@ -174,7 +174,7 @@ Todos bajo `/api/admin/...`, rol ADMIN. Los tres endpoints de estados y vigencia
 - `PATCH /api/admin/reportes/{codigo}/estado` - EXISTE. Estado y observación (RF-20); ver 5.1.
 - `GET` y `PUT /api/admin/configuracion/vigencia` - EXISTEN (RF-21); ver 5.1.
 - `GET /api/admin/mapa` (RF-22) — EXISTE (NOT-129); ver 5.2.
-- `GET /api/admin/mapa/calor` (RF-23) — FALTA; NOT-129 (diseño en `docs/sdd/plan.md`).
+- `GET /api/admin/mapa/calor` (RF-23) — EXISTE (NOT-129); ver 5.3.
 - `GET /api/admin/estadisticas` (RF-24) — FALTA; NOT-129 (diseño en `docs/sdd/plan.md`).
 - `PUT /api/admin/categorias/{id}/correo-destino` (RF-25).
 
@@ -312,8 +312,55 @@ Respuesta 200:
 - No trae datos del ciudadano ni la descripción (Ley 1581): el detalle completo está en
   `GET /api/admin/reportes`.
 - Sin coincidencias: 200 con `reportes: []` y `total: 0`.
-- Rendimiento medido (11/11/2026, base local): con 1.001 reportes vigentes la prueba completa
-  (sembrar, calentar y consultar) tardó 1,1 s; el criterio es ≤ 2 s por consulta.
+- Rendimiento medido (11/11/2026, base local): con 1.001 reportes vigentes la consulta tarda unos
+  0,6 s; el criterio es ≤ 2 s por consulta.
+
+### 5.3 Mapa de calor y comunas críticas — IMPLEMENTADO (NOT-129, RF-23)
+
+**GET /api/admin/mapa/calor**
+
+Mismos reportes que el mapa (vigentes con ubicación) y mismos **filtros comunes** (5.2). Además:
+
+| Parámetro | Valor | Error |
+| --- | --- | --- |
+| `pagina` | Página del ranking de comunas críticas; por defecto 1 | 400 `VALIDACION`, campo `pagina`, si es menor que 1 |
+| `tamano` | Comunas por página, de 1 a 10; por defecto 5 | 400 `VALIDACION`, campo `tamano` |
+
+Ejemplo: `GET /api/admin/mapa/calor?idCategoria=1&pagina=2`.
+
+Respuesta 200:
+
+```json
+{
+  "totalReportes": 10,
+  "totalPuntos": 8,
+  "truncado": false,
+  "sinComuna": 0,
+  "puntos": [ { "latitud": 4.0867, "longitud": -76.195, "peso": 3 } ],
+  "comunasCriticas": {
+    "pagina": 1,
+    "tamano": 5,
+    "totalComunas": 6,
+    "totalPaginas": 2,
+    "items": [
+      { "posicion": 1, "comuna": 5, "total": 4,
+        "categoriaPrincipal": { "idCategoria": 1, "nombre": "Vías, huecos y andenes" } }
+    ]
+  }
+}
+```
+
+- **Peso:** cada reporte pesa 1 y los reportes en el mismo punto se suman (sirve tal cual para
+  Leaflet.heat). Los puntos van de más a menos peso, hasta **1.000**; `totalPuntos` dice cuántos puntos
+  distintos hay y `truncado` es `true` si son más de 1.000. `totalReportes` es la suma de todos los pesos.
+- **Comunas críticas:** las comunas con al menos un reporte, de más a menos reportes; en empate va
+  primero la de menor número. Como hay 10 comunas, con el tamaño por defecto son 2 páginas como máximo.
+  `posicion` es el lugar en el ranking completo (en la página 2 empieza en 6).
+- **Categoría principal:** la categoría con más reportes en esa comuna; en empate, la de menor número.
+- Los reportes sin comuna no entran al ranking: se cuentan en `sinComuna`.
+- Una página fuera de rango responde 200 con `items: []` (los puntos y los totales siguen llegando).
+- Rendimiento medido (11/11/2026, base local): con 1.202 reportes en 1.201 puntos la consulta tarda unos
+  0,9 s (son dos consultas: puntos y conteo por comuna).
 
 ## 6. Decisiones propuestas (no cerradas)
 

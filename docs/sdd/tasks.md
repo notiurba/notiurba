@@ -7,7 +7,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) |
 | Plan | [plan.md](plan.md) |
-| Estado general | **En curso** — PR A (mapa) hecho y probado, sin commit; siguen PR B y PR C |
+| Estado general | **En curso** — PR A (mapa) en commit; PR B (calor) hecho y probado, sin commit; sigue PR C |
 | Última actualización | 2026-11-11 |
 
 ## Cómo se usa
@@ -37,9 +37,14 @@ correo que piden `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales). Sin commit 
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-07 | Pruebas: pesos que suman, ranking por comuna, paginación (5/10), `sinComuna`, tope | Pruebas | CA-03, 04, 10, 11, 13 | `MapaAdminIntegracionTest`, `MapaAdminServicioTest` | [ ] |
-| T-08 | `GET /api/admin/mapa/calor` con `comunasCriticas` y `categoriaPrincipal` | Backend | CA-03, 04 | ídem | [ ] |
-| T-09 | Contrato §5: calor | Docs | CA-09 | revisión | [ ] |
+| T-07 | Pruebas: pesos que suman, ranking por comuna, paginación (5/10), `sinComuna`, tope | Pruebas | CA-03, 04, 10, 11, 13 | `MapaAdminIntegracionTest` (+7), `MapaAdminServicioTest` (+4) | [x] |
+| T-08 | `GET /api/admin/mapa/calor` con `comunasCriticas` y `categoriaPrincipal` | Backend | CA-03, 04 | ídem | [x] |
+| T-09 | Contrato §5.3: calor | Docs | CA-09 | revisión | [x] |
+
+Resultado del PR B (11 nov): pruebas vistas fallar (no compilaban) y luego 25/25 en verde contra PostGIS
+real. Mutación manual: al invertir el desempate de la categoría principal, la prueba de comunas críticas
+falla. Medición aislada: con ~1.200 reportes, el mapa tarda ~0,6 s y el calor ~0,9 s. Suite completa: 280
+pruebas, 0 fallos, las mismas 10 omitidas. Sin commit todavía.
 
 ## PR C — Estadísticas
 
@@ -62,20 +67,22 @@ correo que piden `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales). Sin commit 
 | --- | --- | --- | --- |
 | CA-01 | T-02, T-03, T-04 | `MapaAdminIntegracionTest` | ✅ mapa |
 | CA-02 | T-02, T-03 | ídem | ✅ mapa |
-| CA-03 | T-07, T-08 | ídem | pendiente |
-| CA-04 | T-07, T-08 | ídem | pendiente |
+| CA-03 | T-07, T-08 | ídem | ✅ |
+| CA-04 | T-07, T-08 | ídem | ✅ |
 | CA-05 | T-10, T-11 | ídem | pendiente |
 | CA-06 | T-10, T-11 | ídem | pendiente |
-| CA-07 | T-02, T-04 | ídem | ✅ mapa; falta calor y estadísticas |
-| CA-08 | T-05 | ídem | ✅ mapa; falta calor y estadísticas |
-| CA-09 | T-06, T-09, T-12 | revisión | ✅ mapa; falta calor y estadísticas |
-| CA-10 | T-01, T-07, T-10 | `MapaAdminServicioTest` | ✅ filtros comunes; falta paginación y vigencia |
-| CA-11 | T-02, T-07, T-10 | `MapaAdminIntegracionTest` | ✅ mapa; falta calor y estadísticas |
+| CA-07 | T-02, T-04 | ídem | ✅ mapa y calor; falta estadísticas |
+| CA-08 | T-05 | ídem | ✅ mapa (~0,6 s) y calor (~0,9 s); falta estadísticas |
+| CA-09 | T-06, T-09, T-12 | revisión | ✅ mapa y calor; falta estadísticas |
+| CA-10 | T-01, T-07, T-10 | `MapaAdminServicioTest` | ✅ filtros y paginación; falta vigencia |
+| CA-11 | T-02, T-07, T-10 | `MapaAdminIntegracionTest` | ✅ mapa y calor; falta estadísticas |
 | CA-12 | T-02, T-03 | ídem | ✅ |
-| CA-13 | T-03, T-07 | ídem | ✅ mapa; falta calor |
+| CA-13 | T-03, T-07 | ídem | ✅ |
 
 ## Registro de cambios
 
 | Fecha | Cambio | Documento |
 | --- | --- | --- |
 | 2026-11-11 | Plan aprobado; tareas creadas; Figma y Linear (NOT-129, 133, 136) ajustados | tasks.md |
+| 2026-11-11 | PR A (mapa) en commit `aa4eec0`; PR B (calor) hecho y probado | tasks.md |
+| 2026-11-11 | Figma: nueva pantalla «Panel administrativo · Estadísticas» (vigencia, indicadores, por estado, comuna y categoría) | plan.md §7 |

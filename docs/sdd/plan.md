@@ -179,7 +179,7 @@ Andrés lo pide (el plan Free duerme).
 - [PENDIENTE] **Tamaño de página** de comunas críticas: 5 por defecto y 10 máximo.
 - [PENDIENTE] **`categoriaPrincipal`** en cada comuna crítica: el Figma la muestra («Comuna 5 · Vías, huecos…») y cuesta una subconsulta. Propuesta: incluirla.
 - [PENDIENTE] **«Atendidos»** cuenta solo Resuelto. Se cambia a «Resuelto + En trámite» con una línea si prefieres.
-- **Figma** — HECHO el 11 nov con permiso de Andrés: «Puntos críticos» ahora lista comunas (1. Comuna 5, 2. Comuna 2, 3. Comuna 1) con su categoría principal, y el subtítulo dice «Comunas ordenadas por cantidad de reportes vigentes.». El Figma no tiene pantalla de estadísticas, así que el filtro de vigencia no se dibujó.
+- **Figma** — HECHO el 11 nov con permiso de Andrés: «Puntos críticos» ahora lista comunas (1. Comuna 5, 2. Comuna 2, 3. Comuna 1) con su categoría principal, y el subtítulo dice «Comunas ordenadas por cantidad de reportes vigentes.». El mismo día se agregó la pantalla nueva «Panel administrativo · Estadísticas» (duplicada del mapa de calor): navegación Reportes · Mapa de calor · Estadísticas, filtro de vigencia (Todos, Vigentes, Fuera de plazo), indicadores (total, atendidos y sin comuna) y las secciones por estado, por comuna y por categoría con sus números visibles.
 - **Linear** — HECHO el 11 nov con permiso de Andrés: NOT-129 y NOT-136 dicen «atendidos» y recogen las decisiones (comunas, paginación, peso 1, vigencia, tope).
 
 ## 8. Documentos que se actualizan (regla del repo: `docs/` y Google Doc)

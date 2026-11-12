@@ -4,13 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.notiurba.reporte.ReporteDetalleResponse;
 import com.notiurba.web.error.ApiException;
 import com.notiurba.web.error.Codigos;
 
-/** NOT-129: validación de los filtros comunes del mapa, del calor y de las estadísticas (CA-10). */
 class MapaAdminServicioTest {
 
     private static void rechaza(Runnable accion, String campo) {
@@ -63,5 +64,53 @@ class MapaAdminServicioTest {
     void rechazaDesdePosteriorAHasta() {
         rechaza(() -> MapaAdminServicio.filtro(null, null, null, LocalDate.of(2026, 11, 10), LocalDate.of(2026, 11, 1)),
                 "desde");
+    }
+
+    private static MapaAdminRepositorio.ConteoComuna conteo(Integer comuna, long total) {
+        return new MapaAdminRepositorio.ConteoComuna(comuna, total, new ReporteDetalleResponse.Categoria(1, "Vías"));
+    }
+
+    @Test
+    void ordenaDeMasAMenosYEnEmpateVaPrimeroLaComunaDeMenorNumero() {
+        var conteos = List.of(conteo(7, 1), conteo(3, 2), conteo(5, 3), conteo(2, 2), conteo(1, 1));
+
+        CalorResponse.ComunasCriticas p = MapaAdminServicio.paginar(conteos, 1, 5);
+
+        assertThat(p.items()).extracting(CalorResponse.ComunaCritica::comuna).containsExactly(5, 2, 3, 1, 7);
+        assertThat(p.items()).extracting(CalorResponse.ComunaCritica::posicion).containsExactly(1, 2, 3, 4, 5);
+        assertThat(p.totalComunas()).isEqualTo(5);
+        assertThat(p.totalPaginas()).isEqualTo(1);
+    }
+
+    @Test
+    void laSegundaPaginaSigueLaPosicionDelRanking() {
+        var conteos = List.of(conteo(1, 6), conteo(2, 5), conteo(3, 4), conteo(4, 3), conteo(5, 2), conteo(6, 1));
+
+        CalorResponse.ComunasCriticas p = MapaAdminServicio.paginar(conteos, 2, 5);
+
+        assertThat(p.pagina()).isEqualTo(2);
+        assertThat(p.tamano()).isEqualTo(5);
+        assertThat(p.totalPaginas()).isEqualTo(2);
+        assertThat(p.items()).extracting(CalorResponse.ComunaCritica::comuna).containsExactly(6);
+        assertThat(p.items()).extracting(CalorResponse.ComunaCritica::posicion).containsExactly(6);
+    }
+
+    @Test
+    void unaPaginaFueraDeRangoYUnaListaVaciaNoFallan() {
+        assertThat(MapaAdminServicio.paginar(List.of(conteo(1, 1)), 4, 5).items()).isEmpty();
+        CalorResponse.ComunasCriticas vacia = MapaAdminServicio.paginar(List.of(), 1, 5);
+        assertThat(vacia.items()).isEmpty();
+        assertThat(vacia.totalComunas()).isZero();
+        assertThat(vacia.totalPaginas()).isZero();
+    }
+
+    @Test
+    void validaPaginaYTamano() {
+        rechaza(() -> MapaAdminServicio.validarPaginacion(0, 5), "pagina");
+        rechaza(() -> MapaAdminServicio.validarPaginacion(-1, 5), "pagina");
+        rechaza(() -> MapaAdminServicio.validarPaginacion(1, 0), "tamano");
+        rechaza(() -> MapaAdminServicio.validarPaginacion(1, 11), "tamano");
+        MapaAdminServicio.validarPaginacion(1, 1);
+        MapaAdminServicio.validarPaginacion(3, 10);
     }
 }
