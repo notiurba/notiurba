@@ -211,7 +211,9 @@ El detalle por tarea irá en [tasks.md](tasks.md) cuando apruebes este plan.
 - `FiltroMapa` se reemplazó por `reporte/FiltroPanel`, compartido con el listado del panel: una sola
   validación (`FiltroPanel.de`) y un solo armado SQL (`FiltroPanel.condiciones`). El controlador arma el
   filtro y los servicios lo reciben por nombre.
-- El calor y las estadísticas corren en `REPEATABLE READ` para que sus consultas vean los mismos reportes.
+- El calor corre en `REPEATABLE READ` para que sus dos consultas vean los mismos reportes. Desde el 13 nov
+  lo pide con `SET TRANSACTION` dentro de la transacción (no por JDBC, que lo cambia en la sesión); las
+  estadísticas salen de una sola consulta y usan el aislamiento por defecto.
 - Con filtro de categoría, `porCategoria` trae solo esa categoría.
 - `geo/ConsultaEspacial.sinJit` apagaba el JIT de PostgreSQL dentro de la transacción en las consultas con
   `v_reporte_comuna` (mapa, calor, estadísticas y listado del panel): era el mayor costo de tiempo. Se
@@ -272,3 +274,16 @@ de desplegar. Siguiente número libre: V19.
 
 Con ese costo el JIT ya no se activa: se quitó `ConsultaEspacial.sinJit` y su prueba. QA de punta a punta
 contra el jar real: 44 de 44; las cuatro rutas del panel responden en 6 a 11 ms.
+
+**Ajustes tras la revisión con `code-reviewer` (13 nov).** V20 no se había aplicado fuera de bases
+desechables (la base local va en V12 y la rama no está en GitHub), así que se corrigió en la misma V20:
+- Cada recálculo hace `LOCK TABLE reporte IN SHARE ROW EXCLUSIVE MODE`: espera a los reportes que se están
+  creando y frena los nuevos hasta terminar. Costo: mientras se recalcula (2,6 s con 10.000 reportes),
+  crear un reporte espera. Pasa solo al cambiar la capa, la comuna de un barrio o la distancia máxima.
+- El trigger del reporte también se dispara con `UPDATE OF id_comuna, comuna_origen`: esas columnas son
+  de solo lectura en la práctica.
+- La distancia máxima recalcula también si su fila se borra, se crea o se renombra.
+- El cambio de capa compara el polígono antes y después (tablas de transición): si no cambió, no
+  reescribe los reportes.
+- No se hizo (y por qué): recalcular solo los reportes cercanos al polígono que cambió. La capa cambia
+  muy pocas veces y hoy hay 4 reportes; queda como mejora si la capa empieza a cambiar seguido.

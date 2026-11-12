@@ -98,10 +98,28 @@ completa: 300 pruebas, 0 fallos, las mismas 10 omitidas. QA de punta a punta: 44
 Figma: la pestaña «Estadísticas» se agregó a la navegación de «Panel administrativo · Reportes» y
 «· Mapa de calor» (y «Cerrar sesión» quedó en 280 de ancho para que quepa).
 
+## Revisión con el subagente `code-reviewer` (13 nov)
+
+3 bugs y 4 de limpieza. Cada bug se reprodujo primero con una prueba que fallaba; después se corrigió.
+
+| Hallazgo | Antes | Después | Prueba |
+| --- | --- | --- | --- |
+| Carrera: un reporte creado mientras cambia la capa quedaba con la regla vieja | el recálculo no lo veía | el recálculo bloquea la creación hasta terminar | `unReporteCreadoMientrasCambiaLaCapaQuedaConLaCapaNueva` |
+| `id_comuna` escrita a mano se guardaba tal cual | quedaba 9 (la regla da 5) | pasa por el trigger | `escribirLaComunaAManoNoSaltaLaRegla` |
+| Borrar o renombrar la distancia máxima no recalculaba | seguía en 5 | recalcula (sin fila = 0 m) | `borrarCrearORenombrarLaDistanciaMaximaTambienRecalcula` |
+| `REPEATABLE READ` pedido por JDBC cambia la sesión (riesgo con pooler) | el calor corría en `read committed` dentro de su transacción | `SET TRANSACTION` dentro de la transacción; estadísticas sin aislamiento extra | `elCalorPideRepeatableReadDentroDeSuTransaccionYNoEnLaSesion` |
+| Un UPDATE sin cambio de polígono reescribía todos los reportes | `xmin` cambiaba | no los toca | `unCambioQueNoTocaElPoligonoNiLaDistanciaNoReescribeLosReportes` |
+| Prueba frágil: función de `pg_temp` en dos conexiones del pool | podía fallar al azar | misma transacción | `laAsignacionDaLoMismoQueLaFuncionAnterior…` |
+| Hook: avisaba por otros proyectos y `node_modules`, no por `application.yml` | regex sin anclar | ruta relativa al proyecto | 12 casos a mano |
+| Faltaban pruebas: migrar con reportes existentes; lejano con barrio | — | `ComunaGuardadaMigracionIntegracionTest` y caso nuevo del barrio | ✅ |
+
+No se hizo: recalcular solo los reportes cercanos al polígono cambiado (ver plan.md §12). Suite completa:
+306 pruebas, 0 fallos, las mismas 10 omitidas. QA de punta a punta: 44 de 44, rutas en 4–11 ms.
+
 ## Pruebas finales (Fase 5)
 
 - [x] Todos los criterios CA verificados (tabla de trazabilidad).
-- [x] Backend: `mvn clean test` en verde con base PostGIS: 300 pruebas (12 nov), 0 fallos, 10 omitidas que
+- [x] Backend: `mvn clean test` en verde con base PostGIS: 306 pruebas (13 nov), 0 fallos, 10 omitidas que
       no tocan este cambio (8 de enrutamiento de correo sin `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales).
 - [x] Llamada real a la API levantada (no solo MockMvc) con token ADMIN: QA de punta a punta, 44 de 44.
 - [x] Documentos al día: `spec.md`, `plan.md`, `docs/contexto/11` y `12`, Linear (NOT-129, NOT-133, NOT-136) y vault.
@@ -139,3 +157,4 @@ Figma: la pestaña «Estadísticas» se agregó a la navegación de «Panel admi
 | 2026-11-12 | V19 y V20 aprobados e implementados; lecturas con `r.id_comuna`; `sinJit` quitado; medición y QA 44/44 | plan.md §12, tasks.md |
 | 2026-11-12 | Hook del equipo y subagente `code-reviewer` (`.claude/`) | CLAUDE.md |
 | 2026-11-12 | Figma: pestaña «Estadísticas» en la navegación de «Reportes» y «Mapa de calor» | plan.md §7 |
+| 2026-11-13 | Revisión con `code-reviewer`: 3 bugs y 4 de limpieza; 7 corregidos con pruebas, 1 mejora no hecha | plan.md §12, tasks.md |

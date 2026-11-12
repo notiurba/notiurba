@@ -17,7 +17,7 @@ Contexto general: `docs/contexto/12-estado-actual-y-traspaso.md`. Trabaje en una
    migraciones de otra rama y Flyway falla.
 4. `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el mismo comando:
    ejecútelo con `env -i` y solo las variables necesarias.
-5. Meta de referencia (12 nov 2026, rama de NOT-129): 300 pruebas, 0 fallos, 10 omitidas (8 de enrutamiento
+5. Meta de referencia (13 nov 2026, rama de NOT-129): 306 pruebas, 0 fallos, 10 omitidas (8 de enrutamiento
    sin `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales). QA del panel: `tools/qa-panel-admin/qa-panel.sh`.
 6. Si no hay Docker/DB, las pruebas de integración se omiten con `assumeTrue`: dígalo, no lo cuente como pasado.
 

@@ -75,7 +75,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el
   mismo comando: ejecútelo en un entorno limpio (`env -i ...`).
 - Una base desechable: contenedor `postgis/postgis:16-3.4`. Docker Desktop debe estar abierto.
-- Última corrida completa (12/11/2026, rama de NOT-129): 300 pruebas, 0 fallos, 10 omitidas (8 de
+- Última corrida completa (13/11/2026, rama de NOT-129): 306 pruebas, 0 fallos, 10 omitidas (8 de
   enrutamiento de correo sin `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales).
 - QA de punta a punta del panel contra el jar real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones).
 - Errores de la API: formato único `{codigo, mensaje, campo}` (`ApiException`; en pruebas use
@@ -138,6 +138,9 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   en 1.000 a 2.300 (el JIT empieza en 100.000), así que se quitó el apagado del JIT. **Neon:** `jit = on`
   pero `pg_jit_available() = false` (no tiene LLVM): en producción nunca hubo JIT. Antes de desplegar
   V19 y V20, branch de respaldo en Neon (no borran nada; V20 llena la comuna de los reportes que hay).
+  **Ojo al cambiar la capa, la comuna de un barrio o la distancia máxima:** el recálculo bloquea la
+  creación de reportes hasta terminar (2,6 s con 10.000), para que ninguno quede con la regla vieja.
+  `id_comuna` y `comuna_origen` no se escriben a mano: el trigger las vuelve a calcular.
 
 ## 8. Cómo se trabaja con Andrés (aprendido)
 
