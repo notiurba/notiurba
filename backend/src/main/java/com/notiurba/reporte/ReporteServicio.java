@@ -47,44 +47,67 @@ public class ReporteServicio {
     @Transactional
     public ReporteCreadoResponse crear(String correoUsuario, CrearReporteRequest p) {
         if (!Boolean.TRUE.equals(p.autorizaEnvio())) throw error("Debes autorizar la remisión", "autorizaEnvio");
+        Borrador b = validar(correoUsuario, p.idCategoria(), p.latitud(), p.longitud(), p.idBarrio(), p.descripcion(),
+                p.direccionIncidente(), p.matriculaCuentaServicio());
+        ReporteCreadoResponse creado = repositorio.insertar(new ReporteRepositorio.NuevoReporte(
+                b.idUsuario(), b.idCategoria(), b.idBarrio(), b.descripcion(), b.latitud(), b.longitud(),
+                b.direccionIncidente(), b.matricula(), vacioANulo(p.radicadoOficial())));
+        repositorio.prepararEnrutamiento(creado.codigoSeguimiento(), Boolean.TRUE.equals(p.emergencia()));
+        return creado;
+    }
+
+    /**
+     * Un reporte que pasó las mismas reglas que al crearlo, sin guardar nada (lo usa también la vista
+     * previa del mensaje). comunaDelPunto: la que PostGIS le da al GPS, o null.
+     */
+    public record Borrador(long idUsuario, int idCategoria, ReporteRepositorio.DatosCategoria categoria,
+            Integer idBarrio, Double latitud, Double longitud, Integer comunaDelPunto, String descripcion,
+            String direccionIncidente, String matricula) {
+    }
+
+    @Transactional(readOnly = true)
+    public Borrador validar(String correoUsuario, Integer idCategoria, Double latitud, Double longitud,
+            Integer idBarrio, String descripcionRecibida, String direccionIncidente, String matriculaRecibida) {
         long idUsuario = usuarios.findByCorreoIgnoreCase(correoUsuario)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, Codigos.NO_AUTENTICADO,
                         Codigos.MSG_NO_AUTENTICADO))
                 .getIdUsuario();
 
-        var categoria = repositorio.categoriaActiva(p.idCategoria())
+        if (idCategoria == null) throw error("La categoría no existe o no está disponible", "idCategoria");
+        var categoria = repositorio.categoriaActiva(idCategoria)
                 .orElseThrow(() -> error("La categoría no existe o no está disponible", "idCategoria"));
 
-        if ((p.latitud() == null) != (p.longitud() == null)) {
-            throw error("Envía la latitud y la longitud juntas", p.latitud() == null ? "latitud" : "longitud");
+        if ((latitud == null) != (longitud == null)) {
+            throw error("Envía la latitud y la longitud juntas", latitud == null ? "latitud" : "longitud");
         }
-        boolean hayGps = p.latitud() != null;
-        if (hayGps && asignador.asignar(p.latitud(), p.longitud()).fueraDeCobertura()) {
-            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, Codigos.FUERA_DE_COBERTURA,
-                    Codigos.MSG_FUERA_DE_COBERTURA, "latitud");
+        boolean hayGps = latitud != null;
+        Integer comunaDelPunto = null;
+        if (hayGps) {
+            var resultado = asignador.asignar(latitud, longitud);
+            if (resultado.fueraDeCobertura()) {
+                throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, Codigos.FUERA_DE_COBERTURA,
+                        Codigos.MSG_FUERA_DE_COBERTURA, "latitud");
+            }
+            comunaDelPunto = resultado.asignacion().map(AsignadorDeComuna.Asignacion::idComuna).orElse(null);
         }
-        if (p.idBarrio() != null && !catalogos.existeBarrio(p.idBarrio())) {
+        if (idBarrio != null && !catalogos.existeBarrio(idBarrio)) {
             throw error("El barrio no existe", "idBarrio");
         }
-        if (categoria.requiereUbicacion() && !hayGps && p.idBarrio() == null) {
+        if (categoria.requiereUbicacion() && !hayGps && idBarrio == null) {
             throw error("Marca la ubicación en el mapa o elige el barrio", "idBarrio");
         }
 
-        String descripcion = p.descripcion().trim();
+        String descripcion = descripcionRecibida == null ? "" : descripcionRecibida.trim();
         if (descripcion.length() < DESCRIPCION_MINIMA || descripcion.length() > DESCRIPCION_MAXIMA) {
             throw error("La descripción debe tener entre " + DESCRIPCION_MINIMA + " y "
                     + DESCRIPCION_MAXIMA + " caracteres", "descripcion");
         }
-        String matricula = vacioANulo(p.matriculaCuentaServicio());
+        String matricula = vacioANulo(matriculaRecibida);
         if (matricula != null && !categoria.esEmpresa()) {
             throw error("La matrícula solo aplica a servicios públicos", "matriculaCuentaServicio");
         }
-
-        ReporteCreadoResponse creado = repositorio.insertar(new ReporteRepositorio.NuevoReporte(
-                idUsuario, p.idCategoria(), p.idBarrio(), descripcion, p.latitud(), p.longitud(),
-                vacioANulo(p.direccionIncidente()), matricula, vacioANulo(p.radicadoOficial())));
-        repositorio.prepararEnrutamiento(creado.codigoSeguimiento(), Boolean.TRUE.equals(p.emergencia()));
-        return creado;
+        return new Borrador(idUsuario, idCategoria, categoria, idBarrio, latitud, longitud, comunaDelPunto, descripcion,
+                vacioANulo(direccionIncidente), matricula);
     }
 
     /** Un reporte propio por código. No existe y «es de otra persona» dan exactamente la misma respuesta. */
