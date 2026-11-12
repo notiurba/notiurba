@@ -57,6 +57,12 @@ Reglas del flujo:
 - Comentarios en el código: pocos, cortos y solo donde hagan falta. No se citan tareas ni historias
   (NOT-xx, EDT) en el código: eso va en commits, PR y `docs/`.
 
+## Cierre de historia (obligatorio)
+
+- Una historia no está cerrada hasta que su documentación está al día. Al terminarla se sigue la skill
+  del repo **`cierre-de-historia`** (`.claude/skills/cierre-de-historia/`): `docs/`, archivo del SDD,
+  modelo de datos (draw.io, Sheet y Doc), Linear, Figma, vault y memoria.
+
 ## Reglas de trabajo
 
 - No inventes endpoints, nombres de tablas ni reglas: revisa `docs/contexto/`.
