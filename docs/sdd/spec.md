@@ -6,10 +6,10 @@
 
 | Campo | Valor |
 | --- | --- |
-| Estado | **En revisión** (Borrador → En revisión → Aprobada) |
+| Estado | **Aprobada** (Borrador → En revisión → Aprobada) |
 | Historia / ticket | NOT-130 (Linear) |
-| Responsable | Andrés |
-| Aprobada por / fecha | _(pendiente)_ |
+| Responsable | Andrés (Figma, backend y frontend) |
+| Aprobada por / fecha | Andrés, 2026-11-12, con los cambios de la sección 8 |
 | Última actualización | 2026-11-12 |
 
 ## 1. Contexto y problema
@@ -65,6 +65,7 @@ Que cada reporte llegue con un **mensaje formal y completo** por un canal con ev
 - **CA-08** — _Dado_ un reporte de la Alcaldía o de acueducto, _cuando_ se envía, _entonces_ va a `servicioalciudadano@tulua.gov.co` o a `info@centroaguas.com`.
 - **CA-09** — _Dado_ un reporte de gas, energía o aseo, _entonces_ no se envía correo, queda «no enviado por correo» y el ciudadano ve los canales de la entidad y «Copiar mi mensaje».
 - **CA-10** — _Dados_ los canales de una entidad, _entonces_ aparecen ordenados, con finalidad y horario; los de la Alcaldía incluyen formulario PQRSDF, PQRSDF anónimo, consulta de estado, agente virtual, presencial y teléfono.
+- **CA-10b** — _Dado_ un canal sin verificar (hoy el WhatsApp de Veolia), _entonces_ está guardado como inactivo, no se muestra y se activa con un cambio de datos, sin cambiar código.
 - **CA-11** — _Dado_ un correo que rebota (webhook de NOT-131), _entonces_ el ciudadano ve los mismos canales y «Copiar mi mensaje».
 - **CA-12** — _Dada_ una emergencia de gas, _entonces_ la app indica la línea 164 y no envía correo (RN-16).
 
@@ -86,7 +87,8 @@ Que cada reporte llegue con un **mensaje formal y completo** por un canal con ev
 - Una sola ruta de envío por reporte: no se mandan copias a varias direcciones de la misma entidad.
 - `RESEND_PRUEBA_DESTINO` sigue puesta: **esta historia no activa el envío real** (NOT-131 y NOT-133).
 - Interfaz y correo en español, tono formal.
-- Toca la pantalla de Katherine «Revise su reporte» (`PasoConfirmacion`): se señala para su revisión.
+- **Orden de trabajo** (decidido por Andrés el 12 nov): primero **Figma** (se valida con Andrés), después el **backend** siguiendo esta spec y por último el **frontend**, con pruebas funcionales al final.
+- La tarjeta de «Revise su reporte» (`PasoConfirmacion`, pantalla de Katherine) la implementan Andrés y Claude junto con el Figma y el backend, porque el cambio es pequeño. Se le avisa a Katherine al integrar.
 
 ## 7. Fuera de alcance
 
@@ -97,16 +99,19 @@ Que cada reporte llegue con un **mensaje formal y completo** por un canal con ev
 
 ## 8. Preguntas abiertas
 
-- [PENDIENTE] **Quién implementa** la tarjeta del frontend y **cuándo** se edita Figma: «Revise su reporte» ya está implementado, así que se confirma antes que Katherine no tenga trabajo en curso sobre esa pantalla. Decide: Andrés.
-- [PENDIENTE] **Texto de las plantillas** (Anexo B), incluida la frase «en ejercicio del derecho de petición (Constitución Política, art. 23)». Decide: Andrés.
-- [PENDIENTE] **Veolia:** el correo `pqr.tulua.co@veolia.com` no respondió en 38 días (era una consulta). Propuesta: sin correo. Decide: Andrés.
-- [PENDIENTE] **WhatsApp de Veolia** (317 372 5078): está en el repo, pero no en el sitio oficial. Propuesta: no mostrarlo hasta confirmarlo. Decide: Andrés.
+**Decididas por Andrés el 12 nov 2026**
+- Quién implementa la tarjeta del frontend: **Andrés y Claude**, junto con Figma y backend (ver sección 6).
+- Texto de las plantillas (Anexo B), con la frase «en ejercicio del derecho de petición (Constitución Política, art. 23)»: **aprobado**.
+- Veolia: **sin correo**; el medio preferido es WhatsApp.
+
+**Abiertas**
+- [PENDIENTE] **Verificar que el WhatsApp de Veolia (317 372 5078) sea oficial para Tuluá.** Lo que se encontró el 12 nov: aparece en el repo y en una nota de prensa sobre Cali; **no** aparece en `valle.veolia.co` (páginas de Tuluá y «Contáctanos»). Para mientras: se guarda inactivo y Veolia muestra la línea 01 8000 95 00 96, la oficina de Tuluá y el formulario «Contáctanos» de su sitio. Cómo verificar: escribir a ese número preguntando si atiende Tuluá, o mirar la factura impresa. Decide: Andrés.
 
 ## 9. Aprobación
 
-- [ ] La especificación está completa y sin ambigüedades.
-- [ ] Las preguntas abiertas están resueltas o aceptadas como riesgo.
-- [ ] **Aprobada por el usuario** → se puede pasar a `plan.md`.
+- [x] La especificación está completa y sin ambigüedades.
+- [x] Las preguntas abiertas están resueltas o aceptadas como riesgo (queda la verificación del WhatsApp de Veolia, que no bloquea).
+- [x] **Aprobada por el usuario** (2026-11-12) → se puede pasar a `plan.md`.
 
 ---
 
@@ -118,7 +123,7 @@ Que cada reporte llegue con un **mensaje formal y completo** por un canal con ev
 | **Centroaguas** | `info@centroaguas.com` | ✅ Correo | Su acto GAC-003660-26 (13 oct) dice que es el único autorizado para PQR; radicado CO260929-3786; respondió en 14 días. `notificacionespqr@` solo es el remitente de sus respuestas. |
 | **Gases de Occidente** | `inquietudes@gdo.com.co` | ❌ | Responde con un aviso automático: hay que pulsar «Confirmar envío» en 24 h o no se recibe. |
 | **Celsia** | `servicioalcliente@celsia.com` | ❌ | Rechazo 550 5.7.1: la cuenta no recibe correos; remite a Zona Clientes. |
-| **Veolia Tuluá** | `pqr.tulua.co@veolia.com` | ❌ (propuesta) | Aceptó el correo del 5 oct y no respondió en 38 días. El repo tenía `pqr.tulua@veolia.com`, que no coincide con su sitio. |
+| **Veolia Tuluá** | `pqr.tulua.co@veolia.com` | ❌ (decidido) | Aceptó el correo del 5 oct y no respondió en 38 días. El repo tenía `pqr.tulua@veolia.com`, que no coincide con su sitio. |
 
 | Entidad | Otros canales (finalidad) |
 | --- | --- |
@@ -126,9 +131,9 @@ Que cada reporte llegue con un **mensaje formal y completo** por un canal con ev
 | **Centroaguas** | Aplicativo PQRS web · línea 231 7300 (3 = PQR, 116 = daños) · Calle 25 #32A-31, lunes a viernes 7:30–11:30 y 1:30–4:00 |
 | **Celsia** | Zona Clientes → PQR (clientes.celsia.com) · línea 01 8000 112 115 · WhatsApp 310 390 3468 (daños) |
 | **Gases de Occidente** | Formulario «Registro de PQR» (gdo.com.co/Paginas/Registro-de-pqrs.aspx) · línea 164 (emergencias) · contact center 24/7: (602) 418 7333 y 01 8000 52 88 88 |
-| **Veolia Tuluá** | Línea 01 8000 95 00 96 · Carrera 26 #26-20 local 104, lunes a viernes 8:00–16:00 |
+| **Veolia Tuluá** | WhatsApp 317 372 5078 (**sin verificar**, inactivo) · línea 01 8000 95 00 96 · Carrera 26 #26-20 local 104, lunes a viernes 8:00–16:00 · formulario «Contáctanos» (valle.veolia.co/contactanos) |
 
-## Anexo B — Plantillas
+## Anexo B — Plantillas (texto aprobado por Andrés el 12 nov 2026)
 
 Asunto: **A** «Petición ciudadana – {categoría} – {barrio}, Comuna {n}» · **B** «Solicitud ciudadana – {categoría}» · **C** «Petición ciudadana – {servicio}».
 
