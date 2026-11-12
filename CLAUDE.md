@@ -46,6 +46,17 @@ Reglas del flujo:
   las plantillas para la siguiente.
 - Un PR pequeño por grupo de tareas, rama `feature/…` desde `develop`.
 
+## Revisión de código al terminar (obligatoria)
+
+- **Siempre** que una tarea haya escrito o cambiado código, al final de la tarea y antes de darla por
+  cerrada se usa el subagente **`code-reviewer`** (`.claude/agents/code-reviewer.md`) sobre todos los
+  cambios de la rama. Sus hallazgos se corrigen con pruebas y se reporta el antes/después.
+- El hook del equipo en `.claude/settings.json` (`PostToolUse`, matcher `Edit|Write`, script
+  `.claude/hooks/recordar-revision.mjs`) lo recuerda cuando se edita código en `backend/src`,
+  `frontend/src` o `tools/`. Necesita Node (el mismo del frontend).
+- Comentarios en el código: pocos, cortos y solo donde hagan falta. No se citan tareas ni historias
+  (NOT-xx, EDT) en el código: eso va en commits, PR y `docs/`.
+
 ## Reglas de trabajo
 
 - No inventes endpoints, nombres de tablas ni reglas: revisa `docs/contexto/`.
