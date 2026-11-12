@@ -98,7 +98,7 @@ completa: 300 pruebas, 0 fallos, las mismas 10 omitidas. QA de punta a punta: 44
 Figma: la pestaña «Estadísticas» se agregó a la navegación de «Panel administrativo · Reportes» y
 «· Mapa de calor» (y «Cerrar sesión» quedó en 280 de ancho para que quepa).
 
-## Revisión con el subagente `code-reviewer` (13 nov)
+## Revisión con el subagente `code-reviewer` (12 nov)
 
 3 bugs y 4 de limpieza. Cada bug se reprodujo primero con una prueba que fallaba; después se corrigió.
 
@@ -119,7 +119,7 @@ No se hizo: recalcular solo los reportes cercanos al polígono cambiado (ver pla
 ## Pruebas finales (Fase 5)
 
 - [x] Todos los criterios CA verificados (tabla de trazabilidad).
-- [x] Backend: `mvn clean test` en verde con base PostGIS: 306 pruebas (13 nov), 0 fallos, 10 omitidas que
+- [x] Backend: `mvn clean test` en verde con base PostGIS: 306 pruebas (12 nov), 0 fallos, 10 omitidas que
       no tocan este cambio (8 de enrutamiento de correo sin `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales).
 - [x] Llamada real a la API levantada (no solo MockMvc) con token ADMIN: QA de punta a punta, 44 de 44.
 - [x] Documentos al día: `spec.md`, `plan.md`, `docs/contexto/11` y `12`, Linear (NOT-129, NOT-133, NOT-136) y vault.
@@ -157,4 +157,4 @@ No se hizo: recalcular solo los reportes cercanos al polígono cambiado (ver pla
 | 2026-11-12 | V19 y V20 aprobados e implementados; lecturas con `r.id_comuna`; `sinJit` quitado; medición y QA 44/44 | plan.md §12, tasks.md |
 | 2026-11-12 | Hook del equipo y subagente `code-reviewer` (`.claude/`) | CLAUDE.md |
 | 2026-11-12 | Figma: pestaña «Estadísticas» en la navegación de «Reportes» y «Mapa de calor» | plan.md §7 |
-| 2026-11-13 | Revisión con `code-reviewer`: 3 bugs y 4 de limpieza; 7 corregidos con pruebas, 1 mejora no hecha | plan.md §12, tasks.md |
+| 2026-11-12 | Revisión con `code-reviewer`: 3 bugs y 4 de limpieza; 7 corregidos con pruebas, 1 mejora no hecha | plan.md §12, tasks.md |

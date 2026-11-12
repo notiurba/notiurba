@@ -75,7 +75,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el
   mismo comando: ejecútelo en un entorno limpio (`env -i ...`).
 - Una base desechable: contenedor `postgis/postgis:16-3.4`. Docker Desktop debe estar abierto.
-- Última corrida completa (13/11/2026, rama de NOT-129): 306 pruebas, 0 fallos, 10 omitidas (8 de
+- Última corrida completa (12/11/2026, rama de NOT-129): 306 pruebas, 0 fallos, 10 omitidas (8 de
   enrutamiento de correo sin `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales).
 - QA de punta a punta del panel contra el jar real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones).
 - Errores de la API: formato único `{codigo, mensaje, campo}` (`ApiException`; en pruebas use
