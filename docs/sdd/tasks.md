@@ -7,7 +7,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) |
 | Plan | [plan.md](plan.md) |
-| Estado general | **Implementado y probado** — mapa (`aa4eec0`) y calor (`f29a9a2`) con commit; estadísticas sin commit; falta la llamada real y el PR |
+| Estado general | **Implementado, revisado y probado de punta a punta** — mapa `aa4eec0`, calor `f29a9a2`, estadísticas `355d0c3`; revisión y QA sin commit; falta el PR |
 | Última actualización | 2026-11-11 |
 
 ## Cómo se usa
@@ -59,13 +59,35 @@ real. Mutación manual: al quitar la condición de «fuera de plazo», la prueba
 aislada: con 1.000 reportes las estadísticas tardan ~0,3 s. Suite completa: 289 pruebas, 0 fallos, las
 mismas 10 omitidas. Sin commit todavía.
 
+## Revisión de código y QA de punta a punta (11 nov)
+
+`/code-review` (nivel alto) sobre `develop...HEAD` dio 7 hallazgos; 6 corregidos con pruebas y 1 dejado
+como propuesta. El QA contra el servidor real encontró un octavo problema (el JIT), el más grave.
+
+| Hallazgo | Antes | Después |
+| --- | --- | --- |
+| Calor: dos consultas podían descuadrarse si entraba un reporte entre ellas | READ COMMITTED | `REPEATABLE READ`: ranking + sinComuna = totalReportes siempre |
+| `porCategoria` con filtro de categoría mostraba las demás en 0 («filtrada» parecía «sin reportes») | 15 filas, 14 en 0 | solo la categoría filtrada |
+| Validación de filtros copiada del listado del panel | 2 copias | `FiltroPanel.de(...)` única |
+| SQL de filtros copiado del listado del panel | 2 copias | `FiltroPanel.condiciones(...)` única |
+| Filtros como 5 a 7 argumentos posicionales del mismo tipo | fácil de intercambiar | un `FiltroPanel` por nombre |
+| Pruebas de tiempo frágiles (una sola medición) | ruido de la máquina | mejor de 3 tras calentar |
+| **JIT de PostgreSQL compilaba cada consulta espacial** (hallado en el QA real) | estadísticas 0,28 s y listado 0,30 s con 13 reportes; 1.000 reportes: mapa 0,57 s, calor 0,90 s, estadísticas 0,31 s | `SET LOCAL jit = off`: 0,017 s y 0,020 s; 1.000 reportes: 0,054 s, 0,125 s y 0,039 s |
+| Comuna recalculada en cada lectura (costo crece con los reportes) | — | **sin cambio**: propuesta de V19 para guardar `id_comuna` (decisión de Andrés) |
+
+Pruebas: backend 291, 0 fallos, 10 omitidas que no tocan este cambio. Pruebas nuevas: `FiltroPanelTest` (6),
+categoría filtrada (1) y JIT apagado en las cuatro consultas (1). QA de punta a punta
+(`tools/qa-panel-admin/qa-panel.sh`): **44 de 44** en verde contra el jar real, con base desechable:
+401/403 reales, 400 con su campo, CORS, totales que cuadran con la base, filtros, orden, paginación,
+regresión del listado y tiempos; 0 errores en el log del servidor.
+
 ## Pruebas finales (Fase 5)
 
 - [x] Todos los criterios CA verificados (tabla de trazabilidad).
 - [x] Backend: `mvn clean test` en verde con base PostGIS: 289 pruebas, 0 fallos, 10 omitidas que no tocan
       este cambio (8 de enrutamiento de correo sin `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales).
-- [ ] Llamada real a la API levantada (no solo MockMvc) con token ADMIN.
-- [ ] Documentos al día: `spec.md`, `plan.md` y `docs/contexto/11` y `12` hechos; faltan el Google Doc y el vault.
+- [x] Llamada real a la API levantada (no solo MockMvc) con token ADMIN: QA de punta a punta, 44 de 44.
+- [x] Documentos al día: `spec.md`, `plan.md`, `docs/contexto/11` y `12`, Linear (NOT-129, NOT-133, NOT-136) y vault.
 
 ## Trazabilidad
 
@@ -95,3 +117,5 @@ mismas 10 omitidas. Sin commit todavía.
 | 2026-11-11 | Calor en commit `f29a9a2`; comentarios del código más cortos y sin citar tareas (pedido de Andrés) | tasks.md |
 | 2026-11-11 | Pantalla de estadísticas rehecha con el Design System (Nunito Sans, tokens de color, chips de estado, filtros de 42 px) | plan.md §7 |
 | 2026-11-11 | Estadísticas implementadas y probadas (PR C) | tasks.md |
+| 2026-11-11 | Revisión de código (6 de 7 corregidos), arreglo del JIT, QA de punta a punta 44/44; Neon: JIT no disponible (`pg_jit_available() = false`) | tasks.md |
+| 2026-11-11 | Medición con 10.000 reportes y propuesta V19 (A y C) pendiente de aprobación | plan.md §12 |

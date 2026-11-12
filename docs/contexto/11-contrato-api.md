@@ -312,8 +312,13 @@ Respuesta 200:
 - No trae datos del ciudadano ni la descripción (Ley 1581): el detalle completo está en
   `GET /api/admin/reportes`.
 - Sin coincidencias: 200 con `reportes: []` y `total: 0`.
-- Rendimiento medido (11/11/2026, base local): con 1.001 reportes vigentes la consulta tarda unos
-  0,6 s; el criterio es ≤ 2 s por consulta.
+- Rendimiento medido (11/11/2026, base local, JIT apagado en la transacción): con 1.001 reportes
+  vigentes la consulta tarda unos 0,05 s (0,6 s con el JIT de PostgreSQL encendido); el criterio es ≤ 2 s.
+- **JIT de PostgreSQL:** PostGIS declara costos muy altos y el JIT compilaba estas consultas aunque
+  fueran pequeñas (1,2 s de compilación para 13 reportes). El mapa, el calor, las estadísticas y el
+  listado del panel ejecutan `SET LOCAL jit = off` dentro de su transacción (`ConsultaEspacial.sinJit`);
+  funciona también detrás del pooler de Neon. En Neon el JIT no está disponible (`pg_jit_available() = false`):
+  el problema se ve en Docker local y en las pruebas, no en producción.
 
 ### 5.3 Mapa de calor y comunas críticas — IMPLEMENTADO (NOT-129, RF-23)
 
@@ -359,8 +364,10 @@ Respuesta 200:
 - **Categoría principal:** la categoría con más reportes en esa comuna; en empate, la de menor número.
 - Los reportes sin comuna no entran al ranking: se cuentan en `sinComuna`.
 - Una página fuera de rango responde 200 con `items: []` (los puntos y los totales siguen llegando).
+- Son dos consultas (puntos y conteo por comuna) en una transacción `REPEATABLE READ`: las dos ven los
+  mismos reportes, así que el ranking más `sinComuna` siempre suma `totalReportes`.
 - Rendimiento medido (11/11/2026, base local): con 1.202 reportes en 1.201 puntos la consulta tarda unos
-  0,9 s (son dos consultas: puntos y conteo por comuna).
+  0,13 s (0,9 s con el JIT encendido).
 
 ### 5.4 Estadísticas — IMPLEMENTADO (NOT-129, RF-24)
 
@@ -406,7 +413,11 @@ Respuesta 200:
 - `sinComuna`: reportes cuya comuna no se pudo determinar; no entran en `porComuna`. Un reporte sin
   ubicación toma la comuna de su barrio.
 - Las tres tablas salen de una sola consulta agrupada: siempre cuadran con `total`.
-- Rendimiento medido (11/11/2026, base local): con 1.000 reportes la consulta tarda unos 0,3 s.
+- Con filtro `idCategoria`, `porCategoria` trae solo esa categoría (un 0 de otra categoría sería
+  engañoso: significaría «filtrada», no «sin reportes»).
+- Rendimiento medido (11/11/2026, base local): con 1.000 reportes la consulta tarda unos 0,04 s
+  (0,3 s con el JIT encendido).
+- QA de punta a punta contra el servidor real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones).
 
 ## 6. Decisiones propuestas (no cerradas)
 

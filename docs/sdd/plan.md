@@ -204,3 +204,42 @@ El detalle por tarea irá en [tasks.md](tasks.md) cuando apruebes este plan.
 - [x] Contrato de API revisado (§3).
 - [x] Decisiones pendientes del §7 resueltas.
 - [x] **Aprobado por Andrés** (11 nov) → se pasa a `tasks.md` y se empieza a implementar.
+
+## 11. Cambios tras la revisión de código y el QA (11 nov)
+
+- `FiltroMapa` se reemplazó por `reporte/FiltroPanel`, compartido con el listado del panel: una sola
+  validación (`FiltroPanel.de`) y un solo armado SQL (`FiltroPanel.condiciones`). El controlador arma el
+  filtro y los servicios lo reciben por nombre.
+- El calor y las estadísticas corren en `REPEATABLE READ` para que sus consultas vean los mismos reportes.
+- Con filtro de categoría, `porCategoria` trae solo esa categoría.
+- `geo/ConsultaEspacial.sinJit` apaga el JIT de PostgreSQL dentro de la transacción en las consultas con
+  `v_reporte_comuna` (mapa, calor, estadísticas y listado del panel): era el mayor costo de tiempo.
+- Pendiente como propuesta (decisión de Andrés): guardar `id_comuna` en `reporte` al crearlo (V19).
+- QA de punta a punta reutilizable: `tools/qa-panel-admin/`.
+
+## 12. Propuesta V19: comuna más rápida (PENDIENTE de aprobación de Andrés)
+
+**Problema medido (11 nov, base desechable con 10.000 reportes, la mitad fuera de la capa):** la comuna no
+se guarda; `v_reporte_comuna` llama a `fn_asignar_comuna` por cada reporte en cada lectura. Un punto dentro
+de una comuna es barato (usa el índice GiST), pero uno en un hueco o fuera de la capa calcula la distancia
+en `geography` a las 10 comunas convirtiendo cada polígono en cada llamada (~7 ms por punto).
+
+| Consulta (10.000 reportes) | Hoy | A | C |
+| --- | --- | --- | --- |
+| Asignar la comuna a todos | 31,1 s | 1,97 s | — |
+| Estadísticas | 31,5 s | — | 2,2 ms |
+| Mapa filtrado por comuna | 16 s | — | 1,3 ms |
+
+**A. `comuna.geog`:** columna `geography` generada (`GENERATED ALWAYS AS (geom::geography) STORED`) con
+índice GiST; `fn_asignar_comuna` usa `geog` en vez de convertir `geom` en cada llamada. Mismas reglas:
+0 diferencias en los 10.000 reportes. Riesgo bajo (solo agrega).
+
+**C. `reporte.id_comuna`:** se guarda al crear el reporte (trigger con la misma `fn_asignar_comuna`) y se
+recalcula si cambian la ubicación o el barrio del reporte, o si cambia el polígono de una comuna (la capa es
+provisional). Índice en `reporte(id_comuna)`. `v_reporte_comuna` lee la columna, así que el mapa, el calor,
+las estadísticas, el listado, el detalle y el correo se aceleran sin cambiar su código. La migración llena
+los reportes que ya existen (en Neon hay 4).
+
+Riesgos: C duplica un dato derivado (lo mantienen los triggers; pruebas que lo verifiquen al crear, al
+cambiar ubicación y al cambiar la capa). Migración no destructiva; aun así, branch de respaldo en Neon antes
+de desplegar. Siguiente número libre: V19.

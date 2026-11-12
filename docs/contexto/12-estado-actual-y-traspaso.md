@@ -126,6 +126,18 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - La plantilla del correo (`PlantillaReporte`) arma una lista fija de campos sin mirar el tipo
   de destinatario; por eso salen filas vacías y la matrícula siempre.
 - `PlantillaReporte.enlaceSeguro` solo admite enlaces `res.cloudinary.com` y `www.openstreetmap.org`.
+- **JIT de PostgreSQL y PostGIS (11/11/2026):** las consultas que usan `v_reporte_comuna` hacen que
+  PostgreSQL compile con JIT (PostGIS declara costos altos): 1,2 s de compilación para 13 reportes. El
+  mapa, el calor, las estadísticas y el listado del panel ya lo apagan en su transacción
+  (`ConsultaEspacial.sinJit`) y bajaron de ~0,3 s a ~0,02 s. **Neon (verificado el 11/11/2026):**
+  `jit = on` pero `pg_jit_available() = false` (no tiene LLVM), así que en producción no hay JIT; el
+  arreglo importa en Docker local, en las pruebas y si se cambia de proveedor. Las consultas de un solo
+  reporte (`ReporteRepositorio.buscarPropio`, `EnvioReporteServicio`, `AsignadorDeComuna`) tienen costo
+  bajo, no activan el JIT y tardan de 0,1 a 7 ms: no necesitan cambios.
+- **Costo de la comuna a escala (medido el 11/11/2026, 10.000 reportes, la mitad fuera de la capa):** la
+  comuna se calcula en cada lectura y un punto en un hueco o fuera de la capa cuesta ~7 ms (distancia en
+  `geography` a las 10 comunas): estadísticas 31,5 s y mapa filtrado 16 s. Propuesta V19 en
+  `docs/sdd/plan.md` §12 (pendiente de aprobación de Andrés).
 
 ## 8. Cómo se trabaja con Andrés (aprendido)
 
