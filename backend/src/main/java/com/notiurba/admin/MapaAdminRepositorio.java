@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.notiurba.geo.ConsultaEspacial;
 import com.notiurba.reporte.FiltroPanel;
 import com.notiurba.reporte.ReporteDetalleResponse;
 
@@ -31,7 +30,6 @@ public class MapaAdminRepositorio {
     }
 
     public MapaResponse mapa(FiltroPanel f) {
-        ConsultaEspacial.sinJit(jdbc);
         var p = new MapSqlParameterSource("limite", MAXIMO_PUNTOS);
         String filtros = f.condiciones(p);
         long[] totales = new long[2]; // total y sinComuna: vienen iguales en cada fila
@@ -69,7 +67,6 @@ public class MapaAdminRepositorio {
     }
 
     public DatosCalor calor(FiltroPanel f) {
-        ConsultaEspacial.sinJit(jdbc);
         var p = new MapSqlParameterSource("limite", MAXIMO_PUNTOS);
         String filtros = f.condiciones(p);
         long[] totales = new long[2]; // totalPuntos y totalReportes
@@ -112,7 +109,6 @@ public class MapaAdminRepositorio {
 
     /** Cuenta todos los reportes, con o sin ubicación. */
     public List<ConteoEstadistica> estadisticas(FiltroPanel f, FiltroVigencia vigencia) {
-        ConsultaEspacial.sinJit(jdbc);
         var p = new MapSqlParameterSource();
         String condicionVigencia = switch (vigencia) {
             case VIGENTES -> " AND r.vigente_hasta > now()";
