@@ -29,8 +29,9 @@ correo, fotos, frontend ni `RESEND_PRUEBA_DESTINO`.
 ## 3. Cambios por capa
 
 ### Base de datos
-- **Sin migración nueva.** Se usan `reporte`, `categoria`, `estado_reporte`, `barrio` y la vista
-  `v_reporte_comuna` (la comuna **no se guarda**, se deriva con `fn_asignar_comuna`; ver §5).
+- Se usan `reporte`, `categoria`, `estado_reporte` y `barrio`. El plan empezó sin migración nueva (la
+  comuna se derivaba en cada lectura con `v_reporte_comuna`); tras medir con 10.000 reportes se
+  agregaron **V19 y V20** y la comuna quedó guardada en `reporte.id_comuna` (§12).
 - Índices que ya ayudan: `ix_reporte_ubicacion` (GiST), `ix_reporte_vigencia`, `ix_reporte_estado`,
   `ix_reporte_categoria`.
 
@@ -161,8 +162,8 @@ Andrés lo pide (el plan Free duerme).
 
 | Riesgo | Prob. / impacto | Mitigación |
 | --- | --- | --- |
-| **La comuna no se guarda en el reporte**: se calcula con `fn_asignar_comuna` por cada fila (con casteos a `geography`). Con 1.000 reportes podría pasar de 2 s (CA-08). | Media / Alto | Medir primero con 1.000 reportes. Si no cumple, **no cambiar nada por mi cuenta**: proponerte una migración V19 que guarde `id_comuna` en `reporte` (decisión tuya; V19 es la siguiente). |
-| Linear dice «la comuna la asigna PostGIS al guardar», pero el código la deriva al leer. | Baja / Bajo | Se documenta en el contrato; el resultado es el mismo. |
+| **La comuna no se guarda en el reporte**: se calcula con `fn_asignar_comuna` por cada fila (con casteos a `geography`). Con 1.000 reportes podría pasar de 2 s (CA-08). | Media / Alto | Medir primero con 1.000 reportes. Si no cumple, **no cambiar nada por mi cuenta**: proponerte una migración V19 que guarde `id_comuna` en `reporte` (decisión tuya; V19 es la siguiente). **Resultado:** con 1.000 cumplía (~0,3 s), con 10.000 no (31,5 s); aprobado y resuelto con V19 y V20 (§12). |
+| Linear dice «la comuna la asigna PostGIS al guardar», pero el código la deriva al leer. | Baja / Bajo | Resuelto con V20: ahora sí se guarda al crear el reporte. |
 | `total` y el tope de 1.000 dan resultados distintos si entran reportes entre dos llamadas. | Baja / Bajo | Cada ruta usa una sola consulta con `count(*) OVER()`; aceptado. |
 | Pruebas de tiempo inestables en un PC lento. | Media / Bajo | Se mide con 1.000 filas y se reporta el tiempo real; el umbral es de 2 s como pide la historia. |
 | Datos de ubicación solo para ADMIN (Ley 1581). | Baja / Alto | Rutas bajo `/api/admin/**`; la respuesta no incluye datos del ciudadano. Hay una prueba que lo verifica. |
@@ -212,9 +213,10 @@ El detalle por tarea irá en [tasks.md](tasks.md) cuando apruebes este plan.
   filtro y los servicios lo reciben por nombre.
 - El calor y las estadísticas corren en `REPEATABLE READ` para que sus consultas vean los mismos reportes.
 - Con filtro de categoría, `porCategoria` trae solo esa categoría.
-- `geo/ConsultaEspacial.sinJit` apaga el JIT de PostgreSQL dentro de la transacción en las consultas con
-  `v_reporte_comuna` (mapa, calor, estadísticas y listado del panel): era el mayor costo de tiempo.
-- Pendiente como propuesta (decisión de Andrés): guardar `id_comuna` en `reporte` al crearlo (V19).
+- `geo/ConsultaEspacial.sinJit` apagaba el JIT de PostgreSQL dentro de la transacción en las consultas con
+  `v_reporte_comuna` (mapa, calor, estadísticas y listado del panel): era el mayor costo de tiempo. Se
+  quitó el 12 nov, cuando la comuna guardada dejó esas consultas lejos del umbral del JIT (§12).
+- Guardar `id_comuna` en `reporte` al crearlo quedó como propuesta; se aprobó el 12 nov (§12).
 - QA de punta a punta reutilizable: `tools/qa-panel-admin/`.
 
 ## 12. V19 y V20: comuna más rápida (APROBADO por Andrés el 12 nov)
@@ -256,3 +258,17 @@ de desplegar. Siguiente número libre: V19.
 - Las consultas del panel, el detalle y el correo leen `r.id_comuna`; `AsignadorDeComuna` sigue usando la
   función para rechazar puntos fuera de cobertura al crear.
 - Si con la comuna guardada el costo estimado ya no activa el JIT, se quita `ConsultaEspacial.sinJit`.
+
+**Resultado (12 nov, base desechable con 10.000 reportes al azar en la capa; 4.923 caen en un polígono):**
+
+| Medida | Antes | Después |
+| --- | --- | --- |
+| Estadísticas | 31,5 s | 12 ms |
+| Mapa filtrado por comuna | 16 s | 2 ms (usa `ix_reporte_comuna`) |
+| Mapa sin filtro / puntos del calor | — | 11 ms / 9 ms |
+| Crear 10.000 reportes (el trigger asigna cada comuna) | — | 4,5 s |
+| Recalcular los 10.000 (cambio de capa o de distancia) | 31,1 s (asignar todos) | 2,6 s |
+| Costo estimado de las consultas del panel | pasaba de 100.000 (JIT) | 1.000 a 2.300 |
+
+Con ese costo el JIT ya no se activa: se quitó `ConsultaEspacial.sinJit` y su prueba. QA de punta a punta
+contra el jar real: 44 de 44; las cuatro rutas del panel responden en 6 a 11 ms.

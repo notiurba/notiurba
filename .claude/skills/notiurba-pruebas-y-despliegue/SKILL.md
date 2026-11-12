@@ -17,7 +17,8 @@ Contexto general: `docs/contexto/12-estado-actual-y-traspaso.md`. Trabaje en una
    migraciones de otra rama y Flyway falla.
 4. `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el mismo comando:
    ejecútelo con `env -i` y solo las variables necesarias.
-5. Meta de referencia (9 nov 2026): 268 pruebas, 0 fallos, 2 omitidas (proveedores reales).
+5. Meta de referencia (12 nov 2026, rama de NOT-129): 300 pruebas, 0 fallos, 10 omitidas (8 de enrutamiento
+   sin `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales). QA del panel: `tools/qa-panel-admin/qa-panel.sh`.
 6. Si no hay Docker/DB, las pruebas de integración se omiten con `assumeTrue`: dígalo, no lo cuente como pasado.
 
 ## Frontend (React 19 + Vite, pnpm)
@@ -27,7 +28,7 @@ Nunca npm ni `package-lock.json`. `VITE_USAR_MOCKS=true` simula la API solo en d
 
 ## Migraciones (Flyway)
 
-- Las aplicadas **no se editan**; se corrige con una nueva (hoy la siguiente es V19).
+- Las aplicadas **no se editan**; se corrige con una nueva (hoy la siguiente es V21).
 - En un `.sql` con GeoJSON, `${` choca con los marcadores de Flyway: deje un espacio tras `$geo$`.
 - Una migración destructiva pide antes un branch de respaldo en Neon.
 - Los scripts `backend/scripts/generar-*.py` convierten un CSV/GeoJSON en una migración.

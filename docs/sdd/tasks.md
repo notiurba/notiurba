@@ -85,16 +85,24 @@ regresión del listado y tiempos; 0 errores en el log del servidor.
 
 | ID | Tarea | Capa | Prueba | Estado |
 | --- | --- | --- | --- | --- |
-| T-13 | V19: `comuna.geog` generada + índice GiST + función con `geog` | DB | `ComunaGeografiaIntegracionTest` (misma respuesta que la función anterior) | [ ] |
-| T-14 | V20: `reporte.id_comuna` y `comuna_origen` + triggers + índice + vista | DB | `ComunaGuardadaIntegracionTest` (crear, mover, cambiar capa, barrio y distancia) | [ ] |
-| T-15 | Panel, detalle y correo leen `r.id_comuna`; quitar `sinJit` si sobra | Backend | suites existentes + QA de punta a punta | [ ] |
-| T-16 | Medición con 10.000 reportes antes/después | Pruebas | `medir-comuna` | [ ] |
+| T-13 | V19: `comuna.geog` generada + índice GiST + función con `geog` | DB | `ComunaGeografiaIntegracionTest` (misma respuesta que la función anterior) | [x] `5864258` |
+| T-14 | V20: `reporte.id_comuna` y `comuna_origen` + triggers + índice + vista | DB | `ComunaGuardadaIntegracionTest` (crear, mover, cambiar capa, barrio y distancia) | [x] `fcb0bcf` |
+| T-15 | Panel, detalle y correo leen `r.id_comuna`; quitar `sinJit` si sobra | Backend | suites existentes + QA de punta a punta | [x] `fb4ea64`, `6fae1ec` |
+| T-16 | Medición con 10.000 reportes antes/después | Pruebas | `medir-comuna` | [x] plan.md §12 |
+
+Resultado (12 nov): con 10.000 reportes, estadísticas de 31,5 s a 12 ms y mapa filtrado por comuna de 16 s
+a 2 ms; el costo estimado bajó a 1.000–2.300 y el JIT ya no se activa, así que se quitó `sinJit` y su
+prueba. `ComunaGeografiaIntegracionTest` compara 900 puntos contra la función anterior: 0 diferencias.
+Mutación manual: al quitar la condición del barrio en el trigger, la prueba del barrio falla. Suite
+completa: 300 pruebas, 0 fallos, las mismas 10 omitidas. QA de punta a punta: 44 de 44, rutas en 6–11 ms.
+Figma: la pestaña «Estadísticas» se agregó a la navegación de «Panel administrativo · Reportes» y
+«· Mapa de calor» (y «Cerrar sesión» quedó en 280 de ancho para que quepa).
 
 ## Pruebas finales (Fase 5)
 
 - [x] Todos los criterios CA verificados (tabla de trazabilidad).
-- [x] Backend: `mvn clean test` en verde con base PostGIS: 289 pruebas, 0 fallos, 10 omitidas que no tocan
-      este cambio (8 de enrutamiento de correo sin `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales).
+- [x] Backend: `mvn clean test` en verde con base PostGIS: 300 pruebas (12 nov), 0 fallos, 10 omitidas que
+      no tocan este cambio (8 de enrutamiento de correo sin `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales).
 - [x] Llamada real a la API levantada (no solo MockMvc) con token ADMIN: QA de punta a punta, 44 de 44.
 - [x] Documentos al día: `spec.md`, `plan.md`, `docs/contexto/11` y `12`, Linear (NOT-129, NOT-133, NOT-136) y vault.
 
@@ -109,7 +117,7 @@ regresión del listado y tiempos; 0 errores en el log del servidor.
 | CA-05 | T-10, T-11 | ídem | ✅ |
 | CA-06 | T-10, T-11 | ídem | ✅ |
 | CA-07 | T-02, T-04 | ídem | ✅ las tres rutas |
-| CA-08 | T-05 | ídem | ✅ mapa ~0,6 s, calor ~0,9 s, estadísticas ~0,3 s (base local) |
+| CA-08 | T-05, T-13 a T-16 | ídem + medición con 10.000 | ✅ con 10.000 reportes: mapa 11 ms, calor 9 ms, estadísticas 12 ms (base local) |
 | CA-09 | T-06, T-09, T-12 | revisión | ✅ contrato §5.2 a §5.4 |
 | CA-10 | T-01, T-07, T-10 | `MapaAdminServicioTest` | ✅ filtros, paginación y vigencia |
 | CA-11 | T-02, T-07, T-10 | `MapaAdminIntegracionTest` | ✅ las tres rutas |
@@ -128,3 +136,6 @@ regresión del listado y tiempos; 0 errores en el log del servidor.
 | 2026-11-11 | Estadísticas implementadas y probadas (PR C) | tasks.md |
 | 2026-11-11 | Revisión de código (6 de 7 corregidos), arreglo del JIT, QA de punta a punta 44/44; Neon: JIT no disponible (`pg_jit_available() = false`) | tasks.md |
 | 2026-11-11 | Medición con 10.000 reportes y propuesta V19 (A y C) pendiente de aprobación | plan.md §12 |
+| 2026-11-12 | V19 y V20 aprobados e implementados; lecturas con `r.id_comuna`; `sinJit` quitado; medición y QA 44/44 | plan.md §12, tasks.md |
+| 2026-11-12 | Hook del equipo y subagente `code-reviewer` (`.claude/`) | CLAUDE.md |
+| 2026-11-12 | Figma: pestaña «Estadísticas» en la navegación de «Reportes» y «Mapa de calor» | plan.md §7 |

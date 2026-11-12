@@ -84,7 +84,7 @@ Rutas previstas (ya nombradas en el contrato y en el Doc): `GET /api/admin/mapa`
 ## 7. Reglas y restricciones que aplican
 
 - **Vigencia:** la base ya define el criterio en la vista `v_reporte_mapa` (`ubicacion IS NOT NULL AND vigente_hasta > now()`); las rutas aplican el mismo criterio en el servidor. «Vigente» se mide con `vigente_hasta` de cada reporte, no con «30 días» fijos: el plazo (hoy 30 días) lo fija `configuracion.vigencia_dias` y cada reporte guarda su fecha.
-- **Comuna:** la asigna PostGIS al guardar el reporte (`fn_asignar_comuna`, vista `v_reporte_comuna`); no se recalcula en el frontend. La tabla `comuna` solo tiene el número (1 a 10), sin nombre. La capa y los 133 barrios son provisionales y el docente aceptó esa limitación.
+- **Comuna:** la asigna PostGIS al guardar el reporte (`fn_asignar_comuna`, guardada en `reporte.id_comuna` desde V20); no se recalcula en el frontend. La tabla `comuna` solo tiene el número (1 a 10), sin nombre. La capa y los 133 barrios son provisionales y el docente aceptó esa limitación.
 - **Privacidad (Ley 1581):** no se devuelven datos personales del ciudadano. El mapa público sigue fuera del MVP.
 - **Estados** (`EstadoReporte`): Recibido, Enviado, En trámite, Resuelto.
 - **Formato** de error único, camelCase, fechas ISO-8601 (contrato §1 y §2). Fechas de filtro en hora de Colombia, ambas inclusive (igual que `/api/admin/reportes`).

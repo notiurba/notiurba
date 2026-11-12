@@ -75,7 +75,9 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el
   mismo comando: ejecútelo en un entorno limpio (`env -i ...`).
 - Una base desechable: contenedor `postgis/postgis:16-3.4`. Docker Desktop debe estar abierto.
-- Última corrida completa: 268 pruebas, 0 fallos, 2 omitidas (pruebas con proveedores reales).
+- Última corrida completa (12/11/2026, rama de NOT-129): 300 pruebas, 0 fallos, 10 omitidas (8 de
+  enrutamiento de correo sin `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales).
+- QA de punta a punta del panel contra el jar real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones).
 - Errores de la API: formato único `{codigo, mensaje, campo}` (`ApiException`; en pruebas use
   `getReason()`).
 
@@ -98,7 +100,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   la entidad real. Quitarla exige autorización del equipo y del docente (historia NOT-131).
 - Netlify: `VITE_API_URL` y `VITE_GOOGLE_CLIENT_ID`.
 - Las migraciones aplicadas **no se editan**: se corrige con una migración nueva. Hoy van
-  V1 a V18 (la siguiente es V19).
+  V1 a V18 en `develop` y V19 y V20 en la rama de NOT-129 (la siguiente es V21).
 
 ## 6. Datos de negocio que se confunden fácil
 
@@ -126,18 +128,16 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - La plantilla del correo (`PlantillaReporte`) arma una lista fija de campos sin mirar el tipo
   de destinatario; por eso salen filas vacías y la matrícula siempre.
 - `PlantillaReporte.enlaceSeguro` solo admite enlaces `res.cloudinary.com` y `www.openstreetmap.org`.
-- **JIT de PostgreSQL y PostGIS (11/11/2026):** las consultas que usan `v_reporte_comuna` hacen que
-  PostgreSQL compile con JIT (PostGIS declara costos altos): 1,2 s de compilación para 13 reportes. El
-  mapa, el calor, las estadísticas y el listado del panel ya lo apagan en su transacción
-  (`ConsultaEspacial.sinJit`) y bajaron de ~0,3 s a ~0,02 s. **Neon (verificado el 11/11/2026):**
-  `jit = on` pero `pg_jit_available() = false` (no tiene LLVM), así que en producción no hay JIT; el
-  arreglo importa en Docker local, en las pruebas y si se cambia de proveedor. Las consultas de un solo
-  reporte (`ReporteRepositorio.buscarPropio`, `EnvioReporteServicio`, `AsignadorDeComuna`) tienen costo
-  bajo, no activan el JIT y tardan de 0,1 a 7 ms: no necesitan cambios.
-- **Costo de la comuna a escala (medido el 11/11/2026, 10.000 reportes, la mitad fuera de la capa):** la
-  comuna se calcula en cada lectura y un punto en un hueco o fuera de la capa cuesta ~7 ms (distancia en
-  `geography` a las 10 comunas): estadísticas 31,5 s y mapa filtrado 16 s. Propuesta V19 en
-  `docs/sdd/plan.md` §12 (pendiente de aprobación de Andrés).
+- **Comuna guardada en el reporte (V19 y V20, 12/11/2026):** antes la comuna se calculaba en cada
+  lectura (`v_reporte_comuna`) y un punto en un hueco o fuera de la capa costaba ~7 ms. Con 10.000
+  reportes las estadísticas tardaban 31,5 s y el mapa filtrado 16 s; además PostGIS declara costos
+  altos y PostgreSQL compilaba esas consultas con JIT (1,2 s para 13 reportes), por eso se apagaba en la
+  transacción. Ahora un trigger llena `reporte.id_comuna` y la recalcula cuando cambian el punto, el
+  barrio, la capa o la distancia máxima. Con 10.000 reportes: estadísticas 12 ms, mapa filtrado 2 ms,
+  crear los 10.000 reportes 4,5 s y recalcularlos todos 2,6 s. El costo estimado de las consultas quedó
+  en 1.000 a 2.300 (el JIT empieza en 100.000), así que se quitó el apagado del JIT. **Neon:** `jit = on`
+  pero `pg_jit_available() = false` (no tiene LLVM): en producción nunca hubo JIT. Antes de desplegar
+  V19 y V20, branch de respaldo en Neon (no borran nada; V20 llena la comuna de los reportes que hay).
 
 ## 8. Cómo se trabaja con Andrés (aprendido)
 

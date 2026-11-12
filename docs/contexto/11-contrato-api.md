@@ -103,7 +103,7 @@ Entrada:
 - `autorizaEnvio`: obligatorio, `true`. Autoriza enviar el reporte a la entidad a nombre del ciudadano y con sus datos (RN-07). El servidor guarda la fecha-hora en `autorizacion_envio_en`. Es la única autorización: no hay una segunda ni se envía copia al ciudadano (decidido el 01/11/2026). Texto de la casilla del paso 4: «Autorizo a NotiUrba a enviar este reporte a la entidad competente, a mi nombre y con mis datos, ubicación y fotos (con enlace público). La entidad podrá responderme a mi correo. Ver aviso de privacidad».
 
 Salida: 201 con `Location: /api/reportes/NU-000123` y un cuerpo mínimo `{ codigoSeguimiento, estado, creadoEn, vigenteHasta }` leído de la base tras guardar, en estado «Recibido». El código lo asigna el trigger de la base, no Java. El reporte completo se obtiene con 3.6 (NOT-89).
-La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02). No se guarda en el reporte: la vista `v_reporte_comuna` la deriva con `fn_asignar_comuna` (V13), la misma función que decide el rechazo. Reglas con GPS (NOT-55):
+La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02). Se guarda en el reporte (`reporte.id_comuna`, V20) con un trigger que usa `fn_asignar_comuna`, la misma función que decide el rechazo; la base la recalcula si cambian la capa de comunas, la comuna de un barrio o la distancia máxima. Reglas con GPS (NOT-55):
 - El punto cae dentro de una comuna (el borde cuenta como dentro): esa comuna.
 - Cae dentro de dos o más (solape): la de menor número.
 - Cae en un hueco: la comuna más cercana, si está a una distancia menor o igual a `configuracion.comuna_distancia_maxima_m` (50 m por defecto, valor propuesto; `0` desactiva la regla).
@@ -312,13 +312,12 @@ Respuesta 200:
 - No trae datos del ciudadano ni la descripción (Ley 1581): el detalle completo está en
   `GET /api/admin/reportes`.
 - Sin coincidencias: 200 con `reportes: []` y `total: 0`.
-- Rendimiento medido (11/11/2026, base local, JIT apagado en la transacción): con 1.001 reportes
-  vigentes la consulta tarda unos 0,05 s (0,6 s con el JIT de PostgreSQL encendido); el criterio es ≤ 2 s.
-- **JIT de PostgreSQL:** PostGIS declara costos muy altos y el JIT compilaba estas consultas aunque
-  fueran pequeñas (1,2 s de compilación para 13 reportes). El mapa, el calor, las estadísticas y el
-  listado del panel ejecutan `SET LOCAL jit = off` dentro de su transacción (`ConsultaEspacial.sinJit`);
-  funciona también detrás del pooler de Neon. En Neon el JIT no está disponible (`pg_jit_available() = false`):
-  el problema se ve en Docker local y en las pruebas, no en producción.
+- Rendimiento medido (12/11/2026, base local, comuna guardada): con 10.000 reportes la consulta tarda
+  unos 11 ms y 2 ms filtrando por comuna (índice `ix_reporte_comuna`); el criterio es ≤ 2 s.
+- **JIT de PostgreSQL:** cuando la comuna se calculaba en cada lectura, PostGIS declaraba costos tan altos
+  que el JIT compilaba estas consultas (1,2 s para 13 reportes) y había que apagarlo. Con la comuna
+  guardada el costo estimado es de 1.000 a 2.300 con 10.000 reportes, lejos del umbral (100.000), y ya no
+  se apaga. En Neon el JIT no está disponible (`pg_jit_available() = false`).
 
 ### 5.3 Mapa de calor y comunas críticas — IMPLEMENTADO (NOT-129, RF-23)
 
@@ -366,8 +365,7 @@ Respuesta 200:
 - Una página fuera de rango responde 200 con `items: []` (los puntos y los totales siguen llegando).
 - Son dos consultas (puntos y conteo por comuna) en una transacción `REPEATABLE READ`: las dos ven los
   mismos reportes, así que el ranking más `sinComuna` siempre suma `totalReportes`.
-- Rendimiento medido (11/11/2026, base local): con 1.202 reportes en 1.201 puntos la consulta tarda unos
-  0,13 s (0,9 s con el JIT encendido).
+- Rendimiento medido (12/11/2026, base local): con 10.000 reportes la consulta de puntos tarda unos 9 ms.
 
 ### 5.4 Estadísticas — IMPLEMENTADO (NOT-129, RF-24)
 
@@ -415,9 +413,10 @@ Respuesta 200:
 - Las tres tablas salen de una sola consulta agrupada: siempre cuadran con `total`.
 - Con filtro `idCategoria`, `porCategoria` trae solo esa categoría (un 0 de otra categoría sería
   engañoso: significaría «filtrada», no «sin reportes»).
-- Rendimiento medido (11/11/2026, base local): con 1.000 reportes la consulta tarda unos 0,04 s
-  (0,3 s con el JIT encendido).
-- QA de punta a punta contra el servidor real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones).
+- Rendimiento medido (12/11/2026, base local): con 10.000 reportes la consulta tarda unos 12 ms (31,5 s
+  cuando la comuna se calculaba en cada lectura).
+- QA de punta a punta contra el servidor real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones); las
+  cuatro rutas del panel responden en 6 a 11 ms.
 
 ## 6. Decisiones propuestas (no cerradas)
 
