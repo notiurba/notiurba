@@ -45,7 +45,7 @@ Reglas del flujo:
 - Los tres archivos de `docs/sdd/` describen **una** funcionalidad a la vez. Al
   terminarla, se archivan en `docs/sdd/historico/<NOT-nn>-<nombre>/` y se parte de
   las plantillas para la siguiente.
-- Un PR pequeño por grupo de tareas, rama `feature/…` desde `develop`.
+- **Un solo PR por historia** (rama `feature/…` desde `develop`), con commits atómicos por tarea. Decidido por Andrés el 12 nov 2026: no quiere integrar muchos PR.
 
 ## Revisión de código al terminar (obligatoria)
 
@@ -111,7 +111,7 @@ Reglas del flujo:
 
 - Español claro y frases cortas, también en las preguntas.
 - Ramas `feature/*` o `docs/*` y PR hacia `develop`; **sin líneas de coautoría de Claude** en commits ni PR.
-  Prefiera PR pequeños y separados. No mezcle nada que cambie datos de producción sin su aprobación.
+  Un PR por historia, con commits atómicos. No mezcle nada que cambie datos de producción sin su aprobación.
 - Lo que toca pantallas de Katherine se señala expresamente para su revisión.
 - Nunca imprima secretos. No cree historias en Linear sin su visto bueno (formato en `docs/contexto/13-sprint-3.md`;
   skill global `linear-historias-sprint`).

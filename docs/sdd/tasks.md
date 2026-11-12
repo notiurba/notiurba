@@ -16,14 +16,14 @@
 - Una tarea = un cambio pequeño que se puede probar solo.
 - Estados: `[ ]` pendiente · `[~]` en curso · `[x]` hecha · `[!]` bloqueada.
 - Cada tarea nombra el criterio de aceptación (CA) que cubre y su prueba.
-- Las tareas se agrupan en **PR pequeños** (rama `feature/…` desde `develop`), sin coautoría de Claude.
+- Toda la historia va en **un solo PR** desde `feature/not-130-correo-claro-y-canales` hacia `develop` (decisión de Andrés, 12 nov), con un commit atómico por tarea y sin coautoría de Claude.
 - Se implementa **en orden**: Figma → backend → frontend → pruebas. Si una tarea cambia el plan, se actualiza `plan.md` primero.
 - Al terminar una tarea se marca aquí con su commit y, si cambió algo de fondo, se actualiza `docs/`.
-- Al tocar código: subagente `code-reviewer` al final de cada PR.
+- Al tocar código: subagente `code-reviewer` al final de cada grupo y antes de abrir el PR.
 
 ## Tareas
 
-### PR 0 — Documentos SDD (rama `feature/not-130-correo-claro-y-canales`)
+### Grupo 0 — Documentos SDD
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
@@ -38,7 +38,7 @@
 | T-03 | Resultado del envío con rebote o fallo: lista de canales y «Copiar mi mensaje» | Figma | CA-11 | capturas a Andrés | [ ] |
 | T-04 | **Validación de Andrés** de T-01 a T-03 (con el Design System); sin ella no se empieza el backend | Figma | — | visto bueno escrito | [ ] |
 
-### PR 1 — Canales en la base y en la ruta (rama `feature/not-130-canales`)
+### Grupo 1 — Canales en la base y en la ruta
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
@@ -46,7 +46,7 @@
 | T-06 | V21, datos: Centroaguas a `info@`; GDO y su WhatsApp a inactivo; Veolia con WhatsApp activo y primero; canales nuevos de la Alcaldía, GDO, Centroaguas y Veolia con finalidad, orden, horario y fuente; nada se borra | DB | CA-08, CA-10, CA-10b, CA-17 | ídem + consulta de solo lectura en Neon tras desplegar | [ ] |
 | T-07 | `EnrutamientoServicio`: `Ruta.canales` en una consulta (sin N+1), ordenados; campos actuales intactos | Backend | CA-09, CA-10, CA-11 | `EnrutamientoIntegracionTest` (1 y 11 con correo; 12, 13 y 14 sin correo con canales; emergencia de gas) | [ ] |
 
-### PR 2 — Mensaje formal y vista previa (rama `feature/not-130-mensaje`)
+### Grupo 2 — Mensaje formal y vista previa
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
@@ -57,7 +57,7 @@
 | T-12 | `GET /api/reportes/{codigo}/mensaje` (solo el autor) | Backend | CA-11 | `VistaPreviaIntegracionTest` (200, 401, 404 de otro usuario) | [ ] |
 | T-13 | Igualdad de textos: vista previa = `GET /mensaje` = `mensaje_json` encolado | Backend | CA-15 | `VistaPreviaIntegracionTest` | [ ] |
 
-### PR 3 — Frontend: atajo, vista previa y canales (rama `feature/not-130-frontend`)
+### Grupo 3 — Frontend: atajo, vista previa y canales
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
@@ -73,7 +73,7 @@
 | --- | --- | --- | --- | --- | --- |
 | T-19 | Script de punta a punta en `tools/` con el jar real y base desechable: crear reporte, vista previa y correo encolado | Pruebas | CA-01, CA-15 | el script en verde | [ ] |
 | T-20 | Prueba funcional manual: categorías 1, 6, 11, 12, 13 y 14; 360 px y 1366 px; en el atajo, la pestaña de red sin `POST /api/reportes`; correo de prueba abierto en Gmail del celular y del computador | Pruebas | CA-07, CA-09b, todos | guion con capturas | [ ] |
-| T-21 | Subagente `code-reviewer` sobre cada PR; hallazgos corregidos con pruebas y antes/después | Pruebas | — | informe | [ ] |
+| T-21 | Subagente `code-reviewer` sobre toda la rama; hallazgos corregidos con pruebas y antes/después | Pruebas | — | informe | [ ] |
 | T-22 | Cierre con la skill `cierre-de-historia`: `docs/contexto/04`, `05`, `07`, `10`, `11`, `12`; texto para draw.io, Sheet y Doc; Linear NOT-130 y aviso a Katherine; vault y memoria; archivo del SDD | Docs | — | lista de la skill completa | [ ] |
 
 ## Pruebas finales (Fase 5)
