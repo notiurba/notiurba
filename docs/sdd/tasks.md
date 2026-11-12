@@ -8,7 +8,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) (aprobada el 2026-11-12, con el atajo de la opción A) |
 | Plan | [plan.md](plan.md) (aprobado el 2026-11-12) |
-| Estado general | **Sin iniciar** (documentos listos) |
+| Estado general | **En curso**: Figma aprobado; Grupo 1 (canales) hecho |
 | Última actualización | 2026-11-12 |
 
 ## Cómo se usa
@@ -42,9 +42,9 @@
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-05 | `V21__canales_y_finalidad.sql`, estructura: catálogo `finalidad_canal` y columnas `id_finalidad_canal`, `orden`, `horario`, `fuente`, `verificado_en` en `canal_atencion` | DB | CA-18 | `CanalesMigracionIntegracionTest` (migra V20 → V21 con reportes y envíos) | [ ] |
-| T-06 | V21, datos: Centroaguas a `info@`; GDO y su WhatsApp a inactivo; Veolia con WhatsApp activo y primero; canales nuevos de la Alcaldía, GDO, Centroaguas y Veolia con finalidad, orden, horario y fuente; nada se borra | DB | CA-08, CA-10, CA-10b, CA-17 | ídem + consulta de solo lectura en Neon tras desplegar | [ ] |
-| T-07 | `EnrutamientoServicio`: `Ruta.canales` en una consulta (sin N+1), ordenados; campos actuales intactos | Backend | CA-09, CA-10, CA-11 | `EnrutamientoIntegracionTest` (1 y 11 con correo; 12, 13 y 14 sin correo con canales; emergencia de gas) | [ ] |
+| T-05 | `V21__canales_y_finalidad.sql`, estructura: catálogo `finalidad_canal` y columnas `id_finalidad_canal`, `orden`, `horario`, `fuente`, `verificado_en` en `canal_atencion` | DB | CA-18 | `CanalesMigracionIntegracionTest` (migra V20 → V21 con reportes y envíos) | [x] `4be86db` |
+| T-06 | V21, datos: Centroaguas a `info@`; GDO y su WhatsApp a inactivo; Veolia con WhatsApp activo y primero; canales nuevos de la Alcaldía, GDO, Centroaguas y Veolia con finalidad, orden, horario y fuente; nada se borra | DB | CA-08, CA-10, CA-10b, CA-17 | ídem + consulta de solo lectura en Neon tras desplegar | [x] `4be86db` (falta la consulta en Neon tras desplegar) |
+| T-07 | `EnrutamientoServicio`: `Ruta.canales` en una consulta (sin N+1), ordenados; campos actuales intactos | Backend | CA-09, CA-10, CA-11 | `CanalesRutaIntegracionTest` y `EnrutamientoIntegracionTest` (1 y 11 con correo; 12, 13 y 14 sin correo con canales; emergencia de gas) | [x] `c4eceea` |
 
 ### Grupo 2 — Mensaje formal y vista previa
 
@@ -93,13 +93,13 @@
 | CA-07 | T-09, T-20 | `PlantillaReporteTest` + Gmail | pendiente |
 | CA-08 | T-06, T-10 | `EnrutamientoIntegracionTest` | pendiente |
 | CA-09, CA-09b, CA-09c | T-02, T-07, T-14, T-15, T-20 | `EnrutamientoIntegracionTest`, `node --test`, manual | pendiente |
-| CA-10, CA-10b | T-06, T-07 | `EnrutamientoIntegracionTest` | pendiente |
+| CA-10, CA-10b | T-06, T-07 | `CanalesRutaIntegracionTest`, `EnrutamientoIntegracionTest` | verde (12 nov) |
 | CA-11 | T-03, T-07, T-12, T-17 | `EnrutamientoIntegracionTest`, `VistaPreviaIntegracionTest`, manual | pendiente |
 | CA-12 | T-07, T-15 | `EnrutamientoIntegracionTest`, manual | pendiente |
 | CA-13, CA-14 | T-01, T-11, T-16 | `VistaPreviaIntegracionTest`, `node --test`, manual | pendiente |
 | CA-15 | T-13, T-19 | `VistaPreviaIntegracionTest`, script | pendiente |
 | CA-16 | T-11 | `VistaPreviaIntegracionTest` | pendiente |
-| CA-17, CA-18 | T-05, T-06 | `CanalesMigracionIntegracionTest` | pendiente |
+| CA-17, CA-18 | T-05, T-06 | `CanalesMigracionIntegracionTest` | verde (12 nov) |
 
 ## Registro de cambios
 
@@ -108,3 +108,4 @@
 | 2026-11-12 | SDD de NOT-129 archivado; spec de NOT-130 escrita y aprobada | spec.md |
 | 2026-11-12 | Atajo para gas, energía y aseo (opción A); WhatsApp de Veolia verificado | spec.md, plan.md |
 | 2026-11-12 | Plan aprobado; endpoints PLANEADO en el contrato; tareas creadas | plan.md, tasks.md, `docs/contexto/11` |
+| 2026-11-12 | Grupo 1 hecho: V21 y `Ruta.canales`; backend 320 pruebas, 0 fallos, 2 omitidas (proveedores reales) | tasks.md |
