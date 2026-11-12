@@ -70,6 +70,14 @@ class EnrutamientoIntegracionTest {
         }
         servicio.procesarSiguiente();verifyNoInteractions(proveedor);
     }
+    @Test void centroaguasEncolaElCorreoHaciaInfo() {
+        String codigo=reporte(11,false);
+        assertThat(servicio.solicitar(correo,codigo).estado()).isEqualTo("PENDIENTE");
+        assertThat(jdbc.queryForMap("""
+            SELECT e.destino,e.id_canal_atencion FROM registro_envio_correo e JOIN reporte r USING(id_reporte)
+            WHERE r.codigo_seguimiento=?""",codigo)).containsEntry("destino","info@centroaguas.com")
+            .containsEntry("id_canal_atencion",13);
+    }
     @Test void pendienteAceptadoYReintentoNoCreanReportesNiDuplicanCorreos() {
         String codigo=reporte(1,false);
         when(proveedor.enviar(any())).thenReturn("fake-"+UUID.randomUUID());

@@ -71,6 +71,8 @@ class CanalesRutaIntegracionTest {
         assertThat(whatsapp.tipo()).isEqualTo("WhatsApp");
         assertThat(whatsapp.acceso()).isEqualTo("317 372 5078");
         assertThat(whatsapp.detalle()).contains("Dto Palmira Buga Tuluá");
+        assertThat(rutas.resolver(14, false).acceso()).isEqualTo("317 372 5078");
+        assertThat(rutas.resolver(12, false).acceso()).isEqualTo("https://www.gdo.com.co/Paginas/Registro-de-pqrs.aspx");
 
         assertThat(rutas.resolver(12, false).canales()).extracting(Canal::acceso)
                 .startsWith("https://www.gdo.com.co/Paginas/Registro-de-pqrs.aspx")

@@ -108,4 +108,5 @@
 | 2026-11-12 | SDD de NOT-129 archivado; spec de NOT-130 escrita y aprobada | spec.md |
 | 2026-11-12 | Atajo para gas, energía y aseo (opción A); WhatsApp de Veolia verificado | spec.md, plan.md |
 | 2026-11-12 | Plan aprobado; endpoints PLANEADO en el contrato; tareas creadas | plan.md, tasks.md, `docs/contexto/11` |
-| 2026-11-12 | Grupo 1 hecho: V21 y `Ruta.canales`; backend 320 pruebas, 0 fallos, 2 omitidas (proveedores reales) | tasks.md |
+| 2026-11-12 | Grupo 1 hecho: V21 y `Ruta.canales` | tasks.md |
+| 2026-11-12 | Revisión del Grupo 1 corregida: canal alterno de gas y aseo = el recomendado; error honesto si el canal se cerró; prueba del envío a Centroaguas. Backend 313 pruebas, 0 fallos, 2 omitidas (proveedores reales) | tasks.md |

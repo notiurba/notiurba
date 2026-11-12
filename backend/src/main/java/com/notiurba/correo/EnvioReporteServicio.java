@@ -26,6 +26,8 @@ public class EnvioReporteServicio {
     /** Si tiene valor (RESEND_PRUEBA_DESTINO), el correo sale a esa dirección y NO a la entidad real. */
     @Value("${notiurba.correo.destino-prueba:}")
     private String destinoPrueba = "";
+    static final String CANAL_CERRADO = "El canal ya no permite envío";
+
     public EnvioReporteServicio(JdbcTemplate jdbc, TransactionTemplate tx, EnrutamientoServicio rutas,
             PlantillaReporte plantilla, EnviadorCorreo enviador, ObjectMapper json,
             @Value("${notiurba.correo.reportes-habilitados:false}") boolean habilitado) {
@@ -135,7 +137,7 @@ public class EnvioReporteServicio {
             var reporte=jdbc.queryForMap("SELECT id_categoria,emergencia FROM reporte WHERE id_reporte=?",intento.get("id_reporte"));
             var actual=rutas.resolver(((Number)reporte.get("id_categoria")).intValue(),(Boolean)reporte.get("emergencia"));
             if(!actual.permiteCorreo() || !actual.acceso().equals(intento.get("destino")))
-                throw new CorreoNoEnviadoException("El canal ya no permite envío",false);
+                throw new CorreoNoEnviadoException(CANAL_CERRADO,false);
             Integer previos=jdbc.queryForObject("SELECT count(*) FROM registro_envio_correo WHERE id_reporte=? AND id_registro_envio<?",Integer.class,intento.get("id_reporte"),id);
             OffsetDateTime primero=jdbc.queryForObject("SELECT min(creado_en) FROM registro_envio_correo WHERE id_reporte=?",OffsetDateTime.class,intento.get("id_reporte"));
             if(previos!=null && previos>0 && Duration.between(primero,OffsetDateTime.now()).compareTo(Duration.ofHours(23))>=0)
@@ -145,10 +147,11 @@ public class EnvioReporteServicio {
             if(proveedor==null || proveedor.isBlank()) throw new CorreoNoEnviadoException("Proveedor sin confirmación",true);
         } catch(Exception fallo) {
             boolean reintentable=fallo instanceof CorreoNoEnviadoException c && c.reintentable();
+            String error=CANAL_CERRADO.equals(fallo.getMessage()) ? CANAL_CERRADO : "El proveedor no confirmó el envío";
             tx.executeWithoutResult(status->jdbc.update("""
                 UPDATE registro_envio_correo SET id_estado_envio=(SELECT id_estado_envio FROM estado_envio WHERE nombre='FALLIDO'),
-                error='El proveedor no confirmó el envío',reintentable=?,procesando=FALSE WHERE id_registro_envio=?
-                """,reintentable,id));
+                error=?,reintentable=?,procesando=FALSE WHERE id_registro_envio=?
+                """,error,reintentable,id));
             return;
         }
         final String aceptado=proveedor;

@@ -1,6 +1,8 @@
 package com.notiurba.correo;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -14,6 +16,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.notiurba.reporte.BarrioDePrueba;
 import com.notiurba.reporte.BaseDeDatosTemporal;
@@ -54,13 +60,15 @@ class CanalesMigracionIntegracionTest {
                 VALUES (?, 12, ?, 'Reporte de gas anterior a los canales nuevos', now(), now())
                 RETURNING id_reporte""", Long.class, idAna, idBarrio);
         jdbc.update("""
-                INSERT INTO registro_envio_correo (id_reporte, id_canal_atencion, id_modo_envio, id_estado_envio, destino)
+                INSERT INTO registro_envio_correo (id_reporte, id_canal_atencion, id_modo_envio, id_estado_envio, destino,
+                                                   clave_idempotencia, mensaje_json)
                 VALUES (?, 18, (SELECT id_modo_envio FROM modo_envio WHERE nombre = 'RESEND'),
-                        (SELECT id_estado_envio FROM estado_envio WHERE nombre = 'PENDIENTE'), 'inquietudes@gdo.com.co')""",
+                        (SELECT id_estado_envio FROM estado_envio WHERE nombre = 'PENDIENTE'), 'inquietudes@gdo.com.co',
+                        'reporte-anterior', '{}')""",
                 reporte);
         List<Integer> antes = jdbc.queryForList("SELECT id_canal_atencion FROM canal_atencion ORDER BY 1", Integer.class);
 
-        migrar(fuente, "latest");
+        migrar(fuente, "21");
 
         assertThat(jdbc.queryForList("SELECT id_canal_atencion FROM canal_atencion ORDER BY 1", Integer.class))
                 .containsAll(antes);
@@ -88,6 +96,17 @@ class CanalesMigracionIntegracionTest {
                 SELECT count(*) FROM canal_atencion
                  WHERE activo AND id_entidad_destino IS NOT NULL AND (fuente IS NULL OR verificado_en IS NULL)""",
                 Integer.class)).as("canales activos sin fuente o sin fecha de verificación").isZero();
+
+        var enviador = mock(EnviadorCorreo.class);
+        new EnvioReporteServicio(jdbc, new TransactionTemplate(new DataSourceTransactionManager(fuente)),
+                new EnrutamientoServicio(jdbc), new PlantillaReporte(), enviador,
+                new ObjectMapper().findAndRegisterModules(), true).procesarSiguiente();
+        verifyNoInteractions(enviador);
+        assertThat(jdbc.queryForMap("""
+                SELECT s.nombre AS estado, e.error, e.reintentable, e.procesando
+                  FROM registro_envio_correo e JOIN estado_envio s USING (id_estado_envio) WHERE e.id_reporte = ?""",
+                reporte)).containsEntry("estado", "FALLIDO").containsEntry("error", "El canal ya no permite envío")
+                .containsEntry("reintentable", false).containsEntry("procesando", false);
     }
 
     private static Boolean activo(JdbcTemplate jdbc, String acceso) {

@@ -19,8 +19,6 @@ ALTER TABLE canal_atencion
   ADD COLUMN fuente VARCHAR(500),
   ADD COLUMN verificado_en DATE;
 
-CREATE INDEX ix_canal_entidad_orden ON canal_atencion (id_entidad_destino, orden) WHERE activo;
-
 -- Alcaldía (CAIC)
 UPDATE canal_atencion SET id_finalidad_canal = 1, orden = 1,
        fuente = 'Respuesta del CAIC con radicado E-.29570 (30 sep 2026)', verificado_en = DATE '2026-11-12'
@@ -124,3 +122,9 @@ UPDATE canal_atencion SET id_finalidad_canal = 6, orden = 5,
 INSERT INTO canal_atencion (id_tipo_canal, acceso, detalle, id_entidad_destino, id_finalidad_canal, orden, fuente, verificado_en) VALUES
  (2, 'https://www.valle.veolia.co/contactanos', 'Formulario «Contáctanos»', 5, 1, 3,
   'https://www.valle.veolia.co/contactanos', DATE '2026-11-12');
+
+-- El canal alterno de gas y aseo pasa a ser el primero que se recomienda.
+UPDATE configuracion_enrutamiento SET id_canal_alterno = (SELECT id_canal_atencion FROM canal_atencion
+        WHERE id_entidad_destino = 3 AND acceso = 'https://www.gdo.com.co/Paginas/Registro-de-pqrs.aspx')
+ WHERE codigo = 'E02';
+UPDATE configuracion_enrutamiento SET id_canal_alterno = 24 WHERE codigo = 'E04';
