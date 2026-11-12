@@ -7,7 +7,7 @@
 | Campo | Valor |
 | --- | --- |
 | Estado | **En revisión** (Borrador → En revisión → Aprobado) |
-| Especificación | [spec.md](spec.md) (aprobada el 2026-11-12) |
+| Especificación | [spec.md](spec.md) (aprobada el 2026-11-12 y modificada ese día con el atajo, opción A) |
 | Aprobado por / fecha | _(pendiente)_ |
 | Última actualización | 2026-11-12 |
 
@@ -15,7 +15,11 @@
 
 Una sola función arma el mensaje (`PlantillaReporte`) y alimenta tres usos: el **correo**, la **vista previa** y **«Copiar mi mensaje»**. Así el texto que el ciudadano revisa es idéntico al que se envía (CA-15) y las plantillas A, B y C salen de datos que ya existen: el grupo se deduce de `entidad_destino.id_tipo_entidad` y `categoria.requiere_ubicacion` (A = Alcaldía con ubicación; B = Alcaldía sin ubicación; C = empresa), sin columna nueva.
 
-Los canales siguen en `canal_atencion` (ya admite varios por entidad). Se le agregan columnas y un catálogo pequeño, y la ruta devuelve **todos** los canales activos de la entidad en vez de uno. El orden de trabajo es el de Andrés: **Figma → backend → frontend → pruebas funcionales**.
+Los canales siguen en `canal_atencion` (ya admite varios por entidad). Se le agregan columnas y un catálogo pequeño, y la ruta devuelve **todos** los canales activos de la entidad en vez de uno.
+
+**Atajo (opción A):** la decisión se toma en el paso 1 con un dato que la ruta ya trae, `permiteCorreo`. Si es falso (gas, energía y aseo), «Continuar» lleva a una pantalla de canales y el flujo termina ahí: no se crea reporte, así que el backend no cambia para esto. El resto de las categorías sigue los 4 pasos, con la vista previa antes de enviar.
+
+El orden de trabajo es el de Andrés: **Figma → backend → frontend → pruebas funcionales**.
 
 ## 2. Stack y límites (fijados, no se cambian)
 
@@ -26,7 +30,8 @@ Java 21 + Spring Boot 3.3 · PostgreSQL 16 + PostGIS 3.4 · JWT · React + Vite 
 ### Figma (primero; se valida con Andrés antes de seguir)
 Se editan solo las pantallas de este flujo, con los tokens del Design System (Nunito Sans, colores y chips ya definidos):
 - **«Paso 3 · Revisar y enviar»:** tarjeta «Así llegará tu mensaje» con las secciones (hechos, ubicación, fecha, evidencia, datos de contacto), un «Editar» por sección y los estados cargando, error y sin datos.
-- **Resultado del envío** (`NO_ENVIADO_CORREO` y rebote): lista de canales con ícono por tipo, finalidad, horario y el botón «Copiar mi mensaje».
+- **«Cómo reportar a {entidad}» (pantalla nueva, el atajo):** reemplaza los pasos 2 a 4 para gas, energía y aseo. Muestra los canales con ícono por tipo, acción directa (Abrir WhatsApp, Llamar, Abrir formulario), horario e instrucciones; el recomendado va primero. Sin barra de pasos y con «Atrás» al paso 1.
+- **Resultado del envío** (solo rebote o fallo): la misma lista de canales más el botón «Copiar mi mensaje».
 - Se entregan capturas a Andrés; sin su visto bueno no se pasa al backend.
 
 ### Base de datos — `V21__canales_y_finalidad.sql` (la siguiente libre; V20 es la última)
@@ -38,9 +43,9 @@ Se editan solo las pantallas de este flujo, con los tokens del Design System (Nu
 | Entidad | Cambio |
 | --- | --- |
 | Centroaguas | `info@centroaguas.com` (canal 13) pasa a **activo y principal**; `notificacionespqr@` (12) a inactivo, con su motivo en `detalle`. En `configuracion_enrutamiento` E01: `id_canal_correo` = 13 y `correo_confirmado` = verdadero. Se agrega la web `https://www.centroaguas.com/index.php/contactenos` (el aplicativo PQRS está en una IP con HTTP y no se enlaza) y se completan línea y oficina con su horario. |
-| Gases de Occidente | `inquietudes@gdo.com.co` (18) a inactivo y no principal; E02: `correo_confirmado` = falso. Se agregan el formulario «Registro de PQR» y el teléfono del contact center (602) 418 7333; 164 queda como Emergencia. |
-| Celsia | Sin cambios de correo (ya inactivo). Finalidad: Zona Clientes = Radicar PQR; WhatsApp 310 390 3468 = Reportar daño. |
-| Veolia | `pqr.tulua@` (26) con `detalle` del motivo y se registra `pqr.tulua.co@veolia.com` inactivo; **el WhatsApp (24) pasa a inactivo** hasta verificarlo; se agrega el formulario «Contáctanos» de su sitio. |
+| Gases de Occidente | `inquietudes@gdo.com.co` (18) a inactivo y no principal; E02: `correo_confirmado` = falso. Se agregan el formulario «Registro de PQR» (primero en el orden) y el teléfono del contact center (602) 418 7333; 164 queda como Emergencia. **El WhatsApp 315 665 8536 (17) pasa a inactivo** hasta verificarlo. |
+| Celsia | Sin cambios de correo (ya inactivo). Orden: Zona Clientes (Radicar PQR) primero, WhatsApp 310 390 3468 (Reportar daño) y la línea. |
+| Veolia | `pqr.tulua@` (26) con `detalle` del motivo y se registra `pqr.tulua.co@veolia.com` inactivo. **El WhatsApp (24) queda activo y primero**, con `detalle` «Elija Dto Palmira Buga Tuluá → Residuos → Aseo Valle», `fuente` «Verificado por Andrés, 12 nov 2026» y `verificado_en`. Se agrega el formulario «Contáctanos» de su sitio; la línea y la oficina siguen. |
 | Alcaldía | Se agregan formulario PQRSDF, PQRSDF anónimo, consulta de estado, agente virtual y oficina presencial, con horario; el teléfono recibe su horario. |
 | Todos | `fuente` y `verificado_en` (2026-11-12) en cada canal con evidencia. |
 
@@ -49,7 +54,7 @@ Orden de las sentencias: primero se quita lo principal de un canal y después se
 ### Backend (`backend/src/main/java/com/notiurba/…`)
 - **`correo/PlantillaReporte`** (reescrita): `Datos` pierde `codigo` y `dependencia` y gana nombre, tipo y número de documento por separado y la bandera «con matrícula». Un método `componer(Datos, Grupo)` devuelve `Mensaje(asunto, texto, html, secciones)`; `crear` lo envuelve en `CorreoSaliente`. Reglas: sin filas vacías, fecha «9 de noviembre de 2026, 10:07 a. m.» (se reemplaza el espacio fino U+202F por un espacio normal), coordenadas `%.5f` con `Locale.ROOT`, fotos como `<img>` con texto alternativo y enlace (la misma URL con ancho fijo), versión en texto plano idéntica, escape de HTML, sin «NotiUrba» ni código.
 - **`correo/GrupoPlantilla`** (enum nuevo A, B, C) y su resolución desde la ruta.
-- **`correo/EnrutamientoServicio`**: `Ruta` suma `canales` (lista de `Canal(tipo, acceso, finalidad, horario, detalle)` con los canales activos no-correo de la entidad, ordenados por `orden`); una consulta, sin N+1. Los campos actuales no cambian para no romper el frontend.
+- **`correo/EnrutamientoServicio`**: `Ruta` suma `canales` (lista de `Canal(tipo, acceso, finalidad, horario, detalle)` con los canales activos no-correo de la entidad, ordenados por `orden`); una consulta, sin N+1. Los campos actuales no cambian para no romper el frontend. Es lo único que necesita el atajo: `GET /api/enrutamiento/categorias` ya trae `permiteCorreo` de las 14 categorías en una llamada. `POST /api/reportes` sigue aceptando las categorías 12 a 14 (compatibilidad); la interfaz ya no las envía por ahí.
 - **`correo/EnvioReporteServicio`**: usa la plantilla nueva; el asunto sin código. Los reintentos conservan el mensaje ya guardado.
 - **`correo/VistaPreviaServicio`** y controlador: arma el `Mensaje` desde el borrador (nombre y contacto salen de la sesión; barrio y comuna con `AsignadorDeComuna`), sin escribir en la base.
 - La comuna y el cálculo siguen en PostGIS.
@@ -66,8 +71,11 @@ Orden de las sentencias: primero se quita lo principal de un canal y después se
 ### Frontend (`frontend/src/app/…`, zona del ciudadano)
 - `servicios/correoReportes.js`: `vistaPrevia(borrador)` y `mensaje(codigo)`.
 - `componentes/VistaPreviaMensaje.jsx` (nuevo): la tarjeta con «Editar» por sección, estados de carga y error; se usa en `reportar/PasoConfirmacion.jsx`.
-- `componentes/ResultadoCorreo.jsx`: `CanalOficial` pasa a listar todos los canales (teléfono `tel:`, web `https:`, WhatsApp `https://wa.me/57…`, presencial como texto) y agrega «Copiar mi mensaje» cuando no hubo correo o rebotó.
-- `componentes/estadoCorreo.js`: `enlaceCanal` reconoce WhatsApp.
+- `componentes/ListaCanales.jsx` (nuevo): lista de canales con acción directa (teléfono `tel:`, web `https:` en otra pestaña, WhatsApp `https://wa.me/57…`, presencial como texto con horario). Se usa en el atajo y en el resultado del envío.
+- `reportar/PasoCanales.jsx` (nuevo, ruta `/reportar/canales` en `rutas.jsx`): la pantalla «Cómo reportar a {entidad}», con «Atrás» al paso 1.
+- `reportar/PasoCategoria.jsx`: al continuar, si la ruta de la categoría no permite correo, navega a `/reportar/canales` en vez de a `/reportar/ubicacion`; la pregunta de fuga de gas y la línea 164 se conservan. Un guardia en el contenedor `ReportarLayout` redirige a `/reportar/canales` si alguien llega directo a un paso 2 a 4 con una categoría sin correo.
+- `componentes/ResultadoCorreo.jsx`: `CanalOficial` usa `ListaCanales` y agrega «Copiar mi mensaje» cuando el correo rebotó o falló.
+- `componentes/estadoCorreo.js`: `enlaceCanal` reconoce WhatsApp (número colombiano de 10 dígitos más `57`).
 - `simulacion/index.js`: respuestas simuladas de los dos endpoints nuevos y `canales` en la ruta.
 - Textos en español y tono claro; sin tocar la lógica de sesión ni de registro.
 
@@ -82,8 +90,9 @@ Orden de las sentencias: primero se quita lo principal de un canal y después se
 | CA-01 a CA-06 | Unitaria de `PlantillaReporte`: tres grupos, con y sin matrícula, filas vacías, fecha, coordenadas, fotos, escape de HTML, ausencia de «NotiUrba» y de NU-… | `backend/src/test/…/correo/PlantillaReporteTest` |
 | CA-02 | Unitaria del grupo por categoría (las 14) | `GrupoPlantillaTest` |
 | CA-07 | Texto plano igual al HTML (unitaria) y **manual** en Gmail del celular y del computador con el destino de pruebas | `PlantillaReporteTest` + guion funcional |
-| CA-08, CA-09, CA-12 | Integración con PostGIS: ruta por categoría (1 y 11 con correo; 12, 13, 14 sin correo y con canales; emergencia de gas) | `EnrutamientoIntegracionTest` |
-| CA-10, CA-10b | Integración: canales ordenados con finalidad y horario; el WhatsApp de Veolia inactivo no aparece | `EnrutamientoIntegracionTest` |
+| CA-08, CA-12 | Integración con PostGIS: ruta por categoría (1 y 11 con correo; emergencia de gas sin correo) | `EnrutamientoIntegracionTest` |
+| CA-09, CA-09b, CA-09c | Integración: las categorías 12, 13 y 14 devuelven `permiteCorreo` falso y sus `canales` en orden (WhatsApp de Veolia primero). Frontend (`node --test`): la decisión de destino en el paso 1, `enlaceCanal` (WhatsApp `wa.me/57…`, `tel:`, `https:`) y el guardia de pasos. **Manual:** elegir gas, energía y aseo, ver la pantalla de canales y comprobar en la pestaña de red que no se llama a `POST /api/reportes` | `EnrutamientoIntegracionTest`, `node --test` y guion funcional |
+| CA-10, CA-10b | Integración: canales ordenados con finalidad y horario; el WhatsApp de Gases de Occidente inactivo no aparece | `EnrutamientoIntegracionTest` |
 | CA-11 | Integración: un envío con rebote devuelve la `ruta` con `canales` | `EnrutamientoIntegracionTest` |
 | CA-13, CA-14 | MockMvc/integración: la vista previa responde 200, no crea reporte ni fila de envío; frontend: la tarjeta y los enlaces «Editar» | `VistaPreviaIntegracionTest` y `node --test` |
 | CA-15 | Integración: el texto de la vista previa, `GET /mensaje` y el `mensaje_json` encolado son iguales | `VistaPreviaIntegracionTest` |
@@ -103,7 +112,10 @@ Incluye entradas hostiles (HTML en la descripción, enlaces de foto no seguros) 
 | Reportes ya encolados conservan el formato viejo y su reintento ve otra configuración | Baja / Bajo | Hay 4 reportes en Neon; el reintento ya se rechaza con «La configuración del canal cambió». |
 | La vista previa se desfasa del correo real | Media / Alto | Misma función `componer` y prueba CA-15. |
 | Clientes de correo bloquean imágenes | Media / Bajo | Texto alternativo y enlace «Fotografía n» siempre visibles. |
-| Cambios en una pantalla de Katherine | Baja / Medio | El cambio es pequeño y aislado (un componente); se le avisa al integrar. |
+| Cambios en pantallas de Katherine (`PasoCategoria`, `PasoConfirmacion`) | Baja / Medio | Cambios pequeños y aislados (un componente por pantalla más una pantalla nueva); se le avisa al integrar. |
+| Gas, energía y aseo ya no aparecen en el mapa de calor ni en las estadísticas | Alta / Bajo | Decisión de Andrés (12 nov), escrita en la spec y en el contrato; el panel muestra «sin datos» para esas categorías. |
+| Alguien llega por URL directa a los pasos 2 a 4 con una categoría sin correo | Baja / Bajo | Guardia en `ReportarLayout` que redirige a `/reportar/canales`. |
+| Los pasos del atajo cambian el recorrido ya probado con Luz | Media / Bajo | Prueba funcional del flujo completo con categorías de cada tipo antes de integrar. |
 | Los canales cambian con el tiempo | Media / Bajo | `fuente` y `verificado_en` por canal; la verificación periódica queda en el cierre. |
 
 ## 6. Alternativas descartadas
@@ -114,11 +126,13 @@ Incluye entradas hostiles (HTML en la descripción, enlaces de foto no seguros) 
 - **Miniaturas con transformación de Cloudinary:** depende de la configuración de la cuenta; se usa la misma foto con ancho fijo (≤ 1 MB, ya comprimida).
 - **Enviar copias a varias direcciones de una entidad:** rompe «un destino por reporte».
 - **Columna de grupo de plantilla:** se deduce de datos existentes.
+- **Atajo con «Guardar también en NotiUrba» (opción B):** descartada por Andrés; esas entidades no reciben correo y nadie haría doble seguimiento a mano.
+- **Seguir con los 4 pasos para todas las categorías:** hace trabajar al ciudadano para terminar en otro canal.
 
 ## 7. Decisiones pendientes
 
-- [PENDIENTE] Verificar el WhatsApp de Veolia (317 372 5078). Activarlo es un cambio de datos (`UPDATE` o una migración de una línea). Decide: Andrés.
-- [PENDIENTE] El WhatsApp de Gases de Occidente (315 665 8536) está en el repo, pero no en su sitio oficial: verificarlo antes de seguir mostrándolo. Decide: Andrés.
+- [PENDIENTE] El WhatsApp de Gases de Occidente (315 665 8536) está en el repo, pero no en su sitio oficial: queda inactivo hasta verificarlo. Activarlo es un cambio de datos. No bloquea. Decide: Andrés.
+- Resuelto el 12 nov: el WhatsApp de Veolia está verificado y activo.
 
 ## 8. Aprobación
 
