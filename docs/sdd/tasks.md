@@ -8,7 +8,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) (aprobada el 2026-11-12, con el atajo de la opción A) |
 | Plan | [plan.md](plan.md) (aprobado el 2026-11-12) |
-| Estado general | **En curso**: Figma aprobado; Grupo 1 (canales) hecho |
+| Estado general | **En curso**: Figma aprobado; Grupos 1 y 2 (backend) hechos; falta el frontend |
 | Última actualización | 2026-11-12 |
 
 ## Cómo se usa
@@ -50,12 +50,12 @@
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-08 | `GrupoPlantilla` (A, B, C) deducido de la entidad y `requiere_ubicacion` | Backend | CA-02 | `GrupoPlantillaTest` (las 14 categorías) | [ ] |
-| T-09 | `PlantillaReporte` reescrita: `componer` → `Mensaje(asunto, texto, html, secciones)`; tono formal, sin NotiUrba, código ni dependencia; sin filas vacías; fecha y coordenadas; fotos con texto alternativo; matrícula condicional; escape de HTML | Backend | CA-01, CA-03 a CA-06, CA-07 (texto) | `PlantillaReporteTest` con entradas hostiles | [ ] |
-| T-10 | `EnvioReporteServicio` con la plantilla nueva; asunto sin código; pruebas que fijaban el asunto viejo actualizadas | Backend | CA-01, CA-08 | `EnrutamientoIntegracionTest`, `DestinoDePruebaTest` | [ ] |
-| T-11 | `POST /api/reportes/vista-previa` (`VistaPreviaServicio` y controlador): sin escribir en la base | Backend | CA-13, CA-14, CA-16 | `VistaPreviaIntegracionTest` (200, no crea reporte ni envío, 400 con `campo`, 401) | [ ] |
-| T-12 | `GET /api/reportes/{codigo}/mensaje` (solo el autor) | Backend | CA-11 | `VistaPreviaIntegracionTest` (200, 401, 404 de otro usuario) | [ ] |
-| T-13 | Igualdad de textos: vista previa = `GET /mensaje` = `mensaje_json` encolado | Backend | CA-15 | `VistaPreviaIntegracionTest` | [ ] |
+| T-08 | `GrupoPlantilla` (A, B, C) deducido de la entidad y `requiere_ubicacion` | Backend | CA-02 | `GrupoPlantillaTest` (las 14 categorías) | [x] `769753f` |
+| T-09 | `PlantillaReporte` reescrita: `componer` → `Mensaje(asunto, texto, html, secciones)`; tono formal, sin NotiUrba, código ni dependencia; sin filas vacías; fecha y coordenadas; fotos con texto alternativo; matrícula condicional; escape de HTML | Backend | CA-01, CA-03 a CA-06, CA-07 (texto) | `PlantillaReporteTest` con entradas hostiles | [x] `4a4e127` |
+| T-10 | `EnvioReporteServicio` con la plantilla nueva; asunto sin código; pruebas que fijaban el asunto viejo actualizadas | Backend | CA-01, CA-08 | `EnrutamientoIntegracionTest`, `DestinoDePruebaTest` | [x] `4a4e127` |
+| T-11 | `POST /api/reportes/vista-previa` (`VistaPreviaServicio` y controlador): sin escribir en la base | Backend | CA-13, CA-14, CA-16 | `VistaPreviaIntegracionTest` (200, no crea reporte ni envío, 400 con `campo`, 401) | [x] `962a663`, `ca11bf9` |
+| T-12 | `GET /api/reportes/{codigo}/mensaje` (solo el autor) | Backend | CA-11 | `VistaPreviaIntegracionTest` (200, 401, 404 de otro usuario) | [x] `ca11bf9` |
+| T-13 | Igualdad de textos: vista previa = `GET /mensaje` = `mensaje_json` encolado | Backend | CA-15 | `VistaPreviaIntegracionTest` | [x] `ca11bf9` (sin la línea de fecha: la vista previa usa la hora de ese momento) |
 
 ### Grupo 3 — Frontend: atajo, vista previa y canales
 
@@ -87,18 +87,18 @@
 
 | Criterio | Tareas | Prueba | Resultado |
 | --- | --- | --- | --- |
-| CA-01 | T-09, T-10, T-19 | `PlantillaReporteTest`, script | pendiente |
-| CA-02 | T-08 | `GrupoPlantillaTest` | pendiente |
-| CA-03 a CA-06 | T-09 | `PlantillaReporteTest` | pendiente |
-| CA-07 | T-09, T-20 | `PlantillaReporteTest` + Gmail | pendiente |
-| CA-08 | T-06, T-10 | `EnrutamientoIntegracionTest` | pendiente |
+| CA-01 | T-09, T-10, T-19 | `PlantillaReporteTest`, `EnrutamientoIntegracionTest`, script | verde en backend (falta script) |
+| CA-02 | T-08 | `GrupoPlantillaTest` | verde |
+| CA-03 a CA-06 | T-09 | `PlantillaReporteTest` | verde |
+| CA-07 | T-09, T-20 | `PlantillaReporteTest` + Gmail | texto plano verde; falta Gmail |
+| CA-08 | T-06, T-10 | `EnrutamientoIntegracionTest` | verde |
 | CA-09, CA-09b, CA-09c | T-02, T-07, T-14, T-15, T-20 | `EnrutamientoIntegracionTest`, `node --test`, manual | pendiente |
 | CA-10, CA-10b | T-06, T-07 | `CanalesRutaIntegracionTest`, `EnrutamientoIntegracionTest` | verde (12 nov) |
 | CA-11 | T-03, T-07, T-12, T-17 | `EnrutamientoIntegracionTest`, `VistaPreviaIntegracionTest`, manual | pendiente |
 | CA-12 | T-07, T-15 | `EnrutamientoIntegracionTest`, manual | pendiente |
 | CA-13, CA-14 | T-01, T-11, T-16 | `VistaPreviaIntegracionTest`, `node --test`, manual | pendiente |
-| CA-15 | T-13, T-19 | `VistaPreviaIntegracionTest`, script | pendiente |
-| CA-16 | T-11 | `VistaPreviaIntegracionTest` | pendiente |
+| CA-15 | T-13, T-19 | `VistaPreviaIntegracionTest`, script | verde en backend (falta script) |
+| CA-16 | T-11 | `VistaPreviaIntegracionTest` | verde |
 | CA-17, CA-18 | T-05, T-06 | `CanalesMigracionIntegracionTest` | verde (12 nov) |
 
 ## Registro de cambios
@@ -109,4 +109,5 @@
 | 2026-11-12 | Atajo para gas, energía y aseo (opción A); WhatsApp de Veolia verificado | spec.md, plan.md |
 | 2026-11-12 | Plan aprobado; endpoints PLANEADO en el contrato; tareas creadas | plan.md, tasks.md, `docs/contexto/11` |
 | 2026-11-12 | Grupo 1 hecho: V21 y `Ruta.canales` | tasks.md |
+| 2026-11-12 | Grupo 2 hecho: carta formal, vista previa y `GET /mensaje`. Backend 352 pruebas, 0 fallos, 2 omitidas | tasks.md |
 | 2026-11-12 | Revisión del Grupo 1 corregida: canal alterno de gas y aseo = el recomendado; error honesto si el canal se cerró; prueba del envío a Centroaguas. Backend 313 pruebas, 0 fallos, 2 omitidas (proveedores reales) | tasks.md |
