@@ -17,6 +17,7 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
 4. La documentación de planeación vive en un Google Doc (fuente formal para la
    universidad). `docs/` es la copia de trabajo para el código. Si cambia algo de
    fondo, se actualiza en ambos.
+5. Al terminar una historia, sigue la skill del repo `cierre-de-historia` (sección «Cierre de historia»).
 
 ## Flujo Spec-Driven Development (SDD)
 
@@ -62,6 +63,11 @@ Reglas del flujo:
 - Una historia no está cerrada hasta que su documentación está al día. Al terminarla se sigue la skill
   del repo **`cierre-de-historia`** (`.claude/skills/cierre-de-historia/`): `docs/`, archivo del SDD,
   modelo de datos (draw.io, Sheet y Doc), Linear, Figma, vault y memoria.
+- La skill vive **en el repo, para todo el equipo** (Andrés, Katherine y Luz Amelia) y para cualquier IA
+  que trabaje aquí: se invoca con el nombre `cierre-de-historia` o leyendo su `SKILL.md`. No la copies a
+  la carpeta personal de nadie; si hay que mejorarla, se cambia en el repo con un PR.
+- Si trabajas una historia de otra persona, la lista aplica igual: lo que no puedas actualizar tú (Figma,
+  Google Doc, draw.io) se entrega al dueño con el texto listo.
 
 ## Reglas de trabajo
 
