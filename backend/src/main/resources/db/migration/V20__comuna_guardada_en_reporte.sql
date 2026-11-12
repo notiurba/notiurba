@@ -27,26 +27,48 @@ BEGIN
   RETURN NEW;
 END $$;
 
-CREATE TRIGGER tg_reporte_comuna BEFORE INSERT OR UPDATE OF ubicacion, id_barrio ON reporte
-  FOR EACH ROW EXECUTE FUNCTION fn_reporte_guardar_comuna();
+-- id_comuna y comuna_origen también disparan el trigger: escribirlas a mano no salta la regla
+CREATE TRIGGER tg_reporte_comuna BEFORE INSERT OR UPDATE OF ubicacion, id_barrio, id_comuna, comuna_origen
+  ON reporte FOR EACH ROW EXECUTE FUNCTION fn_reporte_guardar_comuna();
 
--- La capa o la distancia máxima cambiaron: se recalculan los reportes con punto
-CREATE FUNCTION fn_recalcular_comuna_por_punto() RETURNS trigger LANGUAGE plpgsql AS $$
+-- Cada recálculo bloquea la creación de reportes hasta que su transacción termine: espera a los que se
+-- están creando (para verlos) y frena los nuevos (para que usen la regla nueva).
+CREATE FUNCTION fn_recalcular_reportes_con_punto() RETURNS void LANGUAGE plpgsql AS $$
 BEGIN
+  LOCK TABLE reporte IN SHARE ROW EXCLUSIVE MODE;
   UPDATE reporte SET ubicacion = ubicacion WHERE ubicacion IS NOT NULL;
+END $$;
+
+-- La comuna 1 a 10 ya existe (ck_comuna_rango), así que la capa solo cambia con un UPDATE
+CREATE FUNCTION fn_comuna_cambio_poligono() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM antes a JOIN despues d USING (id_comuna) WHERE a.geom IS DISTINCT FROM d.geom) THEN
+    PERFORM fn_recalcular_reportes_con_punto();
+  END IF;
   RETURN NULL;
 END $$;
 
-CREATE TRIGGER tg_comuna_recalcular AFTER INSERT OR UPDATE OF geom ON comuna
-  FOR EACH STATEMENT EXECUTE FUNCTION fn_recalcular_comuna_por_punto();
+CREATE TRIGGER tg_comuna_recalcular AFTER UPDATE ON comuna
+  REFERENCING OLD TABLE AS antes NEW TABLE AS despues
+  FOR EACH STATEMENT EXECUTE FUNCTION fn_comuna_cambio_poligono();
 
-CREATE TRIGGER tg_distancia_comuna_recalcular AFTER UPDATE ON configuracion
-  FOR EACH ROW WHEN (NEW.clave = 'comuna_distancia_maxima_m' AND NEW.valor IS DISTINCT FROM OLD.valor)
-  EXECUTE FUNCTION fn_recalcular_comuna_por_punto();
+-- Sin la fila, fn_asignar_comuna usa 0 m: borrarla o renombrarla también cambia la regla
+CREATE FUNCTION fn_configuracion_cambio_distancia() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF 'comuna_distancia_maxima_m' IN (NEW.clave, OLD.clave)
+     AND (NEW.clave, NEW.valor) IS DISTINCT FROM (OLD.clave, OLD.valor) THEN
+    PERFORM fn_recalcular_reportes_con_punto();
+  END IF;
+  RETURN NULL;
+END $$;
+
+CREATE TRIGGER tg_distancia_comuna_recalcular AFTER INSERT OR UPDATE OR DELETE ON configuracion
+  FOR EACH ROW EXECUTE FUNCTION fn_configuracion_cambio_distancia();
 
 -- Un barrio cambió de comuna: solo cambian sus reportes cuya comuna salía del barrio
 CREATE FUNCTION fn_recalcular_comuna_por_barrio() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
+  LOCK TABLE reporte IN SHARE ROW EXCLUSIVE MODE;
   UPDATE reporte SET id_barrio = id_barrio
    WHERE id_barrio = NEW.id_barrio AND comuna_origen IS DISTINCT FROM 'poligono';
   RETURN NULL;

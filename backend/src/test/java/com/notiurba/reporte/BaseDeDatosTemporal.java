@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
 
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.context.DynamicPropertyRegistry;
 
 /**
@@ -50,6 +53,11 @@ public final class BaseDeDatosTemporal {
         registro.add("spring.datasource.password", () -> clave);
         // Valor ficticio: V4 siembra el administrador con esta contraseña, solo en la base desechable
         registro.add("spring.flyway.placeholders.adminPassword", () -> "ClaveDePrueba-" + UUID.randomUUID());
+    }
+
+    /** Para migrar a mano (Flyway por versiones) sin levantar Spring. */
+    public DataSource fuente() {
+        return new DriverManagerDataSource(urlServidor + "/" + nombre, usuario, clave);
     }
 
     public void borrar() throws SQLException {
