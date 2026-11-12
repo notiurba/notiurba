@@ -24,6 +24,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +33,8 @@ import com.notiurba.reporte.BarrioDePrueba;
 import com.notiurba.reporte.BaseDeDatosTemporal;
 import com.notiurba.reporte.DatosDePrueba;
 import com.notiurba.reporte.DatosDePrueba.Reporte;
+import com.notiurba.reporte.FiltroPanel;
+import com.notiurba.reporte.ListadoReportesRepositorio;
 import com.notiurba.seguridad.JwtProveedor;
 
 /** Contra PostgreSQL + PostGIS real. Cada prueba empieza sin reportes para que los totales sean exactos. */
@@ -65,6 +69,9 @@ class MapaAdminIntegracionTest {
     @Autowired private JdbcTemplate jdbc;
     @Autowired private JwtProveedor jwt;
     @Autowired private ObjectMapper json;
+    @Autowired private MapaAdminRepositorio mapaRepositorio;
+    @Autowired private ListadoReportesRepositorio listadoRepositorio;
+    @Autowired private PlatformTransactionManager transacciones;
 
     private int idBarrio;
     private long idAna;
@@ -615,4 +622,27 @@ class MapaAdminIntegracionTest {
                 .isLessThanOrEqualTo(2000);
     }
 
+    // JIT de PostgreSQL
+
+    /** El JIT tarda más en compilar las consultas con PostGIS que en ejecutarlas. */
+    @Test
+    void lasConsultasEspacialesApaganElJitSoloDentroDeSuTransaccion() {
+        var sinFiltro = new FiltroPanel(null, null, null, null, null);
+        var tx = new TransactionTemplate(transacciones);
+        tx.setReadOnly(true);
+        List<Runnable> consultas = List.of(() -> mapaRepositorio.mapa(sinFiltro),
+                () -> mapaRepositorio.calor(sinFiltro),
+                () -> mapaRepositorio.estadisticas(sinFiltro, FiltroVigencia.TODOS),
+                () -> listadoRepositorio.listarParaAdmin(sinFiltro));
+        String jitInicial = jdbc.queryForObject("SHOW jit", String.class);
+
+        for (Runnable consulta : consultas) {
+            String jitDentro = tx.execute(estado -> {
+                consulta.run();
+                return jdbc.queryForObject("SHOW jit", String.class);
+            });
+            assertThat(jitDentro).isEqualTo("off");
+        }
+        assertThat(jdbc.queryForObject("SHOW jit", String.class)).isEqualTo(jitInicial);
+    }
 }

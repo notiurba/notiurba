@@ -10,6 +10,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.notiurba.geo.ConsultaEspacial;
+
 /** Listados de reportes: los propios del ciudadano («Mis reportes») y todos para el panel de administración. */
 @Repository
 public class ListadoReportesRepositorio {
@@ -65,6 +67,7 @@ public class ListadoReportesRepositorio {
      * detalle. Fotos, historial y último envío se piden en lote (3 consultas), no una vez por reporte.
      */
     public List<ReporteDetalleResponse> listarParaAdmin(FiltroPanel f) {
+        ConsultaEspacial.sinJit(jdbc);
         var p = new MapSqlParameterSource();
         String donde = " WHERE TRUE" + f.condiciones(p);
 
