@@ -70,6 +70,21 @@ class EnrutamientoIntegracionTest {
         }
         servicio.procesarSiguiente();verifyNoInteractions(proveedor);
     }
+    @Test void elCorreoEncoladoEsLaCartaFormalSinNotiUrbaNiCodigo() throws Exception {
+        String codigo=reporte(1,false);
+        servicio.solicitar(correo,codigo);
+        var fila=jdbc.queryForMap("""
+            SELECT e.destino,e.mensaje_json FROM registro_envio_correo e JOIN reporte r USING(id_reporte)
+            WHERE r.codigo_seguimiento=?""",codigo);
+        var mensaje=new ObjectMapper().readValue((String)fila.get("mensaje_json"),CorreoSaliente.class);
+        assertThat(fila.get("destino")).isEqualTo("servicioalciudadano@tulua.gov.co");
+        assertThat(mensaje.asunto()).startsWith("Petición ciudadana – "+rutas.resolver(1,false).categoria()+" – ");
+        assertThat(mensaje.texto()).startsWith("Respetados señores:").contains("Yo, Ana Prueba, con cédula de ciudadanía No. ",
+            "Hechos: Un incidente sintético para verificar el correo","Atentamente,\nAna Prueba");
+        for(String cuerpo:new String[]{mensaje.asunto(),mensaje.texto(),mensaje.html()})
+            assertThat(cuerpo).doesNotContain("NotiUrba",codigo,"Hábitat");
+        assertThat(mensaje.responderA()).isEqualTo(correo);
+    }
     @Test void centroaguasEncolaElCorreoHaciaInfo() {
         String codigo=reporte(11,false);
         assertThat(servicio.solicitar(correo,codigo).estado()).isEqualTo("PENDIENTE");

@@ -64,7 +64,7 @@ public class EnvioReporteServicio {
             } else {
                 var detalle=datos(id,ruta);
                 String clave="reporte-"+UUID.randomUUID();
-                CorreoSaliente correo=plantilla.crear(detalle,ruta.acceso(),clave);
+                CorreoSaliente correo=plantilla.crear(detalle.datos(),detalle.grupo(),ruta.acceso(),clave);
                 try { insertar(id,ruta.idCanal(),"RESEND","PENDIENTE",ruta.acceso(),clave,json.writeValueAsString(correo)); }
                 catch(com.fasterxml.jackson.core.JsonProcessingException e){ throw new IllegalStateException("No se pudo preparar el correo",e); }
             }
@@ -100,19 +100,30 @@ public class EnvioReporteServicio {
                 rs.getBoolean(2),rs.getBoolean(3),ruta),id);
         return rows.isEmpty()?new Estado("SIN_SOLICITAR",null,false,false,ruta):rows.get(0);
     }
-    private PlantillaReporte.Datos datos(long id,EnrutamientoServicio.Ruta ruta) {
+    record DatosDelReporte(PlantillaReporte.Datos datos,GrupoPlantilla grupo) { }
+
+    private DatosDelReporte datos(long id,EnrutamientoServicio.Ruta ruta) {
         List<String> fotos=jdbc.queryForList("SELECT url FROM evidencia_reporte WHERE id_reporte=? ORDER BY orden",String.class,id);
         return jdbc.queryForObject("""
             SELECT r.*,u.nombres,u.apellidos,u.numero_documento,u.direccion_correspondencia,u.correo,u.telefono,
-             t.codigo AS tipo_documento,b.nombre AS barrio,ST_Y(r.ubicacion) AS lat,ST_X(r.ubicacion) AS lon
+             t.codigo AS codigo_documento,t.nombre AS tipo_documento,b.nombre AS barrio,
+             ST_Y(r.ubicacion) AS lat,ST_X(r.ubicacion) AS lon,c.requiere_ubicacion,
+             te.nombre='Empresa de servicios públicos' AS es_empresa
             FROM reporte r JOIN usuario u USING(id_usuario) JOIN tipo_documento t USING(id_tipo_documento)
+            JOIN categoria c ON c.id_categoria=r.id_categoria JOIN dependencia d ON d.id_dependencia=c.id_dependencia
+            JOIN entidad_destino e ON e.id_entidad_destino=d.id_entidad_destino JOIN tipo_entidad te ON te.id_tipo_entidad=e.id_tipo_entidad
             LEFT JOIN barrio b ON b.id_barrio=r.id_barrio
             WHERE r.id_reporte=?
-            """,(rs,i)->new PlantillaReporte.Datos(rs.getString("codigo_seguimiento"),ruta.entidad(),ruta.dependencia(),ruta.categoria(),
-             rs.getString("nombres")+" "+rs.getString("apellidos"),rs.getString("tipo_documento")+" "+rs.getString("numero_documento"),
-             rs.getString("direccion_correspondencia"),rs.getString("correo"),rs.getString("telefono"),rs.getString("descripcion"),
-             rs.getString("direccion_incidente"),rs.getString("barrio"),rs.getString("id_comuna"),(Double)rs.getObject("lat"),(Double)rs.getObject("lon"),
-             rs.getObject("creado_en",OffsetDateTime.class),rs.getObject("autorizacion_envio_en",OffsetDateTime.class),rs.getString("matricula_cuenta_servicio"),fotos),id);
+            """,(rs,i)->new DatosDelReporte(PlantillaReporte.Datos.builder().entidad(ruta.entidad()).categoria(ruta.categoria())
+             .nombre(rs.getString("nombres")+" "+rs.getString("apellidos")).tipoDocumento(rs.getString("tipo_documento"))
+             .codigoDocumento(rs.getString("codigo_documento")).numeroDocumento(rs.getString("numero_documento"))
+             .direccionCorrespondencia(rs.getString("direccion_correspondencia")).correo(rs.getString("correo"))
+             .telefono(rs.getString("telefono")).descripcion(rs.getString("descripcion"))
+             .direccionIncidente(rs.getString("direccion_incidente")).barrio(rs.getString("barrio"))
+             .comuna((Integer)rs.getObject("id_comuna",Integer.class)).latitud((Double)rs.getObject("lat")).longitud((Double)rs.getObject("lon"))
+             .creadoEn(rs.getObject("creado_en",OffsetDateTime.class)).autorizacion(rs.getObject("autorizacion_envio_en",OffsetDateTime.class))
+             .matricula(rs.getString("matricula_cuenta_servicio")).fotos(fotos).build(),
+             GrupoPlantilla.de(rs.getBoolean("es_empresa"),rs.getBoolean("requiere_ubicacion"))),id);
     }
 
     /** Reclamo corto con SKIP LOCKED; ninguna transacción de BD permanece abierta durante la llamada HTTP. */
