@@ -103,7 +103,7 @@ Entrada:
 - `autorizaEnvio`: obligatorio, `true`. Autoriza enviar el reporte a la entidad a nombre del ciudadano y con sus datos (RN-07). El servidor guarda la fecha-hora en `autorizacion_envio_en`. Es la única autorización: no hay una segunda ni se envía copia al ciudadano (decidido el 01/11/2026). Texto de la casilla del paso 4: «Autorizo a NotiUrba a enviar este reporte a la entidad competente, a mi nombre y con mis datos, ubicación y fotos (con enlace público). La entidad podrá responderme a mi correo. Ver aviso de privacidad».
 
 Salida: 201 con `Location: /api/reportes/NU-000123` y un cuerpo mínimo `{ codigoSeguimiento, estado, creadoEn, vigenteHasta }` leído de la base tras guardar, en estado «Recibido». El código lo asigna el trigger de la base, no Java. El reporte completo se obtiene con 3.6 (NOT-89).
-La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02). No se guarda en el reporte: la vista `v_reporte_comuna` la deriva con `fn_asignar_comuna` (V13), la misma función que decide el rechazo. Reglas con GPS (NOT-55):
+La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02). Se guarda en el reporte (`reporte.id_comuna`, V20) con un trigger que usa `fn_asignar_comuna`, la misma función que decide el rechazo; la base la recalcula si cambian la capa de comunas, la comuna de un barrio o la distancia máxima. Reglas con GPS (NOT-55):
 - El punto cae dentro de una comuna (el borde cuenta como dentro): esa comuna.
 - Cae dentro de dos o más (solape): la de menor número.
 - Cae en un hueco: la comuna más cercana, si está a una distancia menor o igual a `configuracion.comuna_distancia_maxima_m` (50 m por defecto, valor propuesto; `0` desactiva la regla).
@@ -173,8 +173,9 @@ Todos bajo `/api/admin/...`, rol ADMIN. Los tres endpoints de estados y vigencia
 - `GET /api/admin/reportes/{codigo}`.
 - `PATCH /api/admin/reportes/{codigo}/estado` - EXISTE. Estado y observación (RF-20); ver 5.1.
 - `GET` y `PUT /api/admin/configuracion/vigencia` - EXISTEN (RF-21); ver 5.1.
-- `GET /api/admin/mapa` y `GET /api/admin/mapa/calor` (RF-22, RF-23) — FALTA; es la historia NOT-129 del Sprint 3.
-- `GET /api/admin/estadisticas` (RF-24) — FALTA; NOT-129.
+- `GET /api/admin/mapa` (RF-22) — EXISTE (NOT-129); ver 5.2.
+- `GET /api/admin/mapa/calor` (RF-23) — EXISTE (NOT-129); ver 5.3.
+- `GET /api/admin/estadisticas` (RF-24) — EXISTE (NOT-129); ver 5.4.
 - `PUT /api/admin/categorias/{id}/correo-destino` (RF-25).
 
 ### 5.1 Estados y vigencia — IMPLEMENTADOS (RN-19, RN-20, RF-20, RF-21)
@@ -259,6 +260,163 @@ y agregaciones de calor cuando existan esos endpoints. El vencimiento no borra
 el reporte, no cambia su estado ni afecta su consulta privada o su disponibilidad
 para gestión administrativa. Los cambios de estado y el procesamiento de correo
 no recalculan su vigencia. No se agregó ninguna migración.
+
+### 5.2 Mapa del panel — IMPLEMENTADO (NOT-129, RF-22, RN-20)
+
+Rol ADMIN. Sin sesión o con token inválido: 401 `NO_AUTENTICADO`; con rol ciudadano: 403
+`SIN_PERMISO`. Errores en el formato `{ codigo, mensaje, campo }`.
+
+**Filtros comunes** del mapa, del mapa de calor y de las estadísticas (todos opcionales, con las
+mismas reglas y mensajes que `GET /api/admin/reportes`):
+
+| Parámetro | Valor | Error |
+| --- | --- | --- |
+| `estado` | Nombre del catálogo («En trámite») o identificador (`EN_TRAMITE`) | 400 `VALIDACION`, campo `estado` |
+| `idCategoria` | Número de la categoría. Una que no existe da una lista vacía | 400 si no es un número |
+| `comuna` | 1 a 10 | 400 `VALIDACION`, campo `comuna` |
+| `desde`, `hasta` | `AAAA-MM-DD`, fecha de creación en hora de Colombia, ambas inclusive | 400 `VALIDACION`, campo `desde` si `desde` > `hasta`; 400 si la fecha está mal escrita |
+
+**GET /api/admin/mapa**
+
+Reportes **vigentes y con ubicación** (el mismo criterio de `v_reporte_mapa`), los más recientes
+primero, hasta **1.000**. Ejemplo: `GET /api/admin/mapa?comuna=5&estado=RECIBIDO&desde=2026-11-01`.
+
+Respuesta 200:
+
+```json
+{
+  "total": 37,
+  "sinComuna": 0,
+  "truncado": false,
+  "reportes": [
+    {
+      "codigoSeguimiento": "NU-000035",
+      "estado": "Recibido",
+      "categoria": { "idCategoria": 1, "nombre": "Vías, huecos y andenes" },
+      "barrio": { "idBarrio": 12, "nombre": "Salesiano" },
+      "comuna": 5,
+      "latitud": 4.0867,
+      "longitud": -76.195,
+      "creadoEn": "2026-11-05T10:07:00-05:00",
+      "vigenteHasta": "2026-12-05T10:07:00-05:00"
+    }
+  ]
+}
+```
+
+- `total`: cuántos reportes cumplen los filtros. `truncado` es `true` si son más de 1.000; el panel
+  puede avisar «mostrando 1.000 de N».
+- `sinComuna`: cuántos de ellos no tienen comuna determinada; en ese caso `comuna` es `null`. `barrio`
+  también puede ser `null`.
+- `estado` usa el nombre del catálogo (Recibido, Enviado, En trámite, Resuelto), igual que el listado.
+- No trae datos del ciudadano ni la descripción (Ley 1581): el detalle completo está en
+  `GET /api/admin/reportes`.
+- Sin coincidencias: 200 con `reportes: []` y `total: 0`.
+- Rendimiento medido (12/11/2026, base local, comuna guardada): con 10.000 reportes la consulta tarda
+  unos 11 ms y 2 ms filtrando por comuna (índice `ix_reporte_comuna`); el criterio es ≤ 2 s.
+- **JIT de PostgreSQL:** cuando la comuna se calculaba en cada lectura, PostGIS declaraba costos tan altos
+  que el JIT compilaba estas consultas (1,2 s para 13 reportes) y había que apagarlo. Con la comuna
+  guardada el costo estimado es de 1.000 a 2.300 con 10.000 reportes, lejos del umbral (100.000), y ya no
+  se apaga. En Neon el JIT no está disponible (`pg_jit_available() = false`).
+
+### 5.3 Mapa de calor y comunas críticas — IMPLEMENTADO (NOT-129, RF-23)
+
+**GET /api/admin/mapa/calor**
+
+Mismos reportes que el mapa (vigentes con ubicación) y mismos **filtros comunes** (5.2). Además:
+
+| Parámetro | Valor | Error |
+| --- | --- | --- |
+| `pagina` | Página del ranking de comunas críticas; por defecto 1 | 400 `VALIDACION`, campo `pagina`, si es menor que 1 |
+| `tamano` | Comunas por página, de 1 a 10; por defecto 5 | 400 `VALIDACION`, campo `tamano` |
+
+Ejemplo: `GET /api/admin/mapa/calor?idCategoria=1&pagina=2`.
+
+Respuesta 200:
+
+```json
+{
+  "totalReportes": 10,
+  "totalPuntos": 8,
+  "truncado": false,
+  "sinComuna": 0,
+  "puntos": [ { "latitud": 4.0867, "longitud": -76.195, "peso": 3 } ],
+  "comunasCriticas": {
+    "pagina": 1,
+    "tamano": 5,
+    "totalComunas": 6,
+    "totalPaginas": 2,
+    "items": [
+      { "posicion": 1, "comuna": 5, "total": 4,
+        "categoriaPrincipal": { "idCategoria": 1, "nombre": "Vías, huecos y andenes" } }
+    ]
+  }
+}
+```
+
+- **Peso:** cada reporte pesa 1 y los reportes en el mismo punto se suman (sirve tal cual para
+  Leaflet.heat). Los puntos van de más a menos peso, hasta **1.000**; `totalPuntos` dice cuántos puntos
+  distintos hay y `truncado` es `true` si son más de 1.000. `totalReportes` es la suma de todos los pesos.
+- **Comunas críticas:** las comunas con al menos un reporte, de más a menos reportes; en empate va
+  primero la de menor número. Como hay 10 comunas, con el tamaño por defecto son 2 páginas como máximo.
+  `posicion` es el lugar en el ranking completo (en la página 2 empieza en 6).
+- **Categoría principal:** la categoría con más reportes en esa comuna; en empate, la de menor número.
+- Los reportes sin comuna no entran al ranking: se cuentan en `sinComuna`.
+- Una página fuera de rango responde 200 con `items: []` (los puntos y los totales siguen llegando).
+- Son dos consultas (puntos y conteo por comuna) en una transacción `REPEATABLE READ`: las dos ven los
+  mismos reportes, así que el ranking más `sinComuna` siempre suma `totalReportes`.
+- Rendimiento medido (12/11/2026, base local): con 10.000 reportes la consulta de puntos tarda unos 9 ms.
+
+### 5.4 Estadísticas — IMPLEMENTADO (NOT-129, RF-24)
+
+**GET /api/admin/estadisticas**
+
+Cuenta **todos** los reportes (con o sin ubicación, vigentes o vencidos) con los **filtros comunes**
+(5.2) y además:
+
+| Parámetro | Valor | Error |
+| --- | --- | --- |
+| `vigencia` | `vigentes` (dentro del plazo), `fuera_de_plazo` (ya vencidos) o `todos` (por defecto); sin distinguir mayúsculas | 400 `VALIDACION`, campo `vigencia` |
+
+«Vigente» se mide con `vigente_hasta` de cada reporte (hoy, 30 días desde su creación según
+`configuracion.vigencia_dias`), igual que en el mapa.
+
+Ejemplo: `GET /api/admin/estadisticas?vigencia=vigentes&comuna=5`.
+
+Respuesta 200:
+
+```json
+{
+  "vigencia": "todos",
+  "total": 12,
+  "atendidos": 3,
+  "porcentajeAtendidos": 25.0,
+  "sinComuna": 0,
+  "porEstado": [
+    { "estado": "Recibido", "total": 5 },
+    { "estado": "Enviado", "total": 2 },
+    { "estado": "En trámite", "total": 2 },
+    { "estado": "Resuelto", "total": 3 }
+  ],
+  "porCategoria": [ { "idCategoria": 1, "categoria": "Vías, huecos y andenes", "total": 5 } ],
+  "porComuna": [ { "comuna": 1, "total": 2 }, { "comuna": 2, "total": 3 } ]
+}
+```
+
+- **Atendidos** = reportes en estado Resuelto. `porcentajeAtendidos` = atendidos ÷ total × 100, con un
+  decimal (redondeo a la mitad hacia arriba); 0.0 si no hay reportes.
+- `porEstado` trae siempre los 4 estados en ese orden; `porComuna`, las 10 comunas en orden; y
+  `porCategoria`, todas las categorías activas (más cualquier categoría inactiva que tenga reportes), de más
+  a menos reportes y en empate por número. Todas aparecen **con 0** cuando no tienen reportes.
+- `sinComuna`: reportes cuya comuna no se pudo determinar; no entran en `porComuna`. Un reporte sin
+  ubicación toma la comuna de su barrio.
+- Las tres tablas salen de una sola consulta agrupada: siempre cuadran con `total`.
+- Con filtro `idCategoria`, `porCategoria` trae solo esa categoría (un 0 de otra categoría sería
+  engañoso: significaría «filtrada», no «sin reportes»).
+- Rendimiento medido (12/11/2026, base local): con 10.000 reportes la consulta tarda unos 12 ms (31,5 s
+  cuando la comuna se calculaba en cada lectura).
+- QA de punta a punta contra el servidor real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones); las
+  cuatro rutas del panel responden en 6 a 11 ms.
 
 ## 6. Decisiones propuestas (no cerradas)
 

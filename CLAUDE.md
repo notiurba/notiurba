@@ -18,6 +18,45 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
    universidad). `docs/` es la copia de trabajo para el código. Si cambia algo de
    fondo, se actualiza en ambos.
 
+## Flujo Spec-Driven Development (SDD)
+
+Todo cambio de funcionalidad sigue este orden y **no se salta ninguna fase**:
+
+**Especificación → Planificación → Tareas → Implementación → Pruebas.**
+
+| Fase | Documento | Qué responde | Puerta para avanzar |
+| --- | --- | --- | --- |
+| 1. Especificación | `docs/sdd/spec.md` | **Qué** y por qué (criterios Dado-Cuando-Entonces) | El usuario la aprueba |
+| 2. Planificación | `docs/sdd/plan.md` | **Cómo** (capas, migración, API, pruebas, riesgos) | El usuario la aprueba |
+| 3. Tareas | `docs/sdd/tasks.md` | Pasos pequeños, ligados a criterios y a PR | Plan aprobado |
+| 4. Implementación | código | Una tarea a la vez, en orden | Tareas escritas |
+| 5. Pruebas | `tasks.md` (trazabilidad) | Cada criterio verificado | Todo en verde |
+
+Reglas del flujo:
+
+- **No escribas código** sin la especificación y el plan aprobados por el usuario.
+  Una aprobación vale para ese documento, no para el siguiente.
+- Trabaja paso a paso: presenta el documento, espera la respuesta, avanza.
+- Mantén los documentos al día: si la implementación cambia algo, actualiza primero
+  `spec.md` o `plan.md` y avisa. Marca el avance en `tasks.md` al cerrar cada tarea.
+- Lo que no esté decidido se marca **[PENDIENTE]**; no lo cierres por tu cuenta.
+- Reutiliza los IDs de `docs/contexto/` (`RF-xx`, `RNF-xx`, `RN-xx`, `ADR-xxxx`).
+- Los tres archivos de `docs/sdd/` describen **una** funcionalidad a la vez. Al
+  terminarla, se archivan en `docs/sdd/historico/<NOT-nn>-<nombre>/` y se parte de
+  las plantillas para la siguiente.
+- Un PR pequeño por grupo de tareas, rama `feature/…` desde `develop`.
+
+## Revisión de código al terminar (obligatoria)
+
+- **Siempre** que una tarea haya escrito o cambiado código, al final de la tarea y antes de darla por
+  cerrada se usa el subagente **`code-reviewer`** (`.claude/agents/code-reviewer.md`) sobre todos los
+  cambios de la rama. Sus hallazgos se corrigen con pruebas y se reporta el antes/después.
+- El hook del equipo en `.claude/settings.json` (`PostToolUse`, matcher `Edit|Write`, script
+  `.claude/hooks/recordar-revision.mjs`) lo recuerda cuando se edita código en `backend/src`,
+  `frontend/src` o `tools/`. Necesita Node (el mismo del frontend).
+- Comentarios en el código: pocos, cortos y solo donde hagan falta. No se citan tareas ni historias
+  (NOT-xx, EDT) en el código: eso va en commits, PR y `docs/`.
+
 ## Reglas de trabajo
 
 - No inventes endpoints, nombres de tablas ni reglas: revisa `docs/contexto/`.

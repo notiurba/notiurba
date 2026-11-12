@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 
 /**
  * Comuna de un punto GPS (RF-08, RN-02, RN-03). Las reglas viven en PostGIS (fn_asignar_comuna, V13)
- * y no aquí: la vista v_reporte_comuna usa la misma función, así que lo que se decide al crear el
- * reporte y lo que se lee después no pueden discrepar.
+ * y no aquí: el trigger que guarda la comuna del reporte usa la misma función, así que lo que se decide
+ * al crear el reporte y lo que se guarda no pueden discrepar.
  */
 @Repository
 public class AsignadorDeComuna {

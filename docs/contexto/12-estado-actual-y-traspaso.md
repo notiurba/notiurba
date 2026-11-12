@@ -36,7 +36,9 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
   estado oficial) y consulta del estado del envío por correo.
 - Panel de administración: listado con filtros (estado, categoría, comuna, fechas, «sin
   respuesta 10 días»), cambio de estado con observación, vigencia configurable (30 días) y
-  un mapa por comunas que **todavía usa datos de prueba**.
+  un mapa por comunas que **todavía usa datos de prueba** en el frontend. La API real del mapa,
+  del mapa de calor (con comunas críticas) y de las estadísticas ya existe en el backend
+  (`/api/admin/mapa`, `/mapa/calor`, `/estadisticas`; contrato §5.2 a §5.4).
 - Envío por correo: cola persistente con reintentos y enrutamiento por categoría
   (`EnvioReporteServicio`, `EnrutamientoServicio`, `PlantillaReporte`). Está **apagado por
   defecto** y en producción todo sale a la bandeja de pruebas (ver §5).
@@ -46,7 +48,7 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
 
 | Falta | Historia en Linear |
 | --- | --- |
-| Rutas del mapa, del mapa de calor y de estadísticas (`/api/admin/mapa`, `/mapa/calor`, `/estadisticas`) | NOT-129 |
+| ~~Rutas del mapa, del mapa de calor y de estadísticas~~ hechas en la rama `feature/not-129-api-mapa-calor-estadisticas` (falta mezclar en `develop`) | NOT-129 |
 | Mapa de reportes y mapa de calor del panel con datos reales | NOT-135, NOT-136 |
 | Correo a la entidad confuso (matrícula siempre, fecha cruda, coordenadas largas, filas vacías, fotos solo como enlaces) | NOT-130 |
 | Envío real a las entidades, rebotes (falta `RESEND_WEBHOOK_SECRET`) | NOT-131 |
@@ -73,7 +75,9 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el
   mismo comando: ejecútelo en un entorno limpio (`env -i ...`).
 - Una base desechable: contenedor `postgis/postgis:16-3.4`. Docker Desktop debe estar abierto.
-- Última corrida completa: 268 pruebas, 0 fallos, 2 omitidas (pruebas con proveedores reales).
+- Última corrida completa (13/11/2026, rama de NOT-129): 306 pruebas, 0 fallos, 10 omitidas (8 de
+  enrutamiento de correo sin `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales).
+- QA de punta a punta del panel contra el jar real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones).
 - Errores de la API: formato único `{codigo, mensaje, campo}` (`ApiException`; en pruebas use
   `getReason()`).
 
@@ -96,7 +100,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   la entidad real. Quitarla exige autorización del equipo y del docente (historia NOT-131).
 - Netlify: `VITE_API_URL` y `VITE_GOOGLE_CLIENT_ID`.
 - Las migraciones aplicadas **no se editan**: se corrige con una migración nueva. Hoy van
-  V1 a V18 (la siguiente es V19).
+  V1 a V18 en `develop` y V19 y V20 en la rama de NOT-129 (la siguiente es V21).
 
 ## 6. Datos de negocio que se confunden fácil
 
@@ -124,6 +128,19 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - La plantilla del correo (`PlantillaReporte`) arma una lista fija de campos sin mirar el tipo
   de destinatario; por eso salen filas vacías y la matrícula siempre.
 - `PlantillaReporte.enlaceSeguro` solo admite enlaces `res.cloudinary.com` y `www.openstreetmap.org`.
+- **Comuna guardada en el reporte (V19 y V20, 12/11/2026):** antes la comuna se calculaba en cada
+  lectura (`v_reporte_comuna`) y un punto en un hueco o fuera de la capa costaba ~7 ms. Con 10.000
+  reportes las estadísticas tardaban 31,5 s y el mapa filtrado 16 s; además PostGIS declara costos
+  altos y PostgreSQL compilaba esas consultas con JIT (1,2 s para 13 reportes), por eso se apagaba en la
+  transacción. Ahora un trigger llena `reporte.id_comuna` y la recalcula cuando cambian el punto, el
+  barrio, la capa o la distancia máxima. Con 10.000 reportes: estadísticas 12 ms, mapa filtrado 2 ms,
+  crear los 10.000 reportes 4,5 s y recalcularlos todos 2,6 s. El costo estimado de las consultas quedó
+  en 1.000 a 2.300 (el JIT empieza en 100.000), así que se quitó el apagado del JIT. **Neon:** `jit = on`
+  pero `pg_jit_available() = false` (no tiene LLVM): en producción nunca hubo JIT. Antes de desplegar
+  V19 y V20, branch de respaldo en Neon (no borran nada; V20 llena la comuna de los reportes que hay).
+  **Ojo al cambiar la capa, la comuna de un barrio o la distancia máxima:** el recálculo bloquea la
+  creación de reportes hasta terminar (2,6 s con 10.000), para que ninguno quede con la regla vieja.
+  `id_comuna` y `comuna_origen` no se escriben a mano: el trigger las vuelve a calcular.
 
 ## 8. Cómo se trabaja con Andrés (aprendido)
 
