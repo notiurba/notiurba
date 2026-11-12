@@ -36,7 +36,7 @@
 | T-01 | «Paso 3 · Revisar y enviar»: tarjeta «Así llegará tu mensaje», «Editar» por sección, estados cargando, error y sin datos | Figma | CA-13 | capturas a Andrés | [x] marco «4 · Confirmación · Vista previa del mensaje» |
 | T-02 | Pantalla nueva «Cómo reportar a {entidad}» (atajo de gas, energía y aseo): canales con ícono, acción directa, horario e instrucciones; «Atrás» al paso 1 | Figma | CA-09, CA-09c | capturas a Andrés | [x] marco «1b · Cómo reportar a la entidad (sin correo)» |
 | T-03 | Resultado del envío con rebote o fallo: lista de canales y «Copiar mi mensaje» | Figma | CA-11 | capturas a Andrés | [x] marco «¡Listo! · Correo no entregado (rebote)» |
-| T-04 | **Validación de Andrés** de T-01 a T-03 (con el Design System); sin ella no se empieza el backend | Figma | — | visto bueno escrito | [~] esperando a Andrés |
+| T-04 | **Validación de Andrés** de T-01 a T-03 (con el Design System); sin ella no se empieza el backend | Figma | — | visto bueno escrito | [x] aprobado por Andrés el 12 nov |
 
 ### Grupo 1 — Canales en la base y en la ruta
 
