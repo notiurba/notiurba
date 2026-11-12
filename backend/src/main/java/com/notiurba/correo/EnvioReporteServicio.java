@@ -102,9 +102,9 @@ public class EnvioReporteServicio {
         List<String> fotos=jdbc.queryForList("SELECT url FROM evidencia_reporte WHERE id_reporte=? ORDER BY orden",String.class,id);
         return jdbc.queryForObject("""
             SELECT r.*,u.nombres,u.apellidos,u.numero_documento,u.direccion_correspondencia,u.correo,u.telefono,
-             t.codigo AS tipo_documento,b.nombre AS barrio,v.id_comuna,ST_Y(r.ubicacion) AS lat,ST_X(r.ubicacion) AS lon
+             t.codigo AS tipo_documento,b.nombre AS barrio,ST_Y(r.ubicacion) AS lat,ST_X(r.ubicacion) AS lon
             FROM reporte r JOIN usuario u USING(id_usuario) JOIN tipo_documento t USING(id_tipo_documento)
-            LEFT JOIN barrio b ON b.id_barrio=r.id_barrio LEFT JOIN v_reporte_comuna v USING(id_reporte)
+            LEFT JOIN barrio b ON b.id_barrio=r.id_barrio
             WHERE r.id_reporte=?
             """,(rs,i)->new PlantillaReporte.Datos(rs.getString("codigo_seguimiento"),ruta.entidad(),ruta.dependencia(),ruta.categoria(),
              rs.getString("nombres")+" "+rs.getString("apellidos"),rs.getString("tipo_documento")+" "+rs.getString("numero_documento"),

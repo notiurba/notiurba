@@ -76,13 +76,12 @@ public class ListadoReportesRepositorio {
         List<Fila> filas = jdbc.query("""
                 SELECT r.id_reporte, r.codigo_seguimiento, est.nombre AS estado, c.id_categoria, c.nombre AS categoria,
                        r.descripcion, ST_Y(r.ubicacion) AS latitud, ST_X(r.ubicacion) AS longitud,
-                       vc.id_comuna, b.id_barrio, b.nombre AS barrio, r.direccion_incidente,
+                       r.id_comuna, b.id_barrio, b.nombre AS barrio, r.direccion_incidente,
                        r.matricula_cuenta_servicio, r.radicado_oficial, r.creado_en, r.vigente_hasta
                   FROM reporte r
                   JOIN categoria c ON c.id_categoria = r.id_categoria
                   JOIN estado_reporte est ON est.id_estado_reporte = r.id_estado_reporte
-                  LEFT JOIN barrio b ON b.id_barrio = r.id_barrio
-                  LEFT JOIN v_reporte_comuna vc ON vc.id_reporte = r.id_reporte""" + donde + """
+                  LEFT JOIN barrio b ON b.id_barrio = r.id_barrio""" + donde + """
 
                  ORDER BY r.creado_en DESC, r.id_reporte DESC LIMIT\s""" + MAXIMO_ADMIN,
                 p, (rs, i) -> {

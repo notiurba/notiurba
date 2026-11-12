@@ -42,8 +42,8 @@ public record FiltroPanel(String estado, Integer idCategoria, Integer comuna, Lo
     }
 
     /**
-     * Condiciones {@code AND ...} sobre los alias {@code r} (reporte), {@code c} (categoría), {@code est}
-     * (estado) y {@code vc} (v_reporte_comuna). Fechas de creación en hora de Colombia, ambas inclusive.
+     * Condiciones {@code AND ...} sobre los alias {@code r} (reporte), {@code c} (categoría) y
+     * {@code est} (estado). Fechas de creación en hora de Colombia, ambas inclusive.
      */
     public String condiciones(MapSqlParameterSource p) {
         var sql = new StringBuilder();
@@ -56,7 +56,7 @@ public record FiltroPanel(String estado, Integer idCategoria, Integer comuna, Lo
             p.addValue("categoria", idCategoria);
         }
         if (comuna != null) {
-            sql.append(" AND vc.id_comuna = :comuna");
+            sql.append(" AND r.id_comuna = :comuna");
             p.addValue("comuna", comuna);
         }
         if (desde != null) {

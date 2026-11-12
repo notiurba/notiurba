@@ -11,7 +11,6 @@ import com.notiurba.geo.ConsultaEspacial;
 import com.notiurba.reporte.FiltroPanel;
 import com.notiurba.reporte.ReporteDetalleResponse;
 
-/** La comuna no se guarda en el reporte: se deriva de la vista {@code v_reporte_comuna}. */
 @Repository
 public class MapaAdminRepositorio {
 
@@ -23,7 +22,6 @@ public class MapaAdminRepositorio {
               JOIN categoria c ON c.id_categoria = r.id_categoria
               JOIN estado_reporte est ON est.id_estado_reporte = r.id_estado_reporte
               LEFT JOIN barrio b ON b.id_barrio = r.id_barrio
-              LEFT JOIN v_reporte_comuna vc ON vc.id_reporte = r.id_reporte
              WHERE r.ubicacion IS NOT NULL AND r.vigente_hasta > now()""";
 
     private final NamedParameterJdbcTemplate jdbc;
@@ -39,10 +37,10 @@ public class MapaAdminRepositorio {
         long[] totales = new long[2]; // total y sinComuna: vienen iguales en cada fila
         List<MapaResponse.Marcador> marcadores = jdbc.query("""
                 SELECT r.codigo_seguimiento, est.nombre AS estado, c.id_categoria, c.nombre AS categoria,
-                       b.id_barrio, b.nombre AS barrio, vc.id_comuna,
+                       b.id_barrio, b.nombre AS barrio, r.id_comuna,
                        ST_Y(r.ubicacion) AS latitud, ST_X(r.ubicacion) AS longitud, r.creado_en, r.vigente_hasta,
                        count(*) OVER () AS total,
-                       count(*) FILTER (WHERE vc.id_comuna IS NULL) OVER () AS sin_comuna
+                       count(*) FILTER (WHERE r.id_comuna IS NULL) OVER () AS sin_comuna
                 """ + DESDE_VIGENTES_CON_UBICACION + filtros + """
 
                  ORDER BY r.creado_en DESC, r.id_reporte DESC
@@ -91,7 +89,7 @@ public class MapaAdminRepositorio {
         // categoría principal: la de más reportes; en empate, la de menor número
         List<ConteoComuna> comunas = jdbc.query("""
                 WITH base AS (
-                    SELECT vc.id_comuna, c.id_categoria, c.nombre AS categoria
+                    SELECT r.id_comuna, c.id_categoria, c.nombre AS categoria
                 """ + DESDE_VIGENTES_CON_UBICACION + filtros + """
 
                 ), conteo AS (
@@ -122,14 +120,13 @@ public class MapaAdminRepositorio {
             case TODOS -> "";
         };
         return jdbc.query("""
-                SELECT est.nombre AS estado, c.id_categoria, c.nombre AS categoria, vc.id_comuna, count(*) AS total
+                SELECT est.nombre AS estado, c.id_categoria, c.nombre AS categoria, r.id_comuna, count(*) AS total
                   FROM reporte r
                   JOIN categoria c ON c.id_categoria = r.id_categoria
                   JOIN estado_reporte est ON est.id_estado_reporte = r.id_estado_reporte
-                  LEFT JOIN v_reporte_comuna vc ON vc.id_reporte = r.id_reporte
                  WHERE TRUE""" + condicionVigencia + f.condiciones(p) + """
 
-                 GROUP BY est.nombre, c.id_categoria, c.nombre, vc.id_comuna""", p, (rs, i) -> new ConteoEstadistica(
+                 GROUP BY est.nombre, c.id_categoria, c.nombre, r.id_comuna""", p, (rs, i) -> new ConteoEstadistica(
                         rs.getString("estado"), rs.getInt("id_categoria"), rs.getString("categoria"),
                         (Integer) rs.getObject("id_comuna"), rs.getLong("total")));
     }

@@ -92,8 +92,7 @@ public class ReporteRepositorio {
 
     /**
      * El reporte de ese código SOLO si es de ese usuario: si no existe o es de otra persona el resultado
-     * es el mismo (vacío), para no revelar qué códigos existen. La comuna sale de v_reporte_comuna
-     * (polígono, o barrio si no hay polígono).
+     * es el mismo (vacío), para no revelar qué códigos existen.
      */
     public Optional<ReporteDetalleResponse> buscarPropio(long idUsuario, String codigo) {
         var parametros = new MapSqlParameterSource().addValue("usuario", idUsuario).addValue("codigo", codigo);
@@ -101,14 +100,13 @@ public class ReporteRepositorio {
                 SELECT r.id_reporte, r.codigo_seguimiento, est.nombre AS estado,
                        c.id_categoria, c.nombre AS categoria, r.descripcion,
                        ST_Y(r.ubicacion) AS latitud, ST_X(r.ubicacion) AS longitud,
-                       vc.id_comuna, b.id_barrio, b.nombre AS barrio,
+                       r.id_comuna, b.id_barrio, b.nombre AS barrio,
                        r.direccion_incidente, r.matricula_cuenta_servicio, r.radicado_oficial,
                        r.creado_en, r.vigente_hasta
                   FROM reporte r
                   JOIN categoria c ON c.id_categoria = r.id_categoria
                   JOIN estado_reporte est ON est.id_estado_reporte = r.id_estado_reporte
                   LEFT JOIN barrio b ON b.id_barrio = r.id_barrio
-                  LEFT JOIN v_reporte_comuna vc ON vc.id_reporte = r.id_reporte
                  WHERE r.codigo_seguimiento = :codigo AND r.id_usuario = :usuario""",
                 parametros, (rs, i) -> {
                     long idReporte = rs.getLong("id_reporte");

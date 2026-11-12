@@ -47,7 +47,7 @@ class FiltroPanelTest {
 
         String sql = FiltroPanel.de("Resuelto", 3, 10, desde, hasta).condiciones(p);
 
-        assertThat(sql).contains("est.nombre = :estado", "c.id_categoria = :categoria", "vc.id_comuna = :comuna",
+        assertThat(sql).contains("est.nombre = :estado", "c.id_categoria = :categoria", "r.id_comuna = :comuna",
                 ">= :desde", "<= :hasta", "America/Bogota");
         assertThat(p.getValue("estado")).isEqualTo("Resuelto");
         assertThat(p.getValue("categoria")).isEqualTo(3);
