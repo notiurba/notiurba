@@ -47,8 +47,11 @@ public class ListadoReportesServicio {
                 nombreDeEstado(estado).orElse(null), idCategoria, comuna, desde, hasta));
     }
 
-    /** Acepta el nombre del catálogo («En trámite») o el identificador de la API (EN_TRAMITE). */
-    static Optional<String> nombreDeEstado(String valor) {
+    /**
+     * Acepta el nombre del catálogo («En trámite») o el identificador de la API (EN_TRAMITE). Pública porque
+     * el mapa del panel (NOT-129) filtra el estado con la misma regla.
+     */
+    public static Optional<String> nombreDeEstado(String valor) {
         if (valor == null || valor.isBlank()) {
             return Optional.empty();
         }

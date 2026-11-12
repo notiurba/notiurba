@@ -173,8 +173,9 @@ Todos bajo `/api/admin/...`, rol ADMIN. Los tres endpoints de estados y vigencia
 - `GET /api/admin/reportes/{codigo}`.
 - `PATCH /api/admin/reportes/{codigo}/estado` - EXISTE. Estado y observación (RF-20); ver 5.1.
 - `GET` y `PUT /api/admin/configuracion/vigencia` - EXISTEN (RF-21); ver 5.1.
-- `GET /api/admin/mapa` y `GET /api/admin/mapa/calor` (RF-22, RF-23) — FALTA; es la historia NOT-129 del Sprint 3.
-- `GET /api/admin/estadisticas` (RF-24) — FALTA; NOT-129.
+- `GET /api/admin/mapa` (RF-22) — EXISTE (NOT-129); ver 5.2.
+- `GET /api/admin/mapa/calor` (RF-23) — FALTA; NOT-129 (diseño en `docs/sdd/plan.md`).
+- `GET /api/admin/estadisticas` (RF-24) — FALTA; NOT-129 (diseño en `docs/sdd/plan.md`).
 - `PUT /api/admin/categorias/{id}/correo-destino` (RF-25).
 
 ### 5.1 Estados y vigencia — IMPLEMENTADOS (RN-19, RN-20, RF-20, RF-21)
@@ -259,6 +260,60 @@ y agregaciones de calor cuando existan esos endpoints. El vencimiento no borra
 el reporte, no cambia su estado ni afecta su consulta privada o su disponibilidad
 para gestión administrativa. Los cambios de estado y el procesamiento de correo
 no recalculan su vigencia. No se agregó ninguna migración.
+
+### 5.2 Mapa del panel — IMPLEMENTADO (NOT-129, RF-22, RN-20)
+
+Rol ADMIN. Sin sesión o con token inválido: 401 `NO_AUTENTICADO`; con rol ciudadano: 403
+`SIN_PERMISO`. Errores en el formato `{ codigo, mensaje, campo }`.
+
+**Filtros comunes** del mapa, del mapa de calor y de las estadísticas (todos opcionales, con las
+mismas reglas y mensajes que `GET /api/admin/reportes`):
+
+| Parámetro | Valor | Error |
+| --- | --- | --- |
+| `estado` | Nombre del catálogo («En trámite») o identificador (`EN_TRAMITE`) | 400 `VALIDACION`, campo `estado` |
+| `idCategoria` | Número de la categoría. Una que no existe da una lista vacía | 400 si no es un número |
+| `comuna` | 1 a 10 | 400 `VALIDACION`, campo `comuna` |
+| `desde`, `hasta` | `AAAA-MM-DD`, fecha de creación en hora de Colombia, ambas inclusive | 400 `VALIDACION`, campo `desde` si `desde` > `hasta`; 400 si la fecha está mal escrita |
+
+**GET /api/admin/mapa**
+
+Reportes **vigentes y con ubicación** (el mismo criterio de `v_reporte_mapa`), los más recientes
+primero, hasta **1.000**. Ejemplo: `GET /api/admin/mapa?comuna=5&estado=RECIBIDO&desde=2026-11-01`.
+
+Respuesta 200:
+
+```json
+{
+  "total": 37,
+  "sinComuna": 0,
+  "truncado": false,
+  "reportes": [
+    {
+      "codigoSeguimiento": "NU-000035",
+      "estado": "Recibido",
+      "categoria": { "idCategoria": 1, "nombre": "Vías, huecos y andenes" },
+      "barrio": { "idBarrio": 12, "nombre": "Salesiano" },
+      "comuna": 5,
+      "latitud": 4.0867,
+      "longitud": -76.195,
+      "creadoEn": "2026-11-05T10:07:00-05:00",
+      "vigenteHasta": "2026-12-05T10:07:00-05:00"
+    }
+  ]
+}
+```
+
+- `total`: cuántos reportes cumplen los filtros. `truncado` es `true` si son más de 1.000; el panel
+  puede avisar «mostrando 1.000 de N».
+- `sinComuna`: cuántos de ellos no tienen comuna determinada; en ese caso `comuna` es `null`. `barrio`
+  también puede ser `null`.
+- `estado` usa el nombre del catálogo (Recibido, Enviado, En trámite, Resuelto), igual que el listado.
+- No trae datos del ciudadano ni la descripción (Ley 1581): el detalle completo está en
+  `GET /api/admin/reportes`.
+- Sin coincidencias: 200 con `reportes: []` y `total: 0`.
+- Rendimiento medido (11/11/2026, base local): con 1.001 reportes vigentes la prueba completa
+  (sembrar, calentar y consultar) tardó 1,1 s; el criterio es ≤ 2 s por consulta.
 
 ## 6. Decisiones propuestas (no cerradas)
 
