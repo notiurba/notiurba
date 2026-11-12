@@ -102,6 +102,26 @@ public class EnvioReporteServicio {
     }
     record DatosDelReporte(PlantillaReporte.Datos datos,GrupoPlantilla grupo) { }
 
+    public record MensajeDelReporte(String asunto,String texto) { }
+
+    /** El mensaje que se encoló para la entidad o, si aún no hay envío, el que se le enviaría. Solo el autor. */
+    public MensajeDelReporte mensaje(String usuario,String codigo) {
+        long id=propio(usuario,codigo,false);
+        List<String> guardado=jdbc.queryForList("""
+            SELECT mensaje_json FROM registro_envio_correo WHERE id_reporte=? AND mensaje_json IS NOT NULL
+            ORDER BY creado_en DESC,id_registro_envio DESC LIMIT 1""",String.class,id);
+        if(!guardado.isEmpty()) {
+            try {
+                CorreoSaliente c=json.readValue(guardado.get(0),CorreoSaliente.class);
+                return new MensajeDelReporte(c.asunto(),c.texto());
+            } catch(com.fasterxml.jackson.core.JsonProcessingException e){ throw new IllegalStateException("Mensaje guardado ilegible",e); }
+        }
+        var r=jdbc.queryForMap("SELECT id_categoria, emergencia FROM reporte WHERE id_reporte=?",id);
+        var detalle=datos(id,rutas.resolver(((Number)r.get("id_categoria")).intValue(),(Boolean)r.get("emergencia")));
+        var m=plantilla.componer(detalle.datos(),detalle.grupo());
+        return new MensajeDelReporte(m.asunto(),m.texto());
+    }
+
     private DatosDelReporte datos(long id,EnrutamientoServicio.Ruta ruta) {
         List<String> fotos=jdbc.queryForList("SELECT url FROM evidencia_reporte WHERE id_reporte=? ORDER BY orden",String.class,id);
         return jdbc.queryForObject("""
