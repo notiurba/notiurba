@@ -217,7 +217,7 @@ El detalle por tarea irá en [tasks.md](tasks.md) cuando apruebes este plan.
 - Pendiente como propuesta (decisión de Andrés): guardar `id_comuna` en `reporte` al crearlo (V19).
 - QA de punta a punta reutilizable: `tools/qa-panel-admin/`.
 
-## 12. Propuesta V19: comuna más rápida (PENDIENTE de aprobación de Andrés)
+## 12. V19 y V20: comuna más rápida (APROBADO por Andrés el 12 nov)
 
 **Problema medido (11 nov, base desechable con 10.000 reportes, la mitad fuera de la capa):** la comuna no
 se guarda; `v_reporte_comuna` llama a `fn_asignar_comuna` por cada reporte en cada lectura. Un punto dentro
@@ -243,3 +243,16 @@ los reportes que ya existen (en Neon hay 4).
 Riesgos: C duplica un dato derivado (lo mantienen los triggers; pruebas que lo verifiquen al crear, al
 cambiar ubicación y al cambiar la capa). Migración no destructiva; aun así, branch de respaldo en Neon antes
 de desplegar. Siguiente número libre: V19.
+
+**Decisiones de implementación (12 nov):**
+- Dos migraciones para commits atómicos: **V19** = A (`comuna.geog` + índice GiST + `fn_asignar_comuna`
+  con `geog`); **V20** = C (`reporte.id_comuna` y `reporte.comuna_origen` + índice + triggers + vista).
+- La regla sigue en un solo lugar: el trigger de `reporte` llama a `fn_asignar_comuna` y, si no hay
+  polígono, usa el barrio. Para recalcular se reasigna la ubicación (`SET ubicacion = ubicacion`), así
+  que todos los recálculos pasan por el mismo trigger.
+- Se recalcula al cambiar: la ubicación o el barrio del reporte, el polígono de una comuna, la comuna de
+  un barrio o `configuracion.comuna_distancia_maxima_m`.
+- `v_reporte_comuna` conserva sus columnas (`id_comuna`, `origen`) pero lee lo guardado.
+- Las consultas del panel, el detalle y el correo leen `r.id_comuna`; `AsignadorDeComuna` sigue usando la
+  función para rechazar puntos fuera de cobertura al crear.
+- Si con la comuna guardada el costo estimado ya no activa el JIT, se quita `ConsultaEspacial.sinJit`.

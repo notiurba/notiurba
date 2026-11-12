@@ -81,6 +81,15 @@ categoría filtrada (1) y JIT apagado en las cuatro consultas (1). QA de punta a
 401/403 reales, 400 con su campo, CORS, totales que cuadran con la base, filtros, orden, paginación,
 regresión del listado y tiempos; 0 errores en el log del servidor.
 
+## V19 y V20 — Comuna más rápida (aprobado el 12 nov)
+
+| ID | Tarea | Capa | Prueba | Estado |
+| --- | --- | --- | --- | --- |
+| T-13 | V19: `comuna.geog` generada + índice GiST + función con `geog` | DB | `ComunaGeografiaIntegracionTest` (misma respuesta que la función anterior) | [ ] |
+| T-14 | V20: `reporte.id_comuna` y `comuna_origen` + triggers + índice + vista | DB | `ComunaGuardadaIntegracionTest` (crear, mover, cambiar capa, barrio y distancia) | [ ] |
+| T-15 | Panel, detalle y correo leen `r.id_comuna`; quitar `sinJit` si sobra | Backend | suites existentes + QA de punta a punta | [ ] |
+| T-16 | Medición con 10.000 reportes antes/después | Pruebas | `medir-comuna` | [ ] |
+
 ## Pruebas finales (Fase 5)
 
 - [x] Todos los criterios CA verificados (tabla de trazabilidad).
