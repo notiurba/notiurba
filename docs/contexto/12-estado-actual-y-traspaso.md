@@ -36,7 +36,9 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
   estado oficial) y consulta del estado del envío por correo.
 - Panel de administración: listado con filtros (estado, categoría, comuna, fechas, «sin
   respuesta 10 días»), cambio de estado con observación, vigencia configurable (30 días) y
-  un mapa por comunas que **todavía usa datos de prueba**.
+  un mapa por comunas que **todavía usa datos de prueba** en el frontend. La API real del mapa,
+  del mapa de calor (con comunas críticas) y de las estadísticas ya existe en el backend
+  (`/api/admin/mapa`, `/mapa/calor`, `/estadisticas`; contrato §5.2 a §5.4).
 - Envío por correo: cola persistente con reintentos y enrutamiento por categoría
   (`EnvioReporteServicio`, `EnrutamientoServicio`, `PlantillaReporte`). Está **apagado por
   defecto** y en producción todo sale a la bandeja de pruebas (ver §5).
@@ -46,7 +48,7 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
 
 | Falta | Historia en Linear |
 | --- | --- |
-| Rutas del mapa, del mapa de calor y de estadísticas (`/api/admin/mapa`, `/mapa/calor`, `/estadisticas`) | NOT-129 |
+| ~~Rutas del mapa, del mapa de calor y de estadísticas~~ hechas en la rama `feature/not-129-api-mapa-calor-estadisticas` (falta mezclar en `develop`) | NOT-129 |
 | Mapa de reportes y mapa de calor del panel con datos reales | NOT-135, NOT-136 |
 | Correo a la entidad confuso (matrícula siempre, fecha cruda, coordenadas largas, filas vacías, fotos solo como enlaces) | NOT-130 |
 | Envío real a las entidades, rebotes (falta `RESEND_WEBHOOK_SECRET`) | NOT-131 |

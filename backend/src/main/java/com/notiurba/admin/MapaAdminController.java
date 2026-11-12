@@ -40,4 +40,16 @@ public class MapaAdminController {
             @RequestParam(defaultValue = "5") int tamano) {
         return servicio.calor(estado, idCategoria, comuna, desde, hasta, pagina, tamano);
     }
+
+    /** {@code vigencia}: vigentes, fuera_de_plazo o todos (por defecto). */
+    @GetMapping("/estadisticas")
+    public EstadisticasResponse estadisticas(
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) Integer idCategoria,
+            @RequestParam(required = false) Integer comuna,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
+            @RequestParam(required = false) String vigencia) {
+        return servicio.estadisticas(estado, idCategoria, comuna, desde, hasta, vigencia);
+    }
 }

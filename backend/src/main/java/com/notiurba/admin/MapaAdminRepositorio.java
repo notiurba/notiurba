@@ -104,6 +104,36 @@ public class MapaAdminRepositorio {
         return new DatosCalor(puntos, totales[0], totales[1], comunas);
     }
 
+    /** {@code comuna} es {@code null} para los reportes sin comuna. */
+    public record ConteoEstadistica(String estado, int idCategoria, String categoria, Integer comuna, long total) {
+    }
+
+    /** Cuenta todos los reportes, con o sin ubicación. */
+    public List<ConteoEstadistica> estadisticas(FiltroMapa f, FiltroVigencia vigencia) {
+        var p = new MapSqlParameterSource();
+        String condicionVigencia = switch (vigencia) {
+            case VIGENTES -> " AND r.vigente_hasta > now()";
+            case FUERA_DE_PLAZO -> " AND r.vigente_hasta <= now()";
+            case TODOS -> "";
+        };
+        return jdbc.query("""
+                SELECT est.nombre AS estado, c.id_categoria, c.nombre AS categoria, vc.id_comuna, count(*) AS total
+                  FROM reporte r
+                  JOIN categoria c ON c.id_categoria = r.id_categoria
+                  JOIN estado_reporte est ON est.id_estado_reporte = r.id_estado_reporte
+                  LEFT JOIN v_reporte_comuna vc ON vc.id_reporte = r.id_reporte
+                 WHERE TRUE""" + condicionVigencia + filtros(f, p) + """
+
+                 GROUP BY est.nombre, c.id_categoria, c.nombre, vc.id_comuna""", p, (rs, i) -> new ConteoEstadistica(
+                        rs.getString("estado"), rs.getInt("id_categoria"), rs.getString("categoria"),
+                        (Integer) rs.getObject("id_comuna"), rs.getLong("total")));
+    }
+
+    public List<ReporteDetalleResponse.Categoria> categoriasActivas() {
+        return jdbc.query("SELECT id_categoria, nombre FROM categoria WHERE activa ORDER BY id_categoria",
+                (rs, i) -> new ReporteDetalleResponse.Categoria(rs.getInt("id_categoria"), rs.getString("nombre")));
+    }
+
     /** Fechas de creación en hora de Colombia, ambas inclusive, igual que el listado del panel. */
     static String filtros(FiltroMapa f, MapSqlParameterSource p) {
         var sql = new StringBuilder();

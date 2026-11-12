@@ -175,7 +175,7 @@ Todos bajo `/api/admin/...`, rol ADMIN. Los tres endpoints de estados y vigencia
 - `GET` y `PUT /api/admin/configuracion/vigencia` - EXISTEN (RF-21); ver 5.1.
 - `GET /api/admin/mapa` (RF-22) — EXISTE (NOT-129); ver 5.2.
 - `GET /api/admin/mapa/calor` (RF-23) — EXISTE (NOT-129); ver 5.3.
-- `GET /api/admin/estadisticas` (RF-24) — FALTA; NOT-129 (diseño en `docs/sdd/plan.md`).
+- `GET /api/admin/estadisticas` (RF-24) — EXISTE (NOT-129); ver 5.4.
 - `PUT /api/admin/categorias/{id}/correo-destino` (RF-25).
 
 ### 5.1 Estados y vigencia — IMPLEMENTADOS (RN-19, RN-20, RF-20, RF-21)
@@ -361,6 +361,52 @@ Respuesta 200:
 - Una página fuera de rango responde 200 con `items: []` (los puntos y los totales siguen llegando).
 - Rendimiento medido (11/11/2026, base local): con 1.202 reportes en 1.201 puntos la consulta tarda unos
   0,9 s (son dos consultas: puntos y conteo por comuna).
+
+### 5.4 Estadísticas — IMPLEMENTADO (NOT-129, RF-24)
+
+**GET /api/admin/estadisticas**
+
+Cuenta **todos** los reportes (con o sin ubicación, vigentes o vencidos) con los **filtros comunes**
+(5.2) y además:
+
+| Parámetro | Valor | Error |
+| --- | --- | --- |
+| `vigencia` | `vigentes` (dentro del plazo), `fuera_de_plazo` (ya vencidos) o `todos` (por defecto); sin distinguir mayúsculas | 400 `VALIDACION`, campo `vigencia` |
+
+«Vigente» se mide con `vigente_hasta` de cada reporte (hoy, 30 días desde su creación según
+`configuracion.vigencia_dias`), igual que en el mapa.
+
+Ejemplo: `GET /api/admin/estadisticas?vigencia=vigentes&comuna=5`.
+
+Respuesta 200:
+
+```json
+{
+  "vigencia": "todos",
+  "total": 12,
+  "atendidos": 3,
+  "porcentajeAtendidos": 25.0,
+  "sinComuna": 0,
+  "porEstado": [
+    { "estado": "Recibido", "total": 5 },
+    { "estado": "Enviado", "total": 2 },
+    { "estado": "En trámite", "total": 2 },
+    { "estado": "Resuelto", "total": 3 }
+  ],
+  "porCategoria": [ { "idCategoria": 1, "categoria": "Vías, huecos y andenes", "total": 5 } ],
+  "porComuna": [ { "comuna": 1, "total": 2 }, { "comuna": 2, "total": 3 } ]
+}
+```
+
+- **Atendidos** = reportes en estado Resuelto. `porcentajeAtendidos` = atendidos ÷ total × 100, con un
+  decimal (redondeo a la mitad hacia arriba); 0.0 si no hay reportes.
+- `porEstado` trae siempre los 4 estados en ese orden; `porComuna`, las 10 comunas en orden; y
+  `porCategoria`, todas las categorías activas (más cualquier categoría inactiva que tenga reportes), de más
+  a menos reportes y en empate por número. Todas aparecen **con 0** cuando no tienen reportes.
+- `sinComuna`: reportes cuya comuna no se pudo determinar; no entran en `porComuna`. Un reporte sin
+  ubicación toma la comuna de su barrio.
+- Las tres tablas salen de una sola consulta agrupada: siempre cuadran con `total`.
+- Rendimiento medido (11/11/2026, base local): con 1.000 reportes la consulta tarda unos 0,3 s.
 
 ## 6. Decisiones propuestas (no cerradas)
 

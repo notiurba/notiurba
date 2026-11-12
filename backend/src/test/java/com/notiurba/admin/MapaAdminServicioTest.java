@@ -113,4 +113,72 @@ class MapaAdminServicioTest {
         MapaAdminServicio.validarPaginacion(1, 1);
         MapaAdminServicio.validarPaginacion(3, 10);
     }
+
+    // estadísticas
+
+    @Test
+    void laVigenciaPorDefectoEsTodosYAceptaMayusculas() {
+        assertThat(MapaAdminServicio.vigencia(null)).isEqualTo(FiltroVigencia.TODOS);
+        assertThat(MapaAdminServicio.vigencia(" ")).isEqualTo(FiltroVigencia.TODOS);
+        assertThat(MapaAdminServicio.vigencia("vigentes")).isEqualTo(FiltroVigencia.VIGENTES);
+        assertThat(MapaAdminServicio.vigencia("FUERA_DE_PLAZO")).isEqualTo(FiltroVigencia.FUERA_DE_PLAZO);
+        assertThat(FiltroVigencia.FUERA_DE_PLAZO.valor()).isEqualTo("fuera_de_plazo");
+        rechaza(() -> MapaAdminServicio.vigencia("vencidos"), "vigencia");
+    }
+
+    private static MapaAdminRepositorio.ConteoEstadistica fila(String estado, int idCategoria, Integer comuna,
+            long total) {
+        return new MapaAdminRepositorio.ConteoEstadistica(estado, idCategoria, "Categoría " + idCategoria, comuna,
+                total);
+    }
+
+    @Test
+    void sumaPorEstadoCategoriaYComunaYCompletaConCeros() {
+        var filas = List.of(fila("Recibido", 1, 5, 4), fila("Resuelto", 1, 5, 2), fila("Resuelto", 2, 3, 1),
+                fila("En trámite", 2, null, 2), fila("Recibido", 9, 3, 3));
+        var catalogo = List.of(new ReporteDetalleResponse.Categoria(1, "Categoría 1"),
+                new ReporteDetalleResponse.Categoria(2, "Categoría 2"),
+                new ReporteDetalleResponse.Categoria(3, "Categoría 3"));
+
+        EstadisticasResponse e = MapaAdminServicio.armar(FiltroVigencia.TODOS, filas, catalogo);
+
+        assertThat(e.vigencia()).isEqualTo("todos");
+        assertThat(e.total()).isEqualTo(12);
+        assertThat(e.atendidos()).isEqualTo(3);
+        assertThat(e.porcentajeAtendidos()).isEqualByComparingTo("25.0");
+        assertThat(e.sinComuna()).isEqualTo(2);
+        assertThat(e.porEstado()).extracting(EstadisticasResponse.PorEstado::estado)
+                .containsExactly("Recibido", "Enviado", "En trámite", "Resuelto");
+        assertThat(e.porEstado()).extracting(EstadisticasResponse.PorEstado::total).containsExactly(7L, 0L, 2L, 3L);
+        assertThat(e.porComuna()).hasSize(10);
+        assertThat(e.porComuna()).extracting(EstadisticasResponse.PorComuna::comuna)
+                .containsExactly(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        assertThat(e.porComuna().get(4).total()).isEqualTo(6);
+        assertThat(e.porComuna().get(2).total()).isEqualTo(4);
+        assertThat(e.porComuna().get(0).total()).isZero();
+        // de más a menos; la 9 no está en el catálogo activo pero tiene reportes y aparece igual
+        assertThat(e.porCategoria()).extracting(EstadisticasResponse.PorCategoria::idCategoria)
+                .containsExactly(1, 2, 9, 3);
+        assertThat(e.porCategoria()).extracting(EstadisticasResponse.PorCategoria::total)
+                .containsExactly(6L, 3L, 3L, 0L);
+    }
+
+    @Test
+    void elPorcentajeDeAtendidosLlevaUnDecimalYEsCeroSinReportes() {
+        var catalogo = List.of(new ReporteDetalleResponse.Categoria(1, "Categoría 1"));
+
+        assertThat(MapaAdminServicio.armar(FiltroVigencia.TODOS,
+                List.of(fila("Resuelto", 1, 1, 1), fila("Recibido", 1, 1, 2)), catalogo).porcentajeAtendidos())
+                .isEqualByComparingTo("33.3");
+        assertThat(MapaAdminServicio.armar(FiltroVigencia.TODOS,
+                List.of(fila("Resuelto", 1, 1, 2), fila("Recibido", 1, 1, 1)), catalogo).porcentajeAtendidos())
+                .isEqualByComparingTo("66.7");
+
+        EstadisticasResponse vacia = MapaAdminServicio.armar(FiltroVigencia.VIGENTES, List.of(), catalogo);
+        assertThat(vacia.total()).isZero();
+        assertThat(vacia.porcentajeAtendidos()).isEqualByComparingTo("0");
+        assertThat(vacia.porEstado()).extracting(EstadisticasResponse.PorEstado::total).containsOnly(0L);
+        assertThat(vacia.porCategoria()).extracting(EstadisticasResponse.PorCategoria::total).containsExactly(0L);
+        assertThat(vacia.vigencia()).isEqualTo("vigentes");
+    }
 }

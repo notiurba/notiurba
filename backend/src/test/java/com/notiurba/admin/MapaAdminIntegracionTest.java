@@ -132,7 +132,6 @@ class MapaAdminIntegracionTest {
                 (rs, i) -> new Reporte(rs.getLong(1), rs.getString(2)), idAna, idBarrio);
     }
 
-
     @Test
     void elMapaTraeSoloReportesVigentesConUbicacionYLosDatosDelMarcador() throws Exception {
         Reporte vigente = DatosDePrueba.reporte(jdbc, idAna, 1, idBarrio, 1);
@@ -195,7 +194,6 @@ class MapaAdminIntegracionTest {
         assertThat(codigos(leer(pedir("/api/admin/mapa?idCategoria=1&estado=EN_TRAMITE", tokenAdmin)))).isEmpty();
     }
 
-
     @Test
     void unReporteSinComunaApareceConComunaNulaYSeCuentaAparte() throws Exception {
         Reporte sinComuna = reporteSinComuna();
@@ -220,7 +218,6 @@ class MapaAdminIntegracionTest {
         assertThat(mapa.get("sinComuna").asLong()).isZero();
         assertThat(mapa.get("truncado").asBoolean()).isFalse();
     }
-
 
     @Test
     void elMapaValidaLosFiltrosConElFormatoDelContrato() throws Exception {
@@ -252,7 +249,6 @@ class MapaAdminIntegracionTest {
             assertThat(error.get("campo").asText()).isEqualTo(campo);
         }
     }
-
 
     @Test
     void conMasDeMilReportesDevuelveMilAvisaQueEstaTruncadoYRespondeEnMenosDeDosSegundos() throws Exception {
@@ -318,7 +314,6 @@ class MapaAdminIntegracionTest {
         return lista;
     }
 
-
     @Test
     void cadaReportePesaUnoYLosDelMismoPuntoSeSuman() throws Exception {
         DatosDePrueba.reporte(jdbc, idAna, 1, idBarrio, 1);
@@ -344,7 +339,6 @@ class MapaAdminIntegracionTest {
         assertThat(puntos.get(1).get("peso").asLong()).isEqualTo(1);
         assertThat(campos(puntos.get(0))).containsExactlyInAnyOrder("latitud", "longitud", "peso");
     }
-
 
     @Test
     void lasComunasCriticasVanDeMasAMenosConSuTotalYSuCategoriaPrincipalDe5En5() throws Exception {
@@ -399,7 +393,6 @@ class MapaAdminIntegracionTest {
                 .isZero();
     }
 
-
     @Test
     void losReportesSinComunaNoEntranAlRankingPeroSeCuentan() throws Exception {
         reporteEnComuna(5, 1);
@@ -429,7 +422,6 @@ class MapaAdminIntegracionTest {
         assertThat(criticas.get("pagina").asInt()).isEqualTo(1);
     }
 
-
     @Test
     void elCalorValidaFiltrosYPaginacionYSoloLoVeElAdministrador() throws Exception {
         assertError(pedir("/api/admin/mapa/calor?pagina=0", tokenAdmin), 400, "VALIDACION", "pagina");
@@ -441,7 +433,6 @@ class MapaAdminIntegracionTest {
         assertError(pedir("/api/admin/mapa/calor", tokenAna), 403, "SIN_PERMISO", null);
         assertError(pedir("/api/admin/mapa/calor", null), 401, "NO_AUTENTICADO", null);
     }
-
 
     @Test
     void conMasDeMilPuntosDevuelveLosMilDeMasPesoYRespondeEnMenosDeDosSegundos() throws Exception {
@@ -467,6 +458,151 @@ class MapaAdminIntegracionTest {
         assertThat(calor.get("truncado").asBoolean()).isTrue();
         assertThat(calor.get("puntos").get(0).get("peso").asLong()).isEqualTo(2);
         assertThat(milisegundos).as("GET /api/admin/mapa/calor con 1.202 reportes tardó %d ms", milisegundos)
+                .isLessThanOrEqualTo(2000);
+    }
+
+    // GET /api/admin/estadisticas
+
+    private int categoriasActivas() {
+        return jdbc.queryForObject("SELECT count(*) FROM categoria WHERE activa", Integer.class);
+    }
+
+    private static long totalDe(JsonNode lista, String campo, String valor) {
+        for (JsonNode n : lista) {
+            if (n.get(campo).asText().equals(valor)) {
+                return n.get("total").asLong();
+            }
+        }
+        throw new AssertionError("no aparece " + campo + " = " + valor);
+    }
+
+    /**
+     * 5 reportes: dos vigentes en el punto de prueba (categoría 2, uno en trámite), uno vencido y resuelto en el
+     * mismo punto (categoría 1), uno sin ubicación con barrio de la comuna 1 y uno sin comuna.
+     */
+    private void sembrarEstadisticas() {
+        DatosDePrueba.reporte(jdbc, idAna, 2, idBarrio, 1);
+        DatosDePrueba.pasarAEstado(jdbc, DatosDePrueba.reporte(jdbc, idAna, 2, idBarrio, 2), "En trámite");
+        DatosDePrueba.pasarAEstado(jdbc, DatosDePrueba.reporte(jdbc, idAna, 1, idBarrio, 40), "Resuelto");
+        reporteSinUbicacion();
+        reporteSinComuna();
+    }
+
+    @Test
+    void lasEstadisticasCuentanTodosLosReportesPorEstadoCategoriaYComuna() throws Exception {
+        sembrarEstadisticas();
+        int comunaDelPunto = comunaDelPuntoDePrueba();
+
+        JsonNode e = leer(pedir("/api/admin/estadisticas", tokenAdmin));
+
+        assertThat(e.get("vigencia").asText()).isEqualTo("todos");
+        assertThat(e.get("total").asLong()).isEqualTo(5);
+        assertThat(e.get("atendidos").asLong()).isEqualTo(1);
+        assertThat(e.get("porcentajeAtendidos").asDouble()).isEqualTo(20.0);
+        assertThat(e.get("sinComuna").asLong()).isEqualTo(1);
+
+        JsonNode porEstado = e.get("porEstado");
+        assertThat(porEstado.findValuesAsText("estado")).containsExactly("Recibido", "Enviado", "En trámite", "Resuelto");
+        assertThat(totalDe(porEstado, "estado", "Recibido")).isEqualTo(3);
+        assertThat(totalDe(porEstado, "estado", "Enviado")).isZero();
+        assertThat(totalDe(porEstado, "estado", "En trámite")).isEqualTo(1);
+        assertThat(totalDe(porEstado, "estado", "Resuelto")).isEqualTo(1);
+
+        JsonNode porComuna = e.get("porComuna");
+        assertThat(porComuna).hasSize(10);
+        long esperadaDelPunto = comunaDelPunto == 1 ? 4 : 3;
+        assertThat(totalDe(porComuna, "comuna", String.valueOf(comunaDelPunto))).isEqualTo(esperadaDelPunto);
+        assertThat(totalDe(porComuna, "comuna", "1")).isEqualTo(comunaDelPunto == 1 ? 4 : 1);
+
+        JsonNode porCategoria = e.get("porCategoria");
+        assertThat(porCategoria).hasSize(categoriasActivas());
+        assertThat(porCategoria.get(0).get("idCategoria").asInt()).isEqualTo(1);
+        assertThat(porCategoria.get(0).get("total").asLong()).isEqualTo(3);
+        assertThat(porCategoria.get(0).get("categoria").asText()).isNotBlank();
+        assertThat(porCategoria.get(1).get("idCategoria").asInt()).isEqualTo(2);
+        assertThat(porCategoria.get(1).get("total").asLong()).isEqualTo(2);
+        assertThat(porCategoria.get(2).get("total").asLong()).isZero();
+    }
+
+    @Test
+    void elFiltroDeVigenciaSeparaVigentesDeFueraDePlazo() throws Exception {
+        sembrarEstadisticas();
+
+        JsonNode vigentes = leer(pedir("/api/admin/estadisticas?vigencia=vigentes", tokenAdmin));
+        assertThat(vigentes.get("vigencia").asText()).isEqualTo("vigentes");
+        assertThat(vigentes.get("total").asLong()).isEqualTo(4);
+        assertThat(vigentes.get("atendidos").asLong()).isZero();
+        assertThat(vigentes.get("porcentajeAtendidos").asDouble()).isZero();
+
+        JsonNode fuera = leer(pedir("/api/admin/estadisticas?vigencia=fuera_de_plazo", tokenAdmin));
+        assertThat(fuera.get("vigencia").asText()).isEqualTo("fuera_de_plazo");
+        assertThat(fuera.get("total").asLong()).isEqualTo(1);
+        assertThat(fuera.get("atendidos").asLong()).isEqualTo(1);
+        assertThat(fuera.get("porcentajeAtendidos").asDouble()).isEqualTo(100.0);
+    }
+
+    @Test
+    void lasEstadisticasUsanLosMismosFiltrosQueElMapa() throws Exception {
+        sembrarEstadisticas();
+        LocalDate hoy = LocalDate.now(ZoneId.of("America/Bogota"));
+
+        assertThat(leer(pedir("/api/admin/estadisticas?idCategoria=2", tokenAdmin)).get("total").asLong()).isEqualTo(2);
+        assertThat(leer(pedir("/api/admin/estadisticas?estado=RESUELTO", tokenAdmin)).get("total").asLong()).isEqualTo(1);
+        assertThat(leer(pedir("/api/admin/estadisticas?comuna=" + comunaDelPuntoDePrueba(), tokenAdmin))
+                .get("total").asLong()).isGreaterThanOrEqualTo(3);
+        assertThat(leer(pedir("/api/admin/estadisticas?hasta=" + hoy.minusDays(30), tokenAdmin))
+                .get("total").asLong()).isEqualTo(1);
+        JsonNode combinado = leer(pedir("/api/admin/estadisticas?vigencia=vigentes&idCategoria=1", tokenAdmin));
+        assertThat(combinado.get("total").asLong()).isEqualTo(2);
+    }
+
+    @Test
+    void sinReportesLasEstadisticasSalenEnCeroYCompletas() throws Exception {
+        JsonNode e = leer(pedir("/api/admin/estadisticas", tokenAdmin));
+
+        assertThat(e.get("total").asLong()).isZero();
+        assertThat(e.get("atendidos").asLong()).isZero();
+        assertThat(e.get("porcentajeAtendidos").asDouble()).isZero();
+        assertThat(e.get("sinComuna").asLong()).isZero();
+        assertThat(e.get("porEstado")).hasSize(4);
+        assertThat(e.get("porComuna")).hasSize(10);
+        assertThat(e.get("porCategoria")).hasSize(categoriasActivas());
+        assertThat(e.get("porCategoria").findValuesAsText("total")).containsOnly("0");
+    }
+
+    @Test
+    void lasEstadisticasValidanLaVigenciaYSoloLasVeElAdministrador() throws Exception {
+        assertError(pedir("/api/admin/estadisticas?vigencia=vencidos", tokenAdmin), 400, "VALIDACION", "vigencia");
+        assertError(pedir("/api/admin/estadisticas?comuna=11", tokenAdmin), 400, "VALIDACION", "comuna");
+        assertError(pedir("/api/admin/estadisticas?estado=Cancelado", tokenAdmin), 400, "VALIDACION", "estado");
+
+        assertError(pedir("/api/admin/estadisticas", tokenAna), 403, "SIN_PERMISO", null);
+        assertError(pedir("/api/admin/estadisticas", null), 401, "NO_AUTENTICADO", null);
+    }
+
+    @Test
+    void conMilReportesLasEstadisticasRespondenEnMenosDeDosSegundos() throws Exception {
+        jdbc.update("""
+                INSERT INTO reporte (id_usuario, id_categoria, id_barrio, descripcion, ubicacion,
+                                     autorizacion_envio_en, creado_en)
+                SELECT ?, 1 + g % 5, ?, 'Reporte de carga para medir las estadísticas',
+                       ST_SetSRID(ST_MakePoint(-76.1950 + (g % 40) * 0.0002, 4.0867 + (g / 40) * 0.0002), 4326),
+                       now() - make_interval(days => g % 60), now() - make_interval(days => g % 60)
+                  FROM generate_series(1, 1000) AS g""", idAna, idBarrio);
+
+        pedir("/api/admin/estadisticas?comuna=1", tokenAdmin); // calentamiento
+        long inicio = System.nanoTime();
+        MvcResult r = pedir("/api/admin/estadisticas", tokenAdmin);
+        long milisegundos = (System.nanoTime() - inicio) / 1_000_000;
+
+        JsonNode e = leer(r);
+        assertThat(e.get("total").asLong()).isEqualTo(1000);
+        long sumaComunas = 0;
+        for (JsonNode c : e.get("porComuna")) {
+            sumaComunas += c.get("total").asLong();
+        }
+        assertThat(sumaComunas + e.get("sinComuna").asLong()).isEqualTo(1000);
+        assertThat(milisegundos).as("GET /api/admin/estadisticas con 1.000 reportes tardó %d ms", milisegundos)
                 .isLessThanOrEqualTo(2000);
     }
 }

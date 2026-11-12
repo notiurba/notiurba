@@ -1,9 +1,14 @@
 package com.notiurba.admin;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
@@ -12,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.notiurba.admin.MapaAdminRepositorio.ConteoComuna;
 import com.notiurba.reporte.ListadoReportesServicio;
+import com.notiurba.reporte.ReporteDetalleResponse;
 import com.notiurba.web.error.ApiException;
 import com.notiurba.web.error.Codigos;
 
@@ -41,6 +47,14 @@ public class MapaAdminServicio {
         return new CalorResponse(datos.totalReportes(), datos.totalPuntos(),
                 datos.totalPuntos() > datos.puntos().size(), sinComuna, datos.puntos(),
                 paginar(datos.comunas(), pagina, tamano));
+    }
+
+    @Transactional(readOnly = true)
+    public EstadisticasResponse estadisticas(String estado, Integer idCategoria, Integer comuna, LocalDate desde,
+            LocalDate hasta, String vigencia) {
+        FiltroMapa f = filtro(estado, idCategoria, comuna, desde, hasta);
+        FiltroVigencia v = vigencia(vigencia);
+        return armar(v, repositorio.estadisticas(f, v), repositorio.categoriasActivas());
     }
 
     /** Mismas reglas y mensajes que el listado del panel. Una categoría que no existe da una lista vacía. */
@@ -79,6 +93,67 @@ public class MapaAdminServicio {
             items.add(new CalorResponse.ComunaCritica((int) i + 1, c.comuna(), c.total(), c.categoriaPrincipal()));
         }
         return new CalorResponse.ComunasCriticas(pagina, tamano, total, totalPaginas, items);
+    }
+
+    static FiltroVigencia vigencia(String valor) {
+        if (valor == null || valor.isBlank()) {
+            return FiltroVigencia.TODOS;
+        }
+        for (FiltroVigencia v : FiltroVigencia.values()) {
+            if (v.valor().equalsIgnoreCase(valor.trim())) {
+                return v;
+            }
+        }
+        throw error("La vigencia es vigentes, fuera_de_plazo o todos", "vigencia");
+    }
+
+    /**
+     * Completa con ceros los 4 estados, las 10 comunas y las categorías activas, para que las tablas del panel
+     * salgan completas. Las categorías van de más a menos reportes.
+     */
+    static EstadisticasResponse armar(FiltroVigencia vigencia, List<MapaAdminRepositorio.ConteoEstadistica> filas,
+            List<ReporteDetalleResponse.Categoria> catalogo) {
+        Map<String, Long> porEstado = new LinkedHashMap<>();
+        for (EstadoReporte e : EstadoReporte.values()) {
+            porEstado.put(e.nombre(), 0L);
+        }
+        Map<Integer, String> nombres = new LinkedHashMap<>();
+        Map<Integer, Long> porCategoria = new HashMap<>();
+        for (ReporteDetalleResponse.Categoria c : catalogo) {
+            nombres.put(c.idCategoria(), c.nombre());
+            porCategoria.put(c.idCategoria(), 0L);
+        }
+        long[] porComuna = new long[10];
+        long total = 0;
+        long sinComuna = 0;
+        for (MapaAdminRepositorio.ConteoEstadistica fila : filas) {
+            total += fila.total();
+            porEstado.merge(fila.estado(), fila.total(), Long::sum);
+            nombres.putIfAbsent(fila.idCategoria(), fila.categoria());
+            porCategoria.merge(fila.idCategoria(), fila.total(), Long::sum);
+            if (fila.comuna() == null) {
+                sinComuna += fila.total();
+            } else {
+                porComuna[fila.comuna() - 1] += fila.total();
+            }
+        }
+
+        long atendidos = porEstado.getOrDefault(EstadoReporte.RESUELTO.nombre(), 0L);
+        BigDecimal porcentaje = total == 0 ? BigDecimal.ZERO.setScale(1)
+                : BigDecimal.valueOf(atendidos * 100).divide(BigDecimal.valueOf(total), 1, RoundingMode.HALF_UP);
+        List<EstadisticasResponse.PorEstado> estados = porEstado.entrySet().stream()
+                .map(e -> new EstadisticasResponse.PorEstado(e.getKey(), e.getValue())).toList();
+        List<EstadisticasResponse.PorCategoria> categorias = nombres.entrySet().stream()
+                .map(c -> new EstadisticasResponse.PorCategoria(c.getKey(), c.getValue(), porCategoria.get(c.getKey())))
+                .sorted(Comparator.comparingLong(EstadisticasResponse.PorCategoria::total).reversed()
+                        .thenComparingInt(EstadisticasResponse.PorCategoria::idCategoria))
+                .toList();
+        List<EstadisticasResponse.PorComuna> comunas = new ArrayList<>();
+        for (int i = 0; i < porComuna.length; i++) {
+            comunas.add(new EstadisticasResponse.PorComuna(i + 1, porComuna[i]));
+        }
+        return new EstadisticasResponse(vigencia.valor(), total, atendidos, porcentaje, sinComuna, estados, categorias,
+                comunas);
     }
 
     private static ApiException error(String mensaje, String campo) {
