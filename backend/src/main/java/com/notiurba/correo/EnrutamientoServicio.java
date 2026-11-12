@@ -1,6 +1,8 @@
 package com.notiurba.correo;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
@@ -14,10 +16,20 @@ public class EnrutamientoServicio {
     public record Ruta(int idCategoria, String codigo, String categoria, String entidad, String dependencia,
             boolean requiereUbicacion, boolean admiteMatricula, boolean esGas, boolean competenciaConfirmada,
             boolean revisionClasificacion, Integer idCanal, String canal, String acceso, String correoReferencia,
-            boolean permiteCorreo, String mensaje) { }
+            boolean permiteCorreo, String mensaje, List<Canal> canales) { }
+
+    /** Canal de la entidad distinto del correo, en el orden en que se recomienda. */
+    public record Canal(String tipo, String acceso, String finalidad, String horario, String detalle) { }
+
+    static final String CANALES = """
+        SELECT k.id_entidad_destino, t.nombre AS tipo, k.acceso, f.nombre AS finalidad, k.horario, k.detalle
+        FROM canal_atencion k JOIN tipo_canal t USING(id_tipo_canal) JOIN finalidad_canal f USING(id_finalidad_canal)
+        WHERE k.activo AND t.nombre<>'Correo' AND k.id_entidad_destino IS NOT NULL
+        ORDER BY k.id_entidad_destino, k.orden, k.id_canal_atencion
+        """;
 
     static final String CONSULTA = """
-        SELECT c.id_categoria, x.codigo, c.nombre AS categoria, e.nombre AS entidad, d.nombre AS dependencia,
+        SELECT c.id_categoria, x.codigo, e.id_entidad_destino, c.nombre AS categoria, e.nombre AS entidad, d.nombre AS dependencia,
           c.requiere_ubicacion, x.admite_matricula, x.es_gas, x.competencia_confirmada, x.revision_clasificacion,
           x.correo_confirmado AND NOT x.prioriza_alterno AND k.activo AND k.es_principal AS permite,
           k.acceso AS referencia, k.id_canal_atencion AS correo_id,
@@ -32,6 +44,7 @@ public class EnrutamientoServicio {
         """;
 
     public List<Ruta> listar() {
+        Map<Integer, List<Canal>> canales = canalesPorEntidad();
         return jdbc.query(CONSULTA + " ORDER BY x.codigo", (rs, i) -> {
             boolean permite = rs.getBoolean("permite");
             boolean competencia = rs.getBoolean("competencia_confirmada");
@@ -43,8 +56,16 @@ public class EnrutamientoServicio {
                 rs.getString("referencia"), permite,
                 !competencia ? "Todavía confirmamos qué entidad atiende este tipo de reportes. El correo no es para emergencias."
                     : permite ? "Enviar el reporte no asegura que lo lean de inmediato; el radicado oficial lo asigna la entidad."
-                    : "Esta entidad atiende por otro canal. Use el que se indica aquí; NotiUrba no le enviará correo.");
+                    : "Esta entidad atiende por otro canal. Use el que se indica aquí; NotiUrba no le enviará correo.",
+                canales.getOrDefault(rs.getInt("id_entidad_destino"), List.of()));
         });
+    }
+
+    private Map<Integer, List<Canal>> canalesPorEntidad() {
+        return jdbc.query(CANALES, (rs, i) -> Map.entry(rs.getInt("id_entidad_destino"), new Canal(rs.getString("tipo"),
+                rs.getString("acceso"), rs.getString("finalidad"), rs.getString("horario"), rs.getString("detalle"))))
+            .stream().collect(Collectors.groupingBy(Map.Entry::getKey,
+                Collectors.mapping(Map.Entry::getValue, Collectors.toUnmodifiableList())));
     }
 
     public Ruta resolver(int categoria, boolean emergencia) {
@@ -57,7 +78,7 @@ public class EnrutamientoServicio {
             ruta.revisionClasificacion(), ruta.esGas() ? canalEmergencia(ruta.idCategoria()) : alterno(ruta.idCategoria()),
             ruta.esGas() ? "Teléfono" : "Canal oficial", ruta.esGas() ? "164" : accesoAlterno(ruta.idCategoria()),
             ruta.correoReferencia(), false, ruta.esGas() ? "Emergencia de gas: llame al 164"
-                : "Para una emergencia, llame al canal de emergencias: el correo no es inmediato.");
+                : "Para una emergencia, llame al canal de emergencias: el correo no es inmediato.", ruta.canales());
     }
     private Integer canalEmergencia(int id) { return jdbc.queryForObject("SELECT id_canal_emergencia FROM configuracion_enrutamiento WHERE id_categoria=?", Integer.class, id); }
     private Integer alterno(int id) { return jdbc.queryForObject("SELECT id_canal_alterno FROM configuracion_enrutamiento WHERE id_categoria=?", Integer.class, id); }

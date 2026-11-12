@@ -52,7 +52,8 @@ class EnrutamientoIntegracionTest {
         assertThat(rutas.resolver(8,false).competenciaConfirmada()).isFalse();
         assertThat(rutas.resolver(9,false).competenciaConfirmada()).isFalse();
         assertThat(rutas.resolver(10,false).revisionClasificacion()).isTrue();
-        assertThat(rutas.resolver(11,false).correoReferencia()).isEqualTo("notificacionespqr@centroaguas.com");
+        assertThat(rutas.resolver(11,false).correoReferencia()).isEqualTo("info@centroaguas.com");
+        assertThat(rutas.resolver(11,false).permiteCorreo()).isTrue();
         assertThat(rutas.resolver(12,false).correoReferencia()).isEqualTo("inquietudes@gdo.com.co");
         assertThat(rutas.resolver(13,false).correoReferencia()).isEqualToIgnoringCase("servicioalcliente@celsia.com");
         assertThat(rutas.resolver(14,false).correoReferencia()).isEqualTo("pqr.tulua@veolia.com");
@@ -61,9 +62,9 @@ class EnrutamientoIntegracionTest {
     @Test void gasEmergenteYCanalesAlternosNoLlamanProveedor() {
         assertThat(rutas.resolver(12,true).mensaje()).isEqualTo("Emergencia de gas: llame al 164");
         assertThat(rutas.resolver(12,true).permiteCorreo()).isFalse();
-        for(int id:new int[]{11,13,14})assertThat(rutas.resolver(id,false).permiteCorreo()).isFalse();
+        for(int id:new int[]{12,13,14})assertThat(rutas.resolver(id,false).permiteCorreo()).isFalse();
         assertThat(rutas.resolver(13,false).canal()).isEqualTo("Web");
-        for(int id:new int[]{11,12,13,14}) {
+        for(int id:new int[]{12,13,14}) {
             String codigo=reporte(id,id==12);
             assertThat(servicio.solicitar(correo,codigo).estado()).isEqualTo("NO_ENVIADO_CORREO");
         }
