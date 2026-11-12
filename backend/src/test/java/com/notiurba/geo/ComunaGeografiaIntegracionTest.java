@@ -14,6 +14,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.notiurba.reporte.BaseDeDatosTemporal;
 
@@ -66,6 +68,7 @@ class ComunaGeografiaIntegracionTest {
     }
 
     @Autowired private JdbcTemplate jdbc;
+    @Autowired private PlatformTransactionManager transacciones;
 
     @Test
     void geogEsElMismoPoligonoQueGeomEnGeography() {
@@ -99,10 +102,22 @@ class ComunaGeografiaIntegracionTest {
 
     @Test
     void laAsignacionDaLoMismoQueLaFuncionAnteriorEnCadaPuntoDeUnaCuadricula() {
-        jdbc.execute(FUNCION_DE_REFERENCIA);
+        // pg_temp solo existe en una conexión: la transacción mantiene las dos llamadas en la misma
+        Map<String, Object> r = new TransactionTemplate(transacciones).execute(estado -> {
+            jdbc.execute(FUNCION_DE_REFERENCIA);
+            return compararConLaReferencia();
+        });
 
-        // 900 puntos sobre la capa y 300 m alrededor: dentro, en huecos, cerca del borde y fuera
-        Map<String, Object> r = jdbc.queryForMap("""
+        assertThat(((Number) r.get("puntos")).intValue()).isEqualTo(900);
+        assertThat(((Number) r.get("diferencias")).intValue()).isZero();
+        assertThat(((Number) r.get("dentro")).intValue()).isPositive();
+        assertThat(((Number) r.get("en_hueco")).intValue()).isPositive();
+        assertThat(((Number) r.get("fuera")).intValue()).isPositive();
+    }
+
+    /** 900 puntos sobre la capa y 300 m alrededor: dentro, en huecos, cerca del borde y fuera. */
+    private Map<String, Object> compararConLaReferencia() {
+        return jdbc.queryForMap("""
                 WITH caja AS (SELECT ST_Expand(ST_Extent(geom)::geometry, 0.003) e FROM comuna),
                      puntos AS (
                        SELECT ST_SetSRID(ST_MakePoint(
@@ -122,11 +137,5 @@ class ComunaGeografiaIntegracionTest {
                        count(*) FILTER (WHERE r2 = 'cercana') AS en_hueco,
                        count(*) FILTER (WHERE r2 IS NULL) AS fuera
                   FROM comparacion""");
-
-        assertThat(((Number) r.get("puntos")).intValue()).isEqualTo(900);
-        assertThat(((Number) r.get("diferencias")).intValue()).isZero();
-        assertThat(((Number) r.get("dentro")).intValue()).isPositive();
-        assertThat(((Number) r.get("en_hueco")).intValue()).isPositive();
-        assertThat(((Number) r.get("fuera")).intValue()).isPositive();
     }
 }
