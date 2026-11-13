@@ -46,6 +46,7 @@ public class EnvioReporteServicio {
     public Estado solicitar(String usuario, String codigo) {
         return tx.execute(status -> {
             long id = propio(usuario,codigo,true);
+            exigirEvidencia(id);
             Map<String,Object> reporte=jdbc.queryForMap("SELECT id_categoria, emergencia, autorizacion_envio_en FROM reporte WHERE id_reporte=?",id);
             if(reporte.get("autorizacion_envio_en")==null) throw error("Debes autorizar la remisión del reporte");
             var ruta=rutas.resolver(((Number)reporte.get("id_categoria")).intValue(), (Boolean)reporte.get("emergencia"));
@@ -225,6 +226,17 @@ public class EnvioReporteServicio {
                 : "<p><strong>" + org.springframework.web.util.HtmlUtils.htmlEscape(aviso) + "</strong></p>" + c.html();
         return new CorreoSaliente(List.of(destinoPrueba.trim()), "[PRUEBA] " + c.asunto(), aviso + "\n\n" + c.texto(),
                 html, c.nombreRemitente(), c.responderA(), c.claveIdempotencia());
+    }
+
+    /** Un reporte que repite uno ya resuelto no sale sin al menos una foto: la que se declaró al crearlo pudo no llegar. */
+    private void exigirEvidencia(long id) {
+        boolean sinFoto = Boolean.TRUE.equals(jdbc.queryForObject(
+                "SELECT requiere_evidencia AND NOT EXISTS (SELECT 1 FROM evidencia_reporte e WHERE e.id_reporte = reporte.id_reporte) FROM reporte WHERE id_reporte = ?",
+                Boolean.class, id));
+        if (sinFoto) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, com.notiurba.web.error.Codigos.EVIDENCIA_REQUERIDA,
+                    com.notiurba.web.error.Codigos.MSG_EVIDENCIA_REQUERIDA, "fotos");
+        }
     }
 
     private static ApiException error(String m){ return new ApiException(HttpStatus.CONFLICT,"CONFLICTO",m); }

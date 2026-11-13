@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import com.notiurba.reporte.DuplicadoServicio;
 import com.notiurba.reporte.ReporteServicio;
 
 /**
@@ -16,20 +17,22 @@ import com.notiurba.reporte.ReporteServicio;
 public class VistaPreviaServicio {
 
     public record VistaPrevia(String asunto, String texto, List<PlantillaReporte.Seccion> secciones,
-            boolean permiteCorreo, EnrutamientoServicio.Ruta ruta) {
+            boolean permiteCorreo, EnrutamientoServicio.Ruta ruta, boolean requiereEvidencia) {
     }
 
     private final ReporteServicio reportes;
     private final EnrutamientoServicio rutas;
     private final PlantillaReporte plantilla;
     private final JdbcTemplate jdbc;
+    private final DuplicadoServicio duplicados;
 
     public VistaPreviaServicio(ReporteServicio reportes, EnrutamientoServicio rutas, PlantillaReporte plantilla,
-            JdbcTemplate jdbc) {
+            JdbcTemplate jdbc, DuplicadoServicio duplicados) {
         this.reportes = reportes;
         this.rutas = rutas;
         this.plantilla = plantilla;
         this.jdbc = jdbc;
+        this.duplicados = duplicados;
     }
 
     public VistaPrevia armar(String correoUsuario, VistaPreviaRequest p) {
@@ -49,6 +52,7 @@ public class VistaPreviaServicio {
                 .latitud(b.latitud()).longitud(b.longitud()).creadoEn(ahora).autorizacion(ahora)
                 .matricula(b.matricula()).totalFotos(p.totalFotos() == null ? 0 : p.totalFotos()).build();
         var m = plantilla.componer(datos, GrupoPlantilla.de(ruta));
-        return new VistaPrevia(m.asunto(), m.texto(), m.secciones(), ruta.permiteCorreo(), ruta);
+        boolean requiereEvidencia = duplicados.repiteResuelto(b.idCategoria(), b.latitud(), b.longitud());
+        return new VistaPrevia(m.asunto(), m.texto(), m.secciones(), ruta.permiteCorreo(), ruta, requiereEvidencia);
     }
 }

@@ -22,7 +22,7 @@ public class ReporteRepositorio {
 
     public record NuevoReporte(
             long idUsuario, int idCategoria, Integer idBarrio, String descripcion, Double latitud, Double longitud,
-            String direccionIncidente, String matriculaCuentaServicio, String radicadoOficial) {
+            String direccionIncidente, String matriculaCuentaServicio, String radicadoOficial, boolean requiereEvidencia) {
     }
 
     /** Texto para el ciudadano: el detalle técnico de registro_envio_correo.error no sale de la API. */
@@ -50,6 +50,18 @@ public class ReporteRepositorio {
 
     public ReporteRepositorio(NamedParameterJdbcTemplate jdbc) {
         this.jdbc = jdbc;
+    }
+
+    /** Pone en fila a quien crea reportes a la vez: así el tope diario no se salta con dos envíos simultáneos. */
+    public void bloquearCiudadano(long idUsuario) {
+        jdbc.queryForObject("SELECT id_usuario FROM usuario WHERE id_usuario = :id FOR UPDATE",
+                new MapSqlParameterSource("id", idUsuario), Long.class);
+    }
+
+    /** Reportes del ciudadano creados desde ese momento (de cualquier estado). */
+    public int contarDesde(long idUsuario, OffsetDateTime desde) {
+        return jdbc.queryForObject("SELECT count(*) FROM reporte WHERE id_usuario = :id AND creado_en >= :desde",
+                new MapSqlParameterSource("id", idUsuario).addValue("desde", desde), Integer.class);
     }
 
     public Optional<DatosCategoria> categoriaActiva(int idCategoria) {
@@ -80,14 +92,15 @@ public class ReporteRepositorio {
                 .addValue("lon", r.longitud(), Types.DOUBLE)
                 .addValue("direccion", r.direccionIncidente())
                 .addValue("matricula", r.matriculaCuentaServicio())
-                .addValue("radicado", r.radicadoOficial());
+                .addValue("radicado", r.radicadoOficial())
+                .addValue("evidencia", r.requiereEvidencia());
         return jdbc.queryForObject("""
                 INSERT INTO reporte (id_usuario, id_categoria, id_barrio, descripcion, ubicacion,
                                      direccion_incidente, matricula_cuenta_servicio, radicado_oficial,
-                                     creado_en, autorizacion_envio_en)
+                                     requiere_evidencia, creado_en, autorizacion_envio_en)
                 VALUES (:usuario, :categoria, :barrio, :descripcion,
                         ST_SetSRID(ST_MakePoint(CAST(:lon AS double precision), CAST(:lat AS double precision)), 4326),
-                        :direccion, :matricula, :radicado, now(), now())
+                        :direccion, :matricula, :radicado, :evidencia, now(), now())
                 RETURNING codigo_seguimiento, creado_en, vigente_hasta,
                           (SELECT e.nombre FROM estado_reporte e
                             WHERE e.id_estado_reporte = reporte.id_estado_reporte) AS estado""",

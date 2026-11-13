@@ -35,6 +35,8 @@ class ReporteServicioTest {
     private final UsuarioRepository usuarios = mock(UsuarioRepository.class);
     private final CatalogosRegistro catalogos = mock(CatalogosRegistro.class);
     private final AsignadorDeComuna asignador = mock(AsignadorDeComuna.class);
+    private final LimiteDiarioServicio limite = mock(LimiteDiarioServicio.class);
+    private final DuplicadoServicio duplicados = mock(DuplicadoServicio.class);
     private ReporteServicio servicio;
 
     @BeforeEach
@@ -51,7 +53,7 @@ class ReporteServicioTest {
         // Por defecto, cualquier punto cae dentro de la comuna 4
         when(asignador.asignar(anyDouble(), anyDouble()))
                 .thenReturn(new Resultado(true, Optional.of(new Asignacion(4, "contiene", 0))));
-        servicio = new ReporteServicio(repositorio, usuarios, catalogos, asignador);
+        servicio = new ReporteServicio(repositorio, usuarios, catalogos, asignador, limite, duplicados);
     }
 
     private static CrearReporteRequest peticion(int categoria, Double lat, Double lon, Integer barrio,
