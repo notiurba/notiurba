@@ -88,10 +88,10 @@
 ## Pruebas finales (Fase 5)
 
 - [ ] Todos los criterios CA-01 a CA-50 verificados (tabla de trazabilidad abajo).
-- [x] Backend: `mvn clean test` en verde (424 pruebas, 0 fallos, 12 omitidas). Frontend: `pnpm test` (192), `pnpm lint` y `pnpm build` en verde.
+- [x] Backend: `mvn clean test` en verde (424 pruebas, 0 fallos, 12 omitidas). Frontend: `pnpm test` (202), `pnpm lint` y `pnpm build` en verde.
 - [ ] `tools/qa-limites/`: registro, login bloqueado, 3 reportes en un día, duplicado, evidencia y ajustes del administrador contra el backend local.
 - [ ] Medición del registro (antes y después) y `EXPLAIN` de la búsqueda de duplicados.
-- [ ] Revisión con `code-reviewer` solo sobre lo que cambió.
+- [x] Revisión con `code-reviewer` solo sobre lo que cambió: backend (3 fallos medios corregidos con pruebas; el más serio, una ráfaga de logins comparaba 20 contraseñas y ahora compara 3) y frontend (2 fallos medios y faltas de pruebas corregidos; 202 pruebas). Queda [PENDIENTE] el texto «sin internet» (plan, sección 7).
 - [ ] Verificación manual en local (360 px y 1366 px, todo en español, sin palabras técnicas).
 - [ ] Documentos actualizados: `spec.md`, `plan.md`, `docs/contexto/` (04, 05, 08, 10, 11, 12, 13) y cierre con la skill `cierre-de-historia`.
 
