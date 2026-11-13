@@ -8,7 +8,41 @@ export function presentacionCorreo(envio) {
   return { clase: 'pendiente', titulo: 'Reporte guardado', etiqueta: 'Sin enviar', subtitulo: 'Falta enviarlo', mensaje: 'Su reporte quedó guardado. Falta enviarlo a la entidad.' }
 }
 
-export function enlaceCanal(ruta) {
-  if (ruta?.canal === 'Teléfono' && /^[+\d ()-]+$/.test(ruta.acceso)) return `tel:${ruta.acceso.replace(/[^+\d]/g, '')}`
-  try { const u = new URL(ruta?.acceso); return u.protocol === 'https:' && !u.username && !u.password ? u.href : null } catch { return null }
+// Acepta un canal de la lista ({ tipo, acceso }) o la ruta antigua ({ canal, acceso }).
+export function enlaceCanal(canal) {
+  const tipo = canal?.tipo ?? canal?.canal
+  const acceso = String(canal?.acceso ?? '')
+  if (tipo === 'WhatsApp') {
+    if (!/^[+\d ()-]+$/.test(acceso)) return null
+    const digitos = acceso.replace(/\D/g, '')
+    const numero = /^3\d{9}$/.test(digitos) ? '57' + digitos : /^573\d{9}$/.test(digitos) ? digitos : null
+    return numero ? `https://wa.me/${numero}` : null
+  }
+  if (tipo === 'Teléfono') return /^[+\d ()-]+$/.test(acceso) ? `tel:${acceso.replace(/[^+\d]/g, '')}` : null
+  if (tipo === 'Presencial') return null
+  try { const u = new URL(acceso); return u.protocol === 'https:' && !u.username && !u.password ? u.href : null } catch { return null }
 }
+
+export function nombreCanal(canal) {
+  if (canal?.tipo === 'Teléfono') {
+    if (canal.finalidad === 'Emergencia') return 'Línea de emergencias'
+    return /^01\s?8000/.test(canal.acceso ?? '') ? 'Línea gratuita' : 'Teléfono'
+  }
+  if (canal?.tipo === 'Web') {
+    return { 'PQR anónimo': 'Formulario sin sus datos', 'Consultar estado': 'Consultar su trámite',
+      'Información': 'Página de atención' }[canal.finalidad] ?? 'Formulario web'
+  }
+  return { WhatsApp: 'WhatsApp', Presencial: 'Oficina en Tuluá', Correo: 'Correo' }[canal?.tipo] ?? canal?.tipo ?? 'Canal oficial'
+}
+
+export function accionCanal(canal) {
+  if (!enlaceCanal(canal)) return null
+  if (canal.tipo === 'WhatsApp') return 'Abrir WhatsApp'
+  if (canal.tipo === 'Teléfono') return `Llamar al ${canal.acceso}`
+  return 'Abrir la página'
+}
+
+// Si el correo no llegó, la persona puede usar otro canal con el mismo mensaje.
+export const ofrecerOtrosCanales = (envio) => Boolean(envio?.rebote || envio?.estado === 'FALLIDO')
+
+export const textoParaCopiar = (mensaje) => `Asunto: ${mensaje.asunto}\n\n${mensaje.texto}`

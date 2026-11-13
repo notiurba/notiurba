@@ -9,7 +9,8 @@ import { IconoCopiar, IconoCorreo, IconoX } from '../../compartido/componentes/I
 import useCargar from '../../compartido/hooks/useCargar'
 import { textoLugar } from '../../compartido/utilidades/reportes'
 import { estadoCorreo } from '../servicios/correoReportes'
-import { presentacionCorreo } from '../componentes/estadoCorreo'
+import { ofrecerOtrosCanales, presentacionCorreo } from '../componentes/estadoCorreo'
+import OtrosCanales from '../componentes/OtrosCanales'
 import { CanalOficial } from '../componentes/ResultadoCorreo'
 import '../paginas/CorreoReportes.css'
 import './ReporteEnviado.css'
@@ -54,7 +55,9 @@ export default function ReporteEnviado() {
       <Aviso titulo={presentacion.subtitulo}>Enviar el reporte no asegura que la entidad lo lea de inmediato. Si le responden, lo harán a su correo.</Aviso>
       {consultaEnvio.error && <Aviso variante="error" titulo="No pudimos actualizar el estado del correo">El reporte sigue guardado. Inténtelo de nuevo.</Aviso>}
       <Boton variante="secundario" onClick={consultaEnvio.recargar} cargando={consultaEnvio.cargando} textoCargando="Consultando…">Actualizar estado del correo</Boton>
-      {envio?.ruta && <CanalOficial ruta={envio.ruta} />}
+      {ofrecerOtrosCanales(envio)
+        ? <OtrosCanales codigo={codigo} ruta={envio.ruta} />
+        : envio?.ruta && <CanalOficial ruta={envio.ruta} />}
 
       <div className="enviado__tarjeta">
         <div className="enviado__codigo">

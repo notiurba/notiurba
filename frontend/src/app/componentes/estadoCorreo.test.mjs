@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { presentacionCorreo, enlaceCanal } from './estadoCorreo.js'
+import { presentacionCorreo, enlaceCanal, nombreCanal, accionCanal, ofrecerOtrosCanales, textoParaCopiar } from './estadoCorreo.js'
 
 test('guardar un reporte no equivale a correo enviado', () => {
   assert.equal(presentacionCorreo(null).etiqueta, 'Sin enviar')
@@ -27,4 +27,39 @@ test('canal externo y gas 164 no simulan envío exitoso', () => {
 test('los enlaces de canales rechazan scripts, HTTP y credenciales', () => {
   for (const acceso of ['javascript:alert(1)', 'http://celsia.com', 'https://clave@celsia.com']) assert.equal(enlaceCanal({ acceso }), null)
   assert.equal(enlaceCanal({ acceso: 'https://www.celsia.com/es/zona-clientes/' }), 'https://www.celsia.com/es/zona-clientes/')
+})
+test('cada canal tiene su acción directa: WhatsApp, teléfono, web; la oficina no tiene enlace', () => {
+  assert.equal(enlaceCanal({ tipo: 'WhatsApp', acceso: '317 372 5078' }), 'https://wa.me/573173725078')
+  assert.equal(enlaceCanal({ tipo: 'WhatsApp', acceso: '+57 310 390 3468' }), 'https://wa.me/573103903468')
+  assert.equal(enlaceCanal({ tipo: 'Teléfono', acceso: '(602) 233 9300' }), 'tel:6022339300')
+  assert.equal(enlaceCanal({ tipo: 'Teléfono', acceso: '01 8000 950 096' }), 'tel:018000950096')
+  assert.equal(enlaceCanal({ tipo: 'Web', acceso: 'https://www.gdo.com.co/Paginas/Registro-de-pqrs.aspx' }),
+    'https://www.gdo.com.co/Paginas/Registro-de-pqrs.aspx')
+  assert.equal(enlaceCanal({ tipo: 'Presencial', acceso: 'Carrera 25 #25-04, Tuluá' }), null)
+})
+test('un WhatsApp o teléfono raro no se convierte en enlace', () => {
+  for (const acceso of ['123', '317 372 50781', 'javascript:alert(1)', '+1 202 555 0100']) assert.equal(enlaceCanal({ tipo: 'WhatsApp', acceso }), null)
+  assert.equal(enlaceCanal({ tipo: 'Teléfono', acceso: 'llamar ya' }), null)
+})
+test('los canales se nombran en lenguaje claro y su acción dice qué pasa', () => {
+  assert.equal(nombreCanal({ tipo: 'WhatsApp' }), 'WhatsApp')
+  assert.equal(nombreCanal({ tipo: 'Teléfono', acceso: '01 8000 950 096' }), 'Línea gratuita')
+  assert.equal(nombreCanal({ tipo: 'Teléfono', acceso: '164', finalidad: 'Emergencia' }), 'Línea de emergencias')
+  assert.equal(nombreCanal({ tipo: 'Web', finalidad: 'PQR anónimo' }), 'Formulario sin sus datos')
+  assert.equal(nombreCanal({ tipo: 'Web', finalidad: 'Radicar PQR' }), 'Formulario web')
+  assert.equal(nombreCanal({ tipo: 'Presencial' }), 'Oficina en Tuluá')
+  assert.equal(accionCanal({ tipo: 'WhatsApp', acceso: '317 372 5078' }), 'Abrir WhatsApp')
+  assert.equal(accionCanal({ tipo: 'Teléfono', acceso: '164' }), 'Llamar al 164')
+  assert.equal(accionCanal({ tipo: 'Web', acceso: 'https://www.celsia.com/' }), 'Abrir la página')
+  assert.equal(accionCanal({ tipo: 'Presencial', acceso: 'Calle 25' }), null)
+})
+test('solo con rebote o fallo se ofrecen los otros canales y «Copiar mi mensaje»', () => {
+  assert.equal(ofrecerOtrosCanales({ estado: 'FALLIDO', rebote: true }), true)
+  assert.equal(ofrecerOtrosCanales({ estado: 'FALLIDO' }), true)
+  for (const estado of ['PENDIENTE', 'ENVIADO', 'NO_ENVIADO_CORREO', 'SIN_SOLICITAR']) assert.equal(ofrecerOtrosCanales({ estado }), false)
+  assert.equal(ofrecerOtrosCanales(null), false)
+})
+test('el mensaje copiado lleva el asunto y el texto, listo para pegar', () => {
+  assert.equal(textoParaCopiar({ asunto: 'Petición ciudadana – Vías', texto: 'Respetados señores:\n\nYo, Ana…' }),
+    'Asunto: Petición ciudadana – Vías\n\nRespetados señores:\n\nYo, Ana…')
 })
