@@ -42,16 +42,22 @@ Revisa cada archivo y cambia solo lo que la historia tocó. Busca con `grep` los
 
 ## 4. Modelo de datos fuera del repo
 
-Claude no edita estos archivos; entrega a Andrés **qué cambió y el texto listo para pegar**:
+Enlaces vigentes (confirmados por Andrés el 12 nov 2026): carpeta Drive «NotiUrba»
+`1O6IreUnIaHKUzV9-nVBGBg6HSw8XbvM5`; **Diagrama ER (draw.io)** `1fW4OvzK5Ftd6oeCLnb7mIpD7P_H4GX7y`;
+**Sheet «Tablas Diagrama ER en excel»** `1eqkDyoNt2_BAUTiUmpy3oIQ96jYpPSc5FriT_bK0r9k`; componentes y
+despliegue `1DZ8XC3TJaDDj9_BVyyOcUbN4zdmCk4GX`; Figma `qRLcQ7jjC71F52CI6S9m1j`.
 
-- **Draw.io del ER** (Drive, carpeta «NotiUrba», archivo «Diagrama Entidad-Relacion»): tablas, columnas
-  y relaciones nuevas.
-- **Google Sheet «Tablas Diagrama ER en excel»**: pestañas `v5`, `Diccionario`, `Reglas v5` y
-  `Diferencias Figma`.
-- **Google Doc «NotiUrba»** (Andrés solo lo ve): pestañas «Asignación de correos», «Modelado» y
-  «Diseño técnico y arquitectura», según lo que cambió.
-- **Neon**: lo aplican las migraciones al desplegar. Antes de una migración que cambia datos, branch
-  de respaldo; después, una consulta de solo lectura que compruebe el resultado.
+- **Draw.io del ER:** Claude no lo edita. Entrega a Andrés un archivo local (en la carpeta del SDD archivado)
+  con las tablas completas que cambiaron, listas para pegar, y qué relaciones se agregan.
+- **Google Sheet:** Andrés pidió que Claude lo actualice. Es aditivo: una hoja nueva fechada con las tablas,
+  columnas, reglas y datos de la historia, y solo se corrigen las celdas de `v5` que quedaron falsas. Las
+  pestañas `Diccionario` y `Reglas v5` son cuadrículas grandes: se avisa si quedan sin actualizar.
+- **Google Doc «NotiUrba»:** igual: una sección «Actualización <fecha>» al final de las pestañas afectadas
+  («Asignación de correos», «Modelado», «Reglas de negocio» y las que toque), sin reescribir lo anterior.
+- **Cómo:** por Chrome (Claude in Chrome), pegando con un evento de portapapeles. Antes de editar, confirmar que
+  el documento está en modo edición; después, comprobar con una captura y avisar a Andrés qué se tocó.
+- **Neon:** lo aplican las migraciones al desplegar. Antes de una migración que cambia datos, branch
+  de respaldo si Andrés lo pide; después, una consulta de solo lectura que compruebe el resultado.
 
 ## 5. Linear, Figma y quien depende de la historia
 
