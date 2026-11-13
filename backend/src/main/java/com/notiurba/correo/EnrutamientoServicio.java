@@ -79,7 +79,13 @@ public class EnrutamientoServicio {
             ruta.revisionClasificacion(), ruta.esGas() ? canalEmergencia(ruta.idCategoria()) : alterno(ruta.idCategoria()),
             ruta.esGas() ? "Teléfono" : "Canal oficial", ruta.esGas() ? "164" : accesoAlterno(ruta.idCategoria()),
             ruta.correoReferencia(), false, ruta.esGas() ? "Emergencia de gas: llame al 164"
-                : "Para una emergencia, llame al canal de emergencias: el correo no es inmediato.", ruta.esEmpresa(), ruta.canales());
+                : "Para una emergencia, llame al canal de emergencias: el correo no es inmediato.", ruta.esEmpresa(),
+                primeroLoUrgente(ruta.canales()));
+    }
+    /** En una emergencia van primero la línea de emergencias y los teléfonos; el resto conserva su orden. */
+    static List<Canal> primeroLoUrgente(List<Canal> canales) {
+        return canales.stream().sorted(java.util.Comparator.comparingInt((Canal c) ->
+                "Emergencia".equals(c.finalidad()) ? 0 : "Teléfono".equals(c.tipo()) ? 1 : 2)).toList();
     }
     private Integer canalEmergencia(int id) { return jdbc.queryForObject("SELECT id_canal_emergencia FROM configuracion_enrutamiento WHERE id_categoria=?", Integer.class, id); }
     private Integer alterno(int id) { return jdbc.queryForObject("SELECT id_canal_alterno FROM configuracion_enrutamiento WHERE id_categoria=?", Integer.class, id); }

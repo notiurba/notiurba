@@ -94,7 +94,16 @@ class CanalesRutaIntegracionTest {
 
         assertThat(ruta.permiteCorreo()).isFalse();
         assertThat(ruta.acceso()).isEqualTo("164");
-        assertThat(ruta.canales()).extracting(Canal::acceso).contains("164");
+        assertThat(ruta.canales()).extracting(Canal::acceso).startsWith("164");
+    }
+
+    @Test
+    void enUnaEmergenciaLosTelefonosVanPrimero() {
+        var inundacion = rutas.resolver(8, true).canales();
+
+        assertThat(inundacion.get(0).tipo()).isEqualTo("Teléfono");
+        assertThat(inundacion).extracting(Canal::acceso).startsWith("(602) 233 9300");
+        assertThat(rutas.resolver(8, false).canales().get(0).tipo()).isEqualTo("Web");
     }
 
     @Test

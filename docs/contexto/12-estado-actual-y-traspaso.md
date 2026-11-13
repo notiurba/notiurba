@@ -80,7 +80,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el
   mismo comando: ejecútelo en un entorno limpio (`env -i ...`).
 - Una base desechable: contenedor `postgis/postgis:16-3.4`. Docker Desktop debe estar abierto.
-- Última corrida completa (12/11/2026, rama de NOT-130): 360 pruebas, 0 fallos, 2 omitidas
+- Última corrida completa (12/11/2026, rama de NOT-130): 361 pruebas, 0 fallos, 2 omitidas
   (proveedores reales). Las 9 de enrutamiento y la de migración de enrutamiento solo corren con
   `NOTIURBA_TEST_DB_URL` apuntando a una base `notiurba_test*` (con `postgis` y `pgcrypto`); sin ella
   se omiten y no cuentan como pasadas.

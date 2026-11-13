@@ -17,7 +17,7 @@ Contexto general: `docs/contexto/12-estado-actual-y-traspaso.md`. Trabaje en una
    migraciones de otra rama y Flyway falla.
 4. `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el mismo comando:
    ejecútelo con `env -i` y solo las variables necesarias.
-5. Meta de referencia (12 nov 2026, rama de NOT-130): 360 pruebas, 0 fallos, 2 omitidas (proveedores reales).
+5. Meta de referencia (12 nov 2026, rama de NOT-130): 361 pruebas, 0 fallos, 2 omitidas (proveedores reales).
    Para no omitir las 10 de enrutamiento: cree una base `notiurba_test_<algo>` en `notiurba-db` con `postgis` y
    `pgcrypto` y pase `NOTIURBA_TEST_DB_URL`, `NOTIURBA_TEST_DB_USER` y `NOTIURBA_TEST_DB_PASSWORD`; bórrela al final.
    QA de punta a punta con el jar: `tools/qa-panel-admin/qa-panel.sh` (panel) y `tools/qa-correo-reporte/qa-correo.sh`

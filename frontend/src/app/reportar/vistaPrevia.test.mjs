@@ -17,5 +17,7 @@ test('un error del borrador se explica y no ofrece reintentar; uno de red sí', 
   assert.deepEqual(explicarErrorVistaPrevia({ estado: 422, mensaje: 'El punto está fuera de Tuluá' }),
     { mensaje: 'El punto está fuera de Tuluá', reintentar: false })
   assert.equal(explicarErrorVistaPrevia({ estado: 503 }).reintentar, true)
+  assert.equal(explicarErrorVistaPrevia({ estado: 404 }).reintentar, true)
+  assert.equal(explicarErrorVistaPrevia({ estado: 405, mensaje: 'Method Not Allowed' }).mensaje, 'Su reporte se puede enviar igual.')
   assert.equal(explicarErrorVistaPrevia(new Error('red')).reintentar, true)
 })

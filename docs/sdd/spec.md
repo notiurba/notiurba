@@ -83,7 +83,7 @@ Que cada reporte por correo llegue con un **mensaje formal y completo** por un c
 
 **Datos**
 - **CA-17** — _Dada_ la migración V21, _entonces_ aplica sobre la base con los reportes existentes sin perder datos; los canales con evidencia en contra quedan **inactivos** con el motivo en `detalle`, no borrados.
-- **CA-18** — _Dado_ cada canal, _entonces_ tiene `finalidad`, `orden`, `fuente` y `verificado_en`.
+- **CA-18** — _Dado_ cada canal, _entonces_ tiene `finalidad` y `orden`; los canales **activos de una entidad** tienen además `fuente` y `verificado_en`. *(Precisado el 12 nov: los correos de referencia de las dependencias y los canales inactivos no se verificaron.)*
 
 ## 6. Reglas y restricciones que aplican
 
