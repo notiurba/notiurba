@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
+import PasoCanales from './PasoCanales'
 import PasoCategoria from './PasoCategoria'
 import PasoConfirmacion from './PasoConfirmacion'
 import PasoDetalles from './PasoDetalles'
@@ -12,6 +13,7 @@ export default function RutasReportar() {
     <Routes>
       <Route element={<ReportarLayout />}>
         <Route index element={<PasoCategoria />} />
+        <Route path="canales" element={<PasoCanales />} />
         <Route path="ubicacion" element={<PasoUbicacion />} />
         <Route path="detalles" element={<PasoDetalles />} />
         <Route path="confirmacion" element={<PasoConfirmacion />} />
