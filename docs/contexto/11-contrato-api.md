@@ -314,7 +314,7 @@ Respuesta 200:
     {
       "codigoSeguimiento": "NU-000035",
       "estado": "Recibido",
-      "categoria": { "idCategoria": 1, "nombre": "Vías, huecos y andenes" },
+      "categoria": { "idCategoria": 1, "nombre": "Vías, huecos, andenes e infraestructura" },
       "barrio": { "idBarrio": 12, "nombre": "Salesiano" },
       "comuna": 5,
       "latitud": 4.0867,
@@ -370,7 +370,7 @@ Respuesta 200:
     "totalPaginas": 2,
     "items": [
       { "posicion": 1, "comuna": 5, "total": 4,
-        "categoriaPrincipal": { "idCategoria": 1, "nombre": "Vías, huecos y andenes" } }
+        "categoriaPrincipal": { "idCategoria": 1, "nombre": "Vías, huecos, andenes e infraestructura" } }
     ]
   }
 }
@@ -420,7 +420,7 @@ Respuesta 200:
     { "estado": "En trámite", "total": 2 },
     { "estado": "Resuelto", "total": 3 }
   ],
-  "porCategoria": [ { "idCategoria": 1, "categoria": "Vías, huecos y andenes", "total": 5 } ],
+  "porCategoria": [ { "idCategoria": 1, "categoria": "Vías, huecos, andenes e infraestructura", "total": 5 } ],
   "porComuna": [ { "comuna": 1, "total": 2 }, { "comuna": 2, "total": 3 } ]
 }
 ```
@@ -451,7 +451,7 @@ Forma (la misma en la lectura y en la escritura):
       "reportesMaximosPorDia": 2,
       "duplicados": {
         "ventanaDias": 30,
-        "categorias": [ { "idCategoria": 1, "nombre": "Vías, huecos y andenes", "metros": 5 }, … ]
+        "categorias": [ { "idCategoria": 1, "nombre": "Vías, huecos, andenes e infraestructura", "metros": 5 }, … ]
       }
     }
 
