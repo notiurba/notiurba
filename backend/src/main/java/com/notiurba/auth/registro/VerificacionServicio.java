@@ -13,13 +13,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.notiurba.auth.google.ResultadoGoogle;
-import com.notiurba.correo.CorreoSaliente;
-import com.notiurba.correo.EnviadorCorreo;
 import com.notiurba.seguridad.JwtProveedor;
 import com.notiurba.usuario.TipoToken;
 import com.notiurba.usuario.TipoTokenRepository;
@@ -49,7 +48,7 @@ public class VerificacionServicio {
     private final UsuarioRepository usuarioRepository;
     private final TokenVerificacionRepository tokenRepository;
     private final TipoTokenRepository tipoTokenRepository;
-    private final EnviadorCorreo enviadorCorreo;
+    private final ApplicationEventPublisher publicador;
     private final JwtProveedor jwtProveedor;
     private final String enlaceBase;
     private final SecureRandom aleatorio = new SecureRandom();
@@ -58,38 +57,30 @@ public class VerificacionServicio {
             UsuarioRepository usuarioRepository,
             TokenVerificacionRepository tokenRepository,
             TipoTokenRepository tipoTokenRepository,
-            EnviadorCorreo enviadorCorreo,
+            ApplicationEventPublisher publicador,
             JwtProveedor jwtProveedor,
             @Value("${notiurba.verificacion.enlace}") String enlaceBase) {
         this.usuarioRepository = usuarioRepository;
         this.tokenRepository = tokenRepository;
         this.tipoTokenRepository = tipoTokenRepository;
-        this.enviadorCorreo = enviadorCorreo;
+        this.publicador = publicador;
         this.jwtProveedor = jwtProveedor;
         this.enlaceBase = enlaceBase;
     }
 
-    /** Crea un token nuevo (deja sin efecto los anteriores) y envía el enlace. Un fallo de envío solo se registra. */
+    /**
+     * Crea un token nuevo (deja sin efecto los anteriores) y avisa que hay un correo por enviar. El envío ocurre
+     * después de confirmar la transacción y en otro hilo (EnvioCorreoVerificacion): no hace esperar a la persona.
+     */
     @Transactional
-    public void emitirYEnviar(Usuario usuario) {
+    public void emitir(Usuario usuario) {
         TipoToken tipo = tipoVerificacion();
         OffsetDateTime ahora = OffsetDateTime.now();
         tokenRepository.invalidarVigentes(usuario, tipo, ahora);
         String token = nuevoToken();
         tokenRepository.save(new TokenVerificacion(usuario, tipo, hash(token), ahora, ahora.plus(VIGENCIA)));
-        try {
-            enviadorCorreo.enviar(new CorreoSaliente(
-                    List.of(usuario.getCorreo()),
-                    "Confirma tu correo en NotiUrba",
-                    "Hola " + usuario.getNombres() + ",\n\n"
-                            + "Para activar tu cuenta de NotiUrba confirma tu correo con este enlace:\n"
-                            + enlaceBase + "?token=" + token + "\n\n"
-                            + "El enlace vence en 24 horas. Si no creaste una cuenta, ignora este mensaje.",
-                    null, null, null, null));
-        } catch (RuntimeException fallo) {
-            // La cuenta ya existe: el ciudadano puede pedir otro enlace con reenviar-verificacion
-            log.error("No se pudo enviar el enlace de verificación de correo", fallo);
-        }
+        publicador.publishEvent(new CorreoVerificacionPendiente(usuario.getCorreo(), usuario.getNombres(),
+                enlaceBase + "?token=" + token));
     }
 
     /** Confirma el correo con el token del enlace e inicia sesión. */
@@ -118,7 +109,7 @@ public class VerificacionServicio {
             long recientes = tokenRepository.countByUsuarioAndTipoTokenAndCreadoEnAfter(
                     usuario, tipoVerificacion(), ahora.minus(ESPERA_ENTRE_ENVIOS));
             if (recientes == 0) {
-                emitirYEnviar(usuario);
+                emitir(usuario);
             } else {
                 log.info("Reenvío de verificación omitido: ya se envió uno hace menos de un minuto");
             }

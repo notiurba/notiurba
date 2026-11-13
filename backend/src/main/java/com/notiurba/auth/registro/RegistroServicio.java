@@ -82,7 +82,7 @@ public class RegistroServicio {
             throw new ApiException(HttpStatus.CONFLICT, Codigos.CONFLICTO,
                     "No se pudo crear la cuenta: el documento o el correo ya están registrados");
         }
-        verificacion.emitirYEnviar(usuario);
+        verificacion.emitir(usuario);
         return new MensajeResponse(correo, MENSAJE);
     }
 }
