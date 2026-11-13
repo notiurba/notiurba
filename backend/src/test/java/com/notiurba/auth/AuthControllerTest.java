@@ -1,6 +1,7 @@
 package com.notiurba.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -9,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -34,6 +36,12 @@ class AuthControllerTest {
     @Autowired private MockMvc mvc;
     @Autowired private PasswordEncoder passwordEncoder;
     @MockBean private UsuarioRepository usuarioRepository;
+    @MockBean private IntentosLoginServicio intentos;
+
+    @BeforeEach
+    void sinBloqueo() {
+        when(intentos.registrarFallo(any())).thenReturn(new IntentosLoginServicio.Fallo(null, 2));
+    }
 
     private String login(String correo, String password) throws Exception {
         return mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)

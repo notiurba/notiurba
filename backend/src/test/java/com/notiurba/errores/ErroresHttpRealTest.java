@@ -71,6 +71,7 @@ class ErroresHttpRealTest {
     @Autowired JwtProveedor jwt;
     @MockBean CategoriaRepository categoriaRepository;
     @MockBean UsuarioRepository usuarioRepository;
+    @MockBean com.notiurba.auth.IntentosLoginServicio intentosLogin;
     @MockBean org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     private HttpResponse<String> enviar(HttpRequest.Builder b, String token) throws Exception {

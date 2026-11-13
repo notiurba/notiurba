@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.notiurba.auth.IntentosLoginServicio;
 import com.notiurba.auth.ReglaContrasena;
 import com.notiurba.usuario.TipoToken;
 import com.notiurba.usuario.TipoTokenRepository;
@@ -45,6 +46,7 @@ public class RecuperacionServicio {
     private final TipoTokenRepository tipoTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final EnviadorEnlaceRecuperacion enviador;
+    private final IntentosLoginServicio intentos;
     private final String enlaceBase;
     private final SecureRandom aleatorio = new SecureRandom();
 
@@ -54,12 +56,14 @@ public class RecuperacionServicio {
             TipoTokenRepository tipoTokenRepository,
             PasswordEncoder passwordEncoder,
             EnviadorEnlaceRecuperacion enviador,
+            IntentosLoginServicio intentos,
             @Value("${notiurba.recuperacion.enlace}") String enlaceBase) {
         this.usuarioRepository = usuarioRepository;
         this.tokenRepository = tokenRepository;
         this.tipoTokenRepository = tipoTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.enviador = enviador;
+        this.intentos = intentos;
         this.enlaceBase = enlaceBase;
     }
 
@@ -100,6 +104,8 @@ public class RecuperacionServicio {
                 .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, Codigos.ENLACE_INVALIDO, ENLACE_INVALIDO, "token"));
         encontrado.marcarUsado(ahora);
         encontrado.getUsuario().cambiarPasswordHash(passwordEncoder.encode(nuevaContrasena));
+        // Quien prueba que es dueño del correo recupera el ingreso aunque estuviera bloqueado
+        intentos.limpiar(encontrado.getUsuario().getCorreo());
     }
 
     private TipoToken tipoRecuperacion() {
