@@ -78,7 +78,7 @@ Que cada reporte por correo llegue con un **mensaje formal y completo** por un c
 **Vista previa**
 - **CA-13** — _Dado_ el paso «Revise su reporte», _entonces_ el ciudadano ve el mensaje tal como se enviará; _al tocar_ «Editar» en una sección, vuelve al paso de ese dato y, al regresar, ve el cambio.
 - **CA-14** — _Dada_ la vista previa, _entonces_ no crea reporte, no sube fotos y no envía correo.
-- **CA-15** — _Dado_ el mismo reporte, _entonces_ el texto de la vista previa y el del correo enviado son idénticos (misma plantilla).
+- **CA-15** — _Dado_ el mismo reporte, _entonces_ el texto de la vista previa y el del correo enviado son idénticos (misma plantilla), salvo la hora del registro y los enlaces de las fotos: la vista previa dice cuántas fotos van, pero sus enlaces solo existen al subirlas. *(Precisado el 12 nov al implementar.)*
 - **CA-16** — Caso de error: _dados_ datos no válidos o sin sesión, _entonces_ responde 400 con `{codigo, mensaje, campo}` o 401, igual que el resto de la API.
 
 **Datos**
@@ -117,6 +117,7 @@ Que cada reporte por correo llegue con un **mensaje formal y completo** por un c
 - **Atajo, opción A:** gas, energía y aseo van directo a sus canales después del paso 1; no se registra el reporte (sin «Guardar también en NotiUrba»). Razón: esas entidades no reciben correo y nadie haría doble seguimiento manual.
 
 **Abiertas**
+- [PENDIENTE] La categoría 15 («Solicitud de información») está activa pero no tiene ruta en `configuracion_enrutamiento`: `POST /api/reportes` la acepta y la vista previa responde 400 «Categoría sin ruta disponible». Viene de antes de esta historia. Opciones: desactivarla o darle ruta al CAIC. Decide: el equipo.
 - [PENDIENTE] El WhatsApp de Gases de Occidente (315 665 8536) está en el repo, pero no en su sitio oficial. No bloquea: se guarda inactivo hasta verificarlo. Decide: Andrés.
 
 ## 9. Aprobación

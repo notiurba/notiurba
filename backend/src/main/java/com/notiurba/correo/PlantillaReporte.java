@@ -137,21 +137,24 @@ public class PlantillaReporte {
         parrafo(t, h, "Respetados señores:");
         parrafo(t, h, intro);
 
-        List<String[]> filas = new ArrayList<>();
-        filas.add(new String[] {etiqueta, d.descripcion() == null ? "" : d.descripcion().trim()});
-        if (ubicacion != null) filas.add(new String[] {"Ubicación", ubicacion});
-        if (coordenadas != null) filas.add(new String[] {"Coordenadas", coordenadas});
-        filas.add(new String[] {"Fecha del registro", fecha});
-        if (evidencia != null) filas.add(new String[] {"Evidencia", evidencia + "."});
-        for (String[] f : filas) {
-            t.append(f[0]).append(": ").append(f[1]).append('\n');
-            if (f[1].equals(coordenadas)) t.append("Ver en el mapa: ").append(mapa).append('\n');
+        String descripcion = d.descripcion() == null ? "" : d.descripcion().trim();
+        t.append(etiqueta).append(": ").append(descripcion).append('\n');
+        h.append("<p><strong>").append(etiqueta).append(":</strong> ").append(esc(descripcion).replace("\n", "<br>")).append("<br>");
+        if (ubicacion != null || hayPunto) {
+            t.append("Ubicación: ").append(unir(" · ", ubicacion, mapa, coordenadas)).append('\n');
+            h.append("<strong>Ubicación:</strong> ").append(ubicacion == null ? "" : esc(ubicacion));
+            if (hayPunto) {
+                h.append(ubicacion == null ? "" : " · ").append("<a href=\"").append(esc(mapa))
+                        .append("\" style=\"color:#0a2f6b\">Ver en el mapa</a> · ").append(esc(coordenadas));
+            }
+            h.append("<br>");
         }
-        h.append("<p>");
-        for (String[] f : filas) {
-            h.append("<strong>").append(f[0]).append(":</strong> ").append(esc(f[1]).replace("\n", "<br>")).append("<br>");
+        t.append("Fecha del registro: ").append(fecha).append('\n');
+        h.append("<strong>Fecha del registro:</strong> ").append(esc(fecha));
+        if (evidencia != null) {
+            t.append("Evidencia: ").append(evidencia).append(".\n");
+            h.append("<br><strong>Evidencia:</strong> ").append(evidencia).append('.');
         }
-        if (mapa != null) h.append("<a href=\"").append(esc(mapa)).append("\" style=\"color:#0a2f6b\">Ver en el mapa</a>");
         h.append("</p>");
 
         int n = 0;
@@ -171,13 +174,13 @@ public class PlantillaReporte {
 
         parrafo(t, h, solicitud);
         parrafo(t, h, autorizo);
-        String firma = unir("\n", limpio(d.nombre()), documento);
+        String firma = unir(" · ", limpio(d.nombre()), documento);
         t.append("Atentamente,\n").append(firma);
-        h.append("<p>Atentamente,<br>").append(esc(firma).replace("\n", "<br>")).append("</p></div></body></html>");
+        h.append("<p>Atentamente,<br>").append(esc(firma)).append("</p></div></body></html>");
 
         List<Seccion> secciones = new ArrayList<>();
         secciones.add(new Seccion("categoria", "Categoría", limpio(d.categoria()), "categoria"));
-        secciones.add(new Seccion("descripcion", etiqueta, filas.get(0)[1], "detalles"));
+        secciones.add(new Seccion("descripcion", etiqueta, descripcion, "detalles"));
         if (ubicacion != null || coordenadas != null)
             secciones.add(new Seccion("ubicacion", "Ubicación", unir("\n", ubicacion, coordenadas), "ubicacion"));
         secciones.add(new Seccion("fecha", "Fecha del registro", fecha, null));

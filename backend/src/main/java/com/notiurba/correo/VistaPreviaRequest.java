@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import com.notiurba.reporte.BorradorDeReporte;
+
 /** El borrador del reporte, sin fotos (solo cuántas) y sin autorización: nada de esto se guarda. */
 public record VistaPreviaRequest(
         @NotNull Integer idCategoria,
@@ -18,5 +20,5 @@ public record VistaPreviaRequest(
         @Size(max = 300) String direccionIncidente,
         @Size(max = 50) String matriculaCuentaServicio,
         @Min(0) @Max(3) Integer totalFotos,
-        Boolean emergencia) {
+        Boolean emergencia) implements BorradorDeReporte {
 }

@@ -26,6 +26,7 @@ public class EnvioReporteServicio {
     /** Si tiene valor (RESEND_PRUEBA_DESTINO), el correo sale a esa dirección y NO a la entidad real. */
     @Value("${notiurba.correo.destino-prueba:}")
     private String destinoPrueba = "";
+    private static final org.slf4j.Logger LOG=org.slf4j.LoggerFactory.getLogger(EnvioReporteServicio.class);
     static final String CANAL_CERRADO = "El canal ya no permite envío";
 
     public EnvioReporteServicio(JdbcTemplate jdbc, TransactionTemplate tx, EnrutamientoServicio rutas,
@@ -106,7 +107,7 @@ public class EnvioReporteServicio {
 
     /** El mensaje que se encoló para la entidad o, si aún no hay envío, el que se le enviaría. Solo el autor. */
     public MensajeDelReporte mensaje(String usuario,String codigo) {
-        long id=propio(usuario,codigo,false);
+        long id=propio(usuario,com.notiurba.reporte.ReporteServicio.normalizarCodigo(codigo),false);
         List<String> guardado=jdbc.queryForList("""
             SELECT mensaje_json FROM registro_envio_correo WHERE id_reporte=? AND mensaje_json IS NOT NULL
             ORDER BY creado_en DESC,id_registro_envio DESC LIMIT 1""",String.class,id);
@@ -114,7 +115,9 @@ public class EnvioReporteServicio {
             try {
                 CorreoSaliente c=json.readValue(guardado.get(0),CorreoSaliente.class);
                 return new MensajeDelReporte(c.asunto(),c.texto());
-            } catch(com.fasterxml.jackson.core.JsonProcessingException e){ throw new IllegalStateException("Mensaje guardado ilegible",e); }
+            } catch(com.fasterxml.jackson.core.JsonProcessingException|IllegalArgumentException e) {
+                LOG.warn("Mensaje guardado ilegible del reporte {}; se vuelve a armar",id);
+            }
         }
         var r=jdbc.queryForMap("SELECT id_categoria, emergencia FROM reporte WHERE id_reporte=?",id);
         var detalle=datos(id,rutas.resolver(((Number)r.get("id_categoria")).intValue(),(Boolean)r.get("emergencia")));
@@ -124,26 +127,25 @@ public class EnvioReporteServicio {
 
     private DatosDelReporte datos(long id,EnrutamientoServicio.Ruta ruta) {
         List<String> fotos=jdbc.queryForList("SELECT url FROM evidencia_reporte WHERE id_reporte=? ORDER BY orden",String.class,id);
-        return jdbc.queryForObject("""
-            SELECT r.*,u.nombres,u.apellidos,u.numero_documento,u.direccion_correspondencia,u.correo,u.telefono,
-             t.codigo AS codigo_documento,t.nombre AS tipo_documento,b.nombre AS barrio,
-             ST_Y(r.ubicacion) AS lat,ST_X(r.ubicacion) AS lon,c.requiere_ubicacion,
-             te.nombre='Empresa de servicios públicos' AS es_empresa
-            FROM reporte r JOIN usuario u USING(id_usuario) JOIN tipo_documento t USING(id_tipo_documento)
-            JOIN categoria c ON c.id_categoria=r.id_categoria JOIN dependencia d ON d.id_dependencia=c.id_dependencia
-            JOIN entidad_destino e ON e.id_entidad_destino=d.id_entidad_destino JOIN tipo_entidad te ON te.id_tipo_entidad=e.id_tipo_entidad
-            LEFT JOIN barrio b ON b.id_barrio=r.id_barrio
-            WHERE r.id_reporte=?
-            """,(rs,i)->new DatosDelReporte(PlantillaReporte.Datos.builder().entidad(ruta.entidad()).categoria(ruta.categoria())
-             .nombre(rs.getString("nombres")+" "+rs.getString("apellidos")).tipoDocumento(rs.getString("tipo_documento"))
-             .codigoDocumento(rs.getString("codigo_documento")).numeroDocumento(rs.getString("numero_documento"))
-             .direccionCorrespondencia(rs.getString("direccion_correspondencia")).correo(rs.getString("correo"))
-             .telefono(rs.getString("telefono")).descripcion(rs.getString("descripcion"))
-             .direccionIncidente(rs.getString("direccion_incidente")).barrio(rs.getString("barrio"))
-             .comuna((Integer)rs.getObject("id_comuna",Integer.class)).latitud((Double)rs.getObject("lat")).longitud((Double)rs.getObject("lon"))
-             .creadoEn(rs.getObject("creado_en",OffsetDateTime.class)).autorizacion(rs.getObject("autorizacion_envio_en",OffsetDateTime.class))
-             .matricula(rs.getString("matricula_cuenta_servicio")).fotos(fotos).build(),
-             GrupoPlantilla.de(rs.getBoolean("es_empresa"),rs.getBoolean("requiere_ubicacion"))),id);
+        var r=jdbc.queryForMap("""
+            SELECT r.id_usuario,r.descripcion,r.direccion_incidente,r.id_comuna,r.creado_en,r.autorizacion_envio_en,
+             r.matricula_cuenta_servicio,b.nombre AS barrio,ST_Y(r.ubicacion) AS lat,ST_X(r.ubicacion) AS lon
+            FROM reporte r LEFT JOIN barrio b ON b.id_barrio=r.id_barrio WHERE r.id_reporte=?
+            """,id);
+        var datos=DatosDelCiudadano.cargar(jdbc,((Number)r.get("id_usuario")).longValue())
+            .entidad(ruta.entidad()).categoria(ruta.categoria()).descripcion((String)r.get("descripcion"))
+            .direccionIncidente((String)r.get("direccion_incidente")).barrio((String)r.get("barrio"))
+            .comuna(r.get("id_comuna")==null?null:((Number)r.get("id_comuna")).intValue())
+            .latitud((Double)r.get("lat")).longitud((Double)r.get("lon"))
+            .creadoEn(fechaHora(r.get("creado_en"))).autorizacion(fechaHora(r.get("autorizacion_envio_en")))
+            .matricula((String)r.get("matricula_cuenta_servicio")).fotos(fotos).build();
+        return new DatosDelReporte(datos,GrupoPlantilla.de(ruta));
+    }
+    private static OffsetDateTime fechaHora(Object valor) {
+        if(valor==null) return null;
+        if(valor instanceof OffsetDateTime o) return o;
+        if(valor instanceof java.sql.Timestamp t) return t.toInstant().atOffset(java.time.ZoneOffset.UTC);
+        throw new IllegalStateException("Fecha con tipo inesperado: "+valor.getClass());
     }
 
     /** Reclamo corto con SKIP LOCKED; ninguna transacción de BD permanece abierta durante la llamada HTTP. */

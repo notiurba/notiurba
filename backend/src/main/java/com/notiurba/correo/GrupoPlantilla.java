@@ -13,4 +13,8 @@ public enum GrupoPlantilla {
         }
         return requiereUbicacion ? A : B;
     }
+
+    public static GrupoPlantilla de(EnrutamientoServicio.Ruta ruta) {
+        return de(ruta.esEmpresa(), ruta.requiereUbicacion());
+    }
 }

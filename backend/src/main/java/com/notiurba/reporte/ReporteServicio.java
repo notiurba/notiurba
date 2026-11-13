@@ -47,12 +47,11 @@ public class ReporteServicio {
     @Transactional
     public ReporteCreadoResponse crear(String correoUsuario, CrearReporteRequest p) {
         if (!Boolean.TRUE.equals(p.autorizaEnvio())) throw error("Debes autorizar la remisión", "autorizaEnvio");
-        Borrador b = validar(correoUsuario, p.idCategoria(), p.latitud(), p.longitud(), p.idBarrio(), p.descripcion(),
-                p.direccionIncidente(), p.matriculaCuentaServicio());
+        Borrador b = validar(correoUsuario, p);
         ReporteCreadoResponse creado = repositorio.insertar(new ReporteRepositorio.NuevoReporte(
                 b.idUsuario(), b.idCategoria(), b.idBarrio(), b.descripcion(), b.latitud(), b.longitud(),
                 b.direccionIncidente(), b.matricula(), vacioANulo(p.radicadoOficial())));
-        repositorio.prepararEnrutamiento(creado.codigoSeguimiento(), Boolean.TRUE.equals(p.emergencia()));
+        repositorio.prepararEnrutamiento(creado.codigoSeguimiento(), b.emergencia());
         return creado;
     }
 
@@ -62,12 +61,15 @@ public class ReporteServicio {
      */
     public record Borrador(long idUsuario, int idCategoria, ReporteRepositorio.DatosCategoria categoria,
             Integer idBarrio, Double latitud, Double longitud, Integer comunaDelPunto, String descripcion,
-            String direccionIncidente, String matricula) {
+            String direccionIncidente, String matricula, boolean emergencia) {
     }
 
     @Transactional(readOnly = true)
-    public Borrador validar(String correoUsuario, Integer idCategoria, Double latitud, Double longitud,
-            Integer idBarrio, String descripcionRecibida, String direccionIncidente, String matriculaRecibida) {
+    public Borrador validar(String correoUsuario, BorradorDeReporte p) {
+        Integer idCategoria = p.idCategoria();
+        Double latitud = p.latitud();
+        Double longitud = p.longitud();
+        Integer idBarrio = p.idBarrio();
         long idUsuario = usuarios.findByCorreoIgnoreCase(correoUsuario)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, Codigos.NO_AUTENTICADO,
                         Codigos.MSG_NO_AUTENTICADO))
@@ -97,17 +99,18 @@ public class ReporteServicio {
             throw error("Marca la ubicación en el mapa o elige el barrio", "idBarrio");
         }
 
-        String descripcion = descripcionRecibida == null ? "" : descripcionRecibida.trim();
+        String descripcion = p.descripcion() == null ? "" : p.descripcion().trim();
         if (descripcion.length() < DESCRIPCION_MINIMA || descripcion.length() > DESCRIPCION_MAXIMA) {
             throw error("La descripción debe tener entre " + DESCRIPCION_MINIMA + " y "
                     + DESCRIPCION_MAXIMA + " caracteres", "descripcion");
         }
-        String matricula = vacioANulo(matriculaRecibida);
+        String matricula = vacioANulo(p.matriculaCuentaServicio());
         if (matricula != null && !categoria.esEmpresa()) {
             throw error("La matrícula solo aplica a servicios públicos", "matriculaCuentaServicio");
         }
         return new Borrador(idUsuario, idCategoria, categoria, idBarrio, latitud, longitud, comunaDelPunto, descripcion,
-                vacioANulo(direccionIncidente), matricula);
+                vacioANulo(p.direccionIncidente()), matricula,
+                repositorio.esEmergencia(idCategoria, descripcion, Boolean.TRUE.equals(p.emergencia())));
     }
 
     /** Un reporte propio por código. No existe y «es de otra persona» dan exactamente la misma respuesta. */

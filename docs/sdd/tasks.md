@@ -109,5 +109,6 @@
 | 2026-11-12 | Atajo para gas, energía y aseo (opción A); WhatsApp de Veolia verificado | spec.md, plan.md |
 | 2026-11-12 | Plan aprobado; endpoints PLANEADO en el contrato; tareas creadas | plan.md, tasks.md, `docs/contexto/11` |
 | 2026-11-12 | Grupo 1 hecho: V21 y `Ruta.canales` | tasks.md |
+| 2026-11-12 | Revisión del Grupo 2 corregida: emergencia de gas en un solo lugar; datos del ciudadano y grupo de plantilla sin duplicar; `GET /mensaje` con 400 por código mal escrito y mensaje ilegible que se vuelve a armar; ubicación y firma como el Anexo B; CA-15 precisada (fotos). Backend 360 pruebas, 0 fallos, 2 omitidas | spec.md, tasks.md |
 | 2026-11-12 | Grupo 2 hecho: carta formal, vista previa y `GET /mensaje`. Backend 352 pruebas, 0 fallos, 2 omitidas | tasks.md |
 | 2026-11-12 | Revisión del Grupo 1 corregida: canal alterno de gas y aseo = el recomendado; error honesto si el canal se cerró; prueba del envío a Centroaguas. Backend 313 pruebas, 0 fallos, 2 omitidas (proveedores reales) | tasks.md |

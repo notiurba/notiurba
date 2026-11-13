@@ -67,12 +67,13 @@ class VistaPreviaIntegracionTest {
 
     private String token;
     private int idBarrio;
+    private long idUsuario;
 
     @BeforeEach
     void crearCiudadano() {
         String correo = "ciudadano-" + UUID.randomUUID() + "@prueba.com";
         idBarrio = BarrioDePrueba.id(jdbc);
-        DatosDePrueba.usuario(jdbc, idBarrio, correo, DatosDePrueba.CIUDADANO);
+        idUsuario = DatosDePrueba.usuario(jdbc, idBarrio, correo, DatosDePrueba.CIUDADANO);
         token = jwt.generar(correo, "CIUDADANO");
     }
 
@@ -115,7 +116,7 @@ class VistaPreviaIntegracionTest {
                 .endsWith("Barrio de prueba, Comuna " + comuna);
         assertThat(cuerpo.get("texto").asText()).startsWith("Respetados señores:")
                 .contains("Hechos: Hay un hueco enorme frente al parque", "Evidencia: 2 fotografías.",
-                        "Coordenadas: 4.08670, -76.19500", "Yo, Ana Gómez, con cédula de ciudadanía No. ")
+                        " · 4.08670, -76.19500\n", "Yo, Ana Gómez, con cédula de ciudadanía No. ")
                 .doesNotContain("NotiUrba", "NU-");
         assertThat(cuerpo.get("permiteCorreo").asBoolean()).isTrue();
         assertThat(cuerpo.at("/ruta/acceso").asText()).isEqualTo("servicioalciudadano@tulua.gov.co");
@@ -136,7 +137,7 @@ class VistaPreviaIntegracionTest {
         JsonNode cuerpo = leer(r);
         assertThat(cuerpo.get("asunto").asText()).startsWith("Solicitud ciudadana – ");
         assertThat(cuerpo.get("texto").asText()).contains("Solicitud: Quiero saber si puedo construir",
-                "Ubicación: barrio Barrio de prueba, Comuna 1").doesNotContain("Coordenadas");
+                "Ubicación: barrio Barrio de prueba, Comuna 1\n").doesNotContain("openstreetmap");
     }
 
     @Test
@@ -175,10 +176,14 @@ class VistaPreviaIntegracionTest {
 
     @Test
     void laVistaPreviaElMensajeDelReporteYElCorreoEncoladoDicenLoMismo() throws Exception {
-        String previa = leer(vistaPrevia(cuerpoVias(""))).get("texto").asText();
+        String previa = leer(vistaPrevia(cuerpoVias(",\"totalFotos\":2"))).get("texto").asText();
         MvcResult creado = hacer(post("/api/reportes").contentType(MediaType.APPLICATION_JSON)
                 .content(cuerpoVias(",\"autorizaEnvio\":true")), token);
         String codigo = leer(creado).get("codigoSeguimiento").asText();
+        var reporte = new DatosDePrueba.Reporte(jdbc.queryForObject(
+                "SELECT id_reporte FROM reporte WHERE codigo_seguimiento = ?", Long.class, codigo), codigo);
+        DatosDePrueba.foto(jdbc, reporte, idUsuario, 1, "notiurba/pruebas/uno");
+        DatosDePrueba.foto(jdbc, reporte, idUsuario, 2, "notiurba/pruebas/dos");
 
         JsonNode antesDeEnviar = leer(hacer(get("/api/reportes/" + codigo + "/mensaje"), token));
         assertThat(hacer(post("/api/reportes/" + codigo + "/enviar"), token).getResponse().getStatus()).isEqualTo(202);
@@ -187,9 +192,10 @@ class VistaPreviaIntegracionTest {
                  WHERE r.codigo_seguimiento = ?""", String.class, codigo), CorreoSaliente.class).texto();
         JsonNode despuesDeEnviar = leer(hacer(get("/api/reportes/" + codigo + "/mensaje"), token));
 
-        assertThat(sinFecha(antesDeEnviar.get("texto").asText())).isEqualTo(sinFecha(previa));
+        assertThat(encolado).contains("Fotografía 1: https://res.cloudinary.com/", "Fotografía 2: ");
+        assertThat(comparable(antesDeEnviar.get("texto").asText())).isEqualTo(comparable(previa));
         assertThat(despuesDeEnviar.get("texto").asText()).isEqualTo(encolado);
-        assertThat(sinFecha(encolado)).isEqualTo(sinFecha(previa));
+        assertThat(comparable(encolado)).isEqualTo(comparable(previa));
         assertThat(despuesDeEnviar.get("asunto").asText()).isEqualTo(antesDeEnviar.get("asunto").asText());
     }
 
@@ -207,8 +213,77 @@ class VistaPreviaIntegracionTest {
                 .getResponse().getStatus()).isEqualTo(200);
     }
 
-    /** La vista previa usa la hora de ahora; el reporte, la de la base: pueden diferir en un minuto. */
-    private static String sinFecha(String texto) {
-        return texto.replaceAll("Fecha del registro: [^\\n]*", "Fecha del registro: —");
+    /**
+     * La vista previa usa la hora de ahora (el reporte, la de la base) y aún no tiene los enlaces de las
+     * fotos: lo demás debe ser idéntico.
+     */
+    private static String comparable(String texto) {
+        return texto.replaceAll("Fecha del registro: [^\\n]*", "Fecha del registro: —")
+                .replaceAll("Fotografía \\d+: [^\\n]*\\n", "");
+    }
+
+    @Test
+    void unPuntoFueraDeTuluaDa422() throws Exception {
+        MvcResult r = vistaPrevia("{\"idCategoria\":1,\"latitud\":4.6,\"longitud\":-74.08,"
+                + "\"descripcion\":\"Hay un hueco enorme frente al parque\"}");
+
+        assertThat(r.getResponse().getStatus()).isEqualTo(422);
+        assertThat(leer(r).get("campo").asText()).isEqualTo("latitud");
+    }
+
+    @Test
+    void unaEmergenciaNoVaPorCorreoYUnOlorAGasSeTrataComoEmergencia() throws Exception {
+        JsonNode marcada = leer(vistaPrevia(cuerpoVias(",\"emergencia\":true")));
+        JsonNode gas = leer(vistaPrevia("{\"idCategoria\":12,\"idBarrio\":" + idBarrio
+                + ",\"descripcion\":\"Hay olor a gas en la esquina del parque\"}"));
+
+        assertThat(marcada.get("permiteCorreo").asBoolean()).isFalse();
+        assertThat(gas.get("permiteCorreo").asBoolean()).isFalse();
+        assertThat(gas.at("/ruta/acceso").asText()).isEqualTo("164");
+    }
+
+    @Test
+    void elAcueductoUsaLaPlantillaCConLaMatricula() throws Exception {
+        JsonNode cuerpo = leer(vistaPrevia("{\"idCategoria\":11,\"idBarrio\":" + idBarrio
+                + ",\"descripcion\":\"No llega el agua desde ayer en la tarde\",\"matriculaCuentaServicio\":\"778899\"}"));
+
+        assertThat(cuerpo.get("asunto").asText()).startsWith("Petición ciudadana – ").doesNotContain("Comuna");
+        assertThat(cuerpo.get("texto").asText()).startsWith("Señores\n")
+                .contains("en calidad de usuario del servicio de ", "(matrícula o cuenta No. 778899)");
+        assertThat(cuerpo.at("/ruta/acceso").asText()).isEqualTo("info@centroaguas.com");
+    }
+
+    @Test
+    void unCodigoMalEscritoDa400ConElCampo() throws Exception {
+        MvcResult r = hacer(get("/api/reportes/abc/mensaje"), token);
+
+        assertThat(r.getResponse().getStatus()).isEqualTo(400);
+        assertThat(leer(r).get("campo").asText()).isEqualTo("codigo");
+    }
+
+    @Test
+    void unMensajeViejoSeDevuelveTalCualYUnoIlegibleSeVuelveAArmar() throws Exception {
+        var viejo = DatosDePrueba.reporte(jdbc, idUsuario, 1, idBarrio, 0);
+        var ilegible = DatosDePrueba.reporte(jdbc, idUsuario, 1, idBarrio, 0);
+        encolar(viejo, json.writeValueAsString(new CorreoSaliente(java.util.List.of("servicioalciudadano@tulua.gov.co"),
+                "NotiUrba #" + viejo.codigo(), "Formato anterior", null, "Ana Gómez", "ana@prueba.com", "clave-vieja")));
+        encolar(ilegible, "{}");
+
+        JsonNode deViejo = leer(hacer(get("/api/reportes/" + viejo.codigo() + "/mensaje"), token));
+        MvcResult deIlegible = hacer(get("/api/reportes/" + ilegible.codigo() + "/mensaje"), token);
+
+        assertThat(deViejo.get("asunto").asText()).isEqualTo("NotiUrba #" + viejo.codigo());
+        assertThat(deViejo.get("texto").asText()).isEqualTo("Formato anterior");
+        assertThat(deIlegible.getResponse().getStatus()).isEqualTo(200);
+        assertThat(leer(deIlegible).get("texto").asText()).startsWith("Respetados señores:");
+    }
+
+    private void encolar(DatosDePrueba.Reporte reporte, String mensajeJson) {
+        jdbc.update("""
+                INSERT INTO registro_envio_correo (id_reporte, id_canal_atencion, id_modo_envio, id_estado_envio, destino,
+                                                   clave_idempotencia, mensaje_json)
+                VALUES (?, 1, (SELECT id_modo_envio FROM modo_envio WHERE nombre = 'RESEND'),
+                        (SELECT id_estado_envio FROM estado_envio WHERE nombre = 'PENDIENTE'),
+                        'servicioalciudadano@tulua.gov.co', ?, ?)""", reporte.id(), "clave-" + UUID.randomUUID(), mensajeJson);
     }
 }

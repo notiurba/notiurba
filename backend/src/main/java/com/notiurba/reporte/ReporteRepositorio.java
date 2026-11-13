@@ -30,10 +30,18 @@ public class ReporteRepositorio {
 
     private final NamedParameterJdbcTemplate jdbc;
 
+    /** Una emergencia la marca el ciudadano o la delata la descripción en una categoría de gas. */
+    public boolean esEmergencia(int idCategoria, String descripcion, boolean marcada) {
+        return Boolean.TRUE.equals(jdbc.queryForObject("""
+            SELECT :marcada OR (EXISTS(SELECT 1 FROM configuracion_enrutamiento x
+             WHERE x.id_categoria=:categoria AND x.es_gas) AND lower(CAST(:descripcion AS text)) ~ '(fuga|olor.*gas|escape.*gas)')
+            """, new MapSqlParameterSource("marcada", marcada).addValue("categoria", idCategoria)
+                .addValue("descripcion", descripcion), Boolean.class));
+    }
+
     public void prepararEnrutamiento(String codigo, boolean emergencia) {
         jdbc.update("""
-            UPDATE reporte r SET emergencia=:emergencia OR (EXISTS(SELECT 1 FROM configuracion_enrutamiento x
-             WHERE x.id_categoria=r.id_categoria AND x.es_gas) AND lower(r.descripcion) ~ '(fuga|olor.*gas|escape.*gas)'),
+            UPDATE reporte r SET emergencia=:emergencia,
              requiere_revision=r.requiere_revision OR COALESCE((SELECT x.revision_clasificacion
               FROM configuracion_enrutamiento x WHERE x.id_categoria=r.id_categoria),FALSE)
             WHERE codigo_seguimiento=:codigo

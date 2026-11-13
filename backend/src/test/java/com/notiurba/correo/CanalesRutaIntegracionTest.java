@@ -98,6 +98,17 @@ class CanalesRutaIntegracionTest {
     }
 
     @Test
+    void cadaCategoriaUsaLaPlantillaDeSuGrupoConLosDatosDeLaBase() {
+        var esperado = new java.util.HashMap<Integer, GrupoPlantilla>();
+        for (int c : new int[] {1, 2, 3, 4, 5, 8}) esperado.put(c, GrupoPlantilla.A);
+        for (int c : new int[] {6, 7, 9, 10}) esperado.put(c, GrupoPlantilla.B);
+        for (int c : new int[] {11, 12, 13, 14}) esperado.put(c, GrupoPlantilla.C);
+
+        assertThat(rutas.listar()).allSatisfy(r ->
+                assertThat(GrupoPlantilla.de(r)).as("categoría %d", r.idCategoria()).isEqualTo(esperado.get(r.idCategoria())));
+    }
+
+    @Test
     void listarTraeLosCanalesDeTodasLasCategorias() {
         assertThat(rutas.listar()).hasSize(14).allMatch(r -> !r.canales().isEmpty());
     }

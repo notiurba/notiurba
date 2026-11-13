@@ -33,14 +33,8 @@ public class VistaPreviaServicio {
     }
 
     public VistaPrevia armar(String correoUsuario, VistaPreviaRequest p) {
-        var b = reportes.validar(correoUsuario, p.idCategoria(), p.latitud(), p.longitud(), p.idBarrio(),
-                p.descripcion(), p.direccionIncidente(), p.matriculaCuentaServicio());
-        var ruta = rutas.resolver(b.idCategoria(), Boolean.TRUE.equals(p.emergencia()));
-        var u = jdbc.queryForMap("""
-                SELECT u.nombres, u.apellidos, u.numero_documento, u.direccion_correspondencia, u.correo, u.telefono,
-                       t.codigo AS codigo_documento, t.nombre AS tipo_documento
-                  FROM usuario u JOIN tipo_documento t USING (id_tipo_documento) WHERE u.id_usuario = ?""",
-                b.idUsuario());
+        var b = reportes.validar(correoUsuario, p);
+        var ruta = rutas.resolver(b.idCategoria(), b.emergencia());
         // Misma regla que el trigger del reporte: la comuna del punto y, si no hay, la del barrio.
         String barrio = null;
         Integer comuna = b.comunaDelPunto();
@@ -50,16 +44,11 @@ public class VistaPreviaServicio {
             if (comuna == null && fila.get("id_comuna") != null) comuna = ((Number) fila.get("id_comuna")).intValue();
         }
         OffsetDateTime ahora = OffsetDateTime.now();
-        var datos = PlantillaReporte.Datos.builder().entidad(ruta.entidad()).categoria(ruta.categoria())
-                .nombre(u.get("nombres") + " " + u.get("apellidos"))
-                .tipoDocumento((String) u.get("tipo_documento")).codigoDocumento((String) u.get("codigo_documento"))
-                .numeroDocumento((String) u.get("numero_documento"))
-                .direccionCorrespondencia((String) u.get("direccion_correspondencia"))
-                .correo((String) u.get("correo")).telefono((String) u.get("telefono"))
+        var datos = DatosDelCiudadano.cargar(jdbc, b.idUsuario()).entidad(ruta.entidad()).categoria(ruta.categoria())
                 .descripcion(b.descripcion()).direccionIncidente(b.direccionIncidente()).barrio(barrio).comuna(comuna)
                 .latitud(b.latitud()).longitud(b.longitud()).creadoEn(ahora).autorizacion(ahora)
                 .matricula(b.matricula()).totalFotos(p.totalFotos() == null ? 0 : p.totalFotos()).build();
-        var m = plantilla.componer(datos, GrupoPlantilla.de(b.categoria().esEmpresa(), b.categoria().requiereUbicacion()));
+        var m = plantilla.componer(datos, GrupoPlantilla.de(ruta));
         return new VistaPrevia(m.asunto(), m.texto(), m.secciones(), ruta.permiteCorreo(), ruta);
     }
 }

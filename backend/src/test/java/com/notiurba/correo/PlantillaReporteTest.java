@@ -41,16 +41,15 @@ class PlantillaReporteTest {
                 "Yo, Ana Prueba, con cédula de ciudadanía No. 123456, en ejercicio del derecho de petición "
                         + "(Constitución Política, art. 23), me dirijo a ustedes para informar la siguiente situación:",
                 "Hechos: Hay un hueco grande frente al colegio.",
-                "Ubicación: Calle 26 # 30-10, barrio El Prado, Comuna 5",
-                "Coordenadas: 4.08672, -76.19500",
-                "https://www.openstreetmap.org/?mlat=4.08672&mlon=-76.19500",
+                "Ubicación: Calle 26 # 30-10, barrio El Prado, Comuna 5 · "
+                        + "https://www.openstreetmap.org/?mlat=4.08672&mlon=-76.19500 · 4.08672, -76.19500\n",
                 "Fecha del registro: 9 de noviembre de 2026, 10:07 a. m.",
                 "Evidencia: 2 fotografías.",
                 "Fotografía 1: " + FOTO_1, "Fotografía 2: " + FOTO_2,
                 "Solicito atender esta situación y comunicarme el trámite adelantado y el número de radicado asignado.",
                 "Autorizo el uso de mis datos para el trámite de esta petición. "
                         + "Recibiré respuesta en ana@example.test · 3001234567 · Calle de prueba 1.")
-                .endsWith("Atentamente,\nAna Prueba\nCC 123456");
+                .endsWith("Atentamente,\nAna Prueba · CC 123456");
         for (String cuerpo : List.of(m.texto(), m.html(), m.asunto())) {
             assertThat(cuerpo).doesNotContainIgnoringCase("notiurba #").doesNotContain("NU-", "No aportado",
                     "Dependencia", "Hábitat");
@@ -75,7 +74,7 @@ class PlantillaReporteTest {
         Mensaje m = plantilla.componer(completo().barrio(null).comuna(null).latitud(null).longitud(null)
                 .direccionIncidente(null).build(), GrupoPlantilla.B);
 
-        assertThat(m.texto()).doesNotContain("Ubicación", "Coordenadas", "openstreetmap");
+        assertThat(m.texto() + m.html()).doesNotContain("Ubicación", "openstreetmap", "mapa");
         assertThat(m.asunto()).isEqualTo("Solicitud ciudadana – Vías, huecos y andenes");
     }
 
@@ -91,6 +90,22 @@ class PlantillaReporteTest {
 
         assertThat(m.texto()).contains("Fecha del registro: " + esperada + "\n");
         assertThat(m.texto() + m.html()).doesNotContain("\u202F", "\u00A0");
+    }
+
+    @Test
+    void soloConCoordenadasLaUbicacionEsElMapa() {
+        Mensaje m = plantilla.componer(completo().barrio(null).comuna(null).direccionIncidente(null).build(), GrupoPlantilla.A);
+
+        assertThat(m.texto()).contains("Ubicación: https://www.openstreetmap.org/?mlat=4.08672&mlon=-76.19500 · 4.08672, -76.19500\n");
+        assertThat(m.html()).contains("<strong>Ubicación:</strong> <a href=");
+    }
+
+    @Test
+    void unaDescripcionIgualALasCoordenadasNoDuplicaElMapa() {
+        Mensaje m = plantilla.componer(completo().descripcion("4.08672, -76.19500").build(), GrupoPlantilla.A);
+
+        assertThat(m.texto().split("openstreetmap", -1)).hasSize(2);
+        assertThat(m.html().split("openstreetmap", -1)).hasSize(2);
     }
 
     @Test
