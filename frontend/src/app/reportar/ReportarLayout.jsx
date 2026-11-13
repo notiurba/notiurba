@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { obtenerBarrios } from '../../compartido/api/catalogos'
 import { estadoSesion } from '../../compartido/auth/sesion'
 import Aviso from '../../compartido/componentes/avisos/Aviso'
@@ -23,6 +23,7 @@ export default function ReportarLayout() {
   const categorias = useCargar(cargarCategorias)
   const barrios = useCargar(cargarBarrios)
   const { pathname } = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => guardarBorrador(borrador), [borrador])
 
@@ -50,10 +51,13 @@ export default function ReportarLayout() {
     // Cambia solo los campos que se pasan: cambiar({ descripcion: '…' })
     cambiar: (parcial) => setBorrador((anterior) => {
       if (parcial.idCategoria !== undefined && parcial.idCategoria !== anterior.idCategoria) {
-        return { ...anterior, ...parcial, matricula: '', emergencia: false,
+        return { ...anterior, ...parcial, matricula: '', emergencia: false, fotoObligatoria: false,
           latitud: null, longitud: null, idBarrio: '', direccion: '' }
       }
-      return { ...anterior, ...parcial }
+      // Otro lugar puede no tener un problema resuelto cerca: la vista previa lo vuelve a decir.
+      const otroLugar = (parcial.latitud !== undefined && parcial.latitud !== anterior.latitud)
+        || (parcial.longitud !== undefined && parcial.longitud !== anterior.longitud)
+      return { ...anterior, ...(otroLugar ? { fotoObligatoria: false } : {}), ...parcial }
     }),
     fotos,
     setFotos,
@@ -61,6 +65,11 @@ export default function ReportarLayout() {
     conservarGuardado,
     // Después de enviar o cancelar, el borrador queda vacío.
     limpiar,
+    // «Cancelar reporte»: descarta el borrador y vuelve al inicio (paso 1 y aviso de reporte parecido).
+    cancelarReporte: () => {
+      limpiar()
+      navigate('/')
+    },
     categorias: categorias.datos,
     // Si no hay barrios disponibles se conserva la alternativa del punto en el mapa.
     barrios: barrios.datos ?? [],

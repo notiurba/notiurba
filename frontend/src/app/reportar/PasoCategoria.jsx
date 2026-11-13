@@ -19,7 +19,7 @@ import './Reportar.css'
 // Paso 1 de 4: ¿qué problema desea reportar? (una sola categoría).
 export default function PasoCategoria() {
   const navigate = useNavigate()
-  const { borrador, cambiar, fotos, limpiar, categorias, errorCatalogos, recargarCatalogos } = useReporte()
+  const { borrador, cambiar, fotos, cancelarReporte, categorias, errorCatalogos, recargarCatalogos } = useReporte()
   const [confirmandoSalida, setConfirmandoSalida] = useState(false)
   const [errorCategoria, setErrorCategoria] = useState('')
   // Solo para gas: '' (sin responder), 'si' (es fuga o emergencia) o 'no'.
@@ -32,11 +32,6 @@ export default function PasoCategoria() {
   function cerrar() {
     if (tieneContenido(borrador, fotos.length)) setConfirmandoSalida(true)
     else navigate('/')
-  }
-
-  function cancelarReporte() {
-    limpiar()
-    navigate('/')
   }
 
   return (

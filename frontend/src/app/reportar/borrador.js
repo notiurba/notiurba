@@ -11,6 +11,8 @@ const BORRADOR_VACIO = {
   descripcion: '',
   matricula: '',
   emergencia: false,
+  // El servicio avisó que en ese lugar se repite un problema ya resuelto: la foto pasa a ser obligatoria.
+  fotoObligatoria: false,
 }
 
 export function leerBorrador() {

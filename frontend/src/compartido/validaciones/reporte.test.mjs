@@ -45,6 +45,17 @@ test('armarSolicitudReporte convierte ids a número y omite lo vacío', () => {
   assert.ok(!('matriculaCuentaServicio' in solicitud))
 })
 
+test('armarSolicitudReporte manda las fotos declaradas y la confirmación del parecido solo si se piden', () => {
+  const b = { idCategoria: '1', descripcion: 'Hueco grande', latitud: 4.1, longitud: -76.2, idBarrio: '', direccion: '', matricula: '' }
+  const simple = armarSolicitudReporte(b, { autorizaEnvio: true })
+  assert.ok(!('totalFotos' in simple))
+  assert.ok(!('confirmarDuplicado' in simple))
+  const completa = armarSolicitudReporte(b, { autorizaEnvio: true, totalFotos: 2, confirmarDuplicado: true })
+  assert.equal(completa.totalFotos, 2)
+  assert.equal(completa.confirmarDuplicado, true)
+  assert.equal(armarSolicitudReporte(b, { totalFotos: 0 }).totalFotos, 0)
+})
+
 test('ubicación admite barrio sin GPS y omisión cuando la categoría no lo requiere', () => {
   assert.deepEqual(validarUbicacion({ latitud: null, longitud: null, idBarrio: '5' }), {})
   assert.deepEqual(validarUbicacion({ latitud: null, longitud: null, idBarrio: '' }, { requiereUbicacion: false }), {})
