@@ -216,7 +216,7 @@ Casos de error y entradas hostiles incluidos. Las pruebas existentes (backend 36
     - Ayuda, línea 2 (reglas): «Entre 10 y 500 caracteres. No hace falta repetir la dirección: ya marcó el lugar. No escriba datos de otras personas. Un resumen de lo que escriba, sin su nombre, puede mostrarse a otras personas que reporten lo mismo.» (la última frase solo mientras el aviso de duplicados esté activo)
   - **Foto**: etiqueta «Foto reciente del problema (opcional)» y ayuda «Una foto tomada hoy ayuda a que la entidad entienda y atienda el problema más rápido.» Obligatoria: «Foto reciente del problema (obligatoria)» y «En este lugar ya se resolvió un reporte parecido. Agregue una foto de hoy que muestre que el problema sigue.»
   - Foto necesaria: «En este lugar ya se resolvió un reporte parecido. Si el problema sigue o volvió, agregue una foto reciente que lo muestre.»
-- **[PENDIENTE] (revisión de código, 13 nov):** hoy cualquier fallo de red dice «No hay conexión a internet» (texto de la spec), aunque la causa sea que NotiUrba no responde (Render dormido, CORS). Propuesta: decir «sin internet» solo si el navegador sabe que no hay red (`navigator.onLine === false`) y, en los demás casos, «NotiUrba no está respondiendo». Lo decide Andrés.
+- ~~Aviso de fallo de red~~ **Decidido (Andrés, 13 nov):** se deja como está en la spec: cualquier fallo de red dice «No hay conexión a internet», aunque la causa sea que NotiUrba no responde. Se descartó distinguirlo con `navigator.onLine`.
 - ~~Orden del límite diario y del duplicado~~ **Decidido (Andrés, 13 nov):** primero el límite diario y después el duplicado.
 
 ## 8. Aprobación
