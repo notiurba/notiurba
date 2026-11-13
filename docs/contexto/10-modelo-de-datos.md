@@ -13,7 +13,7 @@ Un ciudadano de Tuluá crea un reporte (categoría, descripción, foto y ubicaci
 - **Longitudes generosas**: es un servicio público con datos heterogéneos; las reglas estrictas viven en CHECK y en el backend, no en el tamaño de la columna (p. ej. la descripción mide 10 a 500 por CHECK).
 - **Comunas, no cuadrantes**: los cuadrantes de la Policía quedaron obsoletos por decisión aprobada.
 
-## 3. Tablas y por qué existen (27)
+## 3. Tablas y por qué existen (29)
 **Catálogos (12)**: `rol` (CIUDADANO, ADMIN), `tipo_documento` (CC, CE, PPT, PAS; sin TI), `aviso_privacidad` (versionado: se guarda qué versión aceptó cada usuario), `tipo_token`, `tipo_entidad`, `tipo_dependencia`, `tipo_canal`, `estado_reporte` (con `orden`), `modo_envio`, `estado_envio`, `proveedor_identidad` (GOOGLE), `finalidad_canal` (V21: Radicar PQR, Reportar daño, PQR anónimo, Consultar estado, Emergencia, Información).
 
 **Territorio**
@@ -33,6 +33,7 @@ Un ciudadano de Tuluá crea un reporte (categoría, descripción, foto y ubicaci
 - `dependencia`: secretarías, departamentos, oficinas, áreas o servicios públicos; pertenecen a una entidad y pueden tener padre (`id_dependencia_padre`).
 - `canal_atencion`: correo, web, teléfono, WhatsApp o presencial. Pertenece a **una entidad o a una dependencia** (nunca ambas ni ninguna). Desde V21 (NOT-130) también guarda para qué sirve (`id_finalidad_canal`), en qué `orden` se recomienda, su `horario`, de dónde sale el dato (`fuente`) y cuándo se verificó (`verificado_en`). Un canal que no sirve no se borra: queda `activo = FALSE` con el motivo en `detalle`. La API muestra los activos no-correo de la entidad en ese orden.
 - `categoria`: lo que el ciudadano elige; apunta a **una** dependencia. `descripcion` guarda los ejemplos que muestra la tarjeta de la app («Huecos, grietas, andenes rotos»); se editan en la base, la app no los tiene escritos (V7). Cadena: **categoría → dependencia → entidad**. Por eso un reporte tiene un solo destino.
+- `configuracion_enrutamiento` (V16): una fila por categoría con su ruta de envío: canal de correo, canal alterno y de emergencia, si el correo está confirmado (`correo_confirmado`), si se prioriza el alterno, si la competencia está confirmada, si requiere revisión de clasificación, si admite matrícula, si es de gas, y la fuente y fecha de validación. Es lo que lee `EnrutamientoServicio`; desde V21 solo el CAIC y Centroaguas tienen correo confirmado.
 - Banderas `requiere_ubicacion` y `requiere_evidencia` en la categoría: el barrio y el GPS son opcionales según el tipo de incidente.
 
 **Reportes**
@@ -41,6 +42,7 @@ Un ciudadano de Tuluá crea un reporte (categoría, descripción, foto y ubicaci
 - `apoyo_reporte`: otros ciudadanos que respaldan un reporte (un apoyo por usuario).
 - `historial_estado`: cada cambio de estado, quién lo hizo y cuándo. Solo se inserta; el estado no retrocede (puede saltar etapas).
 - `registro_envio_correo`: cada intento de envío (canal usado, modo RESEND (BORRADOR quedó descartado, ADR-0002), estado PENDIENTE/ENVIADO/FALLIDO, error).
+- `evento_correo` (V16): identificadores de envío del proveedor que reportaron rebote o queja por el webhook; permite marcar el envío como fallido sin un código en el asunto.
 
 ## 4. Decisiones clave y su razón
 - **Un solo destino por reporte**: simplifica el envío y evita duplicados.
