@@ -1,6 +1,6 @@
 # Pendientes
 
-Actualizado el 9 de noviembre de 2026 (Sprint 2 cerrado; Sprint 3 en curso). Esta lista antes
+Actualizado el 13 de noviembre de 2026 (Sprint 3 en curso). Esta lista antes
 reflejaba la pestaña «Pendientes» del Google Doc y tenía muchos puntos ya resueltos; se rehízo.
 Lo que está en Linear lleva su clave `NOT-n`. Estado general: [12-estado-actual-y-traspaso.md](12-estado-actual-y-traspaso.md).
 
@@ -13,14 +13,26 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
   Queda: verificar el WhatsApp de Gases de Occidente; decidir la categoría 15 (activa sin ruta).
 - Envío real a las entidades y aviso de rebotes; hoy todo sale a la bandeja de pruebas (NOT-131).
   Incluye mostrar canales y «Copiar mi mensaje» en el detalle del reporte cuando llegue el rebote.
-- Registro rápido (~10 s hoy), diagnóstico del error de Google en celular, límite de intentos de
-  login, límite diario y duplicados R.06 (NOT-132).
+- ~~Registro rápido, diagnóstico de Google en celular, límite de intentos, límite diario y
+  duplicados (NOT-132)~~: backend y frontend hechos el 13/11/2026 en la rama
+  `feature/not-132-registro-rapido-y-sin-abusos`; faltan las pruebas finales y el cierre.
 - Despliegue final, respaldo de la base y administrador real (NOT-133).
 - App instalable (PWA): no hay manifiesto ni service worker (NOT-134).
 - Pulido de la app: servidor despertando, reintento de foto, GPS de 10 s, atribución del mapa,
   usabilidad, tono y accesibilidad (NOT-137, 138, 139).
 - Pruebas del panel, de punta a punta y colección Postman (NOT-140, 141).
 - Informe final, manuales y Google Doc al día (NOT-142).
+
+## Después del MVP (decidido no hacerlo ahora)
+
+- **Limitar los avisos de «reporte parecido» por cuenta** (por ejemplo, 20 por hora). Hoy ese aviso
+  no cuenta contra el tope diario, así que se podría probar muchos puntos y leer el resumen de
+  140 caracteres de reportes de otras personas (nunca quién lo escribió). Andrés decidió el
+  13/11/2026 no limitarlo en el MVP para no sobreingenierizar; el riesgo es bajo (NOT-132).
+- **Distinguir «sin internet» de «NotiUrba no responde»** en los avisos de red: hoy todo fallo de red
+  dice «No hay conexión a internet». Se dejó así el 13/11/2026 (NOT-132).
+- **Límite de intentos por IP o por dispositivo:** hoy es solo por correo, así que alguien podría
+  bloquear el correo de otra persona por 5 minutos; aceptado en la spec de NOT-132.
 
 ## Fuera del equipo (no bloquean el MVP)
 
@@ -67,7 +79,9 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 
 ## Reglas de negocio por definir
 
-- Valores del límite diario de reportes, intentos de login y distancia de duplicados (NOT-132).
+- ~~Valores del límite diario de reportes, intentos de login y distancia de duplicados (NOT-132)~~:
+  decididos el 13/11/2026 (3 intentos en 5 min, bloqueo de 5 min, 2 reportes por cuenta al día,
+  5 a 15 m por categoría, 30 días) y ajustables por el administrador en «Configuración».
 - Pasar a las RN la regla de huecos y solapes de la capa de comunas (ya está en `fn_asignar_comuna`).
 
 ## Notas operativas que conviene recordar
