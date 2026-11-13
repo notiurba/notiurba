@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useUnaVez from '../hooks/useUnaVez'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { completarPerfilGoogle } from '../api/auth'
 import { obtenerBarrios, obtenerTiposDocumento } from '../api/catalogos'
@@ -30,6 +31,8 @@ export default function CompletarPerfil() {
   const barrios = useCargar(obtenerBarrios)
   const [errorGeneral, setErrorGeneral] = useState('')
   const [enviando, setEnviando] = useState(false)
+  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
+  const guardarUnaVez = useUnaVez(guardar)
 
   async function guardar(evento) {
     evento.preventDefault()
@@ -68,7 +71,7 @@ export default function CompletarPerfil() {
       <EncabezadoPantalla titulo="Complete su perfil" atras="/login" />
 
       <FormularioPantalla
-        alEnviar={guardar}
+        alEnviar={guardarUnaVez}
         acciones={
           <>
             <Boton type="submit" disabled={!listos} cargando={enviando} textoCargando="Guardando…">

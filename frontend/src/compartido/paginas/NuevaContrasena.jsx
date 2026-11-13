@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useUnaVez from '../hooks/useUnaVez'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { restablecerPassword } from '../api/auth'
 import Aviso from '../componentes/avisos/Aviso'
@@ -23,6 +24,8 @@ export default function NuevaContrasena() {
   const [enlaceInvalido, setEnlaceInvalido] = useState(!token)
   const [fallo, setFallo] = useState(false)
   const [enviando, setEnviando] = useState(false)
+  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
+  const guardarUnaVez = useUnaVez(guardar)
 
   async function guardar(evento) {
     evento.preventDefault()
@@ -53,7 +56,7 @@ export default function NuevaContrasena() {
     <LayoutAuth>
       <EncabezadoPantalla atras="/login" />
 
-      <form className="formulario-auth" onSubmit={guardar} noValidate>
+      <form className="formulario-auth" onSubmit={guardarUnaVez} noValidate>
         <CabeceraAuth
           titulo="Cree una nueva contraseña"
           texto="Elija una contraseña que no haya usado antes en NotiUrba."

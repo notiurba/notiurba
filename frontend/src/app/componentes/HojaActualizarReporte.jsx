@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useUnaVez from '../../compartido/hooks/useUnaVez'
 import { actualizarMiReporte } from '../../compartido/api/reportes'
 import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
@@ -18,6 +19,8 @@ export default function HojaActualizarReporte({ reporte, alCerrar, alGuardar }) 
   const [tipo, setTipo] = useState('RESPUESTA')
   const [radicado, setRadicado] = useState('')
   const [guardando, setGuardando] = useState(false)
+  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
+  const guardarUnaVez = useUnaVez(guardar)
   const [fallo, setFallo] = useState(false)
 
   async function guardar() {
@@ -71,7 +74,7 @@ export default function HojaActualizarReporte({ reporte, alCerrar, alGuardar }) 
       </Aviso>
       {fallo && <Aviso variante="error">No pudimos guardar la actualización. Inténtelo de nuevo.</Aviso>}
 
-      <Boton onClick={guardar} cargando={guardando} textoCargando="Guardando…">
+      <Boton onClick={guardarUnaVez} cargando={guardando} textoCargando="Guardando…">
         Guardar actualización
       </Boton>
       <Boton variante="texto" onClick={alCerrar} disabled={guardando}>

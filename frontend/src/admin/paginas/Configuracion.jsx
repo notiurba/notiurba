@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useUnaVez from '../../compartido/hooks/useUnaVez'
 import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
 import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
@@ -30,6 +31,8 @@ export default function Configuracion() {
   const [formulario, setFormulario] = useState(null)
   const [errores, setErrores] = useState({})
   const [guardando, setGuardando] = useState(false)
+  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
+  const guardarUnaVez = useUnaVez(guardar)
   const [resultado, setResultado] = useState(null) // { variante, texto }
 
   if (cargando && !datos) return <p className="cargando-texto">Cargando la configuración…</p>
@@ -77,7 +80,7 @@ export default function Configuracion() {
   }
 
   return (
-    <form className="adm-conf" onSubmit={guardar} noValidate>
+    <form className="adm-conf" onSubmit={guardarUnaVez} noValidate>
       <div className="adm-conf__titulo">
         <h1>Configuración</h1>
         <p>Límites para evitar abusos. Los cambios aplican de inmediato, sin reiniciar nada.</p>

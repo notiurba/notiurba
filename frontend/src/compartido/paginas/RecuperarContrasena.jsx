@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useUnaVez from '../hooks/useUnaVez'
 import { solicitarRecuperacion } from '../api/auth'
 import Aviso from '../componentes/avisos/Aviso'
 import Boton from '../componentes/Boton'
@@ -18,6 +19,8 @@ export default function RecuperarContrasena() {
   const [correo, setCorreo] = useState('')
   const [error, setError] = useState('')
   const [enviando, setEnviando] = useState(false)
+  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
+  const enviarUnaVez = useUnaVez(enviar)
   const [respuesta, setRespuesta] = useState('')
   const [fallo, setFallo] = useState(false)
 
@@ -43,7 +46,7 @@ export default function RecuperarContrasena() {
     <LayoutAuth>
       <EncabezadoPantalla atras="/login" />
 
-      <form className="formulario-auth" onSubmit={enviar} noValidate>
+      <form className="formulario-auth" onSubmit={enviarUnaVez} noValidate>
         <CabeceraAuth
           titulo="Recupere su contraseña"
           texto="Escriba el correo de su cuenta. Le enviaremos un enlace para crear una nueva contraseña."

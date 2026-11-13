@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useUnaVez from '../../compartido/hooks/useUnaVez'
 import { useNavigate } from 'react-router-dom'
 import { obtenerBarrios, obtenerTiposDocumento } from '../../compartido/api/catalogos'
 import { guardarPerfil, obtenerPerfil } from '../../compartido/api/usuario'
@@ -43,6 +44,8 @@ function Formulario({ perfil, tipos, barrios }) {
   })
   const [errorGeneral, setErrorGeneral] = useState('')
   const [guardando, setGuardando] = useState(false)
+  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
+  const guardarUnaVez = useUnaVez(guardar)
 
   async function guardar(evento) {
     evento.preventDefault()
@@ -63,7 +66,7 @@ function Formulario({ perfil, tipos, barrios }) {
 
   return (
     <FormularioPantalla
-      alEnviar={guardar}
+      alEnviar={guardarUnaVez}
       acciones={
         <>
           <Boton type="submit" cargando={guardando} textoCargando="Guardando…">

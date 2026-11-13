@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import useUnaVez from '../hooks/useUnaVez'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { iniciarSesion } from '../api/auth'
 import { SITUACION, avisoDeIngreso } from '../auth/errorLogin'
@@ -33,6 +34,8 @@ export default function Login() {
   const [aviso, setAviso] = useState(null)
   const [bloqueoHasta, setBloqueoHasta] = useState(null)
   const [enviando, setEnviando] = useState(false)
+  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
+  const enviarUnaVez = useUnaVez(enviar)
   const navigate = useNavigate()
   const { state } = useLocation()
   const retorno = estadoRetornoReporte(state?.siguiente ?? null)
@@ -84,7 +87,7 @@ export default function Login() {
     <LayoutAuth web>
       <EncabezadoPantalla atras="/" />
 
-      <form className="formulario-auth" onSubmit={enviar} noValidate>
+      <form className="formulario-auth" onSubmit={enviarUnaVez} noValidate>
         <CabeceraAuth titulo="Bienvenido a NotiUrba" texto="Ingrese con su cuenta para continuar" />
 
         {sesionVencida && <Aviso variante="info">{MENSAJE_SESION_VENCIDA}</Aviso>}

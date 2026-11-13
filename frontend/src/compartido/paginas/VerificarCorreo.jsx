@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useUnaVez from '../hooks/useUnaVez'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { estadoRetornoReporte } from '../auth/retornoReporte'
 import { reenviarVerificacion } from '../api/auth'
@@ -17,6 +18,8 @@ export default function VerificarCorreo() {
   const navigate = useNavigate()
   const retorno = estadoRetornoReporte(state?.siguiente)
   const [reenviando, setReenviando] = useState(false)
+  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
+  const reenviarUnaVez = useUnaVez(reenviar)
   const [resultado, setResultado] = useState(null) // { tipo: 'exito' | 'error', texto }
   if (!state?.correo) return <Navigate to="/login" state={retorno} replace />
 
@@ -48,7 +51,7 @@ export default function VerificarCorreo() {
         </p>
 
         <Boton href="mailto:">Abrir mi correo</Boton>
-        <Boton variante="secundario" onClick={reenviar} cargando={reenviando} textoCargando="Reenviando…">
+        <Boton variante="secundario" onClick={reenviarUnaVez} cargando={reenviando} textoCargando="Reenviando…">
           Reenviar enlace
         </Boton>
 
