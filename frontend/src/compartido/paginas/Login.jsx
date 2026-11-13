@@ -53,7 +53,8 @@ export default function Login() {
 
   async function enviar(evento) {
     evento.preventDefault()
-    if (bloqueoHasta) return
+    // Enter mientras se espera la respuesta no manda otro intento (cada fallo cuenta para el bloqueo).
+    if (bloqueoHasta || enviando) return
     enfocarPrimerError(evento.currentTarget)
     const encontrados = soloErrores({
       correo: validarCorreo(correo),
