@@ -8,7 +8,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) |
 | Plan | [plan.md](plan.md) |
-| Estado general | **Figma validado; backend hecho (T-08 a T-19); sigue el frontend** |
+| Estado general | **Backend y frontend hechos (T-08 a T-25); faltan las pruebas finales y el cierre** |
 | Última actualización | 2026-11-13 |
 
 ## Cómo se usa
@@ -78,17 +78,17 @@
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-20 | `ErrorApi` conserva `datos`; `textos/ingreso.js`; `errorLogin.js` por código y estado; `cliente.js` sin la palabra «servidor» | Frontend | CA-35, CA-36 | `errorLogin.test.mjs`; prueba de lenguaje de RN-24 | [ ] |
-| T-21 | `Login.jsx` y `BotonGoogle.jsx`: mensaje por situación, bloqueo con cuenta regresiva, «le queda 1 intento» | Frontend | CA-32, CA-35, CA-40 | componente con errores simulados | [ ] |
-| T-22 | `PasoDetalles.jsx`: ayuda siempre visible, foto reciente y «obligatoria» | Frontend | CA-45, CA-50 | componente | [ ] |
-| T-23 | `PasoConfirmacion.jsx`: hoja de duplicado, aviso de límite diario, aviso de foto necesaria; «Cancelar reporte» común | Frontend | CA-33, CA-34, CA-44, CA-46, CA-47 | componente: textos por variante, «Enviar de todas maneras», «Cancelar reporte» | [ ] |
-| T-24 | Pantalla `Configuración` del panel, servicio, ruta y enlace | Frontend | CA-30, CA-31 | componente y manual contra el backend local | [ ] |
-| T-25 | Datos simulados para los casos nuevos | Frontend | CA-32 a CA-34 | modo `VITE_USAR_MOCKS` | [ ] |
+| T-20 | `ErrorApi` conserva `datos`; `textos/ingreso.js`; `errorLogin.js` por código y estado; `cliente.js` sin la palabra «servidor» | Frontend | CA-35, CA-36 | `errorLogin.test.mjs`; prueba de lenguaje de RN-24 | [x] `errorLogin.test.mjs` (14), `cliente.test.mjs` con `datos` |
+| T-21 | `Login.jsx` y `BotonGoogle.jsx`: mensaje por situación, bloqueo con cuenta regresiva, «le queda 1 intento» | Frontend | CA-32, CA-35, CA-40 | componente con errores simulados | [x] `AvisoIngreso.test.mjs`; manual con simulación a 360 px (bloqueo, cuenta regresiva, «le queda 1 intento»); se arregló el doble Enter que gastaba intentos |
+| T-22 | `PasoDetalles.jsx`: ayuda siempre visible, foto reciente y «obligatoria» | Frontend | CA-45, CA-50 | componente | [x] manual con simulación a 360 px; textos en `textos/reporte.js` con prueba |
+| T-23 | `PasoConfirmacion.jsx`: hoja de duplicado, aviso de límite diario, aviso de foto necesaria; «Cancelar reporte» común | Frontend | CA-33, CA-34, CA-44, CA-46, CA-47 | componente: textos por variante, «Enviar de todas maneras», «Cancelar reporte» | [x] `reporte.test.mjs` (variantes); manual con simulación: parecido → «Enviar de todas maneras», límite del día, foto necesaria → «Agregar foto» |
+| T-24 | Pantalla `Configuración` del panel, servicio, ruta y enlace | Frontend | CA-30, CA-31 | componente y manual contra el backend local | [x] `limites.test.mjs`; manual con simulación a 1366 px (rango y guardado). Falta probarla contra el backend local (QA final) |
+| T-25 | Datos simulados para los casos nuevos | Frontend | CA-32 a CA-34 | modo `VITE_USAR_MOCKS` | [x] `simulacion.test.mjs` cubre los casos nuevos; disparadores en `simulacion/README.md` |
 
 ## Pruebas finales (Fase 5)
 
 - [ ] Todos los criterios CA-01 a CA-50 verificados (tabla de trazabilidad abajo).
-- [ ] Backend: `mvn clean test` en verde. Frontend: `pnpm test`, `pnpm lint` y `pnpm build` en verde.
+- [x] Backend: `mvn clean test` en verde (424 pruebas, 0 fallos, 12 omitidas). Frontend: `pnpm test` (192), `pnpm lint` y `pnpm build` en verde.
 - [ ] `tools/qa-limites/`: registro, login bloqueado, 3 reportes en un día, duplicado, evidencia y ajustes del administrador contra el backend local.
 - [ ] Medición del registro (antes y después) y `EXPLAIN` de la búsqueda de duplicados.
 - [ ] Revisión con `code-reviewer` solo sobre lo que cambió.
@@ -124,3 +124,4 @@
 | 2026-11-13 | Tareas escritas con el plan aprobado; empieza Figma | tasks.md |
 | 2026-11-13 | Figma hecho (T-01 a T-06); falta el visto bueno de Andrés | tasks.md |
 | 2026-11-13 | Figma validado por Andrés (T-07); backend hecho (T-08 a T-18) con 420 pruebas en verde; contrato de API al día (T-19) | tasks.md, 11-contrato-api.md |
+| 2026-11-13 | Revisión de código del backend: el login cuenta el intento antes de comparar la contraseña; frontend hecho (T-20 a T-25) | tasks.md, plan.md |
