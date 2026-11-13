@@ -8,7 +8,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) |
 | Plan | [plan.md](plan.md) |
-| Estado general | **Figma hecho; espera el visto bueno de Andrés (T-07)** |
+| Estado general | **Figma validado; backend hecho (T-08 a T-19); sigue el frontend** |
 | Última actualización | 2026-11-13 |
 
 ## Cómo se usa
@@ -33,7 +33,7 @@
 | T-04 | F-4 «Confirmación · posible duplicado» como hoja de confirmación, 4 variantes de texto | Figma | CA-34, CA-46 a CA-49 | capturas a Andrés | [x] 4 hojas «F-4 · Modal · Posible duplicado (…)»: otra persona ya enviado, varios parecidos, propio con enlace «Ver el reporte», parecido aún sin enviar |
 | T-05 | F-5 «Reportar · descripción y fotos»: ayuda siempre visible, foto reciente y «obligatoria» | Figma | CA-45, CA-50 | capturas a Andrés | [x] 2 marcos «F-5 · Reportar · …» (foto opcional y foto obligatoria); la casilla queda sin texto de ejemplo y la guía va como ayuda visible |
 | T-06 | F-6 «Confirmación · foto necesaria» | Figma | CA-44 | capturas a Andrés | [x] marco «F-6 · Confirmación · Foto necesaria» (aviso ámbar y envío apagado) |
-| T-07 | **Validación de Andrés** de T-01 a T-06 (con el Design System); sin ella no se empieza el backend | Figma | — | visto bueno escrito | [ ] pendiente |
+| T-07 | **Validación de Andrés** de T-01 a T-06 (con el Design System); sin ella no se empieza el backend | Figma | — | visto bueno escrito | [x] visto bueno de Andrés el 13 nov 2026 |
 
 **Pendientes del diseño (a ajustar con Andrés al validar):** el ícono de las hojas F-3 y F-4 sigue siendo el sobre de «enviar» (debe ser uno de alerta o información); F-1 solo tiene dos tarjetas con una muestra de campos (hay 10 categorías) y no tiene el estado «guardado»; el marco «F-4 · … aún sin enviar» quedó encima de otro marco del tablero; los nombres de algunos marcos muestran mal la tilde. Textos a pulir solo con Andrés.
 
@@ -41,38 +41,38 @@
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-08 | `V22__limites_y_duplicados.sql`: 5 parámetros con `CHECK`, `distancia_duplicado` (10 filas), `intento_login`, `reporte.requiere_evidencia` | DB | CA-16, CA-21, CA-28 | prueba de migración: valores iniciales, rangos rechazados, 10 filas | [ ] |
+| T-08 | `V22__limites_y_duplicados.sql`: 5 parámetros con `CHECK`, `distancia_duplicado` (10 filas), `intento_login`, `reporte.requiere_evidencia` | DB | CA-16, CA-21, CA-28 | prueba de migración: valores iniciales, rangos rechazados, 10 filas | [x] |
 
 ### Grupo 2 — Base común del backend
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-09 | `ErrorApi` con `datos` opcional, `ApiException` lo acepta, tres códigos y mensajes en `Codigos`; bean `Clock`; ejecutor asíncrono acotado | Backend | CA-24 | formato `{ codigo, mensaje, campo, datos }`; `datos` ausente si no existe | [ ] |
-| T-10 | `ParametrosServicio` y `ParametrosController` (`GET`/`PUT /api/admin/configuracion/limites`) con rangos y auditoría | Backend | CA-26 a CA-29 | integración: GET, PUT válido, fuera de rango, todo o nada, 401/403 | [ ] |
+| T-09 | `ErrorApi` con `datos` opcional, `ApiException` lo acepta, tres códigos y mensajes en `Codigos`; bean `Clock`; ejecutor asíncrono acotado | Backend | CA-24 | formato `{ codigo, mensaje, campo, datos }`; `datos` ausente si no existe | [x] |
+| T-10 | `ParametrosServicio` y `ParametrosController` (`GET`/`PUT /api/admin/configuracion/limites`) con rangos y auditoría | Backend | CA-26 a CA-29 | integración: GET, PUT válido, fuera de rango, todo o nada, 401/403 | [x] |
 
 ### Grupo 3 — Registro rápido y Google
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-11 | Correo de verificación después del commit y en otro hilo; `reenviar` por la misma ruta | Backend | CA-01 a CA-04 | integración con envío de 8 s: responde en < 2 s; sin correo si el registro falla; reenvío funciona | [ ] |
-| T-12 | Log por paso en `GoogleAuthServicio`, sin datos personales | Backend | CA-05, CA-06 | captura del log: sin correo, nombre, documento, token ni `sub` | [ ] |
-| T-13 | Diagnóstico del fallo de Google en el celular: preflight CORS, arranque de Render, `GOOGLE_CLIENT_ID`; resultado en `12-estado-actual-y-traspaso.md` | Docs | CA-07 | documento | [ ] |
+| T-11 | Correo de verificación después del commit y en otro hilo; `reenviar` por la misma ruta | Backend | CA-01 a CA-04 | integración con envío de 8 s: responde en < 2 s; sin correo si el registro falla; reenvío funciona | [x] |
+| T-12 | Log por paso en `GoogleAuthServicio`, sin datos personales | Backend | CA-05, CA-06 | captura del log: sin correo, nombre, documento, token ni `sub` | [x] |
+| T-13 | Diagnóstico del fallo de Google en el celular: preflight CORS, arranque de Render, `GOOGLE_CLIENT_ID`; resultado en `12-estado-actual-y-traspaso.md` | Docs | CA-07 | documento | [x] |
 
 ### Grupo 4 — Límite de intentos de login
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-14 | `IntentosLoginServicio` (`UPSERT` atómico, normalización, limpieza) y su uso en `AuthController.login`, con `intentosRestantes` y `Retry-After` | Backend | CA-08 a CA-13, CA-40 | integración con reloj fijo; correo inexistente = solo-Google = contraseña mala; 20 hilos | [ ] |
-| T-15 | Restablecer contraseña levanta el bloqueo | Backend | CA-37 | integración: bloquear, restablecer, ingresar | [ ] |
+| T-14 | `IntentosLoginServicio` (`UPSERT` atómico, normalización, limpieza) y su uso en `AuthController.login`, con `intentosRestantes` y `Retry-After` | Backend | CA-08 a CA-13, CA-40 | integración con reloj fijo; correo inexistente = solo-Google = contraseña mala; 20 hilos | [x] |
+| T-15 | Restablecer contraseña levanta el bloqueo | Backend | CA-37 | integración: bloquear, restablecer, ingresar | [x] |
 
 ### Grupo 5 — Límite diario, duplicados y evidencia
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-16 | `LimiteDiarioServicio` y bloqueo de la fila del usuario en `ReporteServicio.crear` | Backend | CA-14 a CA-18, CA-23, CA-39 | integración: 2 pasan y el 3.º no; cambio de valor sin reiniciar; día de Bogotá; 2 hilos | [ ] |
-| T-17 | `DuplicadoServicio` entre todas las cuentas (misma categoría, cercanía, 30 días), datos base y resumen, `confirmarDuplicado` | Backend | CA-19 a CA-22, CA-48, CA-49 | integración PostGIS: bordes de distancia y de 30 días, propio y ajeno, privacidad del cuerpo | [ ] |
-| T-18 | Evidencia: `repiteResuelto`, `totalFotos`, `requiere_evidencia`, `EVIDENCIA_REQUERIDA` al crear y al enviar, `requiereEvidencia` en la vista previa | Backend | CA-41 a CA-44 | integración: sin foto 422, con foto marcado, sin foto real no se envía, vista previa sin escribir | [ ] |
-| T-19 | Contrato de API: endpoints, errores y `datos` en `11-contrato-api.md` (estado *PLANEADO* al aprobar el plan, *IMPLEMENTADO* al cerrar) | Docs | CA-24 | revisión | [ ] |
+| T-16 | `LimiteDiarioServicio` y bloqueo de la fila del usuario en `ReporteServicio.crear` | Backend | CA-14 a CA-18, CA-23, CA-39 | integración: 2 pasan y el 3.º no; cambio de valor sin reiniciar; día de Bogotá; 2 hilos | [x] |
+| T-17 | `DuplicadoServicio` entre todas las cuentas (misma categoría, cercanía, 30 días), datos base y resumen, `confirmarDuplicado` | Backend | CA-19 a CA-22, CA-48, CA-49 | integración PostGIS: bordes de distancia y de 30 días, propio y ajeno, privacidad del cuerpo | [x] |
+| T-18 | Evidencia: `repiteResuelto`, `totalFotos`, `requiere_evidencia`, `EVIDENCIA_REQUERIDA` al crear y al enviar, `requiereEvidencia` en la vista previa | Backend | CA-41 a CA-44 | integración: sin foto 422, con foto marcado, sin foto real no se envía, vista previa sin escribir | [x] |
+| T-19 | Contrato de API: endpoints, errores y `datos` en `11-contrato-api.md` (estado *PLANEADO* al aprobar el plan, *IMPLEMENTADO* al cerrar) | Docs | CA-24 | revisión | [x] |
 
 ### Grupo 6 — Frontend
 
@@ -99,21 +99,21 @@
 
 | Criterio | Tareas | Prueba | Resultado |
 | --- | --- | --- | --- |
-| CA-01 a CA-04 | T-11 | integración del registro | pendiente |
-| CA-05, CA-06 | T-12 | captura del log | pendiente |
-| CA-07 | T-13 | documento | pendiente |
+| CA-01 a CA-04 | T-11 | integración del registro | verificado en backend |
+| CA-05, CA-06 | T-12 | captura del log | verificado en backend |
+| CA-07 | T-13 | documento | documentado en `12-estado-actual-y-traspaso.md` |
 | CA-08 a CA-13, CA-40 | T-14, T-21 | integración del login; componente | pendiente |
-| CA-14 a CA-18, CA-23, CA-39 | T-16 | integración del límite diario | pendiente |
-| CA-19 a CA-22, CA-48, CA-49 | T-17 | integración PostGIS | pendiente |
-| CA-24 | T-09, T-19 | formato del error; contrato | pendiente |
-| CA-25 | T-14, T-16 | reloj de prueba | pendiente |
-| CA-26 a CA-29 | T-10 | integración del administrador | pendiente |
+| CA-14 a CA-18, CA-23, CA-39 | T-16 | integración del límite diario | verificado en backend |
+| CA-19 a CA-22, CA-48, CA-49 | T-17 | integración PostGIS | verificado en backend |
+| CA-24 | T-09, T-19 | formato del error; contrato | verificado en backend |
+| CA-25 | T-14, T-16 | reloj de prueba | verificado en backend |
+| CA-26 a CA-29 | T-10 | integración del administrador | verificado en backend |
 | CA-30, CA-31 | T-01, T-24 | Figma; componente | pendiente |
 | CA-32 | T-02, T-21 | Figma; componente | pendiente |
 | CA-33 | T-03, T-23 | Figma; componente | pendiente |
 | CA-34, CA-46, CA-47 | T-04, T-23 | Figma; componente | pendiente |
 | CA-35, CA-36 | T-20, T-21 | pruebas de mensajes y de lenguaje | pendiente |
-| CA-37 | T-15 | integración de recuperación | pendiente |
+| CA-37 | T-15 | integración de recuperación | verificado en backend |
 | CA-41 a CA-44 | T-06, T-18, T-23 | integración; componente | pendiente |
 | CA-45, CA-50 | T-05, T-22 | Figma; componente | pendiente |
 
@@ -123,3 +123,4 @@
 | --- | --- | --- |
 | 2026-11-13 | Tareas escritas con el plan aprobado; empieza Figma | tasks.md |
 | 2026-11-13 | Figma hecho (T-01 a T-06); falta el visto bueno de Andrés | tasks.md |
+| 2026-11-13 | Figma validado por Andrés (T-07); backend hecho (T-08 a T-18) con 420 pruebas en verde; contrato de API al día (T-19) | tasks.md, 11-contrato-api.md |
