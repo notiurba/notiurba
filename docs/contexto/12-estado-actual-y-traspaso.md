@@ -131,9 +131,19 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - «No pudimos comunicarnos con el servidor» sale **solo** cuando el navegador no recibe
   respuesta (`fetch` falla): Render dormido, mala red o CORS. No es un error de lógica. El ingreso
   con Google falló así en un celular; desde otro equipo `/api/auth/google` respondía bien (CORS
-  correcto y 401 ante un token falso). La causa no está confirmada.
-- El registro tarda ~10 s: BCrypt con poca CPU y el correo de verificación se envía dentro de la
-  transacción de `RegistroServicio.registrar` (`VerificacionServicio.emitirYEnviar`).
+  correcto y 401 ante un token falso). **Diagnóstico del 13/11/2026 (NOT-132):** la primera llamada a
+  `/api/health` con Render dormido no respondió en 90 s; después, el preflight desde
+  `https://notiurba.netlify.app` dio 200 con los encabezados CORS correctos y un `POST /api/auth/google`
+  con un token falso respondió 401 en 1,4 s. O sea: ni Google ni CORS fallan; la causa más probable es
+  el **arranque en frío de Render** (mientras despierta responde un error sin encabezados CORS, y el
+  navegador lo ve como «sin respuesta»). Queda para la historia de pulido el aviso «servidor despertando»;
+  desde este cambio el backend deja en el log el paso y el tipo de cada fallo de Google (sin datos
+  personales; ver `GoogleAuthServicio`), para confirmarlo si vuelve a pasar con Render despierto.
+- El registro tardaba ~10 s: el correo de verificación se enviaba dentro de la transacción de
+  `RegistroServicio.registrar`. Desde NOT-132 se crea el token dentro y el envío sale después de
+  confirmar, en otro hilo (`EnvioCorreoVerificacion`): con un correo de 6 s la respuesta tarda menos de
+  0,7 s (prueba `RegistroRapidoIntegracionTest`). El cifrado de la contraseña (BCrypt) sigue en la
+  petición.
 - La categoría 15 («Solicitud de información») está activa sin ruta de envío: crear un reporte
   funciona, pero la vista previa responde 400. Decide el equipo: desactivarla o darle ruta al CAIC.
 - El rebote real llega después por el webhook (NOT-131): mostrar canales y «Copiar mi mensaje» en el
