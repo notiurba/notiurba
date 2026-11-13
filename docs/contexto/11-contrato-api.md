@@ -88,7 +88,7 @@ Público. Entrada: `correo`, `password` (obligatorios).
 Salida: 200 `{ token, rol }` con rol CIUDADANO o ADMIN.
 Errores: 400 VALIDACION; 401 CREDENCIALES_INVALIDAS (también para cuentas creadas solo con Google, que no tienen contraseña); 403 CORREO_NO_VERIFICADO (solo se dice después de acertar la contraseña, para no revelar qué cuentas existen); 429 INTENTOS_EXCEDIDOS.
 
-Límite de intentos (NOT-132, RF-33, RN-22): se cuenta **por correo** (sin distinguir mayúsculas), no por IP ni por cuenta, y se aplica igual si el correo no existe o es solo de Google, para no revelar qué cuentas hay. Por defecto, 3 fallos dentro de 5 minutos bloquean ese correo 5 minutos (el administrador ajusta los tres valores, ver 5.5). Mientras dure el bloqueo no se mira la contraseña: responde 429 aunque sea la correcta. Un fallo viejo (fuera de la ventana) deja de contar. El 401 trae `datos.intentosRestantes`; con 1 el frontend avisa «le queda 1 intento». Un ingreso correcto, o restablecer la contraseña por el enlace del correo, borra el conteo y levanta el bloqueo. El 429 trae `Retry-After` (segundos, entero hacia arriba) y el mensaje dice los minutos que faltan sin lenguaje técnico. La tabla `intento_login` guarda el correo normalizado y las fechas; no guarda contraseñas ni IP.
+Límite de intentos (NOT-132, RF-34): se cuenta **por correo** (sin distinguir mayúsculas), no por IP ni por cuenta, y se aplica igual si el correo no existe o es solo de Google, para no revelar qué cuentas hay. Por defecto, 3 fallos dentro de 5 minutos bloquean ese correo 5 minutos (el administrador ajusta los tres valores, ver 5.5). Mientras dure el bloqueo no se mira la contraseña: responde 429 aunque sea la correcta. Un fallo viejo (fuera de la ventana) deja de contar. El 401 trae `datos.intentosRestantes`; con 1 el frontend avisa «le queda 1 intento». Un ingreso correcto, o restablecer la contraseña por el enlace del correo, borra el conteo y levanta el bloqueo. El 429 trae `Retry-After` (segundos, entero hacia arriba) y el mensaje dice los minutos que faltan sin lenguaje técnico. La tabla `intento_login` guarda el correo normalizado y las fechas; no guarda contraseñas ni IP.
 
 ### 3.3 Lista de categorías — `GET /api/categorias` — EXISTE
 JWT de cualquier rol (*propuesto*: mantenerlo con sesión).
@@ -121,7 +121,7 @@ La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02). Se guard
 Detalle técnico: la base exige `autorizacion_envio_en <= creado_en`, así que el servidor debe fijar ambas fechas con el mismo instante.
 Errores: 400 VALIDACION, 401, 422 FUERA_DE_COBERTURA (se aplica en cuanto `comuna.geom` tenga polígonos; mientras todos estén en NULL el reporte se guarda), 429 LIMITE_DIARIO_REPORTES, 409 POSIBLE_DUPLICADO, 422 EVIDENCIA_REQUERIDA.
 
-Controles contra el abuso (NOT-132, RF-34 a RF-37, RN-23). Se aplican en este orden, después de validar el cuerpo, y todo el crear va en una transacción que bloquea la fila del ciudadano (dos peticiones a la vez no pueden pasar del tope):
+Controles contra el abuso (NOT-132, RF-35, RF-36, RF-39, RN-22). Se aplican en este orden, después de validar el cuerpo, y todo el crear va en una transacción que bloquea la fila del ciudadano (dos peticiones a la vez no pueden pasar del tope):
 1. **Tope diario por cuenta** (429 LIMITE_DIARIO_REPORTES). Por defecto 2 reportes por cuenta y por día de Colombia (de 00:00 a 24:00, hora de Bogotá). Cuenta los reportes creados ese día por esa cuenta, incluidos los no enviados. `datos { maximo, vuelveEn }`. Mensaje: «Hoy ya enviaste 2 reportes, que es el máximo por día. Podrás enviar otro desde mañana.»
 2. **Reporte parecido** (409 POSIBLE_DUPLICADO), solo si hay punto GPS y la categoría exige ubicación, y no viene `confirmarDuplicado: true`. Es parecido el reporte de **cualquier cuenta** (también la propia) con la **misma categoría**, a una distancia menor o igual a la de esa categoría (`distancia_duplicado`, de 5 a 500 m; valores iniciales en 5.5: 5 m en vías y en basuras, 8 m en señalización, 10 m en alumbrado, riesgo sanitario y acueducto, 15 m en riesgo de desastres, gas, energía y aseo; Tuluá es pequeña y en el centro los problemas se repiten muy cerca, por eso las distancias son cortas), creado en los últimos `duplicado_ventana_dias` días (por defecto 30) y que **no esté «Resuelto»**. La búsqueda usa PostGIS (`ST_DWithin` sobre `geography` con una caja previa que aprovecha el índice GiST `ix_reporte_ubicacion`; con 10 000 reportes tarda menos de 100 ms). `datos` lleva solo datos base, nunca la identidad ni los datos de otra persona: `esPropio` (true si alguno es de la misma cuenta), `cantidad` (cuántos parecidos hay), `estadoExistente` (el del más reciente), `creadoEn` (fecha, sin hora), `descripcion` (resumen de hasta 140 caracteres, cortado en palabra) y `codigoExistente` **solo si es propio**. Con `confirmarDuplicado: true` se guarda igual.
 3. **Evidencia al repetir un problema resuelto** (422 EVIDENCIA_REQUERIDA, campo `totalFotos`). Si en ese punto, con la misma categoría, la misma distancia hay un reporte de cualquier cuenta que ya está «Resuelto» y que pasó a ese estado dentro de la misma ventana de días, el reporte nuevo debe llevar al menos 1 foto: se exige `totalFotos >= 1` al crear y se vuelve a comprobar con las fotos reales al enviar (`POST /api/reportes/{codigo}/enviar` responde 422 si no hay ninguna). El reporte se marca `requiere_evidencia = true`. `confirmarDuplicado` no sustituye la foto. Mensaje: «En este lugar ya se resolvió un reporte parecido. Si el problema sigue o volvió, agrega una foto de hoy que lo muestre.»
@@ -194,7 +194,7 @@ Todos bajo `/api/admin/...`, rol ADMIN. Los tres endpoints de estados y vigencia
 - `GET /api/admin/reportes/{codigo}`.
 - `PATCH /api/admin/reportes/{codigo}/estado` - EXISTE. Estado y observación (RF-20); ver 5.1.
 - `GET` y `PUT /api/admin/configuracion/vigencia` - EXISTEN (RF-21); ver 5.1.
-- `GET` y `PUT /api/admin/configuracion/limites` - EXISTEN (NOT-132, RF-38); ver 5.5.
+- `GET` y `PUT /api/admin/configuracion/limites` - EXISTEN (NOT-132, RF-37); ver 5.5.
 - `GET /api/admin/mapa` (RF-22) — EXISTE (NOT-129); ver 5.2.
 - `GET /api/admin/mapa/calor` (RF-23) — EXISTE (NOT-129); ver 5.3.
 - `GET /api/admin/estadisticas` (RF-24) — EXISTE (NOT-129); ver 5.4.
@@ -440,7 +440,7 @@ Respuesta 200:
 - QA de punta a punta contra el servidor real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones); las
   cuatro rutas del panel responden en 6 a 11 ms.
 
-### 5.5 Límites contra el abuso — IMPLEMENTADOS (NOT-132, RF-38)
+### 5.5 Límites contra el abuso — IMPLEMENTADOS (NOT-132, RF-37, RN-23)
 
 `GET` y `PUT /api/admin/configuracion/limites`. JWT con rol ADMIN (401 sin sesión, 403 a un ciudadano). Reúne en una sola pantalla del panel todo lo que el administrador ajusta de los controles de 3.2 y 3.4.
 
