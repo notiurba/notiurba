@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.AfterAll;
@@ -30,6 +31,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -74,10 +76,29 @@ class LoginBloqueoIntegracionTest {
         }
     }
 
+    /** BCrypt de verdad, pero cuenta cuántas contraseñas se comparan. */
+    static class CodificadorQueCuenta implements PasswordEncoder {
+        private final BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        final AtomicInteger comparaciones = new AtomicInteger();
+
+        @Override public String encode(CharSequence clave) {
+            return bcrypt.encode(clave);
+        }
+
+        @Override public boolean matches(CharSequence clave, String hash) {
+            comparaciones.incrementAndGet();
+            return bcrypt.matches(clave, hash);
+        }
+    }
+
     @TestConfiguration
     static class Config {
         @Bean @Primary RelojAjustable relojDePrueba() {
             return new RelojAjustable();
+        }
+
+        @Bean @Primary CodificadorQueCuenta codificadorQueCuenta() {
+            return new CodificadorQueCuenta();
         }
     }
 
@@ -104,6 +125,7 @@ class LoginBloqueoIntegracionTest {
     @Autowired JdbcTemplate jdbc;
     @Autowired RelojAjustable reloj;
     @Autowired PasswordEncoder codificador;
+    @Autowired CodificadorQueCuenta contador;
     @MockBean EnviadorCorreo correoExterno;
     @MockBean AlmacenFotos fotosExternas;
 
@@ -270,6 +292,30 @@ class LoginBloqueoIntegracionTest {
         hilos.shutdown();
         assertThat(respuestas401).as("solo los 2 primeros fallos dejan intentar").isEqualTo(2);
         assertThat(respuestas429).isEqualTo(18);
+    }
+
+    @Test
+    void unaRafagaAlMismoTiempoNoPruebaMasContrasenasQueElMaximo() throws Exception {
+        contador.comparaciones.set(0);
+        ExecutorService hilos = Executors.newFixedThreadPool(20);
+        List<Future<Integer>> resultados = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            String clave = "Mala" + i + "2345";
+            resultados.add(hilos.submit(() -> login("ana@example.test", clave).estado()));
+        }
+        for (Future<Integer> f : resultados) {
+            f.get();
+        }
+        hilos.shutdown();
+        assertThat(contador.comparaciones.get()).as("contraseñas comparadas en la ráfaga").isEqualTo(3);
+    }
+
+    @Test
+    void laContrasenaCorrectaDentroDelCupoEntraAunqueYaHayaDosFallos() throws Exception {
+        login("ana@example.test", "Mala12345");
+        login("ana@example.test", "Mala12345");
+        assertThat(login("ana@example.test", CORRECTA).estado()).as("el tercer intento es el correcto").isEqualTo(200);
+        assertThat(login("ana@example.test", "Mala12345").cuerpo()).contains("\"intentosRestantes\":2");
     }
 
     @Test

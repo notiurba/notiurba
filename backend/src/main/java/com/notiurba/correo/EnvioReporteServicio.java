@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.notiurba.web.error.ApiException;
+import com.notiurba.web.error.Codigos;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -234,8 +235,8 @@ public class EnvioReporteServicio {
                 "SELECT requiere_evidencia AND NOT EXISTS (SELECT 1 FROM evidencia_reporte e WHERE e.id_reporte = reporte.id_reporte) FROM reporte WHERE id_reporte = ?",
                 Boolean.class, id));
         if (sinFoto) {
-            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, com.notiurba.web.error.Codigos.EVIDENCIA_REQUERIDA,
-                    com.notiurba.web.error.Codigos.MSG_EVIDENCIA_REQUERIDA, "fotos");
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, Codigos.EVIDENCIA_REQUERIDA,
+                    Codigos.MSG_EVIDENCIA_REQUERIDA, "fotos");
         }
     }
 

@@ -91,6 +91,13 @@ class GoogleAuthRegistroDeFallosTest {
     }
 
     @Test
+    void laCausaSeDecidePorPalabrasCompletasNoPorPedazos() {
+        assertThat(GoogleAuthServicio.causaDelRechazo(new JwtException("The iss claim is not valid"))).contains("emisor no válido");
+        assertThat(GoogleAuthServicio.causaDelRechazo(new JwtException("Missing required claim: sub"))).doesNotContain("emisor");
+        assertThat(GoogleAuthServicio.causaDelRechazo(new JwtException("Unsupported audit header"))).doesNotContain("audiencia");
+    }
+
+    @Test
     void noPoderObtenerLasClavesDeGoogleSeDistingueDeUnTokenMalo() {
         when(verificador.verificar(CREDENTIAL))
                 .thenThrow(new JwtException("An error occurred while attempting to decode the Jwt: Couldn't retrieve remote JWK set: timed out"));

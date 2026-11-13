@@ -22,6 +22,19 @@ public class DuplicadoServicio {
 
     static final int LARGO_RESUMEN = 140;
 
+    /** La caja (&&) va antes de ST_DWithin para que el índice espacial descarte lo lejano. */
+    static final String SQL_SIN_RESOLVER = """
+            SELECT r.id_usuario = :usuario AS propio, r.codigo_seguimiento, est.nombre AS estado, r.creado_en,
+                   r.descripcion, count(*) OVER () AS cantidad
+              FROM reporte r
+              JOIN estado_reporte est ON est.id_estado_reporte = r.id_estado_reporte
+             WHERE r.id_categoria = :categoria AND r.ubicacion IS NOT NULL
+               AND r.ubicacion && ST_Expand(ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), :caja)
+               AND ST_DWithin(r.ubicacion::geography, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography, :metros)
+               AND est.nombre <> 'Resuelto' AND r.creado_en >= :desde
+             ORDER BY (r.id_usuario = :usuario) DESC, r.creado_en DESC
+             LIMIT 1""";
+
     /**
      * Lo único que se muestra de un reporte parecido: cuántos hay y los datos base del que se elige (el propio, si
      * hay uno; si no, el más reciente). El código solo viaja si es de la misma persona.
@@ -45,17 +58,8 @@ public class DuplicadoServicio {
             return Optional.empty();
         }
         OffsetDateTime desde = OffsetDateTime.now(reloj).minusDays(parametros.ventanaDuplicadoDias());
-        List<Parecido> filas = jdbc.query("""
-                SELECT r.id_usuario = :usuario AS propio, r.codigo_seguimiento, est.nombre AS estado, r.creado_en,
-                       r.descripcion, count(*) OVER () AS cantidad
-                  FROM reporte r
-                  JOIN estado_reporte est ON est.id_estado_reporte = r.id_estado_reporte
-                 WHERE r.id_categoria = :categoria AND r.ubicacion IS NOT NULL
-                   AND r.ubicacion && ST_Expand(ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), :caja)
-                   AND ST_DWithin(r.ubicacion::geography, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography, :metros)
-                   AND est.nombre <> 'Resuelto' AND r.creado_en >= :desde
-                 ORDER BY (r.id_usuario = :usuario) DESC, r.creado_en DESC
-                 LIMIT 1""", parametros(idCategoria, latitud, longitud, metros.get(), desde).addValue("usuario", idUsuario),
+        List<Parecido> filas = jdbc.query(SQL_SIN_RESOLVER,
+                parametros(idCategoria, latitud, longitud, metros.get(), desde).addValue("usuario", idUsuario),
                 (rs, i) -> new Parecido(rs.getInt("cantidad"), rs.getBoolean("propio"),
                         rs.getBoolean("propio") ? rs.getString("codigo_seguimiento") : null, rs.getString("estado"),
                         rs.getObject("creado_en", OffsetDateTime.class).atZoneSameInstant(RelojConfig.ZONA_NEGOCIO).toLocalDate().toString(),
@@ -91,7 +95,7 @@ public class DuplicadoServicio {
     }
 
     /** La caja usa grados de sobra (1 m son menos de 0,00001°) para que el índice espacial descarte lo lejano. */
-    private static MapSqlParameterSource parametros(int categoria, double latitud, double longitud, int metros, OffsetDateTime desde) {
+    static MapSqlParameterSource parametros(int categoria, double latitud, double longitud, int metros, OffsetDateTime desde) {
         return new MapSqlParameterSource().addValue("categoria", categoria).addValue("lat", latitud).addValue("lon", longitud)
                 .addValue("metros", metros).addValue("caja", metros / 100_000.0).addValue("desde", desde);
     }

@@ -121,27 +121,32 @@ public class ParametrosServicio {
     private void validar(Limites l) {
         if (l == null || l.login() == null) throw error("Envía los datos de ingreso.", "login");
         if (l.duplicados() == null) throw error("Envía los datos de duplicados.", "duplicados");
-        rango(l.login().intentosMaximos(), RANGO_INTENTOS, "Los intentos fallidos permitidos", "intentosMaximos", "");
-        rango(l.login().ventanaMinutos(), RANGO_MINUTOS, "Los minutos para contar los intentos", "ventanaMinutos", " minutos");
-        rango(l.login().bloqueoMinutos(), RANGO_MINUTOS, "Los minutos de descanso tras el bloqueo", "bloqueoMinutos", " minutos");
-        rango(l.reportesMaximosPorDia(), RANGO_REPORTES, "Los reportes por cuenta al día", "reportesMaximosPorDia", "");
-        rango(l.duplicados().ventanaDias(), RANGO_DIAS, "Los días para considerar un reporte reciente", "ventanaDias", " días");
+        rango(l.login().intentosMaximos(), RANGO_INTENTOS, "Los intentos fallidos permitidos deben", "intentosMaximos", "");
+        rango(l.login().ventanaMinutos(), RANGO_MINUTOS, "Los minutos para contar los intentos deben", "ventanaMinutos", " minutos");
+        rango(l.login().bloqueoMinutos(), RANGO_MINUTOS, "Los minutos de descanso tras el bloqueo deben", "bloqueoMinutos", " minutos");
+        rango(l.reportesMaximosPorDia(), RANGO_REPORTES, "Los reportes por cuenta al día deben", "reportesMaximosPorDia", "");
+        rango(l.duplicados().ventanaDias(), RANGO_DIAS, "Los días para considerar un reporte reciente deben", "ventanaDias", " días");
         List<Integer> vistas = new ArrayList<>();
         for (Distancia d : categoriasDe(l)) {
             if (d == null || d.idCategoria() == null) throw error("Falta el número de la categoría.", "categorias");
-            boolean existe = Boolean.TRUE.equals(jdbc.queryForObject(
-                    "SELECT EXISTS (SELECT 1 FROM distancia_duplicado WHERE id_categoria = ?)", Boolean.class, d.idCategoria()));
-            if (!existe || vistas.contains(d.idCategoria())) {
-                throw error("La categoría " + d.idCategoria() + " no admite distancia de duplicado.", "categorias");
+            String nombre = jdbc.query("""
+                    SELECT c.nombre FROM distancia_duplicado d JOIN categoria c ON c.id_categoria = d.id_categoria
+                     WHERE d.id_categoria = ?""", rs -> rs.next() ? rs.getString(1) : null, d.idCategoria());
+            if (nombre == null) {
+                throw error("Esa categoría no se revisa por cercanía: no tiene distancia para reportes parecidos.", "categorias");
+            }
+            if (vistas.contains(d.idCategoria())) {
+                throw error("La categoría «" + nombre + "» está repetida.", "categorias");
             }
             vistas.add(d.idCategoria());
-            rango(d.metros(), RANGO_METROS, "La distancia de la categoría " + d.idCategoria(), "categorias." + d.idCategoria() + ".metros", " metros");
+            rango(d.metros(), RANGO_METROS, "La distancia de «" + nombre + "» debe", "categorias." + d.idCategoria() + ".metros", " metros");
         }
     }
 
-    private static void rango(Integer valor, int[] limites, String nombre, String campo, String unidad) {
+    /** {@code sujeto} trae el verbo ya conjugado («Los reportes… deben», «La distancia… debe»). */
+    private static void rango(Integer valor, int[] limites, String sujeto, String campo, String unidad) {
         if (valor == null || valor < limites[0] || valor > limites[1]) {
-            throw error(nombre + " deben estar entre " + limites[0] + " y " + limites[1] + unidad + ".", campo);
+            throw error(sujeto + " estar entre " + limites[0] + " y " + limites[1] + unidad + ".", campo);
         }
     }
 

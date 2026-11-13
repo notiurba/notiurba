@@ -2,6 +2,7 @@ package com.notiurba.auth.google;
 
 import java.time.OffsetDateTime;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,6 +218,9 @@ public class GoogleAuthServicio {
     }
 
     /** Una etiqueta fija según el motivo, para separar «token mal» de «no se pudieron obtener las claves de Google». */
+    private static final Pattern PALABRA_AUDIENCIA = Pattern.compile("\\b(aud|audience)\\b");
+    private static final Pattern PALABRA_EMISOR = Pattern.compile("\\b(iss|issuer)\\b");
+
     static String causaDelRechazo(JwtException e) {
         String mensaje = e.getMessage() == null ? "" : e.getMessage().toLowerCase(java.util.Locale.ROOT);
         String causa;
@@ -224,9 +228,9 @@ public class GoogleAuthServicio {
             causa = "no se pudieron obtener las claves de Google";
         } else if (mensaje.contains("expired")) {
             causa = "token vencido";
-        } else if (mensaje.contains("aud")) {
+        } else if (PALABRA_AUDIENCIA.matcher(mensaje).find()) {
             causa = "audiencia distinta: revisar GOOGLE_CLIENT_ID";
-        } else if (mensaje.contains("iss")) {
+        } else if (PALABRA_EMISOR.matcher(mensaje).find()) {
             causa = "emisor no válido";
         } else if (mensaje.contains("signature") || mensaje.contains("firma")) {
             causa = "firma no válida";

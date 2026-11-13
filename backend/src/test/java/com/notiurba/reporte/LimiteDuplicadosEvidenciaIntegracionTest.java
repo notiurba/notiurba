@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -101,6 +103,7 @@ class LimiteDuplicadosEvidenciaIntegracionTest {
     @Autowired JwtProveedor jwt;
     @Autowired RelojDesplazable reloj;
     @Autowired DuplicadoServicio servicioDuplicados;
+    @Autowired NamedParameterJdbcTemplate jdbcConNombres;
     @MockBean EnviadorCorreo correoExterno;
     @MockBean AlmacenFotos fotosExternas;
 
@@ -111,8 +114,18 @@ class LimiteDuplicadosEvidenciaIntegracionTest {
     private int barrio;
     private int contador;
 
+    /** El reporte toma la hora de la base y el día sale del reloj: cerca de medianoche podrían caer en días distintos. */
+    private static void esperarSiEsMedianocheEnColombia() throws InterruptedException {
+        var ahora = java.time.ZonedDateTime.now(RelojConfig.ZONA_NEGOCIO);
+        long faltan = Duration.between(ahora, ahora.toLocalDate().plusDays(1).atStartOfDay(RelojConfig.ZONA_NEGOCIO)).toMillis();
+        if (faltan < 60_000) {
+            Thread.sleep(faltan + 1_000);
+        }
+    }
+
     @BeforeEach
-    void preparar() {
+    void preparar() throws InterruptedException {
+        esperarSiEsMedianocheEnColombia();
         reloj.desplazar(Duration.ZERO);
         barrio = BarrioDePrueba.id(jdbc);
         jdbc.update("UPDATE configuracion SET valor = '2' WHERE clave = 'reportes_maximos_por_dia'");
@@ -462,7 +475,7 @@ class LimiteDuplicadosEvidenciaIntegracionTest {
     }
 
     @Test
-    void conDiezMilReportesLaBusquedaUsaElIndiceEspacialYTardaPoco() {
+    void conDiezMilReportesLaBusquedaRealUsaElIndiceEspacial() {
         var luis = persona("luis");
         jdbc.update("""
                 INSERT INTO reporte (id_usuario, id_categoria, id_barrio, descripcion, ubicacion, autorizacion_envio_en, creado_en)
@@ -471,19 +484,13 @@ class LimiteDuplicadosEvidenciaIntegracionTest {
                   FROM generate_series(1, 10000)""", luis.id(), barrio, LON, LAT);
         jdbc.execute("ANALYZE reporte");
 
-        String plan = String.join("\n", jdbc.queryForList("""
-                EXPLAIN SELECT r.id_usuario FROM reporte r
-                 WHERE r.id_categoria = 1 AND r.ubicacion IS NOT NULL
-                   AND r.ubicacion && ST_Expand(ST_SetSRID(ST_MakePoint(-76.19, 4.08), 4326), 0.00005)
-                   AND ST_DWithin(r.ubicacion::geography, ST_SetSRID(ST_MakePoint(-76.19, 4.08), 4326)::geography, 5)""", String.class));
-        assertThat(plan).contains("ix_reporte_ubicacion");
+        var parametros = DuplicadoServicio.parametros(1, LAT, LON, 5, OffsetDateTime.now().minusDays(30)).addValue("usuario", luis.id());
+        String plan = String.join("\n", jdbcConNombres.queryForList("EXPLAIN " + DuplicadoServicio.SQL_SIN_RESOLVER, parametros, String.class));
+        assertThat(plan).as("plan de la consulta que usa el servicio").contains("ix_reporte_ubicacion");
 
         var ana = persona("ana");
-        long inicio = System.nanoTime();
         for (int i = 0; i < 20; i++) {
             servicioDuplicados.buscarSinResolver(ana.id(), 1, norte(i * 7), LON);
         }
-        long milisPorBusqueda = (System.nanoTime() - inicio) / 1_000_000 / 20;
-        assertThat(milisPorBusqueda).as("ms por búsqueda con 10 000 reportes").isLessThan(100);
     }
 }

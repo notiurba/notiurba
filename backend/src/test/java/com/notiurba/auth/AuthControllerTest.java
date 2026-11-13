@@ -40,7 +40,7 @@ class AuthControllerTest {
 
     @BeforeEach
     void sinBloqueo() {
-        when(intentos.registrarFallo(any())).thenReturn(new IntentosLoginServicio.Fallo(null, 2));
+        when(intentos.reservar(any())).thenReturn(new IntentosLoginServicio.Reserva(null, 2));
     }
 
     private String login(String correo, String password) throws Exception {

@@ -146,6 +146,16 @@ class ParametrosIntegracionTest {
     }
 
     @Test
+    void losMensajesNombranLaCategoriaYConcuerdanEnNumero() throws Exception {
+        guardar(VALIDO.replace("\"metros\":6", "\"metros\":4"))
+                .andExpect(jsonPath("$.mensaje").value("La distancia de «Vías, huecos, andenes e infraestructura» debe estar entre 5 y 500 metros."));
+        guardar(VALIDO.replace("\"reportesMaximosPorDia\":3", "\"reportesMaximosPorDia\":0"))
+                .andExpect(jsonPath("$.mensaje").value("Los reportes por cuenta al día deben estar entre 1 y 50."));
+        guardar(VALIDO.replace("\"idCategoria\":11", "\"idCategoria\":6"))
+                .andExpect(jsonPath("$.mensaje").value("Esa categoría no se revisa por cercanía: no tiene distancia para reportes parecidos."));
+    }
+
+    @Test
     void sinLosDatosDeIngresoOFaltandoUnValorNoGuardaNada() throws Exception {
         guardar("{\"reportesMaximosPorDia\":3,\"duplicados\":{\"ventanaDias\":20}}")
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.campo").value("login"));

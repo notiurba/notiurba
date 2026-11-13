@@ -39,12 +39,12 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest peticion) {
         // Un correo bloqueado no entra ni con la contraseña correcta, exista o no la cuenta
-        intentos.verificarNoBloqueado(peticion.correo());
+        var reserva = intentos.reservar(peticion.correo());
         var usuario = usuarioRepository.findByCorreoIgnoreCase(peticion.correo())
                 // Una cuenta solo-Google (sin contraseña) recibe la misma respuesta que unas credenciales malas
                 .filter(u -> u.getPasswordHash() != null)
                 .filter(u -> passwordEncoder.matches(peticion.password(), u.getPasswordHash()))
-                .orElseThrow(() -> credencialesInvalidas(peticion.correo()));
+                .orElseThrow(() -> credencialesInvalidas(reserva));
         intentos.limpiar(peticion.correo());
 
         // Solo se dice después de acertar la contraseña, para no revelar qué cuentas existen
@@ -57,13 +57,12 @@ public class AuthController {
         return new LoginResponse(token, rol);
     }
 
-    /** Cuenta el fallo: si completa el máximo es 429 con la espera; si no, 401 con los intentos que quedan (igual para todos los correos). */
-    private ApiException credencialesInvalidas(String correo) {
-        var fallo = intentos.registrarFallo(correo);
-        if (fallo.bloqueado()) {
-            return intentos.bloqueo(fallo);
+    /** Si con este intento se llegó al máximo es 429 con la espera; si no, 401 con los intentos que quedan (igual para todos los correos). */
+    private ApiException credencialesInvalidas(IntentosLoginServicio.Reserva reserva) {
+        if (reserva.bloquea()) {
+            return intentos.bloqueo(reserva.bloqueadoHasta());
         }
         return new ApiException(HttpStatus.UNAUTHORIZED, Codigos.CREDENCIALES_INVALIDAS, Codigos.MSG_CREDENCIALES, null,
-                Map.of("intentosRestantes", fallo.restantes()));
+                Map.of("intentosRestantes", reserva.restantes()));
     }
 }
