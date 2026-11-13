@@ -79,6 +79,13 @@ Reglas del flujo:
   verdad es PostGIS en el backend, no el frontend.
 - No subas secretos (claves de Resend, Cloudinary, base de datos): van en
   variables de entorno.
+- **Botones de un solo clic:** todo botón o formulario que consulta o envía datos al servicio
+  (ingresar, enviar un reporte, guardar…) se bloquea desde el primer clic hasta que llega la
+  respuesta. Usa `useUnaVez` (`frontend/src/compartido/hooks/useUnaVez.js`):
+  `const guardarUnaVez = useUnaVez(guardar)` y conecta `guardarUnaVez`. Si falla, el botón vuelve
+  a habilitarse para reintentar. No hace falta en acciones locales (copiar, abrir una hoja, GPS).
+- **MVP sin sobreingeniería:** lo que no sea necesario para el MVP se anota en
+  `docs/contexto/08-pendientes.md` (y en el Google Doc) en vez de construirse.
 
 ## Stack fijado
 
