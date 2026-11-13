@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { unaVez } from './unaVez.js'
+import { ejecutarUnaVez } from './unaVez.js'
+
+// Igual que el hook: un candado que vive entre clics y la acción del momento.
+const unaVez = (obtenerAccion) => {
+  const candado = { current: false }
+  return (...args) => ejecutarUnaVez(candado, obtenerAccion(), args)
+}
 
 const esperar = () => {
   let soltar

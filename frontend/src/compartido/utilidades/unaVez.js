@@ -13,8 +13,3 @@ export async function ejecutarUnaVez(candado, accion, args) {
   }
 }
 
-// Versión sin React: `obtenerAccion` devuelve la función a ejecutar en ese momento.
-export function unaVez(obtenerAccion) {
-  const candado = { current: false }
-  return (...args) => ejecutarUnaVez(candado, obtenerAccion(), args)
-}

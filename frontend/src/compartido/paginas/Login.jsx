@@ -34,7 +34,6 @@ export default function Login() {
   const [aviso, setAviso] = useState(null)
   const [bloqueoHasta, setBloqueoHasta] = useState(null)
   const [enviando, setEnviando] = useState(false)
-  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
   const enviarUnaVez = useUnaVez(enviar)
   const navigate = useNavigate()
   const { state } = useLocation()
@@ -56,8 +55,8 @@ export default function Login() {
 
   async function enviar(evento) {
     evento.preventDefault()
-    // Enter mientras se espera la respuesta no manda otro intento (cada fallo cuenta para el bloqueo).
-    if (bloqueoHasta || enviando) return
+    // Durante el bloqueo no se intenta: el servicio respondería lo mismo.
+    if (bloqueoHasta) return
     enfocarPrimerError(evento.currentTarget)
     const encontrados = soloErrores({
       correo: validarCorreo(correo),

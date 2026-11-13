@@ -19,7 +19,6 @@ export default function HojaActualizarReporte({ reporte, alCerrar, alGuardar }) 
   const [tipo, setTipo] = useState('RESPUESTA')
   const [radicado, setRadicado] = useState('')
   const [guardando, setGuardando] = useState(false)
-  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
   const guardarUnaVez = useUnaVez(guardar)
   const [fallo, setFallo] = useState(false)
 

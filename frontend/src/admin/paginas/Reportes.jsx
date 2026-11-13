@@ -158,7 +158,6 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
   const [nuevo, setNuevo] = useState(reporte.estado)
   const [observacion, setObservacion] = useState('')
   const [guardando, setGuardando] = useState(false)
-  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
   const guardarUnaVez = useUnaVez(guardar)
   const [mensaje, setMensaje] = useState('')
   const [fallo, setFallo] = useState(false)

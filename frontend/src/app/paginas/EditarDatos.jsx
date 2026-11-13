@@ -44,7 +44,6 @@ function Formulario({ perfil, tipos, barrios }) {
   })
   const [errorGeneral, setErrorGeneral] = useState('')
   const [guardando, setGuardando] = useState(false)
-  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
   const guardarUnaVez = useUnaVez(guardar)
 
   async function guardar(evento) {

@@ -18,7 +18,6 @@ export default function VerificarCorreo() {
   const navigate = useNavigate()
   const retorno = estadoRetornoReporte(state?.siguiente)
   const [reenviando, setReenviando] = useState(false)
-  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
   const reenviarUnaVez = useUnaVez(reenviar)
   const [resultado, setResultado] = useState(null) // { tipo: 'exito' | 'error', texto }
   if (!state?.correo) return <Navigate to="/login" state={retorno} replace />

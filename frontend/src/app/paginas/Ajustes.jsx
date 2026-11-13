@@ -31,7 +31,6 @@ export default function Ajustes() {
   const { datos: perfil } = useCargar(obtenerPerfil)
   const [hoja, setHoja] = useState(null) // 'datos' | 'cuenta' | null
   const [trabajando, setTrabajando] = useState(false)
-  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
   const confirmarUnaVez = useUnaVez(confirmar)
   const [fallo, setFallo] = useState(false)
   const [mensaje, setMensaje] = useState(state?.mensaje ?? '')

@@ -19,7 +19,6 @@ export default function RecuperarContrasena() {
   const [correo, setCorreo] = useState('')
   const [error, setError] = useState('')
   const [enviando, setEnviando] = useState(false)
-  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
   const enviarUnaVez = useUnaVez(enviar)
   const [respuesta, setRespuesta] = useState('')
   const [fallo, setFallo] = useState(false)

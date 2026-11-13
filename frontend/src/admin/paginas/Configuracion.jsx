@@ -31,7 +31,6 @@ export default function Configuracion() {
   const [formulario, setFormulario] = useState(null)
   const [errores, setErrores] = useState({})
   const [guardando, setGuardando] = useState(false)
-  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
   const guardarUnaVez = useUnaVez(guardar)
   const [resultado, setResultado] = useState(null) // { variante, texto }
 

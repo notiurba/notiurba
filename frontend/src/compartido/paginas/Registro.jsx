@@ -42,7 +42,6 @@ export default function Registro() {
   const { datos, errores, setErrores, cambiar, errorDeCampo } = useFormulario(DATOS_INICIALES)
   const [errorGeneral, setErrorGeneral] = useState('')
   const [enviando, setEnviando] = useState(false)
-  // Un doble clic o un doble Enter no repite el envío mientras se espera la respuesta.
   const crearCuentaUnaVez = useUnaVez(crearCuenta)
   const tipos = useCargar(obtenerTiposDocumento)
   const barrios = useCargar(obtenerBarrios)
