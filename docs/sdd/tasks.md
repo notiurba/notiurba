@@ -8,7 +8,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) (aprobada el 2026-11-12, con el atajo de la opción A) |
 | Plan | [plan.md](plan.md) (aprobado el 2026-11-12) |
-| Estado general | **En curso**: Figma, backend y frontend hechos; faltan las pruebas funcionales y el cierre (T-19 a T-22) |
+| Estado general | **Hecha** (12 nov 2026): falta integrar el PR y desplegar V21 con respaldo en Neon |
 | Última actualización | 2026-11-12 |
 
 ## Cómo se usa
@@ -27,7 +27,7 @@
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-00 | Archivar NOT-129, spec y plan aprobados, endpoints PLANEADO en el contrato, estas tareas | Docs | — | revisión de Andrés | [~] |
+| T-00 | Archivar NOT-129, spec y plan aprobados, endpoints PLANEADO en el contrato, estas tareas | Docs | — | revisión de Andrés | [x] |
 
 ### Figma — sin PR; puerta: visto bueno de Andrés
 
@@ -71,33 +71,33 @@
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-19 | Script de punta a punta en `tools/` con el jar real y base desechable: crear reporte, vista previa y correo encolado | Pruebas | CA-01, CA-15 | el script en verde | [ ] |
-| T-20 | Prueba funcional manual: categorías 1, 6, 11, 12, 13 y 14; 360 px y 1366 px; en el atajo, la pestaña de red sin `POST /api/reportes`; correo de prueba abierto en Gmail del celular y del computador | Pruebas | CA-07, CA-09b, todos | guion con capturas | [ ] |
-| T-21 | Subagente `code-reviewer` sobre toda la rama; hallazgos corregidos con pruebas y antes/después | Pruebas | — | informe | [ ] |
-| T-22 | Cierre con la skill `cierre-de-historia`: `docs/contexto/04`, `05`, `07`, `10`, `11`, `12`; texto para draw.io, Sheet y Doc; Linear NOT-130 y aviso a Katherine; vault y memoria; archivo del SDD | Docs | — | lista de la skill completa | [ ] |
+| T-19 | Script de punta a punta en `tools/` con el jar real y base desechable: crear reporte, vista previa y correo encolado | Pruebas | CA-01, CA-15 | el script en verde | [x] `fcbeac8` (40 de 40) |
+| T-20 | Prueba funcional manual: categorías 1, 6, 11, 12, 13 y 14; 360 px y 1366 px; en el atajo, la pestaña de red sin `POST /api/reportes`; correo de prueba abierto en Gmail del celular y del computador | Pruebas | CA-07, CA-09b, todos | guion con capturas | [x] 12 nov: atajo, guardia y vista previa en el navegador (375 y 1366 px); 2 correos reales a la bandeja de pruebas vistos en Gmail de escritorio y su HTML a 360 px sin desborde. Falta la app de Gmail en un celular real |
+| T-21 | Subagente `code-reviewer` sobre toda la rama; hallazgos corregidos con pruebas y antes/después | Pruebas | — | informe | [x] revisión por grupo y de toda la rama; hallazgos corregidos (`a8fd573`, `6628d1a`, `84a8cc0`, `2e78f95`) |
+| T-22 | Cierre con la skill `cierre-de-historia`: `docs/contexto/04`, `05`, `07`, `10`, `11`, `12`; texto para draw.io, Sheet y Doc; Linear NOT-130 y aviso a Katherine; vault y memoria; archivo del SDD | Docs | — | lista de la skill completa | [x] docs, SDD archivado, texto para externos; Linear, vault y memoria en el cierre |
 
 ## Pruebas finales (Fase 5)
 
-- [ ] Todos los criterios CA-01 a CA-18 verificados (tabla de trazabilidad).
-- [ ] Backend: `mvn clean test` en verde (hoy 306 pruebas). Frontend: `pnpm test`, `pnpm lint` y `pnpm build` en verde.
-- [ ] Verificación manual en local (flujo completo, español, 360 px y 1366 px).
-- [ ] Documentos actualizados: `spec.md`, `plan.md`, `docs/contexto/` y los externos.
+- [x] Todos los criterios CA-01 a CA-18 verificados (tabla de trazabilidad).
+- [x] Backend: `mvn clean test` 361 pruebas, 0 fallos, 2 omitidas (antes 306). Frontend: 156 pruebas (antes 139), lint y build en verde.
+- [x] Verificación manual en local (flujo completo, español, 360 px y 1366 px).
+- [x] Documentos actualizados: `spec.md`, `plan.md`, `docs/contexto/`; texto para los externos en `texto-para-externos-NOT-130.md` (Andrés lo pega).
 
 ## Trazabilidad
 
 | Criterio | Tareas | Prueba | Resultado |
 | --- | --- | --- | --- |
-| CA-01 | T-09, T-10, T-19 | `PlantillaReporteTest`, `EnrutamientoIntegracionTest`, script | verde en backend (falta script) |
+| CA-01 | T-09, T-10, T-19 | `PlantillaReporteTest`, `EnrutamientoIntegracionTest`, script | verde (backend y script) |
 | CA-02 | T-08 | `GrupoPlantillaTest` | verde |
 | CA-03 a CA-06 | T-09 | `PlantillaReporteTest` | verde |
-| CA-07 | T-09, T-20 | `PlantillaReporteTest` + Gmail | texto plano verde; falta Gmail |
+| CA-07 | T-09, T-20 | `PlantillaReporteTest` + Gmail | verde; Gmail escritorio y 360 px (falta celular real) |
 | CA-08 | T-06, T-10 | `EnrutamientoIntegracionTest` | verde |
-| CA-09, CA-09b, CA-09c | T-02, T-07, T-14, T-15, T-20 | `EnrutamientoIntegracionTest`, `node --test`, manual | pendiente |
+| CA-09, CA-09b, CA-09c | T-02, T-07, T-14, T-15, T-20 | `EnrutamientoIntegracionTest`, `node --test`, manual | verde |
 | CA-10, CA-10b | T-06, T-07 | `CanalesRutaIntegracionTest`, `EnrutamientoIntegracionTest` | verde (12 nov) |
-| CA-11 | T-03, T-07, T-12, T-17 | `EnrutamientoIntegracionTest`, `VistaPreviaIntegracionTest`, manual | pendiente |
-| CA-12 | T-07, T-15 | `EnrutamientoIntegracionTest`, manual | pendiente |
-| CA-13, CA-14 | T-01, T-11, T-16 | `VistaPreviaIntegracionTest`, `node --test`, manual | pendiente |
-| CA-15 | T-13, T-19 | `VistaPreviaIntegracionTest`, script | verde en backend (falta script) |
+| CA-11 | T-03, T-07, T-12, T-17 | `EnrutamientoIntegracionTest`, `VistaPreviaIntegracionTest`, manual | verde |
+| CA-12 | T-07, T-15 | `EnrutamientoIntegracionTest`, manual | verde |
+| CA-13, CA-14 | T-01, T-11, T-16 | `VistaPreviaIntegracionTest`, `node --test`, manual | verde |
+| CA-15 | T-13, T-19 | `VistaPreviaIntegracionTest`, script | verde (backend y script) |
 | CA-16 | T-11 | `VistaPreviaIntegracionTest` | verde |
 | CA-17, CA-18 | T-05, T-06 | `CanalesMigracionIntegracionTest` | verde (12 nov) |
 
@@ -109,6 +109,7 @@
 | 2026-11-12 | Atajo para gas, energía y aseo (opción A); WhatsApp de Veolia verificado | spec.md, plan.md |
 | 2026-11-12 | Plan aprobado; endpoints PLANEADO en el contrato; tareas creadas | plan.md, tasks.md, `docs/contexto/11` |
 | 2026-11-12 | Grupo 1 hecho: V21 y `Ruta.canales` | tasks.md |
+| 2026-11-12 | Pruebas funcionales, revisión de toda la rama y cierre: backend 361, frontend 156, QA 40 de 40, correo real en Gmail | tasks.md, docs/contexto |
 | 2026-11-12 | Grupo 3 (frontend) hecho y revisado: atajo a canales, vista previa con estado de carga, «Copiar mi mensaje» compatible con iPhone. Frontend 156 pruebas, lint y build en verde | plan.md, tasks.md |
 | 2026-11-12 | Revisión del Grupo 2 corregida: emergencia de gas en un solo lugar; datos del ciudadano y grupo de plantilla sin duplicar; `GET /mensaje` con 400 por código mal escrito y mensaje ilegible que se vuelve a armar; ubicación y firma como el Anexo B; CA-15 precisada (fotos). Backend 360 pruebas, 0 fallos, 2 omitidas | spec.md, tasks.md |
 | 2026-11-12 | Grupo 2 hecho: carta formal, vista previa y `GET /mensaje`. Backend 352 pruebas, 0 fallos, 2 omitidas | tasks.md |
