@@ -13,8 +13,8 @@ Un ciudadano de Tuluá crea un reporte (categoría, descripción, foto y ubicaci
 - **Longitudes generosas**: es un servicio público con datos heterogéneos; las reglas estrictas viven en CHECK y en el backend, no en el tamaño de la columna (p. ej. la descripción mide 10 a 500 por CHECK).
 - **Comunas, no cuadrantes**: los cuadrantes de la Policía quedaron obsoletos por decisión aprobada.
 
-## 3. Tablas y por qué existen (26)
-**Catálogos (11)**: `rol` (CIUDADANO, ADMIN), `tipo_documento` (CC, CE, PPT, PAS; sin TI), `aviso_privacidad` (versionado: se guarda qué versión aceptó cada usuario), `tipo_token`, `tipo_entidad`, `tipo_dependencia`, `tipo_canal`, `estado_reporte` (con `orden`), `modo_envio`, `estado_envio`, `proveedor_identidad` (GOOGLE).
+## 3. Tablas y por qué existen (27)
+**Catálogos (12)**: `rol` (CIUDADANO, ADMIN), `tipo_documento` (CC, CE, PPT, PAS; sin TI), `aviso_privacidad` (versionado: se guarda qué versión aceptó cada usuario), `tipo_token`, `tipo_entidad`, `tipo_dependencia`, `tipo_canal`, `estado_reporte` (con `orden`), `modo_envio`, `estado_envio`, `proveedor_identidad` (GOOGLE), `finalidad_canal` (V21: Radicar PQR, Reportar daño, PQR anónimo, Consultar estado, Emergencia, Información).
 
 **Territorio**
 - `comuna`: id 1 a 10 con `geom` (MultiPolygon, EPSG:4326). El polígono llega después; mientras tanto la comuna se infiere por el barrio.
@@ -31,7 +31,7 @@ Un ciudadano de Tuluá crea un reporte (categoría, descripción, foto y ubicaci
 **Destinos (a quién llega un reporte)**
 - `entidad_destino`: Alcaldía de Tuluá y las empresas (Centroaguas, Gases de Occidente, Celsia, Veolia).
 - `dependencia`: secretarías, departamentos, oficinas, áreas o servicios públicos; pertenecen a una entidad y pueden tener padre (`id_dependencia_padre`).
-- `canal_atencion`: correo, web, teléfono, WhatsApp o presencial. Pertenece a **una entidad o a una dependencia** (nunca ambas ni ninguna).
+- `canal_atencion`: correo, web, teléfono, WhatsApp o presencial. Pertenece a **una entidad o a una dependencia** (nunca ambas ni ninguna). Desde V21 (NOT-130) también guarda para qué sirve (`id_finalidad_canal`), en qué `orden` se recomienda, su `horario`, de dónde sale el dato (`fuente`) y cuándo se verificó (`verificado_en`). Un canal que no sirve no se borra: queda `activo = FALSE` con el motivo en `detalle`. La API muestra los activos no-correo de la entidad en ese orden.
 - `categoria`: lo que el ciudadano elige; apunta a **una** dependencia. `descripcion` guarda los ejemplos que muestra la tarjeta de la app («Huecos, grietas, andenes rotos»); se editan en la base, la app no los tiene escritos (V7). Cadena: **categoría → dependencia → entidad**. Por eso un reporte tiene un solo destino.
 - Banderas `requiere_ubicacion` y `requiere_evidencia` en la categoría: el barrio y el GPS son opcionales según el tipo de incidente.
 

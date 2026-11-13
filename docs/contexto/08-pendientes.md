@@ -9,9 +9,10 @@ Lo que está en Linear lleva su clave `NOT-n`. Estado general: [12-estado-actual
 Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 
 - API y pantallas del mapa de reportes, del mapa de calor y de las estadísticas (NOT-129, 135, 136).
-- Correo claro: matrícula solo para empresas, fecha y coordenadas legibles, sin filas vacías,
-  fotos como miniaturas (NOT-130).
+- ~~Correo claro (NOT-130)~~: hecho el 12/11/2026 (carta formal, canales por entidad, vista previa).
+  Queda: verificar el WhatsApp de Gases de Occidente; decidir la categoría 15 (activa sin ruta).
 - Envío real a las entidades y aviso de rebotes; hoy todo sale a la bandeja de pruebas (NOT-131).
+  Incluye mostrar canales y «Copiar mi mensaje» en el detalle del reporte cuando llegue el rebote.
 - Registro rápido (~10 s hoy), diagnóstico del error de Google en celular, límite de intentos de
   login, límite diario y duplicados R.06 (NOT-132).
 - Despliegue final, respaldo de la base y administrador real (NOT-133).

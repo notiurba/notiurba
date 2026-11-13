@@ -123,6 +123,8 @@ Reglas del flujo:
 - Validación jurídica del aviso de privacidad v3 (ya es el vigente; puntos por validar en ADR-0008).
 - Valores del límite diario de reportes, intentos de login y distancia de duplicados (NOT-132).
 - Cuándo y con qué autorización se activa el envío real a las entidades (NOT-131).
+- La categoría 15 («Solicitud de información») está activa sin ruta de envío: desactivarla o enviarla al CAIC.
+- Verificar el WhatsApp de Gases de Occidente (315 665 8536) antes de activarlo (hoy inactivo).
 
 Ya decididas (no reabrir): categorías 8 y 9 y la consulta de la Ley 1581 están validadas por el equipo; el docente
 aceptó que los barrios (PMGR 2020, V17) y la capa de comunas (V14) queden provisionales (ADR-0003).

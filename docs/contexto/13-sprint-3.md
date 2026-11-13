@@ -19,7 +19,7 @@ NOT-137.
 | Linear | Historia | Pts |
 | --- | --- | --- |
 | NOT-129 | [EDT 8.3] API del mapa de reportes, del mapa de calor y de las estadísticas (Urgente) | 5 |
-| NOT-130 | [Mejora] Correo claro y completo en la entidad | 5 |
+| NOT-130 | [Mejora] Correo claro y completo en la entidad (hecho 12 nov; en PR) | 5 |
 | NOT-131 | [Mejora] Envío real a las entidades y marcar rebotes | 3 |
 | NOT-132 | [Mejora] Registro e ingreso rápidos y sin abusos | 5 |
 | NOT-133 | [EDT 10.3] Versión final desplegada y respaldo de datos | 3 |
