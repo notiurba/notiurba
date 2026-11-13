@@ -68,9 +68,11 @@ Orden de las sentencias: primero se quita lo principal de un canal y después se
 
 `paso` indica a qué pantalla vuelve «Editar»: `categoria`, `ubicacion` o `detalles`.
 
+*Ajuste al implementar (12 nov):* el rebote o fallo se muestra con canales y «Copiar mi mensaje» en `ReporteEnviado`. El rebote real llega más tarde por el webhook (NOT-131), cuando la persona ya salió de esa pantalla: mostrarlo también en el detalle del reporte (`/app/reportes/:codigo`) queda para NOT-131. `ConsultarReporte` y `ResultadoCorreo` (por defecto) no tienen ruta y no se tocaron.
+
 ### Frontend (`frontend/src/app/…`, zona del ciudadano)
 - `servicios/correoReportes.js`: `vistaPrevia(borrador)` y `mensaje(codigo)`.
-- `componentes/VistaPreviaMensaje.jsx` (nuevo): la tarjeta con «Editar» por sección, estados de carga y error; se usa en `reportar/PasoConfirmacion.jsx`.
+- `componentes/VistaPreviaMensaje.jsx` (nuevo): la tarjeta de solo lectura (asunto, mensaje, «Ver completo»), estados de carga y error; se usa en `reportar/PasoConfirmacion.jsx`. *Ajuste al implementar (12 nov):* «Editar» por sección son los enlaces «Cambiar» que ya tiene el resumen del paso 4, cada uno a su paso (categoría, ubicación, detalles), como se validó en Figma; `secciones` queda en la API para otros usos.
 - `componentes/ListaCanales.jsx` (nuevo): lista de canales con acción directa (teléfono `tel:`, web `https:` en otra pestaña, WhatsApp `https://wa.me/57…`, presencial como texto con horario). Se usa en el atajo y en el resultado del envío.
 - `reportar/PasoCanales.jsx` (nuevo, ruta `/reportar/canales` en `rutas.jsx`): la pantalla «Cómo reportar a {entidad}», con «Atrás» al paso 1.
 - `reportar/PasoCategoria.jsx`: al continuar, si la ruta de la categoría no permite correo, navega a `/reportar/canales` en vez de a `/reportar/ubicacion`; la pregunta de fuga de gas y la línea 164 se conservan. Un guardia en el contenedor `ReportarLayout` redirige a `/reportar/canales` si alguien llega directo a un paso 2 a 4 con una categoría sin correo.

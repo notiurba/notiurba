@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { presentacionCorreo, enlaceCanal, nombreCanal, accionCanal, ofrecerOtrosCanales, textoParaCopiar } from './estadoCorreo.js'
+import { presentacionCorreo, enlaceCanal, nombreCanal, accionCanal, ofrecerOtrosCanales, textoParaCopiar, copiarMensaje } from './estadoCorreo.js'
 
 test('guardar un reporte no equivale a correo enviado', () => {
   assert.equal(presentacionCorreo(null).etiqueta, 'Sin enviar')
@@ -62,4 +62,23 @@ test('solo con rebote o fallo se ofrecen los otros canales y «Copiar mi mensaje
 test('el mensaje copiado lleva el asunto y el texto, listo para pegar', () => {
   assert.equal(textoParaCopiar({ asunto: 'Petición ciudadana – Vías', texto: 'Respetados señores:\n\nYo, Ana…' }),
     'Asunto: Petición ciudadana – Vías\n\nRespetados señores:\n\nYo, Ana…')
+})
+test('copiar mi mensaje: con ClipboardItem, con writeText y, si falla, deja el texto para copiarlo a mano', async () => {
+  const obtener = async () => ({ asunto: 'A', texto: 'T' })
+  class Item { constructor(datos) { this.datos = datos } }
+  let copiado = ''
+  const conItem = { write: async ([item]) => { copiado = await (await item.datos['text/plain']).text() } }
+  assert.deepEqual(await copiarMensaje({ obtener, portapapeles: conItem, Item }), { copiado: true, texto: 'Asunto: A\n\nT' })
+  assert.equal(copiado, 'Asunto: A\n\nT')
+  const soloTexto = { writeText: async (t) => { copiado = t + '!' } }
+  assert.equal((await copiarMensaje({ obtener, portapapeles: soloTexto })).copiado, true)
+  assert.equal(copiado, 'Asunto: A\n\nT!')
+  const negado = { writeText: async () => { throw new Error('sin permiso') } }
+  assert.deepEqual(await copiarMensaje({ obtener, portapapeles: negado }), { copiado: false, texto: 'Asunto: A\n\nT' })
+  const sinMensaje = async () => { throw new Error('red') }
+  assert.deepEqual(await copiarMensaje({ obtener: sinMensaje, portapapeles: conItem, Item }), { copiado: false, texto: '' })
+})
+test('nombre y acción también entienden la ruta antigua ({ canal })', () => {
+  assert.equal(accionCanal({ canal: 'Teléfono', acceso: '164' }), 'Llamar al 164')
+  assert.equal(nombreCanal({ canal: 'Teléfono', acceso: '164' }), 'Teléfono')
 })

@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { enlaceCanal, ofrecerOtrosCanales, presentacionCorreo } from './estadoCorreo'
+import { enlaceCanal, presentacionCorreo } from './estadoCorreo'
 import ListaCanales from './ListaCanales'
-import OtrosCanales from './OtrosCanales'
 import iconoCorreo from '../../compartido/assets/correo/mail.svg'
 import iconoCerrar from '../../compartido/assets/correo/close.svg'
 import iconoCopiar from '../../compartido/assets/correo/copy.svg'
@@ -39,7 +38,6 @@ export default function ResultadoCorreo({ reporte, envio, onEnviar, ocupado }) {
       <div className={`correo-estado ${estado.clase}`} aria-live="polite"><strong>CORREO · {estado.etiqueta}</strong><h2>{estado.subtitulo}</h2><p>{envio?.rebote ? `El reporte conserva su estado «${reporte.estado}». La falla está registrada por separado.` : 'El reporte se conserva con su código de seguimiento. No necesitas registrarlo otra vez.'}</p></div>
       {(envio?.estado === 'SIN_SOLICITAR' || (envio?.estado === 'FALLIDO' && envio.reintentable && !envio.rebote)) && <button className="correo-secundario" disabled={ocupado} onClick={onEnviar}>{ocupado ? 'Solicitando…' : 'Reintentar envío'}</button>}
       {envio?.estado === 'NO_ENVIADO_CORREO' && <CanalOficial ruta={envio.ruta} />}
-      {ofrecerOtrosCanales(envio) && <OtrosCanales codigo={reporte.codigoSeguimiento} ruta={envio.ruta} />}
       <p className="correo-aviso correo-aviso-icono"><img src={iconoInfo} alt="" /><span>Este código es de NotiUrba, no el radicado de la entidad. Guárdelo para consultar el avance.</span></p>
     </div>
     <footer><Link className="correo-primario" to="/app/mis-reportes">Ver mis reportes</Link><Link className="correo-secundario" to="/app/crear-reporte">Hacer otro reporte</Link></footer>

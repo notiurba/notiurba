@@ -9,8 +9,10 @@ export function presentacionCorreo(envio) {
 }
 
 // Acepta un canal de la lista ({ tipo, acceso }) o la ruta antigua ({ canal, acceso }).
+const tipoCanal = (canal) => canal?.tipo ?? canal?.canal
+
 export function enlaceCanal(canal) {
-  const tipo = canal?.tipo ?? canal?.canal
+  const tipo = tipoCanal(canal)
   const acceso = String(canal?.acceso ?? '')
   if (tipo === 'WhatsApp') {
     if (!/^[+\d ()-]+$/.test(acceso)) return null
@@ -24,21 +26,22 @@ export function enlaceCanal(canal) {
 }
 
 export function nombreCanal(canal) {
-  if (canal?.tipo === 'Teléfono') {
+  const tipo = tipoCanal(canal)
+  if (tipo === 'Teléfono') {
     if (canal.finalidad === 'Emergencia') return 'Línea de emergencias'
     return /^01\s?8000/.test(canal.acceso ?? '') ? 'Línea gratuita' : 'Teléfono'
   }
-  if (canal?.tipo === 'Web') {
+  if (tipo === 'Web') {
     return { 'PQR anónimo': 'Formulario sin sus datos', 'Consultar estado': 'Consultar su trámite',
       'Información': 'Página de atención' }[canal.finalidad] ?? 'Formulario web'
   }
-  return { WhatsApp: 'WhatsApp', Presencial: 'Oficina en Tuluá', Correo: 'Correo' }[canal?.tipo] ?? canal?.tipo ?? 'Canal oficial'
+  return { WhatsApp: 'WhatsApp', Presencial: 'Oficina en Tuluá', Correo: 'Correo' }[tipo] ?? tipo ?? 'Canal oficial'
 }
 
 export function accionCanal(canal) {
   if (!enlaceCanal(canal)) return null
-  if (canal.tipo === 'WhatsApp') return 'Abrir WhatsApp'
-  if (canal.tipo === 'Teléfono') return `Llamar al ${canal.acceso}`
+  if (tipoCanal(canal) === 'WhatsApp') return 'Abrir WhatsApp'
+  if (tipoCanal(canal) === 'Teléfono') return `Llamar al ${canal.acceso}`
   return 'Abrir la página'
 }
 
@@ -46,3 +49,22 @@ export function accionCanal(canal) {
 export const ofrecerOtrosCanales = (envio) => Boolean(envio?.rebote || envio?.estado === 'FALLIDO')
 
 export const textoParaCopiar = (mensaje) => `Asunto: ${mensaje.asunto}\n\n${mensaje.texto}`
+
+// Safari solo copia dentro del toque: con ClipboardItem la copia empieza ya y espera el texto.
+// Si no se puede copiar, devuelve el texto para mostrarlo y que la persona lo copie a mano.
+export async function copiarMensaje({ obtener, portapapeles, Item }) {
+  let texto = ''
+  const traer = obtener().then((mensaje) => (texto = textoParaCopiar(mensaje)))
+  traer.catch(() => {})
+  try {
+    if (Item && portapapeles?.write) {
+      await portapapeles.write([new Item({ 'text/plain': traer.then((t) => new Blob([t], { type: 'text/plain' })) })])
+    } else {
+      await portapapeles.writeText(await traer)
+    }
+    return { copiado: true, texto }
+  } catch {
+    try { await traer } catch { return { copiado: false, texto: '' } }
+    return { copiado: false, texto }
+  }
+}

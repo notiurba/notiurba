@@ -1,18 +1,20 @@
 import { useState } from 'react'
 import Aviso from '../../compartido/componentes/avisos/Aviso'
+import { explicarErrorVistaPrevia } from '../reportar/vistaPrevia'
 import './VistaPreviaMensaje.css'
 
 // «Así llegará su mensaje»: solo lectura. Cada dato se cambia en su paso con «Cambiar» del resumen.
 export default function VistaPreviaMensaje({ previa, entidad }) {
   const [completo, setCompleto] = useState(false)
+  const error = previa.error && explicarErrorVistaPrevia(previa.error)
   return (
     <section className="vista-previa" aria-labelledby="vista-previa-titulo">
       <h3 id="vista-previa-titulo">Así llegará su mensaje</h3>
       {previa.cargando && <p role="status" className="vista-previa__estado">Preparando la vista previa…</p>}
-      {previa.error && (
+      {error && (
         <Aviso variante="error" titulo="No pudimos preparar la vista previa">
-          Su reporte se puede enviar igual.{' '}
-          <button type="button" className="enlace-boton" onClick={previa.recargar}>Reintentar</button>
+          {error.mensaje}
+          {error.reintentar && <>{' '}<button type="button" className="enlace-boton" onClick={previa.recargar}>Reintentar</button></>}
         </Aviso>
       )}
       {previa.datos && <>

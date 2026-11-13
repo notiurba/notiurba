@@ -48,7 +48,7 @@ const CORREO_SIN_VERIFICAR = 'sinverificar@correo.com'
 // Gas, energía y aseo no reciben correo (como en la API): con ellos se ve el atajo a los canales.
 const SIN_CORREO = [12, 13, 14]
 const CANALES_SIMULADOS = [
-  { tipo: 'WhatsApp', acceso: '300 000 0000', finalidad: 'Radicar PQR', horario: null,
+  { tipo: 'WhatsApp', acceso: '000 000 0000', finalidad: 'Radicar PQR', horario: null,
     detalle: 'Número de prueba: no pertenece a ninguna entidad' },
   { tipo: 'Teléfono', acceso: '01 8000 000 000', finalidad: 'Información', horario: 'Lunes a viernes, 8:00 a. m. a 4:00 p. m.', detalle: null },
   { tipo: 'Web', acceso: 'https://www.example.com/pqr', finalidad: 'Radicar PQR', horario: null, detalle: 'Formulario de prueba' },

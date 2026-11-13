@@ -19,7 +19,7 @@ export default function ListaCanales({ canales, recomendarPrimero = true }) {
         const Icono = ICONOS[canal.tipo] ?? IconoInfo
         const enlace = enlaceCanal(canal)
         return (
-          <li key={`${canal.tipo}-${canal.acceso}`} className="lista-canales__fila">
+          <li key={`${canal.tipo}-${canal.acceso}-${canal.finalidad}`} className="lista-canales__fila">
             <span className="lista-canales__icono" aria-hidden="true"><Icono tamano={20} /></span>
             <div className="lista-canales__textos">
               <strong>
@@ -31,7 +31,9 @@ export default function ListaCanales({ canales, recomendarPrimero = true }) {
               {canal.horario && <span>{canal.horario}</span>}
               {enlace
                 ? <a href={enlace} target={enlace.startsWith('https:') ? '_blank' : undefined} rel="noopener noreferrer"
-                    aria-label={`${accionCanal(canal)}: ${canal.acceso}`}>{textoAcceso(canal)}</a>
+                    aria-label={`${accionCanal(canal)}: ${nombreCanal(canal)}, ${textoAcceso(canal)}${enlace.startsWith('https:') ? ' (se abre en otra pestaña)' : ''}`}>
+                    {textoAcceso(canal)}
+                  </a>
                 : <span className="lista-canales__acceso">{canal.acceso}</span>}
             </div>
           </li>

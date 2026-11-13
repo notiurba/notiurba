@@ -8,7 +8,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) (aprobada el 2026-11-12, con el atajo de la opción A) |
 | Plan | [plan.md](plan.md) (aprobado el 2026-11-12) |
-| Estado general | **En curso**: Figma aprobado; Grupos 1 y 2 (backend) hechos; falta el frontend |
+| Estado general | **En curso**: Figma, backend y frontend hechos; faltan las pruebas funcionales y el cierre (T-19 a T-22) |
 | Última actualización | 2026-11-12 |
 
 ## Cómo se usa
@@ -61,11 +61,11 @@
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-14 | `enlaceCanal` con WhatsApp (`wa.me/57…`) y componente `ListaCanales` | Frontend | CA-09c | `estadoCorreo.test.mjs` | [ ] |
-| T-15 | Atajo: `PasoCategoria` decide el destino con `permiteCorreo`; `PasoCanales` en `/reportar/canales`; guardia en `ReportarLayout`; la pregunta de fuga de gas y la línea 164 se conservan | Frontend | CA-09, CA-09b, CA-12 | `node --test` de la decisión y del guardia + manual | [ ] |
-| T-16 | `VistaPreviaMensaje` en `PasoConfirmacion` (servicio `vistaPrevia`, «Editar» por sección, carga y error) | Frontend | CA-13, CA-14 | `node --test` del armado + manual | [ ] |
-| T-17 | `ResultadoCorreo`: `ListaCanales` y «Copiar mi mensaje» con rebote o fallo (servicio `mensaje`) | Frontend | CA-11 | manual + `estadoCorreo.test.mjs` | [ ] |
-| T-18 | Simulación (`VITE_USAR_MOCKS`): endpoints nuevos y `canales` en la ruta | Frontend | — | `simulacion.test.mjs` | [ ] |
+| T-14 | `enlaceCanal` con WhatsApp (`wa.me/57…`) y componente `ListaCanales` | Frontend | CA-09c | `estadoCorreo.test.mjs` | [x] `d6ef115` |
+| T-15 | Atajo: `PasoCategoria` decide el destino con `permiteCorreo`; `PasoCanales` en `/reportar/canales`; guardia en `ReportarLayout`; la pregunta de fuga de gas y la línea 164 se conservan | Frontend | CA-09, CA-09b, CA-12 | `node --test` de la decisión y del guardia + manual | [x] `7f2c506` |
+| T-16 | `VistaPreviaMensaje` en `PasoConfirmacion` (servicio `vistaPrevia`, «Editar» por sección, carga y error) | Frontend | CA-13, CA-14 | `node --test` del armado + manual | [x] `27322d3` («Editar» = «Cambiar» del resumen) |
+| T-17 | `ResultadoCorreo`: `ListaCanales` y «Copiar mi mensaje» con rebote o fallo (servicio `mensaje`) | Frontend | CA-11 | manual + `estadoCorreo.test.mjs` | [x] `d6ef115` (detalle del reporte: NOT-131) |
+| T-18 | Simulación (`VITE_USAR_MOCKS`): endpoints nuevos y `canales` en la ruta | Frontend | — | `simulacion.test.mjs` | [x] `bd1aa56` |
 
 ### Pruebas funcionales y cierre (Fase 5)
 
@@ -109,6 +109,7 @@
 | 2026-11-12 | Atajo para gas, energía y aseo (opción A); WhatsApp de Veolia verificado | spec.md, plan.md |
 | 2026-11-12 | Plan aprobado; endpoints PLANEADO en el contrato; tareas creadas | plan.md, tasks.md, `docs/contexto/11` |
 | 2026-11-12 | Grupo 1 hecho: V21 y `Ruta.canales` | tasks.md |
+| 2026-11-12 | Grupo 3 (frontend) hecho y revisado: atajo a canales, vista previa con estado de carga, «Copiar mi mensaje» compatible con iPhone. Frontend 156 pruebas, lint y build en verde | plan.md, tasks.md |
 | 2026-11-12 | Revisión del Grupo 2 corregida: emergencia de gas en un solo lugar; datos del ciudadano y grupo de plantilla sin duplicar; `GET /mensaje` con 400 por código mal escrito y mensaje ilegible que se vuelve a armar; ubicación y firma como el Anexo B; CA-15 precisada (fotos). Backend 360 pruebas, 0 fallos, 2 omitidas | spec.md, tasks.md |
 | 2026-11-12 | Grupo 2 hecho: carta formal, vista previa y `GET /mensaje`. Backend 352 pruebas, 0 fallos, 2 omitidas | tasks.md |
 | 2026-11-12 | Revisión del Grupo 1 corregida: canal alterno de gas y aseo = el recomendado; error honesto si el canal se cerró; prueba del envío a Centroaguas. Backend 313 pruebas, 0 fallos, 2 omitidas (proveedores reales) | tasks.md |
