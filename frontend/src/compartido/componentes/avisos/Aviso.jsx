@@ -13,12 +13,13 @@ const ICONOS = {
 //  - variante: 'error' (rojo), 'alerta' (ámbar), 'info' (azul), 'exito' (verde)
 //    o 'nota' (escudo gris, sin caja).
 //  - titulo: línea en negrita opcional; el resto va en `children`.
-// Los errores se anuncian al lector de pantalla enseguida (role="alert"); el resto, con calma.
-export default function Aviso({ variante = 'info', titulo, children }) {
+// Los errores se anuncian al lector de pantalla enseguida (role="alert"); el resto, con calma,
+// salvo que se pida `urgente` (por ejemplo, un ámbar que impide seguir).
+export default function Aviso({ variante = 'info', titulo, urgente = false, children }) {
   const Icono = ICONOS[variante]
 
   return (
-    <div className={`aviso aviso--${variante}`} role={variante === 'error' ? 'alert' : 'status'}>
+    <div className={`aviso aviso--${variante}`} role={variante === 'error' || urgente ? 'alert' : 'status'}>
       <span className="aviso__icono">
         <Icono tamano={variante === 'nota' ? 18 : 22} />
       </span>

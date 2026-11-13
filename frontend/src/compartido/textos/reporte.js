@@ -1,4 +1,5 @@
 // Textos de los avisos al crear un reporte. Voz de la app: «usted», sin palabras técnicas.
+import { MAX_DESCRIPCION, MIN_DESCRIPCION } from '../validaciones/reporte.js'
 
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
 
@@ -16,7 +17,7 @@ export const TEXTOS_DESCRIPCION = {
   guia:
     'Aquí explicará el problema: qué está pasando, desde cuándo y a quién afecta. Ejemplo: Hay un hueco grande en la calle desde hace dos semanas y las motos frenan de golpe para esquivarlo.',
   reglas:
-    'Entre 10 y 500 caracteres. No hace falta repetir la dirección: ya marcó el lugar. No escriba datos de otras personas. Un resumen de lo que escriba, sin su nombre, puede mostrarse a otras personas que reporten lo mismo.',
+    `Entre ${MIN_DESCRIPCION} y ${MAX_DESCRIPCION} caracteres. No hace falta repetir la dirección: ya marcó el lugar. No escriba datos de otras personas. Un resumen de lo que escriba, sin su nombre, puede mostrarse a otras personas que reporten lo mismo.`,
 }
 
 export const TEXTOS_FOTO = {

@@ -58,11 +58,10 @@ export function formatoCuenta(segundos) {
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`
 }
 
-// Momento (en milisegundos) en que termina el bloqueo, o null si el error no lo dice bien.
+// Momento (en milisegundos, reloj del equipo) en que termina el bloqueo, o null si el error no lo dice.
+// Se cuenta con los segundos de espera y no con la hora del servicio: el reloj del celular puede estar
+// corrido y la cuenta regresiva no debe depender de eso. La hora del servicio solo se usa en el texto.
 export function finDelBloqueo(datos, ahora = Date.now()) {
-  const hasta = new Date(datos?.bloqueadoHasta).getTime()
-  if (Number.isFinite(hasta) && hasta > ahora) return hasta
   const espera = Number(datos?.esperarSegundos)
-  if (Number.isFinite(espera) && espera > 0) return ahora + espera * 1000
-  return null
+  return Number.isFinite(espera) && espera > 0 ? ahora + espera * 1000 : null
 }

@@ -118,12 +118,13 @@ test('la cuenta regresiva se muestra en minutos y segundos y nunca baja de cero'
   assert.equal(formatoCuenta(-3), '0:00')
 })
 
-test('el fin del bloqueo sale de la hora del servicio o, si falta, de los segundos de espera', async () => {
+test('el fin del bloqueo se cuenta con los segundos de espera, no con el reloj del celular', async () => {
   const { finDelBloqueo } = await import('../textos/ingreso.js')
   const ahora = Date.parse('2026-11-13T20:40:00Z')
-  assert.equal(finDelBloqueo({ bloqueadoHasta: '2026-11-13T20:42:00Z', esperarSegundos: 999 }, ahora), Date.parse('2026-11-13T20:42:00Z'))
+  // Aunque la hora del servicio diga otra cosa (reloj del equipo corrido), cuentan los segundos.
+  assert.equal(finDelBloqueo({ bloqueadoHasta: '2026-11-13T20:50:00Z', esperarSegundos: 300 }, ahora), ahora + 300000)
   assert.equal(finDelBloqueo({ esperarSegundos: 30 }, ahora), ahora + 30000)
-  assert.equal(finDelBloqueo({ bloqueadoHasta: '2026-11-13T20:00:00Z', esperarSegundos: 30 }, ahora), ahora + 30000)
-  assert.equal(finDelBloqueo({ bloqueadoHasta: 'basura' }, ahora), null)
+  assert.equal(finDelBloqueo({ bloqueadoHasta: '2026-11-13T20:42:00Z' }, ahora), null)
+  assert.equal(finDelBloqueo({ esperarSegundos: 0 }, ahora), null)
   assert.equal(finDelBloqueo(null, ahora), null)
 })

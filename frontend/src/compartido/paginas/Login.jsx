@@ -129,7 +129,7 @@ export default function Login() {
 
         <Separador texto="O ingrese con" />
 
-        <BotonGoogle />
+        <BotonGoogle alFallar={setAviso} />
 
         <PieAuth texto="¿Aún no tiene cuenta?" enlace="Regístrese" to="/registro" state={retorno} />
       </form>

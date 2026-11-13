@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { aFormulario, aSolicitud, validarLimites } from './limites.js'
+import { aFormulario, aSolicitud, explicarFalloGuardado, validarLimites } from './limites.js'
 
 const delServicio = {
   login: { intentosMaximos: 3, ventanaMinutos: 5, bloqueoMinutos: 5 },
@@ -39,4 +39,19 @@ test('vacío, decimales o letras piden un número entero', () => {
       'Escriba un número entero.', JSON.stringify(valor))
   }
   assert.deepEqual(validarLimites({ ...aFormulario(delServicio), reportesMaximosPorDia: ' 7 ' }), {})
+})
+
+test('un rechazo del servicio se marca en su campo, o se explica arriba si el campo no está en pantalla', () => {
+  const f = aFormulario(delServicio)
+  const enCampo = explicarFalloGuardado({ estado: 400, campo: 'categorias.12.metros', mensaje: 'La distancia de «Gas natural» debe estar entre 5 y 500 metros.' }, f)
+  assert.deepEqual(enCampo.errores, { 'categorias.12.metros': 'La distancia de «Gas natural» debe estar entre 5 y 500 metros.' })
+  assert.match(enCampo.aviso, /Revise los valores marcados/)
+
+  const fuera = explicarFalloGuardado({ estado: 400, campo: 'categorias', mensaje: 'Esa categoría no se revisa por cercanía.' }, f)
+  assert.deepEqual(fuera.errores, {})
+  assert.equal(fuera.aviso, 'Esa categoría no se revisa por cercanía. No se guardó ningún cambio.')
+
+  const caido = explicarFalloGuardado({ estado: 0, codigo: 'SIN_CONEXION' }, f)
+  assert.deepEqual(caido.errores, {})
+  assert.match(caido.aviso, /No pudimos guardar los cambios/)
 })

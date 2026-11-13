@@ -52,7 +52,7 @@ No copiar sus IDs a la base ni reasignar borradores por coincidencia numérica.
 
 | Pantalla | Endpoint | Estado | Envía | Recibe | Archivos |
 |---|---|---|---|---|---|
-| Login | `POST /api/auth/login` | EXISTE | `correo`, `password` | `{ token, rol }` · 401 si no coinciden. **Propuesto:** el 401 trae `campo` (`correo` o `password`) para mostrar el error bajo la casilla | `datos/auth/login.ok.*.json`, `datos/auth/login.error.*.json` |
+| Login | `POST /api/auth/login` | EXISTE | `correo`, `password` | `{ token, rol }` · 401 `CREDENCIALES_INVALIDAS` con `datos.intentosRestantes` (no dice cuál dato falló) · 403 sin confirmar · 429 `INTENTOS_EXCEDIDOS` | `datos/auth/login.ok.*.json`, `datos/auth/login.error.correo-no-verificado.json`; el 401 y el 429 los arma `index.js` |
 | Registro | `POST /api/auth/registro` | PROPUESTO | `nombres`, `apellidos`, `idTipoDocumento`, `numeroDocumento`, `idBarrio`, `direccionCorrespondencia`, `correo`, `telefono?`, `password`, `aceptaPrivacidad` | mensaje de éxito · error con `campo` | `datos/auth/registro.*.json` |
 | Verificar correo | por definir | PROPUESTO | — | el prototipo muestra «Abrir mi correo» y «Reenviar enlace» | — |
 | Completar perfil (Google) | `POST /api/auth/google/completar` | EXISTE (campos por confirmar) | `nombres`, `apellidos`, `idTipoDocumento`, `numeroDocumento`, `telefono?`, `idBarrio`, `direccionCorrespondencia`, `aceptaPrivacidad` | sesión `{ token, rol }` | `datos/auth/google.completar-perfil.solicitud.json` |

@@ -33,6 +33,7 @@ test('el bloqueo dice hasta qué hora y ofrece restablecer la contraseña', () =
   assert.match(html, /3:42 p\. m\./)
   assert.match(html, /href="\/recuperar"[^>]*>Restablecer mi contraseña</)
   assert.match(html, /aviso--alerta/)
+  assert.match(html, /role="alert"/, 'el bloqueo impide seguir: se anuncia enseguida')
 })
 
 test('correo sin confirmar ofrece reenviar el enlace', () => {
@@ -57,6 +58,7 @@ test('un fallo del servicio no muestra el texto técnico que trae', () => {
 test('mientras dura el bloqueo el botón está apagado y muestra la cuenta regresiva', () => {
   const html = pintar(React.createElement(BotonEsperando, { fin: Date.now() + 272_000, alTerminar: () => {} }))
   assert.match(html, /disabled=""/)
-  assert.match(html, /Podrá intentarlo en 4:3[12]/)
+  // Tolera una máquina lenta: solo importa que muestre minutos y segundos de una espera de unos 4 minutos.
+  assert.match(html, /Podrá intentarlo en 4:\d\d/)
   assert.match(html, /type="submit"/)
 })

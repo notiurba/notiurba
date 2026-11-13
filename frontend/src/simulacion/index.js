@@ -31,9 +31,7 @@ function crearErrorApi(estado, cuerpo = {}, ruta = '') {
 }
 
 // Límites contra el abuso, simulados igual que el servicio: 3 fallos de login bloquean ese correo 5 minutos.
-const INTENTOS_MAXIMOS = 3
 const fallosLogin = new Map()
-const BLOQUEO_MS = 5 * 60 * 1000
 const CORREO_BLOQUEADO = 'bloqueado@correo.com'
 
 // Valores iniciales de la migración V22 (contrato 5.5).
@@ -54,15 +52,16 @@ function bloqueoLogin(hasta, ruta) {
 }
 
 function contarFallo(correo, ruta) {
+  const { intentosMaximos, bloqueoMinutos } = limitesSimulados.login
   const fallos = (fallosLogin.get(correo)?.fallos ?? 0) + 1
-  if (fallos >= INTENTOS_MAXIMOS) {
-    const hasta = Date.now() + BLOQUEO_MS
+  if (fallos >= intentosMaximos) {
+    const hasta = Date.now() + bloqueoMinutos * 60_000
     fallosLogin.set(correo, { fallos: 0, hasta })
     return bloqueoLogin(hasta, ruta)
   }
   fallosLogin.set(correo, { fallos, hasta: null })
   return crearErrorApi(401, { codigo: 'CREDENCIALES_INVALIDAS', mensaje: 'Correo o contraseña incorrectos.',
-    datos: { intentosRestantes: INTENTOS_MAXIMOS - fallos } }, ruta)
+    datos: { intentosRestantes: intentosMaximos - fallos } }, ruta)
 }
 
 // Palabras en la descripción que provocan los avisos nuevos al crear un reporte (ver README).
@@ -144,7 +143,7 @@ const RUTAS = [
 
   ['POST', '/api/auth/login', (cuerpo, _p, ruta) => {
     const correo = (cuerpo.correo ?? '').trim().toLowerCase()
-    if (correo === CORREO_BLOQUEADO) throw bloqueoLogin(Date.now() + BLOQUEO_MS, ruta)
+    if (correo === CORREO_BLOQUEADO) throw bloqueoLogin(Date.now() + limitesSimulados.login.bloqueoMinutos * 60_000, ruta)
     const hasta = fallosLogin.get(correo)?.hasta
     if (hasta && hasta > Date.now()) throw bloqueoLogin(hasta, ruta)
     if (correo === CORREO_SIN_VERIFICAR && cuerpo.password === PASSWORD_PRUEBA) {
@@ -205,8 +204,9 @@ const RUTAS = [
       throw crearErrorApi(400, { mensaje: 'Debes autorizar el envío del reporte.', campo: 'autorizaEnvio' }, ruta)
     }
     if (pide(cuerpo, 'límite') || pide(cuerpo, 'limite')) {
-      throw crearErrorApi(429, { codigo: 'LIMITE_DIARIO_REPORTES', mensaje: 'Hoy ya enviaste 2 reportes.',
-        datos: { maximo: 2, vuelveEn: hoyMenos(-1) + 'T00:00-05:00' } }, ruta)
+      const maximo = limitesSimulados.reportesMaximosPorDia
+      throw crearErrorApi(429, { codigo: 'LIMITE_DIARIO_REPORTES', mensaje: 'Hoy ya enviaste el máximo de reportes.',
+        datos: { maximo, vuelveEn: hoyMenos(-1) + 'T00:00-05:00' } }, ruta)
     }
     if (pide(cuerpo, 'parecido') && cuerpo.confirmarDuplicado !== true) {
       const propio = pide(cuerpo, 'parecido mío')

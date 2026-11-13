@@ -4,7 +4,7 @@ import Boton from '../../compartido/componentes/Boton'
 import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
 import useCargar from '../../compartido/hooks/useCargar'
 import { consultarLimites, guardarLimites } from '../servicios/limitesService'
-import { aFormulario, aSolicitud, validarLimites } from './limites'
+import { aFormulario, aSolicitud, explicarFalloGuardado, validarLimites } from './limites'
 import './Configuracion.css'
 
 function CampoNumero({ id, etiqueta, ayuda, unidad, valor, error, alCambiar, deshabilitado }) {
@@ -68,11 +68,9 @@ export default function Configuracion() {
       setFormulario(aFormulario(guardados))
       setResultado({ variante: 'exito', texto: 'Cambios guardados. Aplican desde ya para los nuevos ingresos y reportes.' })
     } catch (fallo) {
-      // Un 400 del servicio dice qué campo no aceptó; lo demás es un problema de conexión o del servicio.
-      if (fallo.estado === 400 && fallo.campo) setErrores({ [fallo.campo]: fallo.mensaje })
-      setResultado({ variante: 'error', texto: fallo.estado === 400
-        ? 'Revise los valores marcados. No se guardó ningún cambio.'
-        : 'No pudimos guardar los cambios. Revise su conexión e inténtelo de nuevo.' })
+      const explicado = explicarFalloGuardado(fallo, f)
+      setErrores(explicado.errores)
+      setResultado({ variante: 'error', texto: explicado.aviso })
     } finally {
       setGuardando(false)
     }

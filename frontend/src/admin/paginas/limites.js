@@ -54,3 +54,19 @@ export function aSolicitud(f) {
     },
   }
 }
+
+// Un fallo al guardar → { errores, aviso }. Si el servicio señala un campo que está en pantalla, se marca
+// ahí; si señala otro (por ejemplo, una categoría que ya no existe), su mensaje va en el aviso general.
+export function explicarFalloGuardado(fallo, formulario) {
+  if (fallo?.estado !== 400) {
+    return { errores: {}, aviso: 'No pudimos guardar los cambios. Revise su conexión e inténtelo de nuevo.' }
+  }
+  const enPantalla = new Set([
+    'intentosMaximos', 'ventanaMinutos', 'bloqueoMinutos', 'reportesMaximosPorDia', 'ventanaDias',
+    ...formulario.categorias.map((c) => `categorias.${c.idCategoria}.metros`),
+  ])
+  if (fallo.campo && enPantalla.has(fallo.campo)) {
+    return { errores: { [fallo.campo]: fallo.mensaje }, aviso: 'Revise los valores marcados. No se guardó ningún cambio.' }
+  }
+  return { errores: {}, aviso: `${fallo.mensaje ?? 'Algún valor no es válido.'} No se guardó ningún cambio.` }
+}

@@ -34,19 +34,25 @@ function cargarScriptGoogle() {
   })
 }
 
-function BotonGoogleReal() {
+function BotonGoogleReal({ alFallar }) {
   const navigate = useNavigate()
   const { state } = useLocation()
   const siguiente = estadoRetornoReporte(state?.siguiente ?? null)?.siguiente
   const contenedor = useRef(null)
   const [error, setError] = useState(null)
+  // La función de la pantalla puede cambiar en cada render: se guarda aparte para no recargar el botón de Google.
+  const alFallarActual = useRef(alFallar)
+  useEffect(() => {
+    alFallarActual.current = alFallar
+  }, [alFallar])
 
   useEffect(() => {
     let activo = true
+    const avisar = (aviso) => (alFallarActual.current ? alFallarActual.current(aviso) : setError(aviso))
 
     // Google devuelve el credential; la API responde la sesión o «PERFIL_INCOMPLETO» (cuenta nueva).
     async function alRecibirCredencial({ credential }) {
-      setError(null)
+      avisar(null)
       try {
         const respuesta = await iniciarSesionConGoogle(credential)
         if (respuesta.estado === 'PERFIL_INCOMPLETO') {
@@ -56,7 +62,7 @@ function BotonGoogleReal() {
         guardarToken(respuesta.token)
         navigate(destinoTrasAutenticacion(respuesta.rol, siguiente ?? null), { replace: true })
       } catch (fallo) {
-        setError(avisoDeGoogle(fallo))
+        avisar(avisoDeGoogle(fallo))
       }
     }
 
@@ -72,7 +78,7 @@ function BotonGoogleReal() {
           width: Math.min(400, contenedor.current.offsetWidth || 320),
         })
       })
-      .catch(() => activo && setError({ titulo: TITULOS_INGRESO.google, mensaje: TEXTOS_INGRESO.googleNoCargo }))
+      .catch(() => activo && avisar({ titulo: TITULOS_INGRESO.google, mensaje: TEXTOS_INGRESO.googleNoCargo }))
 
     return () => {
       activo = false
@@ -91,9 +97,10 @@ function BotonGoogleReal() {
   )
 }
 
-export default function BotonGoogle() {
+// alFallar: si la pantalla tiene su propia zona de aviso (el ingreso), el error de Google va allí.
+export default function BotonGoogle({ alFallar }) {
   const { state } = useLocation()
-  if (!SIMULANDO && ID_CLIENTE) return <BotonGoogleReal />
+  if (!SIMULANDO && ID_CLIENTE) return <BotonGoogleReal alFallar={alFallar} />
 
   const propiedades = SIMULANDO
     ? { to: '/completar-perfil', state: { correo: 'nombre@gmail.com', ...estadoRetornoReporte(state?.siguiente ?? null) } }

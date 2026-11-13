@@ -40,6 +40,18 @@ export function borrarBorrador() {
   }
 }
 
+// Aplica un cambio parcial al borrador. Otra categoría reinicia lo que depende de ella; otro lugar
+// reinicia la foto obligatoria (la vista previa vuelve a decir si hace falta).
+export function aplicarCambio(anterior, parcial) {
+  if (parcial.idCategoria !== undefined && parcial.idCategoria !== anterior.idCategoria) {
+    return { ...anterior, ...parcial, matricula: '', emergencia: false, fotoObligatoria: false,
+      latitud: null, longitud: null, idBarrio: '', direccion: '' }
+  }
+  const otroLugar = (parcial.latitud !== undefined && parcial.latitud !== anterior.latitud)
+    || (parcial.longitud !== undefined && parcial.longitud !== anterior.longitud)
+  return { ...anterior, ...(otroLugar ? { fotoObligatoria: false } : {}), ...parcial }
+}
+
 // ¿La persona ya escribió o eligió algo? Decide si al salir se pide confirmación.
 export const tieneContenido = (borrador, cantidadFotos) =>
   Boolean(borrador.idCategoria || borrador.descripcion || cantidadFotos > 0)

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import * as api from '../servicios/correoReportes'
 import { claveRuta, rutaActual, guardarConEvidencias } from '../servicios/recuperacionReporte'
@@ -19,6 +19,7 @@ import { armarSolicitudReporte, armarVistaPrevia, validarConfirmacionReporte, va
 import { TEXTOS_FOTO_NECESARIA, textoDuplicado, textoLimiteDiario } from '../../compartido/textos/reporte'
 import { reducirFoto } from '../../compartido/utilidades/fotos'
 import { esEmergencia } from './catalogo'
+import { decidirFalloEnvio } from './falloEnvio'
 import { useReporte } from './useReporte'
 import useVistaPrevia from './useVistaPrevia'
 import './Reportar.css'
@@ -65,6 +66,11 @@ export default function PasoConfirmacion() {
   const archivosListos = !guardado || fotos.length === faltanFotos
   // En este lugar se repite un problema ya resuelto: sin una foto no se puede enviar.
   const faltaFoto = !guardado && fotos.length === 0 && (previa.datos?.requiereEvidencia === true || borrador.fotoObligatoria)
+  const pideEvidencia = previa.datos?.requiereEvidencia === true
+  // El paso 3 debe decir «(obligatoria)» aunque la persona vuelva por «Cambiar» y no por «Agregar foto».
+  useEffect(() => {
+    if (pideEvidencia && !borrador.fotoObligatoria) cambiar({ fotoObligatoria: true })
+  }, [pideEvidencia, borrador.fotoObligatoria, cambiar])
 
   if (!guardado) {
     if (!borrador.idCategoria) return <Navigate to="/reportar" replace />
@@ -131,7 +137,13 @@ export default function PasoConfirmacion() {
   }
 
   async function enviar(confirmarDuplicado = false) {
-    if (ocupado.current || preparando || !comprobar()) return
+    if (ocupado.current || preparando) return
+    if (!comprobar()) {
+      // Si la hoja tapa el motivo (por ejemplo, hace falta una foto), se cierra para que se vea.
+      setHoja(false)
+      setParecido(null)
+      return
+    }
     ocupado.current = true
     setEnviando(true)
     setError('')
@@ -153,17 +165,12 @@ export default function PasoConfirmacion() {
       })
       navigate('/reportar/enviado/' + resultado.codigoSeguimiento, { replace: true, state: { envio: resultado.envio } })
     } catch (e) {
+      const decision = decidirFalloEnvio(e, avance)
       setHoja(false)
-      setParecido(null)
-      // Aún no se guardó nada: lo escrito sigue aquí y la persona decide qué hacer.
-      if (!avance && e.codigo === 'POSIBLE_DUPLICADO') { setParecido(e.datos ?? {}); return }
-      if (!avance && e.codigo === 'LIMITE_DIARIO_REPORTES') { setLimite(e.datos ?? {}); return }
-      if (!avance && e.codigo === 'EVIDENCIA_REQUERIDA') { cambiar({ fotoObligatoria: true }); return }
-      setError(e.codigo === 'FUERA_DE_COBERTURA'
-        ? 'El punto está fuera de la cobertura disponible. Vuelva al paso de ubicación y elija otro lugar.'
-        : avance
-          ? 'Su reporte está guardado. No se completaron las fotos o la solicitud de envío. Reintente sobre este mismo código.'
-          : e.mensaje ?? 'No pudimos guardar su reporte. Sus datos siguen aquí; revise su conexión e inténtelo de nuevo.')
+      setParecido(decision.parecido)
+      setLimite(decision.limite)
+      if (decision.fotoObligatoria) cambiar({ fotoObligatoria: true })
+      setError(decision.error)
     } finally { ocupado.current = false; setEnviando(false) }
   }
 
