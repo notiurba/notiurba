@@ -29,7 +29,9 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
   eliminar mis datos y eliminar mi cuenta (también borra las fotos de Cloudinary).
 - Crear reporte en 4 pasos: categoría, ubicación (GPS o tocando el mapa; opcional para
   Vivienda), detalles con hasta 3 fotos y confirmación con el código `NU-000001`.
-  El paso 2 se muestra siempre. 14 categorías (10 de Alcaldía + 4 de empresas).
+  El paso 2 se muestra siempre. 14 categorías (10 de Alcaldía + 4 de empresas). Gas, energía y aseo
+  no reciben correo: tras el paso 1 van a «Cómo reportar a {entidad}» con sus canales oficiales y no se
+  crea reporte (NOT-130). El paso 4 muestra la vista previa del mensaje («Así llegará su mensaje»).
 - Asignación de comuna en PostGIS (`fn_asignar_comuna`): contiene, solape (menor número),
   hueco cercano (hasta 50 m) y `FUERA_DE_COBERTURA` (422).
 - «Mis reportes», detalle, «Actualizar mi reporte» (nota en el historial; no cambia el
@@ -41,7 +43,10 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
   (`/api/admin/mapa`, `/mapa/calor`, `/estadisticas`; contrato §5.2 a §5.4).
 - Envío por correo: cola persistente con reintentos y enrutamiento por categoría
   (`EnvioReporteServicio`, `EnrutamientoServicio`, `PlantillaReporte`). Está **apagado por
-  defecto** y en producción todo sale a la bandeja de pruebas (ver §5).
+  defecto** y en producción todo sale a la bandeja de pruebas (ver §5). Desde NOT-130 el correo es
+  una carta formal en primera persona (plantillas A, B y C, sin «NotiUrba» ni código) y solo se envía
+  al CAIC y a Centroaguas (`info@`). Si rebota o falla, la pantalla final ofrece los canales y «Copiar
+  mi mensaje». Probado el 12/11/2026 con correos reales a la bandeja de pruebas (Gmail, 360 px y escritorio).
 - Catálogos públicos: tipos de documento y 133 barrios históricos (PMGR 2020).
 
 ## 3. Qué falta (lo que cubre el Sprint 3)
@@ -75,15 +80,19 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el
   mismo comando: ejecútelo en un entorno limpio (`env -i ...`).
 - Una base desechable: contenedor `postgis/postgis:16-3.4`. Docker Desktop debe estar abierto.
-- Última corrida completa (13/11/2026, rama de NOT-129): 306 pruebas, 0 fallos, 10 omitidas (8 de
-  enrutamiento de correo sin `NOTIURBA_TEST_DB_URL` y 2 con proveedores reales).
+- Última corrida completa (12/11/2026, rama de NOT-130): 361 pruebas, 0 fallos, 2 omitidas
+  (proveedores reales). Las 9 de enrutamiento y la de migración de enrutamiento solo corren con
+  `NOTIURBA_TEST_DB_URL` apuntando a una base `notiurba_test*` (con `postgis` y `pgcrypto`); sin ella
+  se omiten y no cuentan como pasadas.
 - QA de punta a punta del panel contra el jar real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones).
+- QA de punta a punta del mensaje a la entidad: `tools/qa-correo-reporte/qa-correo.sh` (40 verificaciones;
+  no envía correos).
 - Errores de la API: formato único `{codigo, mensaje, campo}` (`ApiException`; en pruebas use
   `getReason()`).
 
 ### Frontend (`frontend/`, React 19 + Vite 8, pnpm)
 
-- `pnpm install`, `pnpm dev`, `pnpm test` (node --test, 139 pruebas), `pnpm lint`, `pnpm build`.
+- `pnpm install`, `pnpm dev`, `pnpm test` (node --test, 156 pruebas), `pnpm lint`, `pnpm build`.
   No use npm ni suba `package-lock.json`.
 - Con `VITE_USAR_MOCKS=true` en desarrollo la API se simula (`src/simulacion/`); el build de
   producción no incluye esa carpeta.
@@ -100,7 +109,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   la entidad real. Quitarla exige autorización del equipo y del docente (historia NOT-131).
 - Netlify: `VITE_API_URL` y `VITE_GOOGLE_CLIENT_ID`.
 - Las migraciones aplicadas **no se editan**: se corrige con una migración nueva. Hoy van
-  V1 a V18 en `develop` y V19 y V20 en la rama de NOT-129 (la siguiente es V21).
+  V1 a V20 en `develop` y V21 en la rama de NOT-130 (la siguiente es V22).
 
 ## 6. Datos de negocio que se confunden fácil
 
@@ -125,8 +134,13 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   correcto y 401 ante un token falso). La causa no está confirmada.
 - El registro tarda ~10 s: BCrypt con poca CPU y el correo de verificación se envía dentro de la
   transacción de `RegistroServicio.registrar` (`VerificacionServicio.emitirYEnviar`).
-- La plantilla del correo (`PlantillaReporte`) arma una lista fija de campos sin mirar el tipo
-  de destinatario; por eso salen filas vacías y la matrícula siempre.
+- La categoría 15 («Solicitud de información») está activa sin ruta de envío: crear un reporte
+  funciona, pero la vista previa responde 400. Decide el equipo: desactivarla o darle ruta al CAIC.
+- El rebote real llega después por el webhook (NOT-131): mostrar canales y «Copiar mi mensaje» en el
+  detalle del reporte queda para esa historia.
+- **Canales (V21, 12/11/2026):** cada canal guarda finalidad, orden, horario, fuente y fecha de
+  verificación. Uno que no sirve no se borra: queda inactivo con el motivo. Revíselos cada cierto
+  tiempo (cambian sin aviso).
 - `PlantillaReporte.enlaceSeguro` solo admite enlaces `res.cloudinary.com` y `www.openstreetmap.org`.
 - **Comuna guardada en el reporte (V19 y V20, 12/11/2026):** antes la comuna se calculaba en cada
   lectura (`v_reporte_comuna`) y un punto en un hueco o fuera de la capa costaba ~7 ms. Con 10.000

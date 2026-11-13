@@ -12,6 +12,7 @@ import PasosBarra from '../../compartido/componentes/PasosBarra'
 import TarjetaOpcion from '../../compartido/componentes/TarjetaOpcion'
 import { ID_CATEGORIA_GAS, LINEA_EMERGENCIA_GAS } from '../../compartido/utilidades/categorias'
 import { tieneContenido } from './borrador'
+import { destinoTrasCategoria } from './destino'
 import { useReporte } from './useReporte'
 import './Reportar.css'
 
@@ -23,6 +24,7 @@ export default function PasoCategoria() {
   const [errorCategoria, setErrorCategoria] = useState('')
   // Solo para gas: '' (sin responder), 'si' (es fuga o emergencia) o 'no'.
   const [respuestaGas, setRespuestaGas] = useState('')
+  const seleccionada = categorias?.find((c) => String(c.idCategoria) === borrador.idCategoria)
   const esGas = borrador.idCategoria === String(ID_CATEGORIA_GAS)
   const preguntandoGas = esGas && respuestaGas === ''
   const bloqueadoPorGas = esGas && respuestaGas !== 'no' // con «sí» no se puede enviar el reporte
@@ -50,7 +52,7 @@ export default function PasoCategoria() {
             return
           }
           if (bloqueadoPorGas) return
-          navigate('/reportar/ubicacion')
+          navigate(destinoTrasCategoria(elegida))
         }}
         acciones={
           <>
@@ -69,7 +71,11 @@ export default function PasoCategoria() {
             <Boton type="submit" disabled={!categorias?.some(c => String(c.idCategoria) === borrador.idCategoria) || Boolean(errorCatalogos) || bloqueadoPorGas}>
               Continuar
             </Boton>
-            <p className="reportar__pie">Su reporte se guardará en su cuenta.</p>
+            <p className="reportar__pie">
+              {seleccionada?.permiteCorreo === false
+                ? 'Le mostraremos los canales oficiales de la entidad.'
+                : 'Su reporte se guardará en su cuenta.'}
+            </p>
           </>
         }
       >

@@ -50,14 +50,24 @@ confirmarse con el equipo.
   Reply-To; no se le envía copia). Decidido el 29/10/2026 (ADR-0002). Si Resend rechaza, registra el fallo (RF-15).
 - **RF-13** (**Descartado el 29/10/2026**, ADR-0002): el borrador que el ciudadano enviaba
   desde su correo se reemplaza por el envío con Resend (RF-12).
-- **RF-14** (Esencial, Estable | EDT 7.6): el correo incluye comuna, categoría,
-  descripción, coordenadas, enlace al mapa, enlace a la foto y código de seguimiento.
+- **RF-14** (Esencial, Estable | EDT 7.6; modificado en NOT-130): el correo es una carta formal en
+  primera persona del ciudadano con la plantilla de su grupo (A, B o C): datos del ciudadano, hechos o
+  solicitud, ubicación con comuna, coordenadas y mapa, fecha y fotos. Sin código de seguimiento, sin
+  «NotiUrba» y sin dependencia.
 - **RF-15** (Esencial, Estable | EDT 7.6, 7.2): enviar en segundo plano y registrar de
   cada envío destinatario, fecha, hora y resultado (enviado/fallido).
 - **RF-16** (Condicional, Estable | EDT 6.6, 7.6): mostrar al ciudadano si el correo fue
   enviado o falló.
-- **RF-17** (Condicional, Puede cambiar | EDT 7.6): para categorías sin destinatario
-  confirmado, mostrar el canal oficial de la entidad en lugar de enviar el correo.
+- **RF-17** (Esencial; modificado en NOT-130): mostrar todos los canales oficiales verificados de la
+  entidad, ordenados, con su finalidad, horario y acción directa (WhatsApp, teléfono, web, oficina).
+- **RF-26** (NOT-130): omitir filas vacías; fecha «9 de noviembre de 2026, 10:07 a. m.» y coordenadas
+  con 5 decimales.
+- **RF-27** (NOT-130): hasta 3 miniaturas con enlace y texto alternativo; versión en texto plano.
+- **RF-28** (NOT-130): enviar por correo solo al CAIC y a Centroaguas (evidencia de respuesta).
+- **RF-29** (NOT-130): «Copiar mi mensaje» cuando el correo rebotó o falló.
+- **RF-30** (NOT-130): vista previa de solo lectura del mensaje antes de enviar; no guarda nada.
+- **RF-31** (NOT-130): cada canal guarda finalidad, orden, horario, fuente y fecha de verificación.
+- **RF-32** (NOT-130): atajo: gas, energía y aseo van del paso 1 a sus canales, sin crear reporte.
 
 ### Panel administrativo
 

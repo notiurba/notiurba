@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { enlaceCanal, presentacionCorreo } from './estadoCorreo'
+import ListaCanales from './ListaCanales'
 import iconoCorreo from '../../compartido/assets/correo/mail.svg'
 import iconoCerrar from '../../compartido/assets/correo/close.svg'
 import iconoCopiar from '../../compartido/assets/correo/copy.svg'
@@ -12,7 +13,7 @@ export function CanalOficial({ ruta }) {
   if (!ruta) return null
   const enlace = enlaceCanal(ruta)
   return <aside className="correo-aviso"><strong>{ruta.entidad}</strong><p>{ruta.dependencia}</p><p>{ruta.mensaje}</p>
-    {!ruta.permiteCorreo && (enlace ? <a href={enlace} target={enlace.startsWith('https:') ? '_blank' : undefined} rel="noopener noreferrer">Abrir canal oficial</a> : <p>{ruta.acceso}</p>)}
+    {!ruta.permiteCorreo && (ruta.canales?.length ? <ListaCanales canales={ruta.canales} /> : enlace ? <a href={enlace} target={enlace.startsWith('https:') ? '_blank' : undefined} rel="noopener noreferrer">Abrir canal oficial</a> : <p>{ruta.acceso}</p>)}
     {ruta.revisionClasificacion && <p>Revisaremos que su reporte esté en la categoría correcta.</p>}
   </aside>
 }

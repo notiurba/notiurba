@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { armarSolicitudReporte, validarDetalles, validarFoto, validarUbicacion, validarConfirmacionReporte } from './reporte.js'
+import { armarSolicitudReporte, armarVistaPrevia, validarDetalles, validarFoto, validarUbicacion, validarConfirmacionReporte } from './reporte.js'
 
 test('validarUbicacion pide el punto', () => {
   assert.ok(validarUbicacion({ latitud: null, longitud: null, idBarrio: '' }).punto)
@@ -75,4 +75,14 @@ test('armarSolicitudReporte omite punto y barrio cuando no los hay', () => {
   assert.ok(!('latitud' in solicitud))
   assert.ok(!('idBarrio' in solicitud))
   assert.equal(solicitud.matriculaCuentaServicio, '123')
+})
+
+test('la vista previa lleva los mismos datos que la creación, cuántas fotos van y nada de autorización', () => {
+  const borrador = { idCategoria: '1', descripcion: '  Hay un hueco grande  ', latitud: 4.0867, longitud: -76.195,
+    idBarrio: '7', direccion: 'Cra 5 # 10-20', matricula: '', emergencia: false }
+  const previa = armarVistaPrevia(borrador, { emergencia: false, categoria: { requiereUbicacion: true, admiteMatricula: false }, totalFotos: 2 })
+  assert.deepEqual(previa, { idCategoria: 1, descripcion: 'Hay un hueco grande', emergencia: false, latitud: 4.0867,
+    longitud: -76.195, idBarrio: 7, direccionIncidente: 'Cra 5 # 10-20', totalFotos: 2 })
+  assert.equal('autorizaEnvio' in previa, false)
+  assert.equal(armarVistaPrevia(borrador, { categoria: { requiereUbicacion: false } }).totalFotos, 0)
 })

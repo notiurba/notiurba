@@ -9,6 +9,7 @@ import useCargar from '../../compartido/hooks/useCargar'
 import MarcoApp from '../componentes/MarcoApp'
 import { borrarBorrador, guardarBorrador, leerBorrador, guardarAvance, leerGuardado } from './borrador'
 import { prepararCategorias } from './catalogo'
+import { redireccionPorCategoria } from './destino'
 
 const cargarCategorias = async () => estadoSesion() === 'activa' ? prepararCategorias(await api.categorias()) : []
 const cargarBarrios = () => estadoSesion() === 'activa' ? obtenerBarrios() : Promise.resolve([])
@@ -86,6 +87,11 @@ export default function ReportarLayout() {
   if (guardado && pathname !== '/reportar/confirmacion' && !pathname.startsWith('/reportar/enviado/')) {
     return <Navigate to="/reportar/confirmacion" replace />
   }
+
+  // Gas, energía y aseo no tienen pasos 2 a 4: alguien que llegue ahí por URL va a sus canales.
+  const elegida = categorias.datos?.find((c) => String(c.idCategoria) === borrador.idCategoria)
+  const redireccion = redireccionPorCategoria(pathname, elegida, guardado)
+  if (redireccion) return <Navigate to={redireccion} replace />
 
   if (categorias.error && !pathname.startsWith('/reportar/enviado/') && !guardado) {
     return <MarcoApp><Aviso variante="error" titulo="No pudimos cargar las categorías">

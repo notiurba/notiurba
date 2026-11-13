@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 class DestinoDePruebaTest {
 
     private static CorreoSaliente original() {
-        return new CorreoSaliente(List.of("servicioalciudadano@tulua.gov.co"), "NotiUrba #NU-000123",
+        return new CorreoSaliente(List.of("servicioalciudadano@tulua.gov.co"), "Petición ciudadana – Vías, huecos y andenes",
                 "Cuerpo del reporte", "<p>Cuerpo</p>", "Ana Gómez", "ana@correo.com", "reporte-1");
     }
 
@@ -19,7 +19,7 @@ class DestinoDePruebaTest {
         CorreoSaliente c = EnvioReporteServicio.aDestinoDePrueba(original(), " prueba@correo.com ");
 
         assertThat(c.para()).containsExactly("prueba@correo.com");
-        assertThat(c.asunto()).isEqualTo("[PRUEBA] NotiUrba #NU-000123");
+        assertThat(c.asunto()).isEqualTo("[PRUEBA] Petición ciudadana – Vías, huecos y andenes");
         assertThat(c.texto()).startsWith("CORREO DE PRUEBA").contains("servicioalciudadano@tulua.gov.co", "Cuerpo del reporte");
         assertThat(c.html()).contains("CORREO DE PRUEBA", "<p>Cuerpo</p>");
         assertThat(c.responderA()).isEqualTo("ana@correo.com");

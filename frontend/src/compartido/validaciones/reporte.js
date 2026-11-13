@@ -68,3 +68,10 @@ export function validarConfirmacionReporte(b, categoria, autorizaEnvio) {
     }),
   }
 }
+
+// La vista previa del mensaje usa los mismos datos que la creación, más cuántas fotos van; no lleva autorización.
+export function armarVistaPrevia(b, { emergencia = false, categoria, totalFotos = 0 } = {}) {
+  const datos = armarSolicitudReporte(b, { emergencia, categoria })
+  delete datos.autorizaEnvio
+  return { ...datos, totalFotos }
+}

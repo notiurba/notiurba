@@ -16,3 +16,6 @@ export async function subirFoto(codigo, foto) {
   body.append('foto', foto)
   return peticion(`/api/reportes/${encodeURIComponent(codigo)}/fotos`, { method: 'POST', body })
 }
+/** El mensaje tal como llegaría a la entidad; no guarda ni envía nada. */
+export const vistaPrevia = (datos) => peticion('/api/reportes/vista-previa', { method: 'POST', body: JSON.stringify(datos) })
+export const mensaje = (codigo) => peticion(`/api/reportes/${encodeURIComponent(codigo)}/mensaje`)

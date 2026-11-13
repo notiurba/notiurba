@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 import * as api from '../servicios/correoReportes'
 import { claveRuta, rutaActual, guardarConEvidencias } from '../servicios/recuperacionReporte'
 import { CanalOficial } from '../componentes/ResultadoCorreo'
+import VistaPreviaMensaje from '../componentes/VistaPreviaMensaje'
 import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
 import Casilla from '../../compartido/componentes/formulario/Casilla'
@@ -13,10 +14,11 @@ import { IconoCorreo } from '../../compartido/componentes/Iconos'
 import { EnlacePrivacidad } from '../../compartido/componentes/avisos/NotaPrivacidad'
 import PasosBarra from '../../compartido/componentes/PasosBarra'
 import useCargar from '../../compartido/hooks/useCargar'
-import { armarSolicitudReporte, validarConfirmacionReporte, validarFoto, validarUbicacion, validarDetalles } from '../../compartido/validaciones/reporte'
+import { armarSolicitudReporte, armarVistaPrevia, validarConfirmacionReporte, validarFoto, validarUbicacion, validarDetalles } from '../../compartido/validaciones/reporte'
 import { reducirFoto } from '../../compartido/utilidades/fotos'
 import { esEmergencia } from './catalogo'
 import { useReporte } from './useReporte'
+import useVistaPrevia from './useVistaPrevia'
 import './Reportar.css'
 import './PasoConfirmacion.css'
 import '../paginas/CorreoReportes.css'
@@ -39,6 +41,11 @@ export default function PasoConfirmacion() {
   }, [idCategoria, emergencia, clave])
   const consulta = useCargar(cargarRuta)
   const ruta = guardado?.ruta ?? rutaActual(consulta.datos, clave)
+  // La vista previa se pide de nuevo solo si cambian los datos que van en el mensaje.
+  const datosPrevia = !guardado && categoria && ruta?.permiteCorreo
+    ? JSON.stringify(armarVistaPrevia(borrador, { emergencia, categoria: { ...categoria, ...ruta }, totalFotos: fotos.length }))
+    : null
+  const previa = useVistaPrevia(datosPrevia)
   const [aceptacion, setAceptacion] = useState(null)
   const [hoja, setHoja] = useState(false)
   const [enviando, setEnviando] = useState(false)
@@ -158,6 +165,7 @@ export default function PasoConfirmacion() {
         <FilaResumen etiqueta="Descripción" a="/reportar/detalles">{borrador.descripcion.trim()}</FilaResumen>
         <FilaResumen etiqueta="Fotos" a="/reportar/detalles">{fotos.length ? fotos.length + ' fotos adjuntas' : 'Sin fotos'}</FilaResumen>
       </div>}
+      {datosPrevia && <VistaPreviaMensaje previa={previa} entidad={ruta.entidad} />}
       {!guardado && consulta.cargando && <p role="status">Buscando a qué entidad va su reporte…</p>}
       {!guardado && consulta.error && <Aviso variante="error" titulo="No pudimos confirmar la entidad"><button type="button" className="enlace-boton" onClick={consulta.recargar}>Reintentar</button></Aviso>}
       <CanalOficial ruta={ruta} />

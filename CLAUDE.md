@@ -17,6 +17,7 @@ académico de la materia Gestión de Proyectos (29 sep – 13 dic 2026).
 4. La documentación de planeación vive en un Google Doc (fuente formal para la
    universidad). `docs/` es la copia de trabajo para el código. Si cambia algo de
    fondo, se actualiza en ambos.
+5. Al terminar una historia, sigue la skill del repo `cierre-de-historia` (sección «Cierre de historia»).
 
 ## Flujo Spec-Driven Development (SDD)
 
@@ -44,7 +45,7 @@ Reglas del flujo:
 - Los tres archivos de `docs/sdd/` describen **una** funcionalidad a la vez. Al
   terminarla, se archivan en `docs/sdd/historico/<NOT-nn>-<nombre>/` y se parte de
   las plantillas para la siguiente.
-- Un PR pequeño por grupo de tareas, rama `feature/…` desde `develop`.
+- **Un solo PR por historia** (rama `feature/…` desde `develop`), con commits atómicos por tarea. Decidido por Andrés el 12 nov 2026: no quiere integrar muchos PR.
 
 ## Revisión de código al terminar (obligatoria)
 
@@ -56,6 +57,17 @@ Reglas del flujo:
   `frontend/src` o `tools/`. Necesita Node (el mismo del frontend).
 - Comentarios en el código: pocos, cortos y solo donde hagan falta. No se citan tareas ni historias
   (NOT-xx, EDT) en el código: eso va en commits, PR y `docs/`.
+
+## Cierre de historia (obligatorio)
+
+- Una historia no está cerrada hasta que su documentación está al día. Al terminarla se sigue la skill
+  del repo **`cierre-de-historia`** (`.claude/skills/cierre-de-historia/`): `docs/`, archivo del SDD,
+  modelo de datos (draw.io, Sheet y Doc), Linear, Figma, vault y memoria.
+- La skill vive **en el repo, para todo el equipo** (Andrés, Katherine y Luz Amelia) y para cualquier IA
+  que trabaje aquí: se invoca con el nombre `cierre-de-historia` o leyendo su `SKILL.md`. No la copies a
+  la carpeta personal de nadie; si hay que mejorarla, se cambia en el repo con un PR.
+- Si trabajas una historia de otra persona, la lista aplica igual: lo que no puedas actualizar tú (Figma,
+  Google Doc, draw.io) se entrega al dueño con el texto listo.
 
 ## Reglas de trabajo
 
@@ -99,7 +111,7 @@ Reglas del flujo:
 
 - Español claro y frases cortas, también en las preguntas.
 - Ramas `feature/*` o `docs/*` y PR hacia `develop`; **sin líneas de coautoría de Claude** en commits ni PR.
-  Prefiera PR pequeños y separados. No mezcle nada que cambie datos de producción sin su aprobación.
+  Un PR por historia, con commits atómicos. No mezcle nada que cambie datos de producción sin su aprobación.
 - Lo que toca pantallas de Katherine se señala expresamente para su revisión.
 - Nunca imprima secretos. No cree historias en Linear sin su visto bueno (formato en `docs/contexto/13-sprint-3.md`;
   skill global `linear-historias-sprint`).
@@ -111,6 +123,8 @@ Reglas del flujo:
 - Validación jurídica del aviso de privacidad v3 (ya es el vigente; puntos por validar en ADR-0008).
 - Valores del límite diario de reportes, intentos de login y distancia de duplicados (NOT-132).
 - Cuándo y con qué autorización se activa el envío real a las entidades (NOT-131).
+- La categoría 15 («Solicitud de información») está activa sin ruta de envío: desactivarla o enviarla al CAIC.
+- Verificar el WhatsApp de Gases de Occidente (315 665 8536) antes de activarlo (hoy inactivo).
 
 Ya decididas (no reabrir): categorías 8 y 9 y la consulta de la Ley 1581 están validadas por el equipo; el docente
 aceptó que los barrios (PMGR 2020, V17) y la capa de comunas (V14) queden provisionales (ADR-0003).
