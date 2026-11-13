@@ -45,17 +45,41 @@ const CORREO_SIN_VERIFICAR = 'sinverificar@correo.com'
 
 // Adaptador del catálogo existente al flujo actual. Son destinos ficticios, no contactos oficiales.
 // V16 conserva ID 15 en el catálogo general, pero no configura una ruta para ella.
+// Gas, energía y aseo no reciben correo (como en la API): con ellos se ve el atajo a los canales.
+const SIN_CORREO = [12, 13, 14]
+const CANALES_SIMULADOS = [
+  { tipo: 'WhatsApp', acceso: '300 000 0000', finalidad: 'Radicar PQR', horario: null,
+    detalle: 'Número de prueba: no pertenece a ninguna entidad' },
+  { tipo: 'Teléfono', acceso: '01 8000 000 000', finalidad: 'Información', horario: 'Lunes a viernes, 8:00 a. m. a 4:00 p. m.', detalle: null },
+  { tipo: 'Web', acceso: 'https://www.example.com/pqr', finalidad: 'Radicar PQR', horario: null, detalle: 'Formulario de prueba' },
+  { tipo: 'Presencial', acceso: 'Dirección de prueba, Tuluá', finalidad: 'Radicar PQR', horario: 'Lunes a viernes, 8:00 a. m. a 12:00 m.', detalle: null },
+]
 const categoriasEnrutamiento = categorias.filter(c => c.idCategoria !== 15).map(c => ({
   ...c, categoria: c.nombre, codigo: `SIM-${c.idCategoria}`,
   esGas: c.idCategoria === 12, admiteMatricula: [11, 12, 13, 14].includes(c.idCategoria),
+  esEmpresa: [11, 12, 13, 14].includes(c.idCategoria), permiteCorreo: !SIN_CORREO.includes(c.idCategoria),
+  entidad: 'Entidad de prueba (simulación local)', canales: CANALES_SIMULADOS,
 }))
+
+// Un mensaje de ejemplo con la forma de la carta formal; el texto real lo arma la API.
+function mensajeSimulado(categoria, descripcion, totalFotos = 0) {
+  const asunto = `Petición ciudadana – ${categoria} (simulación)`
+  const texto = ['Respetados señores:', '',
+    'Yo, María Camila Gómez Rojas, con cédula de ciudadanía No. 0000000000, en ejercicio del derecho de petición '
+      + '(Constitución Política, art. 23), me dirijo a ustedes para informar la siguiente situación:', '',
+    `Hechos: ${descripcion}`, 'Fecha del registro: (se pone al enviar)',
+    ...(totalFotos ? [`Evidencia: ${totalFotos} ${totalFotos === 1 ? 'fotografía' : 'fotografías'}.`] : []), '',
+    'Solicito atender esta situación y comunicarme el trámite adelantado y el número de radicado asignado.', '',
+    'Atentamente,', 'María Camila Gómez Rojas · CC 0000000000'].join('\n')
+  return { asunto, texto }
+}
 
 function resolverRuta(id, emergencia = false) {
   const categoria = categoriasEnrutamiento.find(c => c.idCategoria === Number(id))
   if (!categoria) throw crearErrorApi(400, { codigo: 'VALIDACION', mensaje: 'Categoría sin ruta disponible', campo: 'idCategoria' })
   return { ...categoria, idCanal: categoria.idCategoria, entidad: 'Entidad de prueba (simulación local)',
     dependencia: 'Sin conexión con entidades reales', canal: 'Simulación', acceso: '',
-    permiteCorreo: !emergencia, revisionClasificacion: categoria.idCategoria === 10,
+    permiteCorreo: categoria.permiteCorreo && !emergencia, revisionClasificacion: categoria.idCategoria === 10,
     mensaje: 'Prueba simulada: no se enviarán correos ni se generará un radicado oficial.' }
 }
 
@@ -121,6 +145,16 @@ const RUTAS = [
   ['DELETE', '/api/usuarios/me', () => almacen.borrarTodo() ?? null],
 
   ['GET', '/api/reportes', () => almacen.listarMisReportes()],
+  ['POST', '/api/reportes/vista-previa', (cuerpo, _p, ruta) => {
+    if ((cuerpo.descripcion ?? '').trim().length < 10) {
+      throw crearErrorApi(400, { codigo: 'VALIDACION', mensaje: 'La descripción debe tener al menos 10 caracteres', campo: 'descripcion' }, ruta)
+    }
+    const destino = resolverRuta(cuerpo.idCategoria, cuerpo.emergencia === true)
+    const { asunto, texto } = mensajeSimulado(destino.categoria, cuerpo.descripcion.trim(), cuerpo.totalFotos)
+    return { asunto, texto, permiteCorreo: destino.permiteCorreo, ruta: destino, secciones: [
+      { id: 'categoria', etiqueta: 'Categoría', valor: destino.categoria, paso: 'categoria' },
+      { id: 'descripcion', etiqueta: 'Hechos', valor: cuerpo.descripcion.trim(), paso: 'detalles' }] }
+  }],
   ['POST', '/api/reportes', (cuerpo, _p, ruta) => {
     if ((cuerpo.descripcion ?? '').trim().length < 10) {
       throw crearErrorApi(400, { mensaje: 'La descripción debe tener al menos 10 caracteres', campo: 'descripcion' }, ruta)
@@ -149,6 +183,11 @@ const RUTAS = [
     return estadoEnvio(codigo)
   }],
   ['GET', '/api/reportes/:codigo/envio', (_c, { codigo }) => estadoEnvio(codigo)],
+  ['GET', '/api/reportes/:codigo/mensaje', (_c, { codigo }, ruta) => {
+    const reporte = almacen.buscarReporte(codigo)
+    if (!reporte) throw crearErrorApi(404, { codigo: 'NO_ENCONTRADO', mensaje: 'No se encontró ese reporte' }, ruta)
+    return mensajeSimulado(reporte.categoria, reporte.descripcion, reporte.fotos.length)
+  }],
   ['GET', '/api/reportes/:codigo', (_c, { codigo }, ruta) => {
     const reporte = almacen.buscarReporte(codigo)
     if (!reporte) throw crearErrorApi(404, { mensaje: 'No se encontró ese reporte' }, ruta)
