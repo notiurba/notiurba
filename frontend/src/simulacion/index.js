@@ -36,6 +36,18 @@ const fallosLogin = new Map()
 const BLOQUEO_MS = 5 * 60 * 1000
 const CORREO_BLOQUEADO = 'bloqueado@correo.com'
 
+// Valores iniciales de la migración V22 (contrato 5.5).
+let limitesSimulados = {
+  login: { intentosMaximos: 3, ventanaMinutos: 5, bloqueoMinutos: 5 },
+  reportesMaximosPorDia: 2,
+  duplicados: { ventanaDias: 30, categorias: [
+    [1, 'Vías, huecos, andenes e infraestructura', 5], [2, 'Alumbrado, espacio público, convivencia y seguridad', 10],
+    [3, 'Basuras, ambiente, árboles y contaminación', 5], [4, 'Señalización, semáforos y tránsito', 8],
+    [5, 'Riesgo sanitario y salud pública', 10], [8, 'Riesgo de desastres', 15], [11, 'Acueducto y alcantarillado', 10],
+    [12, 'Gas natural', 15], [13, 'Energía eléctrica', 15], [14, 'Aseo (falla del servicio)', 15],
+  ].map(([idCategoria, nombre, metros]) => ({ idCategoria, nombre, metros })) },
+}
+
 function bloqueoLogin(hasta, ruta) {
   return crearErrorApi(429, { codigo: 'INTENTOS_EXCEDIDOS', mensaje: 'Demasiados intentos.',
     datos: { esperarSegundos: Math.ceil((hasta - Date.now()) / 1000), bloqueadoHasta: new Date(hasta).toISOString() } }, ruta)
@@ -247,6 +259,19 @@ const RUTAS = [
   }],
 
   // Panel de administración: todos los reportes y cambio de estado con observación.
+  ['GET', '/api/admin/configuracion/limites', () => limitesSimulados],
+  ['PUT', '/api/admin/configuracion/limites', (cuerpo, _p, ruta) => {
+    const metros = cuerpo.duplicados?.categorias ?? []
+    const malo = metros.find((c) => !(c.metros >= 5 && c.metros <= 500))
+    if (malo) {
+      throw crearErrorApi(400, { codigo: 'VALIDACION', campo: `categorias.${malo.idCategoria}.metros`,
+        mensaje: 'La distancia debe estar entre 5 y 500 metros.' }, ruta)
+    }
+    limitesSimulados = { login: cuerpo.login, reportesMaximosPorDia: cuerpo.reportesMaximosPorDia, duplicados: {
+      ventanaDias: cuerpo.duplicados.ventanaDias,
+      categorias: limitesSimulados.duplicados.categorias.map((c) => ({ ...c, metros: metros.find((m) => m.idCategoria === c.idCategoria)?.metros ?? c.metros })) } }
+    return limitesSimulados
+  }],
   ['GET', '/api/admin/reportes', () => almacen.listarReportes()],
   ['PATCH', '/api/admin/reportes/:codigo/estado', (cuerpo, { codigo }) =>
     almacen.cambiarEstado(codigo, cuerpo.estado, cuerpo.observacion || null)],
