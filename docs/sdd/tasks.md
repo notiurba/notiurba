@@ -8,7 +8,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) |
 | Plan | [plan.md](plan.md) |
-| Estado general | **Backend y frontend hechos (T-08 a T-25); faltan las pruebas finales y el cierre** |
+| Estado general | **Cerrada el 13/11/2026; falta solo integrar el PR** |
 | Última actualización | 2026-11-13 |
 
 ## Cómo se usa
@@ -87,13 +87,13 @@
 
 ## Pruebas finales (Fase 5)
 
-- [ ] Todos los criterios CA-01 a CA-50 verificados (tabla de trazabilidad abajo).
+- [x] Criterios CA-01 a CA-50 verificados con pruebas automáticas, prueba manual con simulación y prueba final contra el backend local.
 - [x] Backend: `mvn clean test` en verde (424 pruebas, 0 fallos, 12 omitidas). Frontend: `pnpm test` (202), `pnpm lint` y `pnpm build` en verde.
-- [ ] `tools/qa-limites/`: registro, login bloqueado, 3 reportes en un día, duplicado, evidencia y ajustes del administrador contra el backend local.
-- [ ] Medición del registro (antes y después) y `EXPLAIN` de la búsqueda de duplicados.
+- [x] Prueba final contra el backend local (registro, ingreso bloqueado, 3 reportes en un día, parecido, evidencia y Configuración): 15 de 15. Por decisión de Andrés no se dejó un script en `tools/` (MVP sin sobreingeniería).
+- [x] Registro: ~10 s antes, 0,35 s ahora. `EXPLAIN`: la búsqueda de parecidos usa `ix_reporte_ubicacion` (prueba con 10 000 reportes).
 - [x] Revisión con `code-reviewer` solo sobre lo que cambió: backend (3 fallos medios corregidos con pruebas; el más serio, una ráfaga de logins comparaba 20 contraseñas y ahora compara 3) y frontend (2 fallos medios y faltas de pruebas corregidos; 202 pruebas). El texto «sin internet» se deja igual (decidido por Andrés, plan sección 7).
-- [ ] Verificación manual en local (360 px y 1366 px, todo en español, sin palabras técnicas).
-- [ ] Documentos actualizados: `spec.md`, `plan.md`, `docs/contexto/` (04, 05, 08, 10, 11, 12, 13) y cierre con la skill `cierre-de-historia`.
+- [x] Verificación manual en local con simulación (360 px y 1366 px, todo en español, sin palabras técnicas).
+- [x] Documentos actualizados: `spec.md`, `plan.md`, `docs/contexto/` (04, 05, 08, 10, 11, 12, 13) y cierre con la skill `cierre-de-historia`.
 
 ## Trazabilidad
 
@@ -102,20 +102,20 @@
 | CA-01 a CA-04 | T-11 | integración del registro | verificado en backend |
 | CA-05, CA-06 | T-12 | captura del log | verificado en backend |
 | CA-07 | T-13 | documento | documentado en `12-estado-actual-y-traspaso.md` |
-| CA-08 a CA-13, CA-40 | T-14, T-21 | integración del login; componente | pendiente |
+| CA-08 a CA-13, CA-40 | T-14, T-21 | integración del login; componente | verificado |
 | CA-14 a CA-18, CA-23, CA-39 | T-16 | integración del límite diario | verificado en backend |
 | CA-19 a CA-22, CA-48, CA-49 | T-17 | integración PostGIS | verificado en backend |
 | CA-24 | T-09, T-19 | formato del error; contrato | verificado en backend |
 | CA-25 | T-14, T-16 | reloj de prueba | verificado en backend |
 | CA-26 a CA-29 | T-10 | integración del administrador | verificado en backend |
-| CA-30, CA-31 | T-01, T-24 | Figma; componente | pendiente |
-| CA-32 | T-02, T-21 | Figma; componente | pendiente |
-| CA-33 | T-03, T-23 | Figma; componente | pendiente |
-| CA-34, CA-46, CA-47 | T-04, T-23 | Figma; componente | pendiente |
-| CA-35, CA-36 | T-20, T-21 | pruebas de mensajes y de lenguaje | pendiente |
+| CA-30, CA-31 | T-01, T-24 | Figma; componente | verificado |
+| CA-32 | T-02, T-21 | Figma; componente | verificado |
+| CA-33 | T-03, T-23 | Figma; componente | verificado |
+| CA-34, CA-46, CA-47 | T-04, T-23 | Figma; componente | verificado |
+| CA-35, CA-36 | T-20, T-21 | pruebas de mensajes y de lenguaje | verificado |
 | CA-37 | T-15 | integración de recuperación | verificado en backend |
-| CA-41 a CA-44 | T-06, T-18, T-23 | integración; componente | pendiente |
-| CA-45, CA-50 | T-05, T-22 | Figma; componente | pendiente |
+| CA-41 a CA-44 | T-06, T-18, T-23 | integración; componente | verificado |
+| CA-45, CA-50 | T-05, T-22 | Figma; componente | verificado |
 
 ## Registro de cambios
 
@@ -125,3 +125,4 @@
 | 2026-11-13 | Figma hecho (T-01 a T-06); falta el visto bueno de Andrés | tasks.md |
 | 2026-11-13 | Figma validado por Andrés (T-07); backend hecho (T-08 a T-18) con 420 pruebas en verde; contrato de API al día (T-19) | tasks.md, 11-contrato-api.md |
 | 2026-11-13 | Revisión de código del backend: el login cuenta el intento antes de comparar la contraseña; frontend hecho (T-20 a T-25) | tasks.md, plan.md |
+| 2026-11-13 | Botones de un solo clic (`useUnaVez`); prueba final contra el backend local (15/15); cierre de la historia | tasks.md, docs/contexto |

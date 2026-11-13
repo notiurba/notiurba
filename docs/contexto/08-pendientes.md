@@ -77,6 +77,9 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 - Las diapositivas del Sprint 2: corregir «15 categorías» (la app ofrece 14) y la nota N.05 que
   dice que las categorías 8 y 9 no están validadas (NOT-142).
 
+- `app/paginas/CrearReporte.jsx` y `ConsultarReporte.jsx` no tienen ruta (código viejo): borrarlos. Si alguien
+  los conectara, no tienen el bloqueo de un solo clic (`useUnaVez`).
+
 ## Reglas de negocio por definir
 
 - ~~Valores del límite diario de reportes, intentos de login y distancia de duplicados (NOT-132)~~:
