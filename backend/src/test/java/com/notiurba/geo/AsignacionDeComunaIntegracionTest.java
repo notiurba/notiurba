@@ -89,6 +89,7 @@ class AsignacionDeComunaIntegracionTest {
         poner(2, 1.5, 2.5, 0.0, 1.0);
         poner(3, 2.0, 3.0, 0.5, 1.5);
         jdbc.update("UPDATE configuracion SET valor = '50' WHERE clave = 'comuna_distancia_maxima_m'");
+        jdbc.update("UPDATE configuracion SET valor = '50' WHERE clave = 'reportes_maximos_por_dia'");
 
         int idBarrio = BarrioDePrueba.id(jdbc);
         String correo = "ciudadano-" + UUID.randomUUID() + "@prueba.com";

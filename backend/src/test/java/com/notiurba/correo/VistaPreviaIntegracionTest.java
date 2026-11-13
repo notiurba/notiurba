@@ -178,7 +178,7 @@ class VistaPreviaIntegracionTest {
     void laVistaPreviaElMensajeDelReporteYElCorreoEncoladoDicenLoMismo() throws Exception {
         String previa = leer(vistaPrevia(cuerpoVias(",\"totalFotos\":2"))).get("texto").asText();
         MvcResult creado = hacer(post("/api/reportes").contentType(MediaType.APPLICATION_JSON)
-                .content(cuerpoVias(",\"autorizaEnvio\":true")), token);
+                .content(cuerpoVias(",\"autorizaEnvio\":true,\"confirmarDuplicado\":true")), token);
         String codigo = leer(creado).get("codigoSeguimiento").asText();
         var reporte = new DatosDePrueba.Reporte(jdbc.queryForObject(
                 "SELECT id_reporte FROM reporte WHERE codigo_seguimiento = ?", Long.class, codigo), codigo);
