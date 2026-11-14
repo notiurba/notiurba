@@ -2,6 +2,8 @@
 
 Diagrama: https://drive.google.com/file/d/1fW4OvzK5Ftd6oeCLnb7mIpD7P_H4GX7y/view
 
+**Archivo listo para abrir en draw.io:** `Diagrama-Entidad-Relacion-v22-generado.drawio` (esta misma carpeta). Es el diagrama completo con las 31 tablas, generado a partir del de V21 más estos cambios; se abre en https://app.diagrams.net con *Archivo → Abrir desde → Dispositivo*.
+
 Cambian **tres cosas**: dos tablas nuevas (`distancia_duplicado` e `intento_login`) y una columna nueva en
 `reporte`. Pegue cada bloque como texto de la tabla. `PK` llave primaria, `FK` llave foránea.
 
