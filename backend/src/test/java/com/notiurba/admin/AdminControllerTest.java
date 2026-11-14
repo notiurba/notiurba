@@ -104,9 +104,19 @@ class AdminControllerTest {
     }
 
     @ParameterizedTest @ValueSource(strings = {"", "   "})
-    void observacionVaciaDa400(String texto) throws Exception {
-        cambiar("EN_TRAMITE", texto).andExpect(status().isBadRequest()).andExpect(jsonPath("campo").value("observacion"));
-        verifyNoInteractions(repositorio);
+    void observacionVaciaGuardaLaFrasePorDefecto(String texto) throws Exception {
+        cambiar("EN_TRAMITE", texto).andExpect(status().isOk())
+                .andExpect(jsonPath("observacion").value(AdminServicio.OBSERVACION_POR_DEFECTO));
+        verify(repositorio).insertar(1, (short)3, AdminServicio.OBSERVACION_POR_DEFECTO, 7);
+    }
+
+    @Test void sinObservacionEnElJsonTambienGuardaLaFraseYLasEtiquetasDeLaPantallaNoSonValidas() throws Exception {
+        mvc.perform(patch("/api/admin/reportes/NU-000001/estado").header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON).content("{\"estado\":\"RESUELTO\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("observacion").value(AdminServicio.OBSERVACION_POR_DEFECTO));
+        mvc.perform(patch("/api/admin/reportes/NU-000001/estado").header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON).content("{\"estado\":\"En trámite\",\"observacion\":\"x\"}"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test void validaEstadoLongitudYCodigo() throws Exception {

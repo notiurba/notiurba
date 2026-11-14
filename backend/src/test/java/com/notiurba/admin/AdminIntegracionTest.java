@@ -166,7 +166,7 @@ class AdminIntegracionTest {
                 .contentType(MediaType.APPLICATION_JSON).content("{\"estado\":\"RESUELTO\",\"observacion\":\"Confirmado\"}"))
                 .andExpect(status().isForbidden());
         cambiar("NU-999999999999","RESUELTO","Confirmado").andExpect(status().isNotFound());
-        cambiar(codigo,"RESUELTO","   ").andExpect(status().isBadRequest());
+        cambiar(codigo,"RESUELTO","x".repeat(1001)).andExpect(status().isBadRequest());
         assertThat(historial(codigo)).isEqualTo(1);
     }
 
