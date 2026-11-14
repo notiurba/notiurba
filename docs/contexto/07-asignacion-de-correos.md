@@ -64,7 +64,7 @@ si el correo rebota o falla, puede copiarlo y usar otro canal.
 - Confirmar el tamaño máximo de adjuntos del buzón del CAIC.
 - Verificar el WhatsApp de Gases de Occidente (315 665 8536) antes de activarlo.
 - La categoría 15 («Solicitud de información») está activa sin ruta de envío (decide el equipo).
-- Activar el envío real a las entidades (NOT-131); hoy todo sale a la bandeja de pruebas.
+- Activar el envío real a las entidades con [14-activar-envio-real.md](14-activar-envio-real.md); hoy todo sale a la bandeja de pruebas.
 
 Fuente: pestañas «Asignación de correos» y «Modelado» del Google Doc; oficios S-43215 y
 GAC-003660-26.

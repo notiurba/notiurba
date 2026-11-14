@@ -26,12 +26,12 @@
 
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-01 | Pruebas de la cola con y sin destino de pruebas: con destino sale solo a esa dirección con «[PRUEBA]»; sin destino sale al destino de la ruta y el envío pasa a «Enviado» | Backend | CA-01, CA-02 | `EnrutamientoIntegracionTest` | [ ] |
-| T-02 | Pruebas del webhook: sin firma, firma falsa y firma vencida dan 401 `FIRMA_INVALIDA` sin cambiar nada; `email.complained` marca rebote; identificador vacío o de más de 100 caracteres da 400; otros eventos se ignoran | Backend | CA-03, CA-04, CA-05 | `EnrutamientoIntegracionTest` | [ ] |
-| T-03 | Pruebas de propiedad y de fallo no reintentable: `/envio` y `/mensaje` de un reporte ajeno dan 404; un fallo no reintentable queda fallido con el motivo amable y no se reintenta solo | Backend | CA-08, CA-09 | `EnrutamientoIntegracionTest` | [ ] |
-| T-04 | Función de presentación del bloque de correo del detalle (qué texto, etiqueta y si se ofrecen otros canales) con sus pruebas | Frontend | CA-06, CA-07 | `estadoCorreo.test.mjs` | [ ] |
-| T-05 | Bloque «Correo a la entidad» en `DetalleReporte.jsx`: carga `estadoCorreo`, muestra el estado y, si el correo no llegó, `OtrosCanales`; si `/envio` falla, el detalle se ve igual | Frontend | CA-06, CA-07 | `pnpm test`, `pnpm lint`, `pnpm build` y revisión en el navegador (360 y 1366 px) | [ ] |
-| T-06 | Guía `docs/contexto/14-activar-envio-real.md`, contrato de API, variables de Render y sprint al día | Docs | CA-10 | Revisión contra `application.yml` | [ ] |
+| T-01 | Pruebas de la cola con y sin destino de pruebas: con destino sale solo a esa dirección con «[PRUEBA]»; sin destino sale al destino de la ruta y el envío pasa a «Enviado» | Backend | CA-01, CA-02 | `EnrutamientoIntegracionTest` | [x] |
+| T-02 | Pruebas del webhook: sin firma, firma falsa y firma vencida dan 401 `FIRMA_INVALIDA` sin cambiar nada; `email.complained` marca rebote; identificador vacío o de más de 100 caracteres da 400; otros eventos se ignoran | Backend | CA-03, CA-04, CA-05 | `EnrutamientoIntegracionTest` | [x] |
+| T-03 | Pruebas de propiedad y de fallo no reintentable: `/envio` y `/mensaje` de un reporte ajeno dan 404; un fallo no reintentable queda fallido con el motivo amable y no se reintenta solo | Backend | CA-08, CA-09 | `EnrutamientoIntegracionTest` | [x] |
+| T-04 | Función de presentación del bloque de correo del detalle (qué texto, etiqueta y si se ofrecen otros canales) con sus pruebas | Frontend | CA-06, CA-07 | `estadoCorreo.test.mjs` | [x] |
+| T-05 | Bloque «Correo a la entidad» en `DetalleReporte.jsx`: carga `estadoCorreo`, muestra el estado y, si el correo no llegó, `OtrosCanales`; si `/envio` falla, el detalle se ve igual | Frontend | CA-06, CA-07 | `pnpm test`, `pnpm lint`, `pnpm build` y revisión en el navegador (360 y 1366 px) | [x] |
+| T-06 | Guía `docs/contexto/14-activar-envio-real.md`, contrato de API, variables de Render y sprint al día | Docs | CA-10 | Revisión contra `application.yml` | [x] |
 
 ## Pruebas finales (Fase 5)
 
