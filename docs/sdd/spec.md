@@ -76,8 +76,9 @@ IDs `RF-16a` y `RNF-xx` se confirman contra `docs/contexto/04` y `05` al planifi
   los canales de la entidad y el botón «Copiar mi mensaje», sin palabras técnicas (RN-24).
 - **CA-07** — _Dado_ un reporte con envío en camino o enviado, _cuando_ abre el detalle, _entonces_ ve ese estado en palabras
   claras y no ve el aviso de fallo.
-- **CA-08** — _Dado_ un fallo transitorio del proveedor, _entonces_ la cola reintenta; si el fallo no es reintentable, el
-  envío queda fallido con el motivo amable.
+- **CA-08** — _Dado_ un fallo transitorio del proveedor, _entonces_ el envío queda fallido y reintentable, y el detalle ofrece
+  «Reintentar envío» (el reintento lo pide la persona, no la cola); si el fallo no es reintentable, queda fallido con el
+  motivo amable y los canales de la entidad.
 - **CA-09** — _Dado_ que la persona abre el detalle de un reporte ajeno, _entonces_ recibe 404 (sin cambios).
 - **CA-10** — _Dado_ el documento de activación, _entonces_ lista las variables (nombres, sin valores), el orden de los pasos,
   la prueba con un reporte controlado y cómo volver a pruebas.

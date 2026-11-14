@@ -8,7 +8,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) |
 | Plan | [plan.md](plan.md) |
-| Estado general | **En curso** |
+| Estado general | **Hecho, falta revisión visual y PR** |
 | Última actualización | 2026-11-13 |
 
 ## Cómo se usa
@@ -35,29 +35,30 @@
 
 ## Pruebas finales (Fase 5)
 
-- [ ] Todos los criterios CA-01 a CA-10 verificados (tabla de trazabilidad abajo).
-- [ ] Backend: `mvn clean test` en verde. Frontend: `pnpm test` y `pnpm lint` en verde.
+- [x] Todos los criterios CA-01 a CA-10 verificados (tabla de trazabilidad abajo).
+- [x] Backend: 433 pruebas, 0 fallos (2 errores por falta de credenciales reales de Cloudinary y de la base con TLS, ajenos a esta historia). Frontend: 215 pruebas, lint y build en verde.
 - [ ] Verificación manual en local (detalle con envío en camino, enviado y rebotado; español, 360 px y 1366 px).
-- [ ] Revisión con el subagente `code-reviewer` y hallazgos corregidos.
-- [ ] Documentos actualizados: `spec.md`, `plan.md`, `docs/contexto/`.
+- [x] Revisión con el subagente `code-reviewer` y hallazgos corregidos (1, 2, 3, 5, 6, 7, 8, 9 y 10; ver registro).
+- [x] Documentos actualizados: `spec.md`, `plan.md`, `docs/contexto/`.
 
 ## Trazabilidad
 
 | Criterio | Tareas | Prueba | Resultado |
 | --- | --- | --- | --- |
-| CA-01 | T-01 | `EnrutamientoIntegracionTest` | pendiente |
-| CA-02 | T-01 | `EnrutamientoIntegracionTest` | pendiente |
-| CA-03 | T-02 | `EnrutamientoIntegracionTest` | pendiente |
-| CA-04 | T-02 | `EnrutamientoIntegracionTest` | pendiente |
-| CA-05 | T-02 | `EnrutamientoIntegracionTest` | pendiente |
-| CA-06 | T-04, T-05 | `estadoCorreo.test.mjs` y revisión manual | pendiente |
-| CA-07 | T-04, T-05 | `estadoCorreo.test.mjs` y revisión manual | pendiente |
-| CA-08 | T-03 | `EnrutamientoIntegracionTest` | pendiente |
-| CA-09 | T-03 | `EnrutamientoIntegracionTest` | pendiente |
-| CA-10 | T-06 | Revisión manual | pendiente |
+| CA-01 | T-01 | `EnrutamientoIntegracionTest` | ok |
+| CA-02 | T-01 | `EnrutamientoIntegracionTest` | ok |
+| CA-03 | T-02 | `EnrutamientoIntegracionTest` | ok |
+| CA-04 | T-02 | `EnrutamientoIntegracionTest` | ok |
+| CA-05 | T-02 | `EnrutamientoIntegracionTest` | ok |
+| CA-06 | T-04, T-05 | `estadoCorreo.test.mjs`; revisión visual pendiente | ok (visual pendiente) |
+| CA-07 | T-04, T-05 | `estadoCorreo.test.mjs`; revisión visual pendiente | ok (visual pendiente) |
+| CA-08 | T-03 | `EnrutamientoIntegracionTest` | ok |
+| CA-09 | T-03 | `EnrutamientoIntegracionTest` | ok |
+| CA-10 | T-06 | Revisión contra `application.yml` y el código | ok |
 
 ## Registro de cambios
 
 | Fecha | Cambio | Documento |
 | --- | --- | --- |
 | 2026-11-13 | Spec y plan aprobados; tareas escritas | spec.md, plan.md, tasks.md |
+| 2026-11-13 | Revisión de código: el detalle ofrece «Reintentar envío» y canales para otro canal; CA-08 ajustado a reintento por la persona; guía con casillas previas y prueba de rebote real | spec.md, tasks.md, 14-activar-envio-real.md |

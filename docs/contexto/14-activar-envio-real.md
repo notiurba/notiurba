@@ -36,14 +36,21 @@ secretos: solo nombres de variables. La usa también NOT-133 (despliegue).
 
 ## Activar el envío real
 
-Antes de empezar: el envío real está validado (13 nov 2026, Andrés) y el CAIC/Centroaguas respondieron lo que corresponda.
+Antes de empezar, marcar cada punto (si falta uno, no se activa):
+
+- [ ] Andrés validó el envío real (13 nov 2026: canales oficiales y datos que la persona autoriza al enviar).
+- [ ] El docente está informado de la fecha de activación.
+- [ ] El CAIC (y Centroaguas, si se usa la categoría 11) fueron avisados y su buzón recibe correos de `reportes.notiurba.com`.
+- [ ] El webhook está registrado y el paso 2 de abajo salió bien.
 
 1. Con `RESEND_PRUEBA_DESTINO` todavía puesta, crear un reporte de prueba en la categoría 1 y comprobar que llega a la
    bandeja de pruebas con «[PRUEBA]».
-2. Probar el rebote: crear un reporte con una cuenta cuyo correo da igual (el destino es el de la ruta, no el de la
-   persona) y, desde el panel de Resend, enviar el evento de prueba del webhook. Comprobar que el detalle muestra
-   «El correo no llegó».
-3. **Quitar** `RESEND_PRUEBA_DESTINO` en Render (borrar la variable, no dejarla vacía con espacios). Render reinicia el servicio.
+2. Probar el rebote con un aviso real: poner **temporalmente** `RESEND_PRUEBA_DESTINO=bounced@resend.dev` (dirección de
+   pruebas de Resend que siempre rebota; confirmarla en la documentación de Resend antes de usarla), crear un reporte en
+   la categoría 1 y esperar unos minutos. El detalle del reporte debe mostrar «El correo no llegó» con los canales. No sirve
+   el «evento de prueba» del panel de Resend: trae un identificador de envío inventado y no coincide con ningún reporte.
+   Al terminar, volver a poner la bandeja de pruebas en `RESEND_PRUEBA_DESTINO`.
+3. **Quitar** `RESEND_PRUEBA_DESTINO` en Render (borrar la variable; vacía también funciona). Render reinicia el servicio.
 4. Crear **un** reporte controlado en una categoría con correo confirmado y avisar antes a la entidad. Comprobar en
    Resend → Emails que salió al destino de la ruta, sin «[PRUEBA]».
 5. Abrir el detalle del reporte: el correo debe verse como enviado, no como fallido.

@@ -103,7 +103,7 @@ Reglas del flujo:
     - Netlify: `VITE_API_URL`.
     - Render: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `ADMIN_DEV_PASSWORD`,
       `GOOGLE_CLIENT_ID`, `CORS_ORIGINS`, `RECUPERACION_ENLACE`, `RESEND_API_KEY`,
-      `RESEND_REMITENTE`, `VERIFICACION_ENLACE`, `CLOUDINARY_CLOUD_NAME`,
+      `RESEND_REMITENTE`, `RESEND_PRUEBA_DESTINO`, `RESEND_WEBHOOK_SECRET`, `NOTIURBA_ENVIO_REPORTES_HABILITADO`, `VERIFICACION_ENLACE`, `CLOUDINARY_CLOUD_NAME`,
       `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (solo la dirección, p. ej. del subdominio `reportes.notiurba.com`).
 - **Correo:** Resend (decidido el 29/10/2026, ADR-0002). Requiere dominio verificado; plan gratuito 100 correos/día. Se descartó el borrador que el ciudadano enviaba. Dominio `notiurba.com` comprado el 31/10/2026 (a nombre de Andrés Mauricio Peña López, ADR-0007); se envía desde el subdominio `reportes.notiurba.com`, verificado en Resend. El envío está implementado con la API HTTP de Resend (`EnviadorCorreo` / `EnviadorCorreoResend`) y se probó con un correo real el 01/11/2026 desde local; ya se probó desde Render. Mientras dure la etapa de pruebas, `RESEND_PRUEBA_DESTINO` debe seguir puesta (el correo sale a la bandeja de pruebas de Andrés, no a la entidad real).
 
@@ -129,9 +129,8 @@ Reglas del flujo:
 
 - Validación jurídica del aviso de privacidad v3 (ya es el vigente; puntos por validar en ADR-0008).
 - Valores del límite diario de reportes, intentos de login y distancia de duplicados (NOT-132).
-- Cuándo y con qué autorización se activa el envío real a las entidades (NOT-131).
 - La categoría 15 («Solicitud de información») está activa sin ruta de envío: desactivarla o enviarla al CAIC.
 - Verificar el WhatsApp de Gases de Occidente (315 665 8536) antes de activarlo (hoy inactivo).
 
-Ya decididas (no reabrir): categorías 8 y 9 y la consulta de la Ley 1581 están validadas por el equipo; el docente
+Ya decididas (no reabrir): el envío real a las entidades está validado por Andrés (13 nov 2026); se activa con `docs/contexto/14-activar-envio-real.md`; categorías 8 y 9 y la consulta de la Ley 1581 están validadas por el equipo; el docente
 aceptó que los barrios (PMGR 2020, V17) y la capa de comunas (V14) queden provisionales (ADR-0003).
