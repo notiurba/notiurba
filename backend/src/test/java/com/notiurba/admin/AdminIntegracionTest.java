@@ -158,6 +158,15 @@ class AdminIntegracionTest {
         assertThat(historial(codigo)).isEqualTo(3);
     }
 
+    @Test void sinObservacionElHistorialGuardaLaFrasePorDefecto() throws Exception {
+        String codigo=crear(false);
+        cambiar(codigo,"RESUELTO","   ").andExpect(status().isOk());
+        assertThat(jdbc.queryForObject("""
+                SELECT h.observacion FROM historial_estado h JOIN reporte r USING(id_reporte)
+                JOIN estado_reporte e ON e.id_estado_reporte=h.id_estado_reporte
+                WHERE r.codigo_seguimiento=? AND e.nombre='Resuelto'""",String.class,codigo)).isEqualTo(AdminServicio.OBSERVACION_POR_DEFECTO);
+    }
+
     @Test void sinSesionCiudadanoInexistenteYObservacionVacia() throws Exception {
         String codigo=crear(false);
         mvc.perform(patch("/api/admin/reportes/"+codigo+"/estado").contentType(MediaType.APPLICATION_JSON)

@@ -110,13 +110,17 @@ class AdminControllerTest {
         verify(repositorio).insertar(1, (short)3, AdminServicio.OBSERVACION_POR_DEFECTO, 7);
     }
 
-    @Test void sinObservacionEnElJsonTambienGuardaLaFraseYLasEtiquetasDeLaPantallaNoSonValidas() throws Exception {
+    @Test void sinObservacionEnElJsonGuardaLaFrasePorDefecto() throws Exception {
         mvc.perform(patch("/api/admin/reportes/NU-000001/estado").header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON).content("{\"estado\":\"RESUELTO\"}"))
                 .andExpect(status().isOk()).andExpect(jsonPath("observacion").value(AdminServicio.OBSERVACION_POR_DEFECTO));
+    }
+
+    @Test void laEtiquetaDeLaPantallaNoEsUnEstadoValidoYUnaObservacionLargaDa400() throws Exception {
         mvc.perform(patch("/api/admin/reportes/NU-000001/estado").header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON).content("{\"estado\":\"En trámite\",\"observacion\":\"x\"}"))
                 .andExpect(status().isBadRequest());
+        cambiar("EN_TRAMITE", "x".repeat(1001)).andExpect(status().isBadRequest()).andExpect(jsonPath("campo").value("observacion"));
     }
 
     @Test void validaEstadoLongitudYCodigo() throws Exception {

@@ -33,9 +33,12 @@ public class AdminServicio {
     public CambioEstadoResponse cambiarEstado(String correo, String codigo, CambiarEstadoRequest peticion) {
         long actor = administrador(correo);
         String normalizado = ReporteServicio.normalizarCodigo(codigo);
-        if (peticion.estado() == null || (peticion.observacion() != null && peticion.observacion().length() > 1000)) {
+        if (peticion.estado() == null) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, Codigos.VALIDACION, "Indica el nuevo estado", "estado");
+        }
+        if (peticion.observacion() != null && peticion.observacion().length() > 1000) {
             throw new ApiException(HttpStatus.BAD_REQUEST, Codigos.VALIDACION,
-                    "Indica el estado y una observación de hasta 1000 caracteres", "observacion");
+                    "La observación admite hasta 1000 caracteres", "observacion");
         }
         var actual = repositorio.bloquear(normalizado).orElseThrow(() ->
                 new ApiException(HttpStatus.NOT_FOUND, Codigos.NO_ENCONTRADO, "No encontramos ese reporte"));

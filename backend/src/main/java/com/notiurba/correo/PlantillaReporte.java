@@ -129,12 +129,14 @@ public class PlantillaReporte {
         StringBuilder h = new StringBuilder("<!doctype html><html lang=\"es\"><head><meta charset=\"utf-8\">"
                 + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>" + esc(asunto) + "</title></head>"
                 + "<body style=\"margin:0;padding:0;background:#eef2f7;color:#1f2937;font-family:Arial,Helvetica,sans-serif;"
-                + "font-size:15px;line-height:1.6\"><div style=\"max-width:600px;margin:0 auto;padding:16px\">"
-                + "<div style=\"background:#0a2f6b;color:#ffffff;padding:24px 28px;border-radius:12px 12px 0 0\">"
+                + "font-size:15px;line-height:1.6\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" "
+                + "style=\"background:#eef2f7\"><tr><td align=\"center\" style=\"padding:16px\">"
+                + "<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"width:100%;max-width:600px\">"
+                + "<tr><td bgcolor=\"#0a2f6b\" style=\"background:#0a2f6b;color:#ffffff;padding:24px 28px;border-radius:12px 12px 0 0\">"
                 + "<div style=\"font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#cfe0ff\">" + esc(titulo) + "</div>"
-                + "<div style=\"font-size:22px;font-weight:bold;margin-top:4px\">" + esc(limpio(d.categoria())) + "</div></div>"
-                + "<div style=\"background:#ffffff;padding:28px;border:1px solid #d9e2ef;border-top:0;border-radius:0 0 12px 12px;"
-                + "overflow-wrap:anywhere;word-break:break-word\">");
+                + "<div style=\"font-size:22px;font-weight:bold;margin-top:4px\">" + esc(limpio(d.categoria())) + "</div></td></tr>"
+                + "<tr><td bgcolor=\"#ffffff\" style=\"background:#ffffff;padding:28px;border:1px solid #d9e2ef;border-top:0;"
+                + "border-radius:0 0 12px 12px;overflow-wrap:anywhere;word-break:break-word\">");
         if (grupo == GrupoPlantilla.C) {
             t.append("Señores\n").append(limpio(d.entidad())).append("\n\n");
             h.append("<p style=\"margin:0 0 16px\">Señores<br>").append(esc(limpio(d.entidad()))).append("</p>");
@@ -143,7 +145,8 @@ public class PlantillaReporte {
         parrafo(t, h, intro);
 
         String descripcion = d.descripcion() == null ? "" : d.descripcion().trim();
-        h.append("<div style=\"background:#f3f7fd;border-left:4px solid #0a2f6b;border-radius:4px;padding:16px 18px;margin:20px 0\">");
+        h.append("<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:20px 0\"><tr>"
+                + "<td bgcolor=\"#f3f7fd\" style=\"background:#f3f7fd;border-left:4px solid #0a2f6b;padding:16px 18px\">");
         t.append(etiqueta).append(": ").append(descripcion).append("\n\n");
         fila(h, etiqueta, esc(descripcion).replace("\n", "<br>"));
         if (ubicacion != null || hayPunto) {
@@ -175,14 +178,14 @@ public class PlantillaReporte {
                     .append(n).append("</a>");
         }
         if (n > 0) h.append("<p style=\"margin:0\">").append(miniaturas).append("<br>").append(enlaces).append("</p>");
-        h.append("</div>");
-        t.append('\n');
+        h.append("</td></tr></table>");
+        if (evidencia != null) t.append('\n');
 
         parrafo(t, h, solicitud);
         parrafo(t, h, autorizo);
         String firma = unir(" · ", limpio(d.nombre()), documento);
         t.append("Atentamente,\n").append(firma);
-        h.append("<p style=\"margin:0\">Atentamente,<br>").append(esc(firma)).append("</p></div></div></body></html>");
+        h.append("<p style=\"margin:0\">Atentamente,<br>").append(esc(firma)).append("</p></td></tr></table></td></tr></table></body></html>");
 
         List<Seccion> secciones = new ArrayList<>();
         secciones.add(new Seccion("categoria", "Categoría", limpio(d.categoria()), "categoria"));
