@@ -27,6 +27,11 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 
 ## Después del MVP (decidido no hacerlo ahora)
 
+- **Pantallas de carga y animaciones** (decidido por Andrés el 14/11/2026): hoy, al registrarse o enviar un reporte, no se ve
+  cuánto hay que esperar (Render puede tardar más de 2 minutos en despertar). Falta un indicador de progreso o animación en las
+  esperas largas. Lo básico («servidor despertando») sigue en NOT-137; la animación completa queda fuera del MVP.
+- **Mensajes de éxito y de error más completos y consistentes** en toda la app (confirmaciones y errores claros en cada acción).
+  Lo básico ya existe; la revisión completa del tono y los textos queda para después (relacionada con NOT-138).
 - **Limitar los avisos de «reporte parecido» por cuenta** (por ejemplo, 20 por hora). Hoy ese aviso
   no cuenta contra el tope diario, así que se podría probar muchos puntos y leer el resumen de
   140 caracteres de reportes de otras personas (nunca quién lo escribió). Andrés decidió el
