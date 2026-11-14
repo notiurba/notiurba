@@ -68,7 +68,7 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
 | Correo a la entidad confuso (matrícula siempre, fecha cruda, coordenadas largas, filas vacías, fotos solo como enlaces) | NOT-130 |
 | ~~Aviso de rebotes en el detalle del reporte~~: hecho el 13/11/2026, en PR. Queda activar el envío real ([guía](14-activar-envio-real.md)) | NOT-131 |
 | ~~Registro lento, error de Google en celular, límites y duplicados~~: hecho el 13/11/2026, en PR | NOT-132 |
-| **Ajustes tras la prueba de Andrés (14/11/2026):** el panel no deja cambiar el estado, ingreso con Google que mostró datos de otra cuenta, mapa que no aparece con ubicación opcional, pasos que no suben al inicio, atrás desde privacidad, lugar vacío, filtros del panel, textos del paso 3, correo HTML y UI del panel. Plan y QA en `docs/sdd/tasks.md` (PR 2) | NOT-131 (abierta) |
+| **Ajustes tras la prueba de Andrés (14/11/2026):** el panel no deja cambiar el estado, ingreso con Google que mostró datos de otra cuenta, mapa que no aparece con ubicación opcional, pasos que no suben al inicio, atrás desde privacidad, lugar vacío, filtros del panel, textos del paso 3, correo HTML y UI del panel. Hechos y integrados (PR #39 y #40). **El QA lo ejecuta Amelia**: `docs/sdd/historico/NOT-131-envio-real-y-rebotes/tasks.md` (sección «QA», Q-01 a Q-19) | NOT-131 (Done en Linear) |
 | Despliegue final, respaldo de la base, administrador real (hoy usa `ADMIN_DEV_PASSWORD`) | NOT-133 |
 | La app no es PWA instalable (no hay manifiesto ni service worker) | NOT-134 |
 | Pulido: «servidor despertando», reintento de foto, GPS 10 s, atribución OSM, tono y accesibilidad | NOT-137, NOT-138, NOT-139 |

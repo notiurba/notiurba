@@ -12,8 +12,8 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 - ~~Correo claro (NOT-130)~~: hecho el 12/11/2026 (carta formal, canales por entidad, vista previa).
   Queda: verificar el WhatsApp de Gases de Occidente; decidir la categoría 15 (activa sin ruta).
 - Aviso de rebotes y envío real (NOT-131): PR #38 integrado el 14/11/2026 (detalle con «El correo no llegó», canales y
-  «Copiar mi mensaje»; webhook de Resend registrado). **Abierta**: faltan los ajustes de la prueba en producción y su QA
-  (`docs/sdd/tasks.md`, PR 2). Después, activar el envío real con la guía [14-activar-envio-real.md](14-activar-envio-real.md);
+  «Copiar mi mensaje»; webhook de Resend registrado). Ajustes de la prueba en producción integrados (PR #39 y #40); **el QA lo ejecuta
+  Amelia** (`docs/sdd/historico/NOT-131-envio-real-y-rebotes/tasks.md`). Después, activar el envío real con la guía [14-activar-envio-real.md](14-activar-envio-real.md);
   hoy todo sale a la bandeja de pruebas.
 - ~~Registro rápido, diagnóstico de Google en celular, límite de intentos, límite diario y
   duplicados (NOT-132)~~: backend y frontend hechos el 13/11/2026 en la rama
