@@ -122,9 +122,8 @@ export function CamposResidencia({ datos, errores, cambiar, barrios }) {
         placeholder="Ej. Cra 26 #28-40"
         autoComplete="street-address"
         maxLength={limiteRegistro ?? LIMITES.direccion}
-        ayuda={limiteRegistro
-          ? `Donde podría llegar correspondencia oficial. Máximo ${limiteRegistro} caracteres (${datos.direccionCorrespondencia.length}/${limiteRegistro}).`
-          : 'Donde podría llegar correspondencia oficial.'}
+        acciones={<span className="campo__contador" aria-live="polite">{datos.direccionCorrespondencia.length}/{limiteRegistro ?? LIMITES.direccion}</span>}
+        ayuda="Donde podría llegar correspondencia oficial."
         value={datos.direccionCorrespondencia}
         onChange={cambiar('direccionCorrespondencia')}
         error={errores.direccionCorrespondencia || (limiteRegistro && datos.direccionCorrespondencia.length > limiteRegistro

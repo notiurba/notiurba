@@ -8,7 +8,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) |
 | Plan | [plan.md](plan.md) |
-| Estado general | **PR 1 integrado (#38). PR 2: T-07 a T-17 y T-19 a T-22 hechos; faltan T-18, T-20 y el QA** |
+| Estado general | **PR 1 integrado (#38). PR 2: T-07 a T-17 y T-19 a T-22 hechos; falta T-18 (webhook) y el QA** |
 | Última actualización | 2026-11-13 |
 
 ## Cómo se usa
@@ -53,7 +53,7 @@
 | T-17 | **Panel (UI):** más espacio, mejor contraste, quitar «Administrador · todas las comunas» | Frontend | CA-21 | Revisión visual a 1366 px y a 1024 px | [x] |
 | T-18 | **Webhook:** con Andrés, abrir el registro de entregas de Resend y comprobar el estado (200 / 401 / tiempo agotado); si el secreto no coincide, corregirlo; probar un rebote real (guía, paso 2) y comprobarlo en el detalle | Ops + Docs | CA-22 | Registro de Resend en 200 y detalle con «El correo no llegó»; guía ajustada con lo aprendido | [ ] |
 | T-19 | **Aviso de privacidad:** eliminar `frontend/public/aviso-privacidad.html` (la propuesta con marcadores que Netlify servía en vez de la pantalla de la app) y una prueba que impide archivos `.html` en `public/` | Frontend | CA-23 | `publico.test.mjs`; comprobar `/aviso-privacidad` en producción tras el despliegue | [x] |
-| T-20 | **Dirección de correspondencia:** confirmar en qué pantalla se vio sin límite; hoy el registro tiene tope de 100 con contador y las demás 150 | Frontend | CA-26 | Prueba de `CamposResidencia`, si hay que cambiar algo | [~] Sin cambio: el registro ya limita a 100 con contador y Completar perfil y Editar datos a 150; falta que Andrés diga en qué pantalla lo vio sin límite |
+| T-20 | **Dirección de correspondencia:** confirmar en qué pantalla se vio sin límite; hoy el registro tiene tope de 100 con contador y las demás 150 | Frontend | CA-26 | Prueba de `CamposResidencia`, si hay que cambiar algo | [x] El contador n/límite va a la derecha del título en las tres pantallas (100 en el registro, 150 en las demás) |
 | T-21 | **Ubicación opcional:** mensaje más claro de que no es obligatorio | Frontend | CA-24 | `ubicacionGps.test.mjs` y revisión en el celular | [x] |
 | T-22 | **Aviso del ciudadano visible al administrador:** el historial marca qué notas son del ciudadano; el panel muestra la etiqueta «Aviso del ciudadano» y destaca el aviso en el detalle. Sin cambio automático de estado y sin notificaciones | Backend + Frontend | CA-25 | `ActualizacionReporteIntegracionTest`, `reportes.test.mjs` y revisión en el panel | [x] |
 
@@ -121,4 +121,4 @@
 | 2026-11-14 | Segunda tanda de hallazgos: T-19 a T-22 (aviso de privacidad, dirección, ubicación opcional, aviso del ciudadano al administrador) y QA Q-16 a Q-19. Límite diario con borrador y rediseño: fuera del MVP | spec.md, tasks.md |
 | 2026-11-14 | Implementados T-19 (se elimina el HTML estático que tapaba el aviso de privacidad en Netlify), T-21 y T-22 (marca `delCiudadano` en el historial y etiqueta en el panel). T-20 sin cambios a la espera de Andrés | tasks.md |
 | 2026-11-14 | Revisión de T-19 a T-22 corregida: la nota del ciudadano usa el reloj monótono, un administrador dueño del reporte no cuenta como ciudadano, el selector permite «Mantener el estado y solo anotar», se quitó el contador, la prueba de `public/` usa lista de permitidos y el simulador ya no cambia el estado | spec.md, plan.md, tasks.md |
-
+| 2026-11-14 | T-20: el contador de la dirección de correspondencia pasó a la fila del título, como en la descripción. Los commits posteriores al PR #39 viajan en un PR nuevo | tasks.md |
