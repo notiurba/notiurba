@@ -12,7 +12,7 @@ La base tenía el adaptador HTTP de Resend, persistencia de reportes/fotos y con
 
 ## Configuración aplicada
 
-V13 reutiliza las 14 categorías existentes y mantiene la categoría histórica 15, sin ofrecerla en el nuevo catálogo de enrutamiento. No se eliminan categorías, canales ni evidencias. `configuracion_enrutamiento` tiene una fila por categoría y referencias a canales existentes; sus opciones son editables en BD mediante un procedimiento autorizado, sin desplegar Java ni añadir condiciones por cada categoría. No se incorpora panel administrativo.
+V16 reutiliza las 14 categorías existentes y mantiene la categoría histórica 15, sin ofrecerla en el nuevo catálogo de enrutamiento. No se eliminan categorías, canales ni evidencias. `configuracion_enrutamiento` tiene una fila por categoría y referencias a canales existentes; sus opciones son editables en BD mediante un procedimiento autorizado, sin desplegar Java ni añadir condiciones por cada categoría. No se incorpora panel administrativo.
 
 | Código | ID actual | Categoría | Entidad / dependencia | Correo de referencia | Modo inicial |
 |---|---:|---|---|---|---|
@@ -73,7 +73,7 @@ Los eventos de rebote recibidos antes de guardar el ID del proveedor también qu
 
 ## Configuración de despliegue
 
-El trabajador está deshabilitado por defecto. Tras revisar canales, aplicar V13 mediante el proceso de despliegue autorizado y configurar `NOTIURBA_ENVIO_REPORTES_HABILITADO=true`, junto con las variables existentes `RESEND_API_KEY` y `RESEND_REMITENTE`. Configurar `RESEND_WEBHOOK_SECRET` y el endpoint del webhook en el proveedor requiere una acción operativa posterior; no se configuró ningún proveedor aquí. La aplicación puede conservar reportes y encolar mientras la cola está deshabilitada, pero el correo no saldrá hasta habilitarla.
+El trabajador está deshabilitado por defecto. Tras revisar canales, aplicar V16 mediante el proceso de despliegue autorizado y configurar `NOTIURBA_ENVIO_REPORTES_HABILITADO=true`, junto con las variables existentes `RESEND_API_KEY` y `RESEND_REMITENTE`. Configurar `RESEND_WEBHOOK_SECRET` y el endpoint del webhook en el proveedor requiere una acción operativa posterior; no se configuró ningún proveedor aquí. La aplicación puede conservar reportes y encolar mientras la cola está deshabilitada, pero el correo no saldrá hasta habilitarla.
 
 No desplegar ni aplicar las migraciones a producción hasta completar la compilación Java 21, pruebas integrales y validación visual pendientes. No se han modificado credenciales, dominios ni bases remotas.
 

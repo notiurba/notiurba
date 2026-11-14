@@ -10,12 +10,9 @@ import {
   TileLayer,
   useMap,
 } from 'react-leaflet'
-import { comunasTulua, getComunaProperties } from '../../compartido/geo/comunasTulua'
-import {
-  categoriasReporte,
-  estadosReporte,
-} from '../datos/reportesPrueba'
-import { identificarComunaPorCoordenadas } from '../../compartido/utils/geoUtils'
+import { CENTRO_TULUA, comunasTulua, getComunaProperties } from '../../compartido/geo/comunasTulua'
+import { estiloComuna } from '../../compartido/geo/estiloComunas'
+import { identificarComunaPorCoordenadas } from '../../compartido/geo/geoUtils'
 import { CapaDiagnostico, PanelDiagnostico } from '../componentes/DiagnosticoLimites'
 import { diagnosticoLimites } from '../datos/diagnosticoLimites'
 import { obtenerReportesCiudadanos } from '../servicios/reportesService'
@@ -31,20 +28,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 })
 
-const TULUA_CENTER = [4.0847, -76.1954]
-
-const comunaColors = [
-  '#2f80ed',
-  '#27ae60',
-  '#f2994a',
-  '#9b51e0',
-  '#eb5757',
-  '#00a6a6',
-  '#f2c94c',
-  '#6fcf97',
-  '#bb6bd9',
-  '#d35478',
-]
 
 function VistaTulua({ geoJson }) {
   const map = useMap()
@@ -221,6 +204,10 @@ export default function MapaComunas() {
     [reportes],
   )
 
+  // Las opciones de los filtros salen de los reportes cargados (no de una lista fija).
+  const categoriasReporte = useMemo(() => [...new Set(reportes.map((r) => r.categoria))].sort(), [reportes])
+  const estadosReporte = useMemo(() => [...new Set(reportes.map((r) => r.estado))], [reportes])
+
   const reportesFiltrados = useMemo(
     () =>
       reportesConComuna.filter((reporte) => {
@@ -238,22 +225,9 @@ export default function MapaComunas() {
     (reporte) => reporte.resultadoComuna.status === 'pendiente_revision',
   ).length
 
-  const styleComuna = (feature) => {
-    const index = Number(feature.properties.COD_LOC_COM) - 1
-    const color = comunaColors[index % comunaColors.length]
-
-    return {
-      color,
-      fillColor: color,
-      fillOpacity: 0.18,
-      opacity: 0.95,
-      weight: 2,
-    }
-  }
-
   const onEachComuna = (feature, layer) => {
     const comuna = getComunaProperties(feature)
-    layer.bindPopup(`<strong>${comuna.nombre}</strong><br/>Codigo: ${comuna.id}`)
+    layer.bindPopup(`<strong>${comuna.nombre}</strong><br/>Código: ${comuna.id}`)
     layer.on({
       mouseover: (event) => {
         event.target.setStyle({
@@ -263,7 +237,7 @@ export default function MapaComunas() {
         event.target.bringToFront()
       },
       mouseout: (event) => {
-        event.target.setStyle(styleComuna(feature))
+        event.target.setStyle(estiloComuna(feature))
       },
     })
   }
@@ -328,7 +302,7 @@ export default function MapaComunas() {
           <div className="control-group">
             <h2>Filtros</h2>
             <label>
-              Categoria
+              Categoría
               <select
                 value={categoria}
                 onChange={(event) => setCategoria(event.target.value)}
@@ -367,14 +341,14 @@ export default function MapaComunas() {
             <p>
               POT 2015: referencia provisional, pendiente de validación
               administrativa. No confirma la división vigente en 2026.
-              Los reportes son ficticios.
+              Los reportes son de demostración si el servidor no responde.
             </p>
           </div>
         </aside>
 
         <div className="map-frame">
           <MapContainer
-            center={TULUA_CENTER}
+            center={CENTRO_TULUA}
             zoom={13}
             scrollWheelZoom
             className="leaflet-map"
@@ -388,7 +362,7 @@ export default function MapaComunas() {
               <GeoJSON
                 key="comunas-tulua-pot2015"
                 data={comunasTulua}
-                style={styleComuna}
+                style={estiloComuna}
                 onEachFeature={onEachComuna}
               />
             )}

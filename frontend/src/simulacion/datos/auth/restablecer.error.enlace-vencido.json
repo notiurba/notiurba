@@ -1,0 +1,5 @@
+{
+  "codigo": "ENLACE_INVALIDO",
+  "mensaje": "El enlace no es válido o venció.",
+  "campo": "token"
+}

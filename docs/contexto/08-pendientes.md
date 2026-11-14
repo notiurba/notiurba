@@ -1,125 +1,104 @@
 # Pendientes
 
-Esta lista refleja la pestaña «Pendientes» del Google Doc. Prioridad de arriba hacia abajo.
+Actualizado el 13 de noviembre de 2026 (Sprint 3 en curso). Esta lista antes
+reflejaba la pestaña «Pendientes» del Google Doc y tenía muchos puntos ya resueltos; se rehízo.
+Lo que está en Linear lleva su clave `NOT-n`. Estado general: [12-estado-actual-y-traspaso.md](12-estado-actual-y-traspaso.md).
 
-## Entregables del Sprint 1
+## Dentro del Sprint 3 (último)
 
-- **Requisitos y reglas de negocio**: existen (ver 04 y 05). Falta confirmar los tiempos
-  de RNF-04, la respuesta del docente sobre datos personales (Ley 1581) y validar las
-  categorías 8 y 9.
-- **Diseño técnico (arquitectura y modelo de datos)**: parcial. Falta todo lo listado en
-  `03-arquitectura-y-datos.md` (diagramas de arquitectura y despliegue, modelo de datos
-  completo, ER, API REST, flujo de estados, notificaciones). **Responsable: Andrés.**
-- **Prototipo navegable en Figma**: existe, falta el enlace en el documento y una pestaña
-  que lo describa. **Responsable: Amelia.**
-- **Delimitación de las 10 comunas**: base real lista (GeoJSON del POT 2015 convertido);
-  falta validarlo con Planeación y aclarar que se convirtió, no se digitalizó.
+Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 
-## Decisiones abiertas
+- API y pantallas del mapa de reportes, del mapa de calor y de las estadísticas (NOT-129, 135, 136).
+- ~~Correo claro (NOT-130)~~: hecho el 12/11/2026 (carta formal, canales por entidad, vista previa).
+  Queda: verificar el WhatsApp de Gases de Occidente; decidir la categoría 15 (activa sin ruta).
+- Aviso de rebotes y envío real (NOT-131): PR #38 integrado el 14/11/2026 (detalle con «El correo no llegó», canales y
+  «Copiar mi mensaje»; webhook de Resend registrado). Ajustes de la prueba en producción integrados (PR #39 y #40); **el QA lo ejecuta
+  Amelia** (`docs/sdd/historico/NOT-131-envio-real-y-rebotes/tasks.md`). Después, activar el envío real con la guía [14-activar-envio-real.md](14-activar-envio-real.md);
+  hoy todo sale a la bandeja de pruebas.
+- ~~Registro rápido, diagnóstico de Google en celular, límite de intentos, límite diario y
+  duplicados (NOT-132)~~: backend y frontend hechos el 13/11/2026 en la rama
+  `feature/not-132-registro-rapido-y-sin-abusos`; faltan las pruebas finales y el cierre.
+- Despliegue final, respaldo de la base y administrador real (NOT-133).
+- App instalable (PWA): no hay manifiesto ni service worker (NOT-134).
+- Pulido de la app: servidor despertando, reintento de foto, GPS de 10 s, atribución del mapa,
+  usabilidad, tono y accesibilidad (NOT-137, 138, 139).
+- Pruebas del panel, de punta a punta y colección Postman (NOT-140, 141).
+- Informe final, manuales y Google Doc al día (NOT-142).
 
-- ~~Mecanismo de envío del correo~~: decidido el 29/10/2026, Resend (ADR-0002).
-- Categorías 8 y 9: confirmar con la Alcaldía.
-- Dominio para Resend antes del 8 de noviembre (ADR-0007): comprar un `.com` (~US$10–12/año en Cloudflare o Porkbun), enviar desde un subdominio y dejar por escrito quién es el dueño. Sin él Resend no envía a las Secretarías; el borrador ya no es respaldo.
+## Después del MVP (decidido no hacerlo ahora)
 
-## Estructura del frontend y auth por rol (25/10/2026)
+- **Limitar los avisos de «reporte parecido» por cuenta** (por ejemplo, 20 por hora). Hoy ese aviso
+  no cuenta contra el tope diario, así que se podría probar muchos puntos y leer el resumen de
+  140 caracteres de reportes de otras personas (nunca quién lo escribió). Andrés decidió el
+  13/11/2026 no limitarlo en el MVP para no sobreingenierizar; el riesgo es bajo (NOT-132).
+- **Distinguir «sin internet» de «NotiUrba no responde»** en los avisos de red: hoy todo fallo de red
+  dice «No hay conexión a internet». Se dejó así el 13/11/2026 (NOT-132).
+- **Límite de intentos por IP o por dispositivo:** hoy es solo por correo, así que alguien podría
+  bloquear el correo de otra persona por 5 minutos; aceptado en la spec de NOT-132.
 
-Resuelto: ver ADR-0005. `app/` (ciudadano), `admin/` (panel, ya con el mapa/filtros/
-diagnóstico de Katherine), `compartido/` (geo, utils, estilos, assets, andamiaje de
-sesión). Backend: paquetes `seguridad/`, `auth/`, `admin/`, `usuario/`, con
-`POST /api/auth/login` devolviendo JWT con rol y `/api/admin/**` exigiendo `ROLE_ADMIN`.
+- **Guardar un reporte como borrador cuando se llega al tope diario** (2 reportes por cuenta al día). Hoy el texto del reporte
+  se conserva mientras la pestaña siga abierta (se guarda en el navegador) y el aviso lo dice; las fotos no. Un borrador que
+  sobreviva al cierre del navegador o viva en el servidor es trabajo de un día, con decisiones de privacidad (Andrés, 14/11/2026).
+- **Rediseño completo del panel del administrador** (identidad visual, tablas y filtros más cuidados). En NOT-131 solo
+  se ajusta espaciado, contraste y etiquetas (Andrés, 14/11/2026).
+- **Mapa de calor del panel** ya existe en el backend; falta la pantalla (NOT-136).
 
-**Verificado de punta a punta el 25/10/2026** contra Postgres real (Docker local):
-`V1`–`V4` migran limpio, `POST /api/auth/login` con el usuario ADMIN de desarrollo
-devuelve un JWT válido, `GET /api/admin/ping` responde 200 con ese token y 401 sin
-token o con uno inválido/con contraseña incorrecta. La migración `V4` ya no depende de
-que alguien cargue barrios antes: si no encuentra ninguno, siembra uno administrativo
-mínimo ella misma (ver el comentario en `V4__usuario_admin_semilla.sql`).
+## Fuera del equipo (no bloquean el MVP)
 
-Queda por hacer:
+- **Validación jurídica del aviso de privacidad v3** (ADR-0008): vigente, pero su texto legal
+  sigue sin validar con el docente o un asesor jurídico.
+- **Barrios y comunas oficiales:** la capa de comunas (V14) es sintética y los 133 barrios (V17)
+  son del PMGR 2020. El docente aceptó esta limitación; reemplazarlos es opcional con los
+  scripts `backend/scripts/generar-capa-comunas.py` y `generar-barrios.py` (migración V19 en adelante).
+- Confirmar con la Alcaldía/CAIC el tamaño máximo de adjuntos y el correo de Centroaguas;
+  respuestas pendientes de Gases de Occidente y Veolia (ver [07](07-asignacion-de-correos.md)).
 
-- Crear la página `/login` y conectar `RutaProtegida` a las rutas `/app/*` y `/admin/*`
-  (hoy existe el componente pero no está en uso, para no dejar una redirección a un
-  `/login` que no existe).
-- Limpieza menor: Spring Security genera una contraseña aleatoria de desarrollo en el
-  log al arrancar ("Using generated security password") porque no hay un
-  `UserDetailsService` propio — no afecta el login real (que no usa ese mecanismo),
-  pero vale la pena silenciarlo cuando se revise `SecurityConfig` a fondo.
-- El puerto de Postgres en `docker-compose.yml` quedó en **5433** (no 5432) porque la
-  máquina de Andrés ya tenía otro contenedor (`postgres-cursos`, de otro proyecto) usando
-  5432. Si alguien más del equipo no tiene ese conflicto, puede dejarlo en 5432 en su
-  copia local del `.env`/`docker-compose.yml` — no hace falta que todos compartan el
-  mismo puerto.
-- Responsable: Andrés (backend/auth) + Katherine (página de login en el frontend).
+## Ya resuelto (no volver a abrir)
 
-## Login con Google y modelo v8 (28/10/2026)
+- Mecanismo de correo: Resend (ADR-0002); dominio `notiurba.com` (ADR-0007), verificado, y envío
+  probado desde Render.
+- Categorías 8 (riesgo de desastres) y 9 (vivienda) y la consulta sobre la Ley 1581: validadas.
+- Stack desplegado en Netlify + Render + Neon (ADR-0004); fotos en Cloudinary (ADR-0006).
+- Registro, ingreso, Google, recuperación, verificación de correo, perfil, eliminar datos y cuenta,
+  «Mis reportes», «Actualizar mi reporte», panel con listado/filtros/estados/vigencia.
+- Asignación de comuna en el backend (NOT-55, V13) y catálogo público de barrios.
+- Se quitó el barrio «Administración NotiUrba» (V18). Nombres y apellidos solo con letras (2 a 60)
+  y contraseña con mensajes claros (8 a 72 bytes).
+- Textos legalistas suavizados; el paso 2 del reporte se muestra siempre; la ubicación es
+  opcional para Vivienda.
+- Orígenes CORS con comodín para las vistas previas de Netlify.
 
-Rama `feat/login-google`: migraciones V5 (Google), V6 (nombres/apellidos) y V7 (ajustes v8),
-`POST /api/auth/google`, `/google/completar`, `/recuperar`, `/restablecer` y `GET /api/categorias`.
+## Deuda técnica conocida
 
-- **Credenciales OAuth de Google Cloud**: crear el ID de cliente (origen del frontend en Netlify
-  y localhost) y ponerlo en `GOOGLE_CLIENT_ID` (Render y local). Sin él el backend no arranca.
-- **Vinculación automática por correo** (caso 2 de `/api/auth/google`): es una *propuesta*,
-  por confirmar con Andrés. Está aislada en `GoogleAuthServicio.vincularPorCorreo`.
-- **Respaldo en Neon antes de aplicar V6**: V6 hace `DROP COLUMN` (irreversible). Crear un
-  branch de respaldo en Neon antes de desplegar.
-- **Reportes anónimos y de menores de edad**: fuera del MVP; requieren acuerdo con las
-  empresas de servicios públicos y la Alcaldía (Ley 1581 de 2012, art. 7).
-- **Validación jurídica del aviso de privacidad**: la versión 3 ya es la vigente (V12, 01/11/2026), pero su texto legal sigue sin validar con el docente o un asesor jurídico (puntos en ADR-0008).
-- **Barrios reales y polígonos de comunas (NOT-54)**: sin barrios nadie completa el perfil, y
-  sin polígonos un reporte con solo GPS (B3) no deriva comuna ni barrio.
-- **Registro con correo y contraseña**: aún no existe en el backend. Cuando se haga, usa
-  `nombres`/`apellidos` y la regla de `auth/ReglaContrasena` (8+ caracteres, letras y números).
-- **Envío real del correo de recuperación**: hoy queda detrás de `EnviadorEnlaceRecuperacion`
-  con una implementación que solo escribe en el log (`RECUPERACION_MOSTRAR_ENLACE=true` en
-  desarrollo). Falta conectarlo a `EnviadorCorreo` (Resend, ya implementado).
-- **Ruta del frontend «Nueva contraseña»**: el enlace apunta a `RECUPERACION_ENLACE`
-  (por defecto `http://localhost:5173/app/nueva-contrasena?token=...`); la página no existe aún.
-- **Categoría 10 y canal SEDAMA (resuelto)**: el commit `741c2b3` los cambiaba editando V3,
-  lo que rompe el checksum de Flyway. Se revirtió y el cambio pasó a
-  `V8__categoria_10_y_sedama.sql`. Regla: una migración aplicada no se edita; se corrige con otra.
-- **`db/probar.sh` estaba roto en `develop`** desde V4 (barrio 1 y usuario 1 repetidos con
-  `datos_ejemplo.sql`). Arreglado en `datos_ejemplo.sql`: conserva el barrio 1 de V4 y corre
-  al admin de V4 al id 1000.
+- `RutaProtegida` ya envuelve `/app` y `/admin`; el panel muestra datos de prueba en el mapa por
+  comunas hasta conectar la API real (NOT-135).
+- Mover o sacar del historial los archivos pesados del prototipo
+  (`plano-p28-tulua-2015-300dpi.png`, ~39 MB, y el PDF, ~5 MB). Decisión aparte: reescribir historial.
+- El panel «Diagnóstico de límites» (`admin/componentes/DiagnosticoLimites.jsx`) es interno:
+  ocultarlo en producción.
+- Normalizar tildes en los textos de la interfaz (parte de NOT-138).
+- Colección Postman (`docs/api/`) sin los endpoints nuevos (NOT-141).
+- Rotar la clave de administrador de desarrollo (NOT-133). `MAIL_FROM` y `MAIL_TEST_TO` ya se quitaron de Render.
+- Pull request #27 de Amelia (`fix/registro-pr20`) quedó superada por el #30: contiene evidencias
+  pesadas (`docs/validacion`, `output/`, PDF) y 11 conflictos con `develop`. Conviene cerrarla y
+  rehacer solo lo útil en PR pequeños. Su prueba `CatalogoCargaBarriosIT` espera 135 barrios; son 133.
+- Las diapositivas del Sprint 2: corregir «15 categorías» (la app ofrece 14) y la nota N.05 que
+  dice que las categorías 8 y 9 no están validadas (NOT-142).
 
-## Despliegue en Netlify + Render + Neon (28/10/2026)
-
-Hecho y verificado: ver «Despliegue actual» en `02-stack.md` y ADR-0004. Health, login ADMIN,
-`/api/categorias` (15) y `/api/admin/ping` responden 200 contra Render.
-
-Queda por hacer:
-
-- **Login con Google en producción**: el cliente OAuth está en «Prueba» (3 usuarios de prueba).
-  Para abrirlo a cualquiera hay que completar la página de marca y publicar la app.
-- **Rotar la contraseña de admin** (`ADMIN_DEV_PASSWORD` en Render y el hash en Neon con
-  `UPDATE usuario SET password_hash = crypt('NUEVA', gen_salt('bf')) WHERE correo = 'admin.dev@notiurba.local';`).
-  Quedó expuesta en capturas de pantalla durante las pruebas.
-- **Frontend**: no existen aún las pantallas de registro, login, recuperación, crear reporte ni mapa.
-- **`GET /api/categorias` exige JWT**: decidir si debe ser pública (la pantalla de crear reporte la necesita).
-- **Correo real** (NOT-15, 39, 40) y almacenamiento de fotos (NOT-28): correo (Resend) y fotos (Cloudinary, ADR-0006) integrados detrás de interfaces (`EnviadorCorreo`, `AlmacenFotos`). Fotos: conectadas al endpoint de subida y probadas en Render el 01/11/2026. Correo: conectado al registro (verificación); falta conectarlo a la recuperación de contraseña y al endpoint `enviar`.
-- **Colección Postman** (`docs/api/`): Postman convirtió los `.json` a YAML; revisar que no haya
-  secretos antes de hacer commit de `.postman/`, `postman/` y los YAML.
-- Auto-Deploy de Render está activo: cada commit a la rama enlazada redespliega.
-- El netlify del proyecto está bajo el equipo `cafe-smart`; moverlo si hace falta.
-
-## Verificaciones técnicas
-
-- Prueba mínima del mapa: OSM + marcadores + GeoJSON de comunas + Leaflet.heat (NOT-9).
-- Probar desde Render el envío con la API HTTP de Resend (probado desde local el 01/11/2026; Render Free bloquea SMTP 25/465/587, por eso no se usa).
-- ~~PostGIS en Neon en el plan Free~~: verificado el 28/10/2026 (V1 corrió en Neon).
+- `app/paginas/CrearReporte.jsx` y `ConsultarReporte.jsx` no tienen ruta (código viejo): borrarlos. Si alguien
+  los conectara, no tienen el bloqueo de un solo clic (`useUnaVez`).
 
 ## Reglas de negocio por definir
 
-- Qué hace el sistema con un punto que cae en un **hueco** o **solapamiento** de la capa
-  de comunas (asignar la más cercana, enviar a revisión, etc.). Hoy no está en las RN.
+- ~~Valores del límite diario de reportes, intentos de login y distancia de duplicados (NOT-132)~~:
+  decididos el 13/11/2026 (3 intentos en 5 min, bloqueo de 5 min, 2 reportes por cuenta al día,
+  5 a 15 m por categoría, 30 días) y ajustables por el administrador en «Configuración».
+- Pasar a las RN la regla de huecos y solapes de la capa de comunas (ya está en `fn_asignar_comuna`).
 
-## Deuda del prototipo del frontend
+## Notas operativas que conviene recordar
 
-- Sacar los archivos pesados del repo: `src/data/geo/plano-p28-tulua-2015-300dpi.png`
-  (~39 MB) y `plano-p28-tulua-2015.pdf` (~5 MB). Ya están en el historial de git; GitHub
-  bloquea sobre 100 MB por archivo. Moverlos fuera de `src/` o usar Git LFS. (No se
-  tocaron en la reorganización del 25/10/2026: sacarlos de `src/` no libera espacio sin
-  reescribir el historial, y eso es una decisión aparte.)
-- Mover la asignación de comuna al backend (PostGIS) como fuente de verdad.
-- El panel «Diagnóstico de límites» (ahora en `admin/componentes/DiagnosticoLimites.jsx`)
-  es una herramienta interna: ocultarlo en producción.
-- Normalizar tildes en los textos de la interfaz.
+- El puerto de Postgres local es **5433** (el de Andrés tenía otro contenedor en 5432).
+- Auto-Deploy de Render redespliega con cada commit a la rama enlazada: un cambio de migración
+  llega a Neon solo. Las migraciones aplicadas **no se editan** (checksum de Flyway).
+- Una migración destructiva (como un `DROP COLUMN`) pide antes un branch de respaldo en Neon.
+- Revisar que `.postman/`, `postman/` y los YAML no traigan secretos antes de un commit.

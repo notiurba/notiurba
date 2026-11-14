@@ -16,11 +16,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.context.ApplicationEventPublisher;
 
 import com.notiurba.auth.google.ResultadoGoogle;
-import com.notiurba.correo.CorreoNoEnviadoException;
-import com.notiurba.correo.CorreoSaliente;
-import com.notiurba.correo.EnviadorCorreo;
 import com.notiurba.seguridad.JwtProveedor;
 import com.notiurba.usuario.Rol;
 import com.notiurba.usuario.TipoToken;
@@ -38,7 +36,7 @@ class VerificacionServicioTest {
     private final UsuarioRepository usuarios = mock(UsuarioRepository.class);
     private final TokenVerificacionRepository tokens = mock(TokenVerificacionRepository.class);
     private final TipoTokenRepository tipos = mock(TipoTokenRepository.class);
-    private final EnviadorCorreo correo = mock(EnviadorCorreo.class);
+    private final ApplicationEventPublisher publicador = mock(ApplicationEventPublisher.class);
     private final JwtProveedor jwt = new JwtProveedor("secreto-de-pruebas-de-notiurba-con-mas-de-32-bytes", 60);
     private final TipoToken tipo = mock(TipoToken.class);
     private VerificacionServicio servicio;
@@ -46,7 +44,7 @@ class VerificacionServicioTest {
     @BeforeEach
     void preparar() {
         when(tipos.findByNombre(TipoToken.VERIFICACION_CORREO)).thenReturn(Optional.of(tipo));
-        servicio = new VerificacionServicio(usuarios, tokens, tipos, correo, jwt, "https://app.test/verificar");
+        servicio = new VerificacionServicio(usuarios, tokens, tipos, publicador, jwt, "https://app.test/verificar");
     }
 
     private static Usuario sinVerificar(String email) {
@@ -55,28 +53,28 @@ class VerificacionServicioTest {
     }
 
     @Test
-    void emitirGuardaSoloElHashYEnviaElEnlaceConElToken() {
+    void emitirGuardaSoloElHashYPublicaElEnlaceConElToken() {
         Usuario ana = sinVerificar("ana@x.com");
 
-        servicio.emitirYEnviar(ana);
+        servicio.emitir(ana);
 
         var guardado = ArgumentCaptor.forClass(TokenVerificacion.class);
         verify(tokens).save(guardado.capture());
-        var enviado = ArgumentCaptor.forClass(CorreoSaliente.class);
-        verify(correo).enviar(enviado.capture());
-        assertThat(enviado.getValue().para()).containsExactly("ana@x.com");
-        String texto = enviado.getValue().texto();
-        String token = texto.substring(texto.indexOf("?token=") + 7).split("\\s")[0];
-        assertThat(texto).contains("https://app.test/verificar?token=");
+        var evento = ArgumentCaptor.forClass(CorreoVerificacionPendiente.class);
+        verify(publicador).publishEvent(evento.capture());
+        assertThat(evento.getValue().correo()).isEqualTo("ana@x.com");
+        assertThat(evento.getValue().nombres()).isEqualTo("Ana");
+        String enlace = evento.getValue().enlace();
+        assertThat(enlace).startsWith("https://app.test/verificar?token=");
+        String token = enlace.substring(enlace.indexOf("?token=") + 7);
         assertThat(guardado.getValue().getTokenHash()).isEqualTo(VerificacionServicio.hash(token)).isNotEqualTo(token);
         verify(tokens).invalidarVigentes(eq(ana), eq(tipo), any());
     }
 
     @Test
-    void siFallaElEnvioLaCuentaSigueYNoSeLanzaError() {
-        when(correo.enviar(any())).thenThrow(new CorreoNoEnviadoException("caído", true));
-        servicio.emitirYEnviar(sinVerificar("ana@x.com"));
-        verify(tokens).save(any());
+    void elEventoNoMuestraElEnlaceEnLosLogs() {
+        assertThat(new CorreoVerificacionPendiente("a@x.com", "Ana", "https://x/?token=secreto").toString())
+                .doesNotContain("secreto").doesNotContain("a@x.com");
     }
 
     @Test
@@ -130,9 +128,9 @@ class VerificacionServicioTest {
         String d = servicio.reenviar("nadie@x.com");
 
         assertThat(a).isEqualTo(b).isEqualTo(c).isEqualTo(d);
-        var enviado = ArgumentCaptor.forClass(CorreoSaliente.class);
-        verify(correo).enviar(enviado.capture());           // solo uno de los cuatro
-        assertThat(enviado.getValue().para()).containsExactly("pendiente@x.com");
+        var evento = ArgumentCaptor.forClass(CorreoVerificacionPendiente.class);
+        verify(publicador).publishEvent(evento.capture());      // solo uno de los cuatro
+        assertThat(evento.getValue().correo()).isEqualTo("pendiente@x.com");
     }
 
     @Test
@@ -143,7 +141,7 @@ class VerificacionServicioTest {
 
         servicio.reenviar("pendiente@x.com");
 
-        verify(correo, never()).enviar(any());
+        verify(publicador, never()).publishEvent(any(Object.class));
         verify(tokens, never()).save(any());
     }
 }

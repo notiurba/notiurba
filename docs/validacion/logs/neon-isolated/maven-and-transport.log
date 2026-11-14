@@ -1,0 +1,10 @@
+recorded_utc=2026-10-27T16:33:21.1440466Z
+First command: mvn -B -f backend/pom.xml -DskipTests test-compile
+Result: exit1; AccessDeniedException writing default Maven cache. No tests executed.
+Corrected command: mvn -B -Dmaven.repo.local=<authorized-workspace>/maven-cache -f backend/pom.xml -DskipTests test-compile
+Result: parent org.springframework.boot:spring-boot-starter-parent:3.3.5 unresolved; Permission denied: getsockopt reaching Maven Central. No tests executed.
+Java21 TCP probe to approved isolated endpoint, no database credentials used:
+UTC=2026-10-27T16:26:04.685587400Z tcp_connection=blocked exception=SocketException message=Permission denied: getsockopt; exit1.
+No TLS, security controls or permissions were weakened. This is an environment block, not a demonstrated backend failure.
+N02/Pspatial-tests: no SpringBoot/Failsafe execution reached; PENDIENTE.
+N03/Hibernate Spatial: not executed against Neon; PENDIENTE.

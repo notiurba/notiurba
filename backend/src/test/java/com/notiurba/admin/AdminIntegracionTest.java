@@ -51,9 +51,10 @@ class AdminIntegracionTest {
     private static BaseDeDatosTemporal bd;
     @BeforeAll static void crearBase() {
         String url = System.getenv("DB_URL");
-        if (url == null || !url.matches("jdbc:postgresql://127\\.0\\.0\\.1:[0-9]+/notiurba_test_admin_bootstrap")) {
-            throw new IllegalArgumentException("Usa el contenedor local desechable de docs/admin-estados-validar-local.ps1");
-        }
+        // Se omite (no falla) si DB_URL apunta a otra base: así no rompe `mvn test` a quien tenga su propia base local
+        org.junit.jupiter.api.Assumptions.assumeTrue(
+                url != null && url.matches("jdbc:postgresql://127\\.0\\.0\\.1:[0-9]+/notiurba_test_admin_bootstrap"),
+                "Se omite: usa el contenedor local desechable de docs/admin-estados-validar-local.ps1");
         bd = BaseDeDatosTemporal.crearOOmitir();
     }
     @AfterAll static void borrarBase() throws SQLException { if (bd != null) bd.borrar(); }
@@ -157,6 +158,15 @@ class AdminIntegracionTest {
         assertThat(historial(codigo)).isEqualTo(3);
     }
 
+    @Test void sinObservacionElHistorialGuardaLaFrasePorDefecto() throws Exception {
+        String codigo=crear(false);
+        cambiar(codigo,"RESUELTO","   ").andExpect(status().isOk());
+        assertThat(jdbc.queryForObject("""
+                SELECT h.observacion FROM historial_estado h JOIN reporte r USING(id_reporte)
+                JOIN estado_reporte e ON e.id_estado_reporte=h.id_estado_reporte
+                WHERE r.codigo_seguimiento=? AND e.nombre='Resuelto'""",String.class,codigo)).isEqualTo(AdminServicio.OBSERVACION_POR_DEFECTO);
+    }
+
     @Test void sinSesionCiudadanoInexistenteYObservacionVacia() throws Exception {
         String codigo=crear(false);
         mvc.perform(patch("/api/admin/reportes/"+codigo+"/estado").contentType(MediaType.APPLICATION_JSON)
@@ -165,7 +175,7 @@ class AdminIntegracionTest {
                 .contentType(MediaType.APPLICATION_JSON).content("{\"estado\":\"RESUELTO\",\"observacion\":\"Confirmado\"}"))
                 .andExpect(status().isForbidden());
         cambiar("NU-999999999999","RESUELTO","Confirmado").andExpect(status().isNotFound());
-        cambiar(codigo,"RESUELTO","   ").andExpect(status().isBadRequest());
+        cambiar(codigo,"RESUELTO","x".repeat(1001)).andExpect(status().isBadRequest());
         assertThat(historial(codigo)).isEqualTo(1);
     }
 

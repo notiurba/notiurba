@@ -1,16 +1,18 @@
 # Arquitectura y modelo de datos
 
-> Estado: **parcial**. Este es el entregable «Diseño técnico» del Sprint 1 y es el
-> que más falta por completar. Lo definido viene de las pestañas «Modelado» y «Stack
-> tecnológico»; lo marcado como *falta* todavía no existe en el proyecto.
+> Estado al 9 de nov de 2026: el diseño del Sprint 1 ya está construido. Modelo de datos:
+> [10-modelo-de-datos.md](10-modelo-de-datos.md) (24 tablas, migraciones V1–V18). API:
+> [11-contrato-api.md](11-contrato-api.md). Estado general: [12-estado-actual-y-traspaso.md](12-estado-actual-y-traspaso.md).
+> La lista «Lo que falta diseñar» de abajo se conserva como historia: casi todo está hecho; lo que
+> sigue abierto está en [08-pendientes.md](08-pendientes.md).
 
 ## Componentes (visión actual)
 
 - **PWA (React + Vite)**: una sola aplicación con dos zonas por rol, ver ADR-0005.
   `app/*` es la PWA ciudadana (registro/sesión, creación de reporte con foto + GPS,
-  «Mis reportes» — aún sin construir). `admin/*` es el panel administrativo (mapa,
-  filtros, mapa de calor, diagnóstico de límites, gestión de estados); hoy ya tiene el
-  mapa y los filtros, migrados del prototipo original. `compartido/` tiene el cliente
+  «Mis reportes», perfil y eliminación de datos). `admin/*` es el panel administrativo (mapa,
+  filtros, mapa de calor, diagnóstico de límites, gestión de estados); hoy tiene el
+  listado con filtros, el cambio de estado y el mapa por comunas (con datos de prueba hasta NOT-135). `compartido/` tiene el cliente
   de API, la sesión/JWT y `RutaProtegida` por rol.
 - **API (Spring Boot)**: autenticación JWT (`POST /api/auth/login`, ya implementado),
   reportes, asignación de comuna, enrutamiento y envío de correo, registro de envíos.

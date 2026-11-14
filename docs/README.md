@@ -20,7 +20,9 @@ esta carpeta la resume y la aterriza para el código.
 | [contexto/08-pendientes.md](contexto/08-pendientes.md) | Lo abierto, por prioridad. |
 | [contexto/09-equipo-y-proceso.md](contexto/09-equipo-y-proceso.md) | Roles, sprints, gestión en Linear y control de cambios. |
 | [contexto/10-modelo-de-datos.md](contexto/10-modelo-de-datos.md) | Modelo de datos: tablas, reglas de la base y mapa de formularios. |
-| [contexto/11-contrato-api.md](contexto/11-contrato-api.md) | Contrato de la API REST: formato de error, los 6 endpoints del MVP y los reservados (NOT-43). |
+| [contexto/11-contrato-api.md](contexto/11-contrato-api.md) | Contrato de la API REST: formato de error, los endpoints que existen y los pendientes (NOT-43). |
+| [contexto/12-estado-actual-y-traspaso.md](contexto/12-estado-actual-y-traspaso.md) | **Empiece aquí:** qué funciona, qué falta, cómo se corre y se prueba, y cómo se trabaja con Andrés. |
+| [contexto/13-sprint-3.md](contexto/13-sprint-3.md) | Sprint 3 (último): 14 historias, reparto, dependencias y plantilla de historia. |
 | [glosario.md](glosario.md) | Términos del proyecto. |
 
 ## Decisiones (ADR)

@@ -1,0 +1,101 @@
+.lista-canales {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--nu-borde-tarjeta);
+  border-radius: var(--nu-radio-xl);
+  background: var(--nu-superficie-base);
+}
+
+.lista-canales__fila {
+  display: flex;
+  gap: var(--nu-esp-12);
+  padding: var(--nu-esp-12) var(--nu-esp-16);
+  border-bottom: 1px solid var(--nu-borde-divisor);
+}
+
+.lista-canales__fila:last-child {
+  border-bottom: 0;
+}
+
+.lista-canales__icono {
+  display: grid;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: var(--nu-radio-pildora);
+  background: var(--nu-marca-suave);
+  color: var(--nu-marca-suave-texto);
+}
+
+.lista-canales__textos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nu-esp-2);
+  min-width: 0;
+  font-size: 14px;
+  color: var(--nu-texto-secundario);
+  overflow-wrap: anywhere;
+}
+
+.lista-canales__textos strong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--nu-esp-6);
+  font-size: 15px;
+  color: var(--nu-texto-principal);
+}
+
+.lista-canales__chip {
+  padding: 2px var(--nu-esp-8);
+  border-radius: var(--nu-radio-pildora);
+  background: var(--nu-marca-seleccion);
+  color: var(--nu-marca-primario);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.lista-canales__textos a {
+  font-weight: 700;
+  color: var(--nu-marca-primario);
+}
+
+.lista-canales__acceso {
+  color: var(--nu-texto-principal);
+}
+
+.otros-canales {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nu-esp-12);
+  width: 100%;
+  text-align: left;
+}
+
+.otros-canales h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.otros-canales p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--nu-texto-secundario);
+}
+
+.otros-canales textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--nu-esp-12);
+  border: 1px solid var(--nu-borde-campo);
+  border-radius: var(--nu-radio-md);
+  font-family: var(--nu-fuente);
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+}

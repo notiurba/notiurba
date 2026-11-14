@@ -1,0 +1,29 @@
+.filtro {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nu-esp-6);
+  height: 42px;
+  padding: 0 var(--nu-esp-20);
+  border: 1.5px solid var(--nu-borde-boton-secundario);
+  border-radius: var(--nu-radio-pildora);
+  background: var(--nu-superficie-base);
+  color: var(--nu-texto-principal);
+  font-family: var(--nu-fuente);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filtro--activo {
+  border-color: var(--nu-marca-primario);
+  background: var(--nu-marca-primario);
+  color: var(--nu-texto-inverso);
+  font-weight: 700;
+  box-shadow: var(--nu-sombra-filtro-activo);
+}
+
+.filtro:focus-visible {
+  outline: 3px solid var(--nu-marca-primario);
+  outline-offset: 2px;
+}

@@ -1,0 +1,36 @@
+.dialogo-privacidad {
+  box-sizing: border-box;
+  width: min(640px, calc(100% - 24px));
+  max-width: calc(100% - 24px);
+  max-height: calc(100dvh - 24px);
+  padding: 16px;
+  border: 1px solid var(--nu-borde-campo);
+  border-radius: var(--nu-radio-xl);
+  background: var(--nu-superficie-base);
+  color: var(--nu-texto-principal);
+  font-family: var(--nu-fuente);
+  overflow-wrap: anywhere;
+}
+
+.dialogo-privacidad::backdrop {
+  background: var(--nu-superficie-velo);
+}
+
+.dialogo-privacidad__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.dialogo-privacidad__cabecera h2 {
+  flex: 1 1 200px;
+  margin: 0;
+  font-size: 20px;
+}
+
+.dialogo-privacidad .boton {
+  min-height: 44px;
+  height: auto;
+  white-space: normal;
+}

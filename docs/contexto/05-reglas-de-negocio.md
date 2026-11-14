@@ -37,18 +37,21 @@ regla cambia, se actualiza aquí y en su pestaña de origen.
 - **RN-11**: cada categoría tiene una entidad de destino en una tabla configurable, no
   escrita en el código.
 - **RN-12**: los reportes de categorías de la Alcaldía se envían siempre al CAIC
-  (`servicioalciudadano@tulua.gov.co`); el asunto y el cuerpo indican la dependencia
-  competente. Los correos de cada dependencia son solo de referencia.
+  (`servicioalciudadano@tulua.gov.co`). Desde NOT-130 el asunto y el cuerpo **no** indican la
+  dependencia: el CAIC redirige según lo que pida el ciudadano. Los correos de cada dependencia son
+  solo de referencia.
 - **RN-13**: los reportes de servicios públicos (acueducto, gas, energía, aseo) se
   envían a la empresa prestadora, no al CAIC.
 - **RN-14**: si una categoría no tiene dependencia competente, el reporte va al CAIC y
   queda marcado para revisión.
-- **RN-15**: si una empresa no acepta correo, NotiUrba muestra su canal oficial y marca
-  el reporte como no enviado por correo.
+- **RN-15**: si una empresa no acepta correo (hoy gas, energía y aseo), NotiUrba muestra sus
+  canales oficiales **al elegir la categoría** y no registra el reporte (NOT-130, decisión de Andrés
+  del 12/11/2026). Antes: se registraba y se marcaba «no enviado por correo».
 - **RN-16**: fugas y emergencias de gas no se envían por correo: la app indica llamar a
   la línea 164.
-- **RN-17**: el asunto sigue el formato «Reporte ciudadano – [categoría] – [barrio y
-  comuna] – NotiUrba #[ID]» (*formato propuesto*).
+- **RN-17**: asunto formal sin código: «Petición ciudadana – [categoría] – [barrio], Comuna [n]»
+  (plantilla A; B y C en `07-asignacion-de-correos.md`). El código NU-… queda solo en la app y la base
+  (NOT-130).
 - **RN-18**: NotiUrba envía el correo con Resend cuando el ciudadano confirma el reporte;
   su correo va en Reply-To y en el cuerpo, y no se le envía copia. Ya no se prellena un borrador para que él lo envíe
   (decidido el 29/10/2026, ADR-0002). Límite gratuito: 100 correos al día.
@@ -61,5 +64,12 @@ regla cambia, se actualiza aquí y en su pestaña de origen.
   sale del mapa pero sigue en el listado del administrador.
 - **RN-21**: el MVP tiene un solo rol de administrador; la Alcaldía y las empresas no
   acceden al panel.
+
+## Límites contra el abuso (NOT-132, 13/11/2026)
+
+- **RN-22**: la distancia de «reporte parecido» depende de la categoría y es ajustable; nunca es menor a 5 m (máximo 500 m).
+- **RN-23**: los valores de los límites viven en la base, no en el código, y solo el administrador los cambia dentro de rangos seguros.
+- **RN-24**: ningún mensaje para el ciudadano muestra códigos, números de estado ni palabras técnicas («servidor», «token», «API»…). Dice qué pasó y qué hacer.
+- Botones de un solo clic: todo botón que envía datos se bloquea desde el primer clic hasta la respuesta.
 
 Fuente: pestaña «Reglas de negocio» del Google Doc.

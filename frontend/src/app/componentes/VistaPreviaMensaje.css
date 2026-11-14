@@ -1,0 +1,52 @@
+.vista-previa {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nu-esp-10);
+  padding: var(--nu-esp-16);
+  border: 1px solid var(--nu-borde-tarjeta);
+  border-radius: var(--nu-radio-xl);
+  background: var(--nu-superficie-base);
+  box-shadow: var(--nu-sombra-campo);
+}
+
+.vista-previa h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.vista-previa__estado {
+  margin: 0;
+  font-size: 14px;
+  color: var(--nu-texto-secundario);
+}
+
+.vista-previa__mensaje {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nu-esp-4);
+  margin: 0;
+}
+
+.vista-previa__mensaje dt {
+  font-size: 13px;
+  color: var(--nu-texto-tenue);
+}
+
+.vista-previa__mensaje dd {
+  margin: 0 0 var(--nu-esp-6);
+  font-size: 14px;
+  color: var(--nu-texto-principal);
+  overflow-wrap: anywhere;
+}
+
+.vista-previa__texto {
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.vista-previa__texto--recortado {
+  max-height: 9em;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, #000 60%, transparent);
+}

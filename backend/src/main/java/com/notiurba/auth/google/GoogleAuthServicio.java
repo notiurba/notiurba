@@ -1,6 +1,11 @@
 package com.notiurba.auth.google;
 
 import java.time.OffsetDateTime;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -32,6 +37,8 @@ import io.jsonwebtoken.Claims;
 @Service
 public class GoogleAuthServicio {
 
+    private static final Logger log = LoggerFactory.getLogger(GoogleAuthServicio.class);
+
     private final GoogleTokenVerificador verificador;
     private final JwtProveedor jwtProveedor;
     private final UsuarioRepository usuarioRepository;
@@ -60,22 +67,23 @@ public class GoogleAuthServicio {
     @Transactional
     public ResultadoGoogle autenticar(String credential) {
         PerfilGoogle perfil = verificar(credential);
-        ProveedorIdentidad google = proveedorGoogle();
+        ProveedorIdentidad google = paso("proveedor", this::proveedorGoogle);
 
         // Caso 1: la identidad de Google ya está vinculada → login normal
-        var identidad = identidadRepository.findByProveedorAndIdentificadorExterno(google, perfil.sub());
+        var identidad = paso("buscar-identidad",
+                () -> identidadRepository.findByProveedorAndIdentificadorExterno(google, perfil.sub()));
         if (identidad.isPresent()) {
             return sesion(identidad.get().getUsuario());
         }
 
         // Caso 2: ya hay una cuenta con ese correo → se vincula (PROPUESTA, ver vincularPorCorreo)
-        var porCorreo = usuarioRepository.findByCorreoIgnoreCase(perfil.correo());
+        var porCorreo = paso("buscar-cuenta", () -> usuarioRepository.findByCorreoIgnoreCase(perfil.correo()));
         if (porCorreo.isPresent()) {
-            return sesion(vincularPorCorreo(porCorreo.get(), google, perfil));
+            return sesion(paso("vincular", () -> vincularPorCorreo(porCorreo.get(), google, perfil)));
         }
 
         // Caso 3: no hay cuenta → no se crea nada; el frontend pide el resto del perfil
-        return perfilIncompleto(perfil);
+        return paso("perfil-incompleto", () -> perfilIncompleto(perfil));
     }
 
     /**
@@ -154,15 +162,18 @@ public class GoogleAuthServicio {
                 peticion.direccionCorrespondencia().trim(), correo,
                 tieneTexto(peticion.telefono()) ? peticion.telefono().trim() : null,
                 ciudadano, catalogos.avisoPrivacidadVigente(), ahora);
-        try {
-            // Usuario sin contraseña + su identidad en la misma transacción (B13 se revisa al confirmar)
-            usuarioRepository.saveAndFlush(usuario);
-            identidadRepository.saveAndFlush(new IdentidadExterna(usuario, google, sub, ahora));
-        } catch (DataIntegrityViolationException carrera) {
-            // Otra petición registró el mismo documento, correo o cuenta de Google entre la revisión y el INSERT
-            throw new ApiException(HttpStatus.CONFLICT, Codigos.CONFLICTO,
-                    "No se pudo crear la cuenta: el documento, el correo o la cuenta de Google ya están registrados");
-        }
+        paso("crear-cuenta", () -> {
+            try {
+                // Usuario sin contraseña + su identidad en la misma transacción (B13 se revisa al confirmar)
+                usuarioRepository.saveAndFlush(usuario);
+                identidadRepository.saveAndFlush(new IdentidadExterna(usuario, google, sub, ahora));
+            } catch (DataIntegrityViolationException carrera) {
+                // Otra petición registró el mismo documento, correo o cuenta de Google entre la revisión y el INSERT
+                throw new ApiException(HttpStatus.CONFLICT, Codigos.CONFLICTO,
+                        "No se pudo crear la cuenta: el documento, el correo o la cuenta de Google ya están registrados");
+            }
+            return usuario;
+        });
         return sesion(usuario);
     }
 
@@ -170,8 +181,12 @@ public class GoogleAuthServicio {
         try {
             return verificador.verificar(credential);
         } catch (JwtException invalido) {
+            log.warn("Google · paso «verificar»: Google rechazó el token ({})", causaDelRechazo(invalido));
             throw new ApiException(HttpStatus.UNAUTHORIZED, Codigos.NO_AUTENTICADO,
                     "No se pudo verificar la cuenta de Google");
+        } catch (RuntimeException inesperado) {
+            log.error("Google · paso «verificar» falló: {}", inesperado.getClass().getSimpleName());
+            throw inesperado;
         }
     }
 
@@ -179,9 +194,52 @@ public class GoogleAuthServicio {
         try {
             return jwtProveedor.validarRegistroGoogle(tokenRegistro);
         } catch (io.jsonwebtoken.JwtException | IllegalArgumentException invalido) {
+            log.warn("Google · paso «token-registro»: el token de registro no es válido o venció ({})",
+                    invalido.getClass().getSimpleName());
             throw new ApiException(HttpStatus.UNAUTHORIZED, Codigos.NO_AUTENTICADO,
                     "El registro con Google no es válido o venció: vuelve a intentarlo");
         }
+    }
+
+    /**
+     * Qué falló en un paso, sin datos personales: solo el tipo de error (y el código si es un error de negocio).
+     * Nunca el mensaje de la excepción: puede traer correo, documento o el token.
+     */
+    private <T> T paso(String nombre, Supplier<T> accion) {
+        try {
+            return accion.get();
+        } catch (ApiException respuesta) {
+            log.warn("Google · paso «{}» respondió {} ({})", nombre, respuesta.getStatusCode().value(), respuesta.getCodigo());
+            throw respuesta;
+        } catch (RuntimeException fallo) {
+            log.error("Google · paso «{}» falló: {}", nombre, fallo.getClass().getSimpleName());
+            throw fallo;
+        }
+    }
+
+    /** Una etiqueta fija según el motivo, para separar «token mal» de «no se pudieron obtener las claves de Google». */
+    private static final Pattern PALABRA_AUDIENCIA = Pattern.compile("\\b(aud|audience)\\b");
+    private static final Pattern PALABRA_EMISOR = Pattern.compile("\\b(iss|issuer)\\b");
+
+    static String causaDelRechazo(JwtException e) {
+        String mensaje = e.getMessage() == null ? "" : e.getMessage().toLowerCase(java.util.Locale.ROOT);
+        String causa;
+        if (mensaje.contains("jwk") || mensaje.contains("retrieve") || mensaje.contains("connect") || mensaje.contains("timed out")) {
+            causa = "no se pudieron obtener las claves de Google";
+        } else if (mensaje.contains("expired")) {
+            causa = "token vencido";
+        } else if (PALABRA_AUDIENCIA.matcher(mensaje).find()) {
+            causa = "audiencia distinta: revisar GOOGLE_CLIENT_ID";
+        } else if (PALABRA_EMISOR.matcher(mensaje).find()) {
+            causa = "emisor no válido";
+        } else if (mensaje.contains("signature") || mensaje.contains("firma")) {
+            causa = "firma no válida";
+        } else if (mensaje.contains("email")) {
+            causa = "correo sin verificar en Google";
+        } else {
+            causa = "token mal formado";
+        }
+        return e.getClass().getSimpleName() + ": " + causa;
     }
 
     private ProveedorIdentidad proveedorGoogle() {
@@ -190,8 +248,10 @@ public class GoogleAuthServicio {
     }
 
     private ResultadoGoogle.Sesion sesion(Usuario usuario) {
-        String rol = usuario.getRol().getNombre();
-        return new ResultadoGoogle.Sesion(jwtProveedor.generar(usuario.getCorreo(), rol), rol);
+        return paso("sesion", () -> {
+            String rol = usuario.getRol().getNombre();
+            return new ResultadoGoogle.Sesion(jwtProveedor.generar(usuario.getCorreo(), rol), rol);
+        });
     }
 
     private static boolean tieneTexto(String valor) {

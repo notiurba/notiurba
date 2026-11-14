@@ -22,18 +22,32 @@ public class ReporteRepositorio {
 
     public record NuevoReporte(
             long idUsuario, int idCategoria, Integer idBarrio, String descripcion, Double latitud, Double longitud,
-            String direccionIncidente, String matriculaCuentaServicio, String radicadoOficial) {
+            String direccionIncidente, String matriculaCuentaServicio, String radicadoOficial, boolean requiereEvidencia) {
     }
 
     /** Texto para el ciudadano: el detalle técnico de registro_envio_correo.error no sale de la API. */
     static final String MOTIVO_ENVIO_FALLIDO = "No pudimos entregar el correo a la entidad.";
 
+    /** La nota es «del ciudadano» si la escribió la persona dueña del reporte y esa persona no es administradora. */
+    static final String SQL_NOTA_DEL_CIUDADANO = """
+            (h.id_usuario_cambia = r.id_usuario AND NOT EXISTS (
+                SELECT 1 FROM usuario u JOIN rol ro ON ro.id_rol = u.id_rol
+                 WHERE u.id_usuario = r.id_usuario AND ro.nombre = 'ADMIN'))""";
+
     private final NamedParameterJdbcTemplate jdbc;
+
+    /** Una emergencia la marca el ciudadano o la delata la descripción en una categoría de gas. */
+    public boolean esEmergencia(int idCategoria, String descripcion, boolean marcada) {
+        return Boolean.TRUE.equals(jdbc.queryForObject("""
+            SELECT :marcada OR (EXISTS(SELECT 1 FROM configuracion_enrutamiento x
+             WHERE x.id_categoria=:categoria AND x.es_gas) AND lower(CAST(:descripcion AS text)) ~ '(fuga|olor.*gas|escape.*gas)')
+            """, new MapSqlParameterSource("marcada", marcada).addValue("categoria", idCategoria)
+                .addValue("descripcion", descripcion), Boolean.class));
+    }
 
     public void prepararEnrutamiento(String codigo, boolean emergencia) {
         jdbc.update("""
-            UPDATE reporte r SET emergencia=:emergencia OR (EXISTS(SELECT 1 FROM configuracion_enrutamiento x
-             WHERE x.id_categoria=r.id_categoria AND x.es_gas) AND lower(r.descripcion) ~ '(fuga|olor.*gas|escape.*gas)'),
+            UPDATE reporte r SET emergencia=:emergencia,
              requiere_revision=r.requiere_revision OR COALESCE((SELECT x.revision_clasificacion
               FROM configuracion_enrutamiento x WHERE x.id_categoria=r.id_categoria),FALSE)
             WHERE codigo_seguimiento=:codigo
@@ -42,6 +56,18 @@ public class ReporteRepositorio {
 
     public ReporteRepositorio(NamedParameterJdbcTemplate jdbc) {
         this.jdbc = jdbc;
+    }
+
+    /** Pone en fila a quien crea reportes a la vez: así el tope diario no se salta con dos envíos simultáneos. */
+    public void bloquearCiudadano(long idUsuario) {
+        jdbc.queryForObject("SELECT id_usuario FROM usuario WHERE id_usuario = :id FOR UPDATE",
+                new MapSqlParameterSource("id", idUsuario), Long.class);
+    }
+
+    /** Reportes del ciudadano creados desde ese momento (de cualquier estado). */
+    public int contarDesde(long idUsuario, OffsetDateTime desde) {
+        return jdbc.queryForObject("SELECT count(*) FROM reporte WHERE id_usuario = :id AND creado_en >= :desde",
+                new MapSqlParameterSource("id", idUsuario).addValue("desde", desde), Integer.class);
     }
 
     public Optional<DatosCategoria> categoriaActiva(int idCategoria) {
@@ -72,14 +98,15 @@ public class ReporteRepositorio {
                 .addValue("lon", r.longitud(), Types.DOUBLE)
                 .addValue("direccion", r.direccionIncidente())
                 .addValue("matricula", r.matriculaCuentaServicio())
-                .addValue("radicado", r.radicadoOficial());
+                .addValue("radicado", r.radicadoOficial())
+                .addValue("evidencia", r.requiereEvidencia());
         return jdbc.queryForObject("""
                 INSERT INTO reporte (id_usuario, id_categoria, id_barrio, descripcion, ubicacion,
                                      direccion_incidente, matricula_cuenta_servicio, radicado_oficial,
-                                     creado_en, autorizacion_envio_en)
+                                     requiere_evidencia, creado_en, autorizacion_envio_en)
                 VALUES (:usuario, :categoria, :barrio, :descripcion,
                         ST_SetSRID(ST_MakePoint(CAST(:lon AS double precision), CAST(:lat AS double precision)), 4326),
-                        :direccion, :matricula, :radicado, now(), now())
+                        :direccion, :matricula, :radicado, :evidencia, now(), now())
                 RETURNING codigo_seguimiento, creado_en, vigente_hasta,
                           (SELECT e.nombre FROM estado_reporte e
                             WHERE e.id_estado_reporte = reporte.id_estado_reporte) AS estado""",
@@ -92,8 +119,7 @@ public class ReporteRepositorio {
 
     /**
      * El reporte de ese código SOLO si es de ese usuario: si no existe o es de otra persona el resultado
-     * es el mismo (vacío), para no revelar qué códigos existen. La comuna sale de v_reporte_comuna
-     * (polígono, o barrio si no hay polígono).
+     * es el mismo (vacío), para no revelar qué códigos existen.
      */
     public Optional<ReporteDetalleResponse> buscarPropio(long idUsuario, String codigo) {
         var parametros = new MapSqlParameterSource().addValue("usuario", idUsuario).addValue("codigo", codigo);
@@ -101,14 +127,13 @@ public class ReporteRepositorio {
                 SELECT r.id_reporte, r.codigo_seguimiento, est.nombre AS estado,
                        c.id_categoria, c.nombre AS categoria, r.descripcion,
                        ST_Y(r.ubicacion) AS latitud, ST_X(r.ubicacion) AS longitud,
-                       vc.id_comuna, b.id_barrio, b.nombre AS barrio,
+                       r.id_comuna, b.id_barrio, b.nombre AS barrio,
                        r.direccion_incidente, r.matricula_cuenta_servicio, r.radicado_oficial,
                        r.creado_en, r.vigente_hasta
                   FROM reporte r
                   JOIN categoria c ON c.id_categoria = r.id_categoria
                   JOIN estado_reporte est ON est.id_estado_reporte = r.id_estado_reporte
                   LEFT JOIN barrio b ON b.id_barrio = r.id_barrio
-                  LEFT JOIN v_reporte_comuna vc ON vc.id_reporte = r.id_reporte
                  WHERE r.codigo_seguimiento = :codigo AND r.id_usuario = :usuario""",
                 parametros, (rs, i) -> {
                     long idReporte = rs.getLong("id_reporte");
@@ -163,12 +188,14 @@ public class ReporteRepositorio {
 
     private List<ReporteDetalleResponse.CambioDeEstado> historial(long idReporte) {
         return jdbc.query("""
-                SELECT e.nombre AS estado, h.observacion, h.cambiado_en
+                SELECT e.nombre AS estado, h.observacion, h.cambiado_en, %s AS del_ciudadano
                   FROM historial_estado h JOIN estado_reporte e ON e.id_estado_reporte = h.id_estado_reporte
-                 WHERE h.id_reporte = :id ORDER BY h.cambiado_en, h.id_historial_estado""",
+                  JOIN reporte r ON r.id_reporte = h.id_reporte
+                 WHERE h.id_reporte = :id ORDER BY h.cambiado_en, h.id_historial_estado""".formatted(SQL_NOTA_DEL_CIUDADANO),
                 new MapSqlParameterSource("id", idReporte),
                 (rs, i) -> new ReporteDetalleResponse.CambioDeEstado(rs.getString("estado"),
-                        rs.getString("observacion"), rs.getObject("cambiado_en", OffsetDateTime.class)));
+                        rs.getString("observacion"), rs.getObject("cambiado_en", OffsetDateTime.class),
+                        rs.getBoolean("del_ciudadano")));
     }
 
     /** El último envío del reporte; null si todavía no hay ninguno. */

@@ -3,6 +3,7 @@ package com.notiurba.reporte;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.notiurba.geo.AsignadorDeComuna;
+import com.notiurba.geo.AsignadorDeComuna.Asignacion;
+import com.notiurba.geo.AsignadorDeComuna.Resultado;
 import com.notiurba.reporte.ReporteRepositorio.DatosCategoria;
 import com.notiurba.reporte.ReporteRepositorio.NuevoReporte;
 import com.notiurba.usuario.CatalogosRegistro;
@@ -30,6 +34,9 @@ class ReporteServicioTest {
     private final ReporteRepositorio repositorio = mock(ReporteRepositorio.class);
     private final UsuarioRepository usuarios = mock(UsuarioRepository.class);
     private final CatalogosRegistro catalogos = mock(CatalogosRegistro.class);
+    private final AsignadorDeComuna asignador = mock(AsignadorDeComuna.class);
+    private final LimiteDiarioServicio limite = mock(LimiteDiarioServicio.class);
+    private final DuplicadoServicio duplicados = mock(DuplicadoServicio.class);
     private ReporteServicio servicio;
 
     @BeforeEach
@@ -43,7 +50,10 @@ class ReporteServicioTest {
         when(repositorio.insertar(any())).thenReturn(
                 new ReporteCreadoResponse("NU-000001", "Recibido", OffsetDateTime.now(), OffsetDateTime.now().plusDays(30)));
         when(catalogos.existeBarrio(1)).thenReturn(true);
-        servicio = new ReporteServicio(repositorio, usuarios, catalogos);
+        // Por defecto, cualquier punto cae dentro de la comuna 4
+        when(asignador.asignar(anyDouble(), anyDouble()))
+                .thenReturn(new Resultado(true, Optional.of(new Asignacion(4, "contiene", 0))));
+        servicio = new ReporteServicio(repositorio, usuarios, catalogos, asignador, limite, duplicados);
     }
 
     private static CrearReporteRequest peticion(int categoria, Double lat, Double lon, Integer barrio,
@@ -69,6 +79,38 @@ class ReporteServicioTest {
         assertThat(guardado.getValue().idUsuario()).isEqualTo(7L);
         assertThat(guardado.getValue().descripcion()).isEqualTo("Hay un hueco enorme en la vía");
         assertThat(guardado.getValue().direccionIncidente()).isNull();      // vacío pasa a nulo
+    }
+
+    @Test
+    void unPuntoFueraDeLasComunasSeRechazaConFueraDeCoberturaEnLatitud() {
+        when(asignador.asignar(4.5, -76.5)).thenReturn(new Resultado(true, Optional.empty()));
+
+        assertThatThrownBy(() -> servicio.crear("ana@x.com",
+                peticion(1, 4.5, -76.5, null, "Hay un hueco enorme en la vía", null)))
+                .isInstanceOfSatisfying(ApiException.class, e -> {
+                    assertThat(e.getCodigo()).isEqualTo(Codigos.FUERA_DE_COBERTURA);
+                    assertThat(e.getCampo()).isEqualTo("latitud");
+                    assertThat(e.getStatusCode().value()).isEqualTo(422);
+                    assertThat(e.getReason()).contains("fuera de cobertura");
+                });
+        verify(repositorio, never()).insertar(any());
+    }
+
+    @Test
+    void sinPoligonosCargadosNoSePuedeDecidirYElReporteSeGuarda() {
+        when(asignador.asignar(anyDouble(), anyDouble())).thenReturn(new Resultado(false, Optional.empty()));
+
+        servicio.crear("ana@x.com", peticion(1, 4.08, -76.19, null, "Hay un hueco enorme en la vía", null));
+
+        verify(repositorio).insertar(any());
+    }
+
+    @Test
+    void sinGpsNoSeConsultaLaCapaDeComunas() {
+        servicio.crear("ana@x.com", peticion(1, null, null, 1, "Hay un hueco enorme en la vía", null));
+
+        verify(asignador, never()).asignar(anyDouble(), anyDouble());
+        verify(repositorio).insertar(any());
     }
 
     @Test

@@ -1,11 +1,14 @@
 package com.notiurba.reporte;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.notiurba.geo.AsignadorDeComuna;
 import com.notiurba.usuario.CatalogosRegistro;
 import com.notiurba.usuario.UsuarioRepository;
 import com.notiurba.web.error.ApiException;
@@ -15,8 +18,10 @@ import com.notiurba.web.error.Codigos;
  * Crea reportes. Las reglas de la base (B3, B6) se revisan antes para devolver un error con su
  * campo en vez de una violación de la base.
  *
- * Pendiente: FUERA_DE_COBERTURA (422) y la comuna por punto-en-polígono, que dependen de cargar
- * comuna.geom y los barrios reales (NOT-31 / NOT-54).
+ * Con GPS, el punto debe caer en una comuna o a menos de la distancia máxima de una (RN-03); si no,
+ * 422 FUERA_DE_COBERTURA. La base guarda la comuna en el reporte con la misma función de PostGIS.
+ * Mientras ninguna comuna tenga polígono (comuna.geom NULL) no se puede decidir y el reporte se
+ * guarda sin rechazo: la comuna sale del barrio.
  */
 @Service
 public class ReporteServicio {
@@ -31,36 +36,89 @@ public class ReporteServicio {
     private final ReporteRepositorio repositorio;
     private final UsuarioRepository usuarios;
     private final CatalogosRegistro catalogos;
+    private final AsignadorDeComuna asignador;
+    private final LimiteDiarioServicio limite;
+    private final DuplicadoServicio duplicados;
 
-    public ReporteServicio(ReporteRepositorio repositorio, UsuarioRepository usuarios, CatalogosRegistro catalogos) {
+    public ReporteServicio(ReporteRepositorio repositorio, UsuarioRepository usuarios, CatalogosRegistro catalogos,
+            AsignadorDeComuna asignador, LimiteDiarioServicio limite, DuplicadoServicio duplicados) {
         this.repositorio = repositorio;
         this.usuarios = usuarios;
         this.catalogos = catalogos;
+        this.asignador = asignador;
+        this.limite = limite;
+        this.duplicados = duplicados;
     }
 
     @Transactional
     public ReporteCreadoResponse crear(String correoUsuario, CrearReporteRequest p) {
         if (!Boolean.TRUE.equals(p.autorizaEnvio())) throw error("Debes autorizar la remisión", "autorizaEnvio");
+        Borrador b = validar(correoUsuario, p);
+        // Una cuenta a la vez: así dos envíos simultáneos no se saltan el tope diario
+        repositorio.bloquearCiudadano(b.idUsuario());
+        limite.verificar(b.idUsuario());
+        if (!Boolean.TRUE.equals(p.confirmarDuplicado())) {
+            duplicados.buscarSinResolver(b.idUsuario(), b.idCategoria(), b.latitud(), b.longitud()).ifPresent(parecido -> {
+                throw avisoDeDuplicado(parecido);
+            });
+        }
+        boolean requiereEvidencia = duplicados.repiteResuelto(b.idCategoria(), b.latitud(), b.longitud());
+        if (requiereEvidencia && (p.totalFotos() == null || p.totalFotos() < 1)) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, Codigos.EVIDENCIA_REQUERIDA,
+                    Codigos.MSG_EVIDENCIA_REQUERIDA, "totalFotos");
+        }
+        ReporteCreadoResponse creado = repositorio.insertar(new ReporteRepositorio.NuevoReporte(
+                b.idUsuario(), b.idCategoria(), b.idBarrio(), b.descripcion(), b.latitud(), b.longitud(),
+                b.direccionIncidente(), b.matricula(), vacioANulo(p.radicadoOficial()), requiereEvidencia));
+        repositorio.prepararEnrutamiento(creado.codigoSeguimiento(), b.emergencia());
+        return creado;
+    }
+
+    /**
+     * Un reporte que pasó las mismas reglas que al crearlo, sin guardar nada (lo usa también la vista
+     * previa del mensaje). comunaDelPunto: la que PostGIS le da al GPS, o null.
+     */
+    public record Borrador(long idUsuario, int idCategoria, ReporteRepositorio.DatosCategoria categoria,
+            Integer idBarrio, Double latitud, Double longitud, Integer comunaDelPunto, String descripcion,
+            String direccionIncidente, String matricula, boolean emergencia) {
+    }
+
+    @Transactional(readOnly = true)
+    public Borrador validar(String correoUsuario, BorradorDeReporte p) {
+        Integer idCategoria = p.idCategoria();
+        Double latitud = p.latitud();
+        Double longitud = p.longitud();
+        Integer idBarrio = p.idBarrio();
         long idUsuario = usuarios.findByCorreoIgnoreCase(correoUsuario)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, Codigos.NO_AUTENTICADO,
                         Codigos.MSG_NO_AUTENTICADO))
                 .getIdUsuario();
 
-        var categoria = repositorio.categoriaActiva(p.idCategoria())
+        if (idCategoria == null) throw error("La categoría no existe o no está disponible", "idCategoria");
+        var categoria = repositorio.categoriaActiva(idCategoria)
                 .orElseThrow(() -> error("La categoría no existe o no está disponible", "idCategoria"));
 
-        if ((p.latitud() == null) != (p.longitud() == null)) {
-            throw error("Envía la latitud y la longitud juntas", p.latitud() == null ? "latitud" : "longitud");
+        if ((latitud == null) != (longitud == null)) {
+            throw error("Envía la latitud y la longitud juntas", latitud == null ? "latitud" : "longitud");
         }
-        boolean hayGps = p.latitud() != null;
-        if (p.idBarrio() != null && !catalogos.existeBarrio(p.idBarrio())) {
+        boolean hayGps = latitud != null;
+        Integer comunaDelPunto = null;
+        if (hayGps) {
+            var resultado = asignador.asignar(latitud, longitud);
+            if (resultado.fueraDeCobertura()) {
+                throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, Codigos.FUERA_DE_COBERTURA,
+                        Codigos.MSG_FUERA_DE_COBERTURA, "latitud");
+            }
+            comunaDelPunto = resultado.asignacion().map(AsignadorDeComuna.Asignacion::idComuna).orElse(null);
+        }
+        if (idBarrio != null && !catalogos.existeBarrio(idBarrio)) {
             throw error("El barrio no existe", "idBarrio");
         }
-        if (categoria.requiereUbicacion() && !hayGps && p.idBarrio() == null) {
+        if (categoria.requiereUbicacion() && !hayGps && idBarrio == null) {
             throw error("Marca la ubicación en el mapa o elige el barrio", "idBarrio");
         }
 
-        String descripcion = p.descripcion().trim();
+        String descripcion = p.descripcion() == null ? "" : p.descripcion().trim();
         if (descripcion.length() < DESCRIPCION_MINIMA || descripcion.length() > DESCRIPCION_MAXIMA) {
             throw error("La descripción debe tener entre " + DESCRIPCION_MINIMA + " y "
                     + DESCRIPCION_MAXIMA + " caracteres", "descripcion");
@@ -69,12 +127,24 @@ public class ReporteServicio {
         if (matricula != null && !categoria.esEmpresa()) {
             throw error("La matrícula solo aplica a servicios públicos", "matriculaCuentaServicio");
         }
+        return new Borrador(idUsuario, idCategoria, categoria, idBarrio, latitud, longitud, comunaDelPunto, descripcion,
+                vacioANulo(p.direccionIncidente()), matricula,
+                repositorio.esEmergencia(idCategoria, descripcion, Boolean.TRUE.equals(p.emergencia())));
+    }
 
-        ReporteCreadoResponse creado = repositorio.insertar(new ReporteRepositorio.NuevoReporte(
-                idUsuario, p.idCategoria(), p.idBarrio(), descripcion, p.latitud(), p.longitud(),
-                vacioANulo(p.direccionIncidente()), matricula, vacioANulo(p.radicadoOficial())));
-        repositorio.prepararEnrutamiento(creado.codigoSeguimiento(), Boolean.TRUE.equals(p.emergencia()));
-        return creado;
+    /** Solo datos base del parecido; el código únicamente si es de la misma persona (nunca la identidad de otra). */
+    private static ApiException avisoDeDuplicado(DuplicadoServicio.Parecido parecido) {
+        Map<String, Object> datos = new LinkedHashMap<>();
+        datos.put("esPropio", parecido.propio());
+        datos.put("cantidad", parecido.cantidad());
+        datos.put("estadoExistente", parecido.estado());
+        datos.put("creadoEn", parecido.fecha());
+        datos.put("descripcion", parecido.resumen());
+        if (parecido.propio()) {
+            datos.put("codigoExistente", parecido.codigo());
+        }
+        return new ApiException(HttpStatus.CONFLICT, Codigos.POSIBLE_DUPLICADO,
+                "Ya hay un reporte parecido en este lugar. Si es otro problema, puedes enviarlo de todas maneras.", null, datos);
     }
 
     /** Un reporte propio por código. No existe y «es de otra persona» dan exactamente la misma respuesta. */

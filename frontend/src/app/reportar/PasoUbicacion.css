@@ -1,0 +1,36 @@
+/* Estado de búsqueda sin impedir la alternativa manual del mapa. */
+.ubicacion__buscando {
+  display: flex;
+  align-items: center;
+  gap: var(--nu-esp-10);
+  min-width: 0;
+  font-family: var(--nu-fuente);
+}
+
+.ubicacion__buscando p {
+  margin: 0;
+  color: var(--nu-texto-secundario);
+  font-size: 14px;
+}
+
+.ubicacion__giro {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 4px solid var(--nu-marca-suave);
+  border-top-color: var(--nu-marca-primario);
+  border-radius: 50%;
+  animation: ubicacion-giro 0.9s linear infinite;
+}
+
+@keyframes ubicacion-giro {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ubicacion__giro {
+    animation: none;
+  }
+}

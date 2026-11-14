@@ -8,8 +8,6 @@
   --border: #d9e0d8;
   --code-bg: #edf2ef;
   --accent: #0f766e;
-  --accent-bg: rgba(15, 118, 110, 0.1);
-  --accent-border: rgba(15, 118, 110, 0.5);
   --shadow:
     rgba(16, 32, 51, 0.08) 0 12px 24px -12px,
     rgba(16, 32, 51, 0.08) 0 4px 10px -6px;
@@ -33,28 +31,13 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #aab4c0;
-    --text-h: #f5f7fa;
-    --muted: #8d99a8;
-    --bg: #121817;
-    --panel-bg: #18211f;
-    --input-bg: #101716;
-    --border: #2c3936;
-    --code-bg: #1f2a28;
-    --accent: #5eead4;
-    --accent-bg: rgba(94, 234, 212, 0.12);
-    --accent-border: rgba(94, 234, 212, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.35) 0 18px 30px -18px,
-      rgba(0, 0, 0, 0.3) 0 4px 10px -6px;
-  }
+/* El diseño (Figma) solo existe en tema claro: no se adapta al modo oscuro del sistema. */
+:root {
+  color-scheme: light;
 }
 
 body {
   margin: 0;
-  min-width: 320px;
 }
 
 #root {
@@ -97,17 +80,97 @@ p {
   margin: 0;
 }
 
-code,
-.counter {
+code {
   font-family: var(--mono);
   display: inline-flex;
   border-radius: 4px;
   color: var(--text-h);
-}
-
-code {
   font-size: 15px;
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+/* Texto «Cargando…» centrado, para las pantallas que esperan datos */
+.cargando-texto {
+  margin: 0;
+  text-align: center;
+  color: var(--nu-texto-secundario);
+}
+
+
+/* La app ciudadana es de celular: en pantallas grandes se ve como una columna blanca sobre fondo gris claro. */
+body:has(.marco-app, .auth--celular, .bienvenida) {
+  background: var(--nu-superficie-atenuada);
+}
+.marco-app,
+.auth--celular,
+.bienvenida {
+  box-shadow: 0 0 0 1px var(--nu-borde-encabezado);
+}
+
+/* ── Celular: un poco más compacto ─────────────────────────────────────────────
+   Baja la altura de botones, campos y tarjetas y las separaciones, sin bajar la letra de 14 px
+   (16 px en las casillas, que es lo que pide la guía de accesibilidad de Android).
+   Va con `body` delante para ganarle a los estilos de cada componente. */
+@media (max-width: 480px) {
+  body .boton {
+    height: 46px;
+    font-size: 15px;
+  }
+
+  body .campo__caja:not(.campo__caja--alta),
+  body .campo__caja input,
+  body .campo__caja select {
+    height: 44px;
+  }
+
+  body .campo__caja textarea {
+    min-height: 96px;
+  }
+
+  body .tarjeta-opcion {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  body .reportar__titulo {
+    font-size: 20px;
+    line-height: 26px;
+  }
+
+  body .reportar__lista {
+    gap: 8px;
+  }
+
+  body .formulario-pantalla__campos {
+    gap: 14px;
+    padding: 12px 0 16px;
+  }
+
+  body .formulario-pantalla__acciones .boton {
+    height: 46px;
+  }
+}
+
+/* ── Enlaces fáciles de tocar ──────────────────────────────────────────────────
+   Los enlaces de texto miden ~16 px de alto; el dedo necesita ~48 px (guía de accesibilidad de Android).
+   Se agranda solo el área que responde al toque (con un pseudo-elemento invisible): no cambia el aspecto
+   ni mueve nada. Para quitarlo, borrar este bloque. */
+.pie-auth a,
+.enlace-campo,
+.enlace-privacidad,
+.enlace-boton,
+.bienvenida__sesion a {
+  position: relative;
+}
+
+.pie-auth a::after,
+.enlace-campo::after,
+.enlace-privacidad::after,
+.enlace-boton::after,
+.bienvenida__sesion a::after {
+  content: '';
+  position: absolute;
+  inset: -14px -8px;
 }

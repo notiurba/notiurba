@@ -1,0 +1,22 @@
+UTC=2026-10-27T06:26:31.9265941Z
+COMMAND=mvn -B -f backend/pom.xml clean test
+LOCAL_REPOSITORY=../maven-cache
+Acceso denegado.
+[INFO] Scanning for projects...
+[INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/springframework/boot/spring-boot-starter-parent/3.3.5/spring-boot-starter-parent-3.3.5.pom
+[ERROR] [ERROR] Some problems were encountered while processing the POMs:
+[FATAL] Non-resolvable parent POM for com.notiurba:backend:0.0.1-SNAPSHOT: The following artifacts could not be resolved: org.springframework.boot:spring-boot-starter-parent:pom:3.3.5 (absent): Could not transfer artifact org.springframework.boot:spring-boot-starter-parent:pom:3.3.5 from/to central (https://repo.maven.apache.org/maven2): Host desconocido (repo.maven.apache.org) and 'parent.relativePath' points at no local POM @ line 6, column 11
+ @
+[ERROR] The build could not read 1 project -> [Help 1]
+[ERROR]
+[ERROR]   The project com.notiurba:backend:0.0.1-SNAPSHOT (C:\Users\Usuario\.codex\.chatgpt-projects\g-p-6aacbd0a1a688191b438845119074d96\edt51-work\backend\pom.xml) has 1 error
+[ERROR]     Non-resolvable parent POM for com.notiurba:backend:0.0.1-SNAPSHOT: The following artifacts could not be resolved: org.springframework.boot:spring-boot-starter-parent:pom:3.3.5 (absent): Could not transfer artifact org.springframework.boot:spring-boot-starter-parent:pom:3.3.5 from/to central (https://repo.maven.apache.org/maven2): Host desconocido (repo.maven.apache.org) and 'parent.relativePath' points at no local POM @ line 6, column 11: Unknown host Host desconocido (repo.maven.apache.org) -> [Help 2]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/ProjectBuildingException
+[ERROR] [Help 2] http://cwiki.apache.org/confluence/display/MAVEN/UnresolvableModelException
+
+EXIT=1

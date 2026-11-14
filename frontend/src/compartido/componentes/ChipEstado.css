@@ -1,0 +1,33 @@
+.chip-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nu-esp-6);
+  padding: var(--nu-esp-4) var(--nu-esp-10);
+  border: 1px solid;
+  border-radius: var(--nu-radio-pildora);
+  font-family: var(--nu-fuente);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.chip-estado--recibido {
+  background: var(--nu-estado-recibido-fondo);
+  border-color: var(--nu-estado-recibido-borde);
+  color: var(--nu-estado-recibido-texto);
+}
+.chip-estado--enviado {
+  background: var(--nu-estado-enviado-fondo);
+  border-color: var(--nu-estado-enviado-borde);
+  color: var(--nu-estado-enviado-texto);
+}
+.chip-estado--tramite {
+  background: var(--nu-estado-tramite-fondo);
+  border-color: var(--nu-estado-tramite-borde);
+  color: var(--nu-estado-tramite-texto);
+}
+.chip-estado--resuelto {
+  background: var(--nu-estado-resuelto-fondo);
+  border-color: var(--nu-estado-resuelto-borde);
+  color: var(--nu-estado-resuelto-texto);
+}

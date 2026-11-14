@@ -1,0 +1,53 @@
+{
+  "recorded_for": "Neon isolated authorization",
+  "run": {
+    "id": 40538495198,
+    "sha": "3580726a9b5941995cd3ab311e4b72315b9c8e5a",
+    "branch": "feature/edt-5.1-technical-validation",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/notiurba/notiurba/actions/runs/40538495198"
+  },
+  "jobs": [
+    {
+      "job_id": 122310144487,
+      "lines": [
+        "2026-10-27T16:12:05.1344751Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.243 s -- in com.notiurba.DiagnosticsDisabledTest",
+        "2026-10-27T16:12:05.8113819Z [INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.730 s -- in com.notiurba.DiagnosticsSecurityTest",
+        "2026-10-27T16:12:06.8442743Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.032 s -- in com.notiurba.foto.JpegValidatorTest",
+        "2026-10-27T16:12:06.8516507Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.notiurba.foto.CloudinarySignatureTest",
+        "2026-10-27T16:12:07.1956140Z [INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.340 s -- in com.notiurba.foto.CloudinaryPhotoStoreTest",
+        "2026-10-27T16:12:07.2346514Z [INFO] Tests run: 25, Failures: 0, Errors: 0, Skipped: 0",
+        "2026-10-27T16:12:07.2372094Z [INFO] BUILD SUCCESS",
+        "2026-10-27T16:12:14.7562788Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.149 s -- in com.notiurba.DiagnosticsDisabledTest",
+        "2026-10-27T16:12:15.4462835Z [INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.742 s -- in com.notiurba.DiagnosticsSecurityTest",
+        "2026-10-27T16:12:15.8283243Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.375 s -- in com.notiurba.foto.JpegValidatorTest",
+        "2026-10-27T16:12:15.8410471Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.notiurba.foto.CloudinarySignatureTest",
+        "2026-10-27T16:12:16.2632721Z [INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.438 s -- in com.notiurba.foto.CloudinaryPhotoStoreTest",
+        "2026-10-27T16:12:16.3193575Z [INFO] Tests run: 25, Failures: 0, Errors: 0, Skipped: 0",
+        "2026-10-27T16:12:16.9772416Z [INFO] BUILD SUCCESS"
+      ]
+    },
+    {
+      "job_id": 122310144943,
+      "lines": [
+        "2026-10-27T16:12:11.6582285Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.776 s -- in com.notiurba.DiagnosticsDisabledTest",
+        "2026-10-27T16:12:14.3246693Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.700 s -- in com.notiurba.foto.JpegValidatorTest",
+        "2026-10-27T16:12:14.3540773Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.notiurba.foto.CloudinarySignatureTest",
+        "2026-10-27T16:12:14.8606507Z [INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.509 s -- in com.notiurba.foto.CloudinaryPhotoStoreTest",
+        "2026-10-27T16:12:15.5101214Z [INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.653 s -- in com.notiurba.DiagnosticsSecurityTest",
+        "2026-10-27T16:12:15.5594249Z [INFO] Tests run: 25, Failures: 0, Errors: 0, Skipped: 0",
+        "2026-10-27T16:12:35.0607955Z UTC=2026-10-27T16:12:35.036564652Z PostgreSQL=18.6 (Debian 18.6-1.pgdg13+2) PostGIS=POSTGIS=\"3.6.4 94d984b\" [EXTENSION] PGSQL=\"180\" GEOS=\"3.14.1-CAPI-1.20.5\" (compiled against GEOS 3.13.1) PROJ=\"9.8.1 NETWORK_ENABLED=OFF URL_ENDPOINT=https://cdn.proj.org USER_WRITABLE_DIRECTORY=/var/lib/postgresql/.local/share/proj DATABASE_PATH=/usr/share/proj/proj.db\" (compiled against PROJ 9.6.0) LIBXML=\"2.9.14\" LIBJSON=\"0.18\" LIBPROTOBUF=\"1.5.1\" WAGYU=\"0.5.0 (Internal)\" TOPOLOGY image=postgis/postgis:18-3.6 Flyway V1-V4; Hibernate validate OK",
+        "2026-10-27T16:12:36.5044244Z UTC=2026-10-27T16:12:36.478318380Z validation profile startup HTTP=200 Flyway=disabled readOnly=true DB_PASSWORD=absent ADMIN_DEV_PASSWORD=absent",
+        "2026-10-27T16:12:36.9126265Z [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 19.85 s -- in com.notiurba.MigrationIntegrationTest",
+        "2026-10-27T16:12:37.2911567Z [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0",
+        "2026-10-27T16:12:37.8126498Z [INFO] BUILD SUCCESS"
+      ]
+    }
+  ],
+  "external_jobs": {
+    "neon": "skipped",
+    "cloudinary": "skipped"
+  }
+}

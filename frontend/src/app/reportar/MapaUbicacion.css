@@ -1,0 +1,48 @@
+.mapa-ubicacion {
+  height: clamp(220px, 38vh, 360px);
+  border: 1px solid var(--nu-borde-tarjeta);
+  border-radius: var(--nu-radio-xl);
+  overflow: hidden;
+  z-index: 0;
+}
+
+.mapa-ubicacion__pin {
+  background: none;
+  border: 0;
+}
+
+.mapa-ubicacion:focus-visible {
+  outline: 3px solid var(--nu-marca-primario);
+  outline-offset: 2px;
+}
+
+.mapa-ubicacion .leaflet-control-zoom a {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+}
+
+/* Etiqueta «COMUNA N» en el centro de cada comuna */
+.mapa-ubicacion__etiqueta {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--nu-texto-principal);
+  text-shadow: 0 0 3px #fff, 0 0 3px #fff;
+}
+.mapa-ubicacion__etiqueta::before {
+  display: none;
+}
+.mapa-ubicacion--sin-etiquetas .mapa-ubicacion__etiqueta {
+  display: none;
+}
+
+/* Ayuda solo para lectores de pantalla: no se ve, pero se lee. */
+.solo-lector {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}

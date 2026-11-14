@@ -1,0 +1,12 @@
+{
+  "nombres": "Ana María",
+  "apellidos": "Pérez Gómez",
+  "idTipoDocumento": 1,
+  "numeroDocumento": "1112345678",
+  "idBarrio": 1,
+  "direccionCorrespondencia": "Calle 25 # 30-15",
+  "correo": "ana.perez@correo.com",
+  "telefono": "3001234567",
+  "password": "Clave1234",
+  "aceptaPrivacidad": true
+}

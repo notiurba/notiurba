@@ -1,0 +1,26 @@
+/* Panel pensado para pantalla de computador: cabecera azul, contenido con aire y tarjetas con sombra suave. */
+.admin { min-height: 100svh; background: var(--nu-superficie-atenuada); text-align: left; }
+.admin__cabecera {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--nu-esp-24);
+  padding: var(--nu-esp-14) var(--nu-esp-32);
+  background: var(--nu-admin-primario); color: var(--nu-texto-inverso);
+  box-shadow: 0 2px 8px rgba(8, 47, 107, 0.25);
+}
+.admin__marca { display: flex; flex-direction: column; line-height: 1.2; }
+.admin__marca strong { font-size: 20px; letter-spacing: 0.2px; }
+.admin__marca span { font-size: 13px; color: rgba(255, 255, 255, 0.78); }
+.admin__pestanas { display: flex; gap: var(--nu-esp-8); margin-right: auto; }
+.admin__pestanas a {
+  padding: var(--nu-esp-8) var(--nu-esp-16); border-radius: 8px; font-weight: 700;
+  color: rgba(255, 255, 255, 0.82); text-decoration: none;
+}
+.admin__pestanas a:hover { background: rgba(255, 255, 255, 0.12); color: var(--nu-texto-inverso); }
+.admin__pestanas a.active { background: var(--nu-texto-inverso); color: var(--nu-admin-primario); }
+.admin__contenido { padding: var(--nu-esp-32); max-width: 1500px; margin: 0 auto; }
+@media (max-width: 640px) { .admin__cabecera { padding: var(--nu-esp-12); gap: var(--nu-esp-12); } .admin__contenido { padding: var(--nu-esp-12); } }
+.admin__cabecera .boton {
+  width: auto; min-height: 40px; padding-inline: var(--nu-esp-16);
+  background: transparent; color: var(--nu-texto-inverso); border: 1px solid rgba(255, 255, 255, 0.6);
+}
+.admin__cabecera .boton:hover { background: rgba(255, 255, 255, 0.14); }
+.admin__cabecera .boton:focus-visible, .admin__pestanas a:focus-visible { outline: 3px solid #ffffff; outline-offset: 2px; }

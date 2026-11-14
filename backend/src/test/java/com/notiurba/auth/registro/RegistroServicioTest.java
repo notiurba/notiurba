@@ -62,7 +62,7 @@ class RegistroServicioTest {
         assertThat(u.getPasswordHash()).isNotEqualTo("Clave1234");
         assertThat(encoder.matches("Clave1234", u.getPasswordHash())).isTrue();
         assertThat(u.getRol().getNombre()).isEqualTo(Rol.CIUDADANO);
-        verify(verificacion).emitirYEnviar(u);
+        verify(verificacion).emitir(u);
         assertThat(respuesta.correo()).isEqualTo("ana@x.com");
     }
 

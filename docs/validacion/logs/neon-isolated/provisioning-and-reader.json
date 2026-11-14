@@ -1,0 +1,155 @@
+{
+  "project": {
+    "name": "NotiUrba-EDT51-isolated",
+    "id": "small-bonus-50024456",
+    "org_plan_before": "free",
+    "org_plan_after": "free",
+    "pg_version": 18,
+    "region": "aws-us-east-2",
+    "created_at": "2026-10-27T16:19:06Z",
+    "compute_min_cu": 0.25,
+    "compute_max_cu": 0.25,
+    "no_parent_project_or_restore_requested": true,
+    "production_modified": false
+  },
+  "branch": {
+    "id": "br-little-mouse-b5tlorl9",
+    "name": "edt51-isolated",
+    "root_branch": true
+  },
+  "database": "notiurba_edt51",
+  "initial_check": {
+    "user_tables": 0,
+    "app_extensions": 0,
+    "postgres": "18.6 (fd34222)"
+  },
+  "provisioning": {
+    "transport": "authorized Neon SQL connector",
+    "atomic": true,
+    "original_scripts": [
+      {
+        "name": "V1__esquema.sql",
+        "sha256": "D100A7F374241DD6D3689772127C2CEAF4CED5C71E76722C8D84D4EFF6DA6032"
+      },
+      {
+        "name": "V2__reglas_y_vistas.sql",
+        "sha256": "4855998F3A3530610C9671FA497A06F4640F604F69CA5EE759253CB9CD7187B5"
+      },
+      {
+        "name": "V3__catalogos_iniciales.sql",
+        "sha256": "EDE28EC56DD36CB64B719960D28BEBC633AF0BE5938CB3B6F4D3D163FE937F6E"
+      },
+      {
+        "name": "V4__usuario_admin_semilla.sql",
+        "sha256": "53139BCCB445F41DC7B38A1BD8A229CD173CA5195C1A8EC63620D9FCBFE0C934"
+      }
+    ],
+    "statements": [
+      {
+        "name": "V1__esquema.sql",
+        "statements": 47
+      },
+      {
+        "name": "V2__reglas_y_vistas.sql",
+        "statements": 24
+      },
+      {
+        "name": "V3__catalogos_iniciales.sql",
+        "statements": 30
+      },
+      {
+        "name": "V4__usuario_admin_semilla.sql",
+        "statements": 3
+      }
+    ],
+    "runtime_placeholder_generated": true,
+    "secret_values_recorded": false,
+    "flyway_runtime_used": false,
+    "flyway_history_created": false,
+    "public_tables": 25,
+    "synthetic_seed_users": 1,
+    "reference_catalogs": "Original V3, no production copying",
+    "reports": 0,
+    "citizen_photos": 0
+  },
+  "reader": {
+    "name": "edt51_validation_reader",
+    "login_tested_via_connector": true,
+    "read_only": "on",
+    "superuser": false,
+    "create_db": false,
+    "create_role": false,
+    "replication": false,
+    "bypass_rls": false,
+    "inherit": false,
+    "memberships": [],
+    "can_read_all_tables": true,
+    "can_modify_any_table": false,
+    "schema_create": false,
+    "database_temp": false,
+    "initial_api_privileged_role_deleted": true
+  },
+  "spatial_sql": {
+    "contains_inside": true,
+    "contains_border": false,
+    "covers_border": true,
+    "geojson": {
+      "type": "Point",
+      "coordinates": [
+        -76.195,
+        4.085
+      ]
+    },
+    "multipolygon_type": "ST_MultiPolygon",
+    "srid": 4326,
+    "backend_tls_reported_by_sql_connector": false,
+    "tls_jdbc_not_certified": true,
+    "final_read": [
+      {
+        "executed_at_utc": "2026-10-27T16:30:25.225Z",
+        "role": "edt51_validation_reader",
+        "read_only": "on",
+        "point_type": "ST_Point",
+        "point_srid": 4326,
+        "multipolygon_type": "ST_MultiPolygon",
+        "multipolygon_srid": 4326,
+        "reports": "0",
+        "citizen_photos": "0"
+      }
+    ]
+  },
+  "errors_and_corrections": [
+    {
+      "error": "HTTP412 modifying suspend interval not permitted",
+      "correction": "Omitted optional interval setting; kept Free policy unchanged; no plan change"
+    },
+    {
+      "error": "Multiple SQL commands in prepared statement",
+      "correction": "Split original scripts lexically preserving dollar-quoted functions; transaction rollback then atomic retry"
+    },
+    {
+      "error": "API-created role has elevated default permissions; owner cannot revoke protected membership",
+      "correction": "Created SQL role with minimum privileges; removed unused API role via management API"
+    },
+    {
+      "error": "Maven cache permission denied",
+      "correction": "Used writable cache inside authorized workspace"
+    },
+    {
+      "error": "Maven HTTPS and Java TCP Permission denied: getsockopt",
+      "correction": "No security bypass; Java integration remains pending"
+    }
+  ],
+  "java_execution": {
+    "maven_test_compile_exit": 1,
+    "dependency_parent_unresolved": true,
+    "tcp_probe_utc": "2026-10-27T16:26:04.685587400Z",
+    "tcp_probe_exit": 1,
+    "exception": "SocketException: Permission denied: getsockopt",
+    "spring_boot_started": false,
+    "hibernate_spatial_executed": false,
+    "spatial_tests_run": 0,
+    "N02": "PENDIENTE",
+    "N03": "PENDIENTE"
+  }
+}

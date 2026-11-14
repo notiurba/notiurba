@@ -1,0 +1,199 @@
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.campo__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.campo__cabecera label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nu-texto-principal);
+}
+
+.campo__opcional {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--nu-texto-secundario);
+}
+
+.campo__caja {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  height: 48px;
+  min-height: 48px;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 var(--nu-esp-14);
+  border: 1.5px solid var(--nu-borde-campo);
+  border-radius: var(--nu-radio-md);
+  background: var(--nu-superficie-base);
+  color: var(--nu-texto-secundario);
+}
+
+.campo__caja:focus-within {
+  border-color: var(--nu-marca-primario);
+  box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.18);
+}
+
+.campo__caja--error,
+.campo__caja--error:focus-within {
+  border-color: var(--nu-peligro-texto);
+  box-shadow: none;
+}
+
+.campo__icono,
+.campo__chevron {
+  display: flex;
+  flex: none;
+}
+
+.campo .campo__caja input,
+.campo .campo__caja select {
+  box-sizing: border-box;
+  flex: 1;
+  width: 0;
+  max-width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--nu-texto-principal);
+  appearance: none;
+}
+
+.campo__caja input::placeholder {
+  color: var(--nu-texto-tenue);
+}
+
+/* El <select> ocupa toda la caja; el chevron queda encima pero no recibe clics */
+.campo__caja select {
+  padding-right: 24px;
+  cursor: pointer;
+}
+
+.campo__chevron {
+  position: absolute;
+  right: 14px;
+  pointer-events: none;
+}
+
+.campo__ojo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--nu-texto-secundario);
+  cursor: pointer;
+}
+
+.campo__caja:has(.campo__ojo) {
+  padding-right: 4px;
+}
+
+/* Edge/Chrome: conservar un único control de mostrar contraseña. */
+.campo__caja input::-ms-reveal,
+.campo__caja input::-ms-clear {
+  display: none;
+}
+
+.campo__ojo:focus-visible {
+  outline: 3px solid var(--nu-marca-primario);
+  outline-offset: -3px;
+  border-radius: 10px;
+}
+
+.campo__error {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nu-peligro-texto);
+}
+
+.campo__ayuda {
+  margin: 0;
+  font-size: 14px;
+  color: var(--nu-texto-secundario);
+}
+
+/* Mientras no se elige nada, el selector se ve gris como un placeholder */
+.campo__caja select:has(option[value='']:checked) {
+  color: var(--nu-texto-tenue);
+}
+
+/* Deshabilitado: fondo gris y texto tenue */
+.campo__caja:has(input:disabled, select:disabled) {
+  background: var(--nu-superficie-atenuada);
+  border-color: var(--nu-borde-divisor);
+  color: var(--nu-texto-tenue);
+}
+
+.campo__caja input:disabled,
+.campo__caja select:disabled {
+  color: var(--nu-texto-tenue);
+  cursor: not-allowed;
+}
+
+/* Caja de varias líneas (descripción del reporte) */
+.campo__caja--alta {
+  height: auto;
+  align-items: stretch;
+  padding: var(--nu-esp-12) var(--nu-esp-14);
+}
+
+.campo__caja textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 120px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--nu-texto-principal);
+  resize: vertical;
+}
+
+.campo__caja textarea::placeholder {
+  color: var(--nu-texto-tenue);
+}
+
+/* Autocompletado del navegador: pinta el campo de gris o azul. Lo tapamos con el fondo de la caja
+   y conservamos el color del texto. (El truco del `transition` evita que el color reaparezca.) */
+.campo__caja input:-webkit-autofill,
+.campo__caja input:-webkit-autofill:hover,
+.campo__caja input:-webkit-autofill:focus,
+.campo__caja select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--nu-superficie-base) inset;
+  -webkit-text-fill-color: var(--nu-texto-principal);
+  caret-color: var(--nu-texto-principal);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Contador de caracteres a la derecha del título del campo, siempre a la vista mientras se escribe. */
+.campo__contador { margin-left: auto; font-size: 13px; color: var(--nu-texto-secundario); }

@@ -26,7 +26,7 @@ public class CatalogosRegistro {
 
     public boolean existeBarrio(Integer idBarrio) {
         return Boolean.TRUE.equals(jdbc.queryForObject(
-                "SELECT EXISTS (SELECT 1 FROM barrio WHERE id_barrio = ?)", Boolean.class, idBarrio));
+                "SELECT EXISTS (SELECT 1 FROM barrio WHERE id_barrio = ? AND NOT interno)", Boolean.class, idBarrio));
     }
 
     /** Versión del aviso de privacidad vigente hoy: la más reciente con vigente_desde ya cumplida. */

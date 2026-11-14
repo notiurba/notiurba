@@ -1,0 +1,38 @@
+.verificar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 24px;
+  text-align: center;
+}
+
+.verificar__sobre {
+  display: grid;
+  place-items: center;
+  width: 128px;
+  height: 128px;
+  margin: 0 auto 8px;
+  border-radius: 46% 54% 52% 48%;
+  background: #cfe2fb;
+  color: var(--nu-marca-suave-texto);
+}
+
+.verificar h1 {
+  margin: 0;
+  font-family: var(--nu-fuente);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--nu-texto-principal);
+}
+
+.verificar p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--nu-texto-secundario);
+  overflow-wrap: anywhere;
+}
+
+.verificar .aviso {
+  text-align: left;
+}

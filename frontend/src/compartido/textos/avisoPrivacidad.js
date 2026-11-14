@@ -102,7 +102,7 @@ export const AVISO_PRIVACIDAD = {
 
 /** Casilla del registro y de completar perfil con Google (un solo clic: mayoría de edad y tratamiento de datos). */
 export const TEXTO_CASILLA_REGISTRO =
-  'Soy mayor de 18 años y acepto el tratamiento de mis datos personales (Ley 1581). Ver aviso de privacidad'
+  'Soy mayor de 18 años. He leído el aviso de privacidad y autorizo el tratamiento de mis datos personales para las finalidades informadas.'
 
 /** Casilla del paso 4 del reporte: la única autorización de envío (no hay copia al ciudadano). */
 export const TEXTO_CASILLA_ENVIO =

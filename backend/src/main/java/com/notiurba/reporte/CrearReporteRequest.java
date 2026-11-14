@@ -3,6 +3,8 @@ package com.notiurba.reporte;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,10 +20,12 @@ public record CrearReporteRequest(
         @Size(max = 50) String matriculaCuentaServicio,
         @Size(max = 50) String radicadoOficial,
         @NotNull @AssertTrue Boolean autorizaEnvio,
-        Boolean emergencia) {
+        Boolean emergencia,
+        Boolean confirmarDuplicado,
+        @Min(0) @Max(3) Integer totalFotos) implements BorradorDeReporte {
     public CrearReporteRequest(Integer idCategoria, Double latitud, Double longitud, Integer idBarrio,
             String descripcion, String direccionIncidente, String matriculaCuentaServicio, String radicadoOficial,
             Boolean autorizaEnvio) {
-        this(idCategoria,latitud,longitud,idBarrio,descripcion,direccionIncidente,matriculaCuentaServicio,radicadoOficial,autorizaEnvio,false);
+        this(idCategoria,latitud,longitud,idBarrio,descripcion,direccionIncidente,matriculaCuentaServicio,radicadoOficial,autorizaEnvio,false,null,null);
     }
 }

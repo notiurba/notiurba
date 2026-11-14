@@ -17,10 +17,12 @@ La propuesta nueva tiene versión documental `propuesta 2026-11-06`; no reemplaz
 
 ## INSTRUCCIONES PARA EL ASISTENTE DE IA
 
+> **Nota (14/11/2026):** `frontend/public/aviso-privacidad.html` ya **no existe** y no se debe volver a crear: Netlify lo servía en `/aviso-privacidad` y tapaba la pantalla vigente (v3) de la app. Los pasos 2 y 11 de abajo quedaron obsoletos. El texto de esta propuesta sigue en `docs/privacidad/aviso-privacidad.md`.
+
 Si estás leyendo este documento mientras trabajas en la integración del registro ciudadano, debes revisar la implementación existente y realizar las siguientes acciones dentro del alcance autorizado de tu tarea:
 
 1. Leer `docs/privacidad/aviso-privacidad.md`.
-2. Localizar la página HTML pública: `frontend/public/aviso-privacidad.html`. Con la base actual de Vite se sirve en `/aviso-privacidad.html`; si cambia la base, ajustar el enlace al despliegue real.
+2. ~~Localizar la página HTML pública~~ (obsoleto: la pantalla del aviso es `ContenidoAvisoPrivacidad`, en `frontend/src`).
 3. Identificar el formulario de registro de ciudadanos y el flujo de completar perfil con Google, si aplica.
 4. Agregar un enlace visible llamado **"Aviso de privacidad"**, reutilizando los componentes existentes.
 5. Configurar el enlace para abrir correctamente el aviso. No enlazar una propuesta no aprobada como si fuera el texto vigente.
@@ -32,7 +34,7 @@ Si estás leyendo este documento mientras trabajas en la integración del regist
 8. Impedir el registro cuando el ciudadano no haya otorgado su autorización. Comprobar también el rechazo por el servidor para evitar eludir la interfaz.
 9. Coordinar con el backend la persistencia de fecha, hora y versión del consentimiento; comprobar la correspondencia exacta del texto mostrado con el guardado. Reutilizar los mecanismos existentes cuando proceda.
 10. Comprobar que el diseño funcione en computador y dispositivos móviles.
-11. Verificar que el enlace funcione después de compilar y desplegar la aplicación. Netlify actualmente publica `frontend/dist` desde `develop`; este PR a main no equivale a un despliegue. La regla SPA de `_redirects` no debe ocultar el archivo estático existente.
+11. Verificar que el enlace funcione después de compilar y desplegar la aplicación (Netlify publica `frontend/dist` desde `develop`).
 12. Ejecutar las pruebas disponibles para comprobar que el registro continúa funcionando correctamente.
 
 ### Restricciones

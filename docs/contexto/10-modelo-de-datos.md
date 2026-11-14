@@ -13,8 +13,8 @@ Un ciudadano de Tuluá crea un reporte (categoría, descripción, foto y ubicaci
 - **Longitudes generosas**: es un servicio público con datos heterogéneos; las reglas estrictas viven en CHECK y en el backend, no en el tamaño de la columna (p. ej. la descripción mide 10 a 500 por CHECK).
 - **Comunas, no cuadrantes**: los cuadrantes de la Policía quedaron obsoletos por decisión aprobada.
 
-## 3. Tablas y por qué existen (26)
-**Catálogos (11)**: `rol` (CIUDADANO, ADMIN), `tipo_documento` (CC, CE, PPT, PAS; sin TI), `aviso_privacidad` (versionado: se guarda qué versión aceptó cada usuario), `tipo_token`, `tipo_entidad`, `tipo_dependencia`, `tipo_canal`, `estado_reporte` (con `orden`), `modo_envio`, `estado_envio`, `proveedor_identidad` (GOOGLE).
+## 3. Tablas y por qué existen (29)
+**Catálogos (12)**: `rol` (CIUDADANO, ADMIN), `tipo_documento` (CC, CE, PPT, PAS; sin TI), `aviso_privacidad` (versionado: se guarda qué versión aceptó cada usuario), `tipo_token`, `tipo_entidad`, `tipo_dependencia`, `tipo_canal`, `estado_reporte` (con `orden`), `modo_envio`, `estado_envio`, `proveedor_identidad` (GOOGLE), `finalidad_canal` (V21: Radicar PQR, Reportar daño, PQR anónimo, Consultar estado, Emergencia, Información).
 
 **Territorio**
 - `comuna`: id 1 a 10 con `geom` (MultiPolygon, EPSG:4326). El polígono llega después; mientras tanto la comuna se infiere por el barrio.
@@ -31,8 +31,9 @@ Un ciudadano de Tuluá crea un reporte (categoría, descripción, foto y ubicaci
 **Destinos (a quién llega un reporte)**
 - `entidad_destino`: Alcaldía de Tuluá y las empresas (Centroaguas, Gases de Occidente, Celsia, Veolia).
 - `dependencia`: secretarías, departamentos, oficinas, áreas o servicios públicos; pertenecen a una entidad y pueden tener padre (`id_dependencia_padre`).
-- `canal_atencion`: correo, web, teléfono, WhatsApp o presencial. Pertenece a **una entidad o a una dependencia** (nunca ambas ni ninguna).
+- `canal_atencion`: correo, web, teléfono, WhatsApp o presencial. Pertenece a **una entidad o a una dependencia** (nunca ambas ni ninguna). Desde V21 (NOT-130) también guarda para qué sirve (`id_finalidad_canal`), en qué `orden` se recomienda, su `horario`, de dónde sale el dato (`fuente`) y cuándo se verificó (`verificado_en`). Un canal que no sirve no se borra: queda `activo = FALSE` con el motivo en `detalle`. La API muestra los activos no-correo de la entidad en ese orden.
 - `categoria`: lo que el ciudadano elige; apunta a **una** dependencia. `descripcion` guarda los ejemplos que muestra la tarjeta de la app («Huecos, grietas, andenes rotos»); se editan en la base, la app no los tiene escritos (V7). Cadena: **categoría → dependencia → entidad**. Por eso un reporte tiene un solo destino.
+- `configuracion_enrutamiento` (V16): una fila por categoría con su ruta de envío: canal de correo, canal alterno y de emergencia, si el correo está confirmado (`correo_confirmado`), si se prioriza el alterno, si la competencia está confirmada, si requiere revisión de clasificación, si admite matrícula, si es de gas, y la fuente y fecha de validación. Es lo que lee `EnrutamientoServicio`; desde V21 solo el CAIC y Centroaguas tienen correo confirmado.
 - Banderas `requiere_ubicacion` y `requiere_evidencia` en la categoría: el barrio y el GPS son opcionales según el tipo de incidente.
 
 **Reportes**
@@ -41,13 +42,16 @@ Un ciudadano de Tuluá crea un reporte (categoría, descripción, foto y ubicaci
 - `apoyo_reporte`: otros ciudadanos que respaldan un reporte (un apoyo por usuario).
 - `historial_estado`: cada cambio de estado, quién lo hizo y cuándo. Solo se inserta; el estado no retrocede (puede saltar etapas).
 - `registro_envio_correo`: cada intento de envío (canal usado, modo RESEND (BORRADOR quedó descartado, ADR-0002), estado PENDIENTE/ENVIADO/FALLIDO, error).
+- `evento_correo` (V16): identificadores de envío del proveedor que reportaron rebote o queja por el webhook; permite marcar el envío como fallido sin un código en el asunto.
 
 ## 4. Decisiones clave y su razón
 - **Un solo destino por reporte**: simplifica el envío y evita duplicados.
 - **Solo se envía al Correo principal activo de la entidad** (Alcaldía = CAIC, que redirige). Los correos de cada secretaría son solo de referencia. Un índice único parcial impide dos correos principales por entidad.
 - **Entidad sin correo principal activo** (hoy Gases de Occidente, Celsia, Veolia): el reporte queda «no enviado por correo» (vista `v_reporte_no_enviado_por_correo`) y la app muestra los demás canales.
 - **El acceso de un canal no se edita**: se desactiva y se crea otro, para no reescribir el destino de envíos pasados.
-- **La comuna no se guarda en el reporte**: se deriva (vista `v_reporte_comuna`) del polígono que contiene el punto (`ST_Covers`) o, si no hay, del barrio. Evita datos contradictorios al actualizar polígonos.
+- **Límites contra el abuso** (V22, NOT-132, 13 nov 2026): 5 claves nuevas en `configuracion` con su rango (`login_intentos_maximos` 3, `login_ventana_minutos` 5, `login_bloqueo_minutos` 5, `reportes_maximos_por_dia` 2, `duplicado_ventana_dias` 30); tabla `distancia_duplicado` (una fila por cada una de las 10 categorías con ubicación, de 5 a 500 m); tabla `intento_login` (fallos por correo normalizado, sin contraseñas ni IP); columna `reporte.requiere_evidencia` (la pone el sistema cuando se repite un problema resuelto); índice `ix_reporte_usuario_creado` para contar los reportes del día. `categoria.requiere_evidencia` no cambia.
+- **La comuna se guarda en el reporte** (V20, 12 nov 2026): `reporte.id_comuna` y `reporte.comuna_origen` (`poligono` o `barrio`) los llena un trigger con `fn_asignar_comuna` (polígono que contiene el punto o, en un hueco, el más cercano dentro de la distancia máxima) o, si no hay, el barrio. Para no dejar datos contradictorios se recalcula si cambian el punto o el barrio del reporte, el polígono de una comuna, la comuna de un barrio o `configuracion.comuna_distancia_maxima_m`. La vista `v_reporte_comuna` lee esas columnas. Antes se derivaba en cada lectura y con 10.000 reportes las estadísticas tardaban 31,5 s (ahora 12 ms).
+- **`comuna.geog`** (V19): el polígono también en `geography`, columna generada con índice GiST, para medir distancias en metros sin convertir el polígono en cada llamada.
 - **Habeas data**: borrar un usuario borra en cascada sus reportes y todo lo que cuelga (evidencia, apoyos, historial, envíos, tokens). Los autores de auditoría (`id_usuario_actualiza`, `id_usuario_cambia`) pasan a NULL. El backend debe borrar además los archivos de las fotos del almacenamiento.
 - **Fotos por usuario**: permite que los apoyantes aporten evidencia sin pisar la del autor.
 - **Estado y vigencia**: ver redundancias.
@@ -77,6 +81,6 @@ B1 dependencia hija de la misma entidad y sin ciclos · B2 solo reportante o apo
 ## 9. Mapa de campos de formularios → columnas (borrador, verificar contra el Figma)
 **Registro**: nombres → `usuario.nombres` · apellidos → `usuario.apellidos` · tipo y número de documento → `id_tipo_documento`, `numero_documento` · barrio → `id_barrio` · dirección → `direccion_correspondencia` · correo → `correo` · teléfono (opcional) → `telefono` · contraseña → `password_hash` · aceptación del aviso → `id_aviso_privacidad` + `acepto_privacidad_en`.
 **Continuar con Google**: Google entrega correo, nombres y apellidos (editables) → `usuario.correo`, `nombres`, `apellidos`; el `sub` → `identidad_externa.identificador_externo`. Lo demás (documento, barrio, dirección, teléfono, aviso) se pide en «completar perfil». Sin `password_hash`.
-**Actualizar mi reporte**: radicado de la Alcaldía → `reporte.radicado_oficial`.
+**Actualizar mi reporte**: radicado de la Alcaldía → `reporte.radicado_oficial`; el aviso («Me respondieron» o «Ya se resolvió») → una fila en `historial_estado` con el estado vigente y la observación, sin cambiar el estado (lo confirma el administrador).
 **Reporte**: categoría → `reporte.id_categoria` · descripción (10–500) → `descripcion` · ubicación GPS → `ubicacion` · barrio (opcional) → `id_barrio` · dirección del incidente (opcional) → `direccion_incidente` · matrícula (solo empresas) → `matricula_cuenta_servicio` · autorización de envío → `autorizacion_envio_en` · fotos 1 a 3 → `evidencia_reporte.url` + `orden`.
 **Del sistema (no son campos)**: `codigo_seguimiento`, `id_estado_reporte`, `vigente_hasta`, `creado_en`, `requiere_revision`.

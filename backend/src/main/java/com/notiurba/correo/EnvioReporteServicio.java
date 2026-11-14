@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.notiurba.web.error.ApiException;
+import com.notiurba.web.error.Codigos;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,17 @@ public class EnvioReporteServicio {
     private final EnviadorCorreo enviador;
     private final ObjectMapper json;
     private final boolean habilitado;
+    /** Si tiene valor (RESEND_PRUEBA_DESTINO), el correo sale a esa dirección y NO a la entidad real. */
+    @Value("${notiurba.correo.destino-prueba:}")
+    private String destinoPrueba = "";
+    private static final org.slf4j.Logger LOG=org.slf4j.LoggerFactory.getLogger(EnvioReporteServicio.class);
+    static final String CANAL_CERRADO = "El canal ya no permite envío";
+
+    /** La ruta dejó de permitir correo: nunca se llamó al proveedor. */
+    private static final class CanalCerrado extends CorreoNoEnviadoException {
+        CanalCerrado() { super(CANAL_CERRADO, false); }
+    }
+
     public EnvioReporteServicio(JdbcTemplate jdbc, TransactionTemplate tx, EnrutamientoServicio rutas,
             PlantillaReporte plantilla, EnviadorCorreo enviador, ObjectMapper json,
             @Value("${notiurba.correo.reportes-habilitados:false}") boolean habilitado) {
@@ -35,6 +47,7 @@ public class EnvioReporteServicio {
     public Estado solicitar(String usuario, String codigo) {
         return tx.execute(status -> {
             long id = propio(usuario,codigo,true);
+            exigirEvidencia(id);
             Map<String,Object> reporte=jdbc.queryForMap("SELECT id_categoria, emergencia, autorizacion_envio_en FROM reporte WHERE id_reporte=?",id);
             if(reporte.get("autorizacion_envio_en")==null) throw error("Debes autorizar la remisión del reporte");
             var ruta=rutas.resolver(((Number)reporte.get("id_categoria")).intValue(), (Boolean)reporte.get("emergencia"));
@@ -59,7 +72,7 @@ public class EnvioReporteServicio {
             } else {
                 var detalle=datos(id,ruta);
                 String clave="reporte-"+UUID.randomUUID();
-                CorreoSaliente correo=plantilla.crear(detalle,ruta.acceso(),clave);
+                CorreoSaliente correo=plantilla.crear(detalle.datos(),detalle.grupo(),ruta.acceso(),clave);
                 try { insertar(id,ruta.idCanal(),"RESEND","PENDIENTE",ruta.acceso(),clave,json.writeValueAsString(correo)); }
                 catch(com.fasterxml.jackson.core.JsonProcessingException e){ throw new IllegalStateException("No se pudo preparar el correo",e); }
             }
@@ -95,19 +108,51 @@ public class EnvioReporteServicio {
                 rs.getBoolean(2),rs.getBoolean(3),ruta),id);
         return rows.isEmpty()?new Estado("SIN_SOLICITAR",null,false,false,ruta):rows.get(0);
     }
-    private PlantillaReporte.Datos datos(long id,EnrutamientoServicio.Ruta ruta) {
+    record DatosDelReporte(PlantillaReporte.Datos datos,GrupoPlantilla grupo) { }
+
+    public record MensajeDelReporte(String asunto,String texto) { }
+
+    /** El mensaje que se encoló para la entidad o, si aún no hay envío, el que se le enviaría. Solo el autor. */
+    public MensajeDelReporte mensaje(String usuario,String codigo) {
+        long id=propio(usuario,com.notiurba.reporte.ReporteServicio.normalizarCodigo(codigo),false);
+        List<String> guardado=jdbc.queryForList("""
+            SELECT mensaje_json FROM registro_envio_correo WHERE id_reporte=? AND mensaje_json IS NOT NULL
+            ORDER BY creado_en DESC,id_registro_envio DESC LIMIT 1""",String.class,id);
+        if(!guardado.isEmpty()) {
+            try {
+                CorreoSaliente c=json.readValue(guardado.get(0),CorreoSaliente.class);
+                return new MensajeDelReporte(c.asunto(),c.texto());
+            } catch(com.fasterxml.jackson.core.JsonProcessingException|IllegalArgumentException e) {
+                LOG.warn("Mensaje guardado ilegible del reporte {}; se vuelve a armar",id);
+            }
+        }
+        var r=jdbc.queryForMap("SELECT id_categoria, emergencia FROM reporte WHERE id_reporte=?",id);
+        var detalle=datos(id,rutas.resolver(((Number)r.get("id_categoria")).intValue(),(Boolean)r.get("emergencia")));
+        var m=plantilla.componer(detalle.datos(),detalle.grupo());
+        return new MensajeDelReporte(m.asunto(),m.texto());
+    }
+
+    private DatosDelReporte datos(long id,EnrutamientoServicio.Ruta ruta) {
         List<String> fotos=jdbc.queryForList("SELECT url FROM evidencia_reporte WHERE id_reporte=? ORDER BY orden",String.class,id);
-        return jdbc.queryForObject("""
-            SELECT r.*,u.nombres,u.apellidos,u.numero_documento,u.direccion_correspondencia,u.correo,u.telefono,
-             t.codigo AS tipo_documento,b.nombre AS barrio,v.id_comuna,ST_Y(r.ubicacion) AS lat,ST_X(r.ubicacion) AS lon
-            FROM reporte r JOIN usuario u USING(id_usuario) JOIN tipo_documento t USING(id_tipo_documento)
-            LEFT JOIN barrio b ON b.id_barrio=r.id_barrio LEFT JOIN v_reporte_comuna v USING(id_reporte)
-            WHERE r.id_reporte=?
-            """,(rs,i)->new PlantillaReporte.Datos(rs.getString("codigo_seguimiento"),ruta.entidad(),ruta.dependencia(),ruta.categoria(),
-             rs.getString("nombres")+" "+rs.getString("apellidos"),rs.getString("tipo_documento")+" "+rs.getString("numero_documento"),
-             rs.getString("direccion_correspondencia"),rs.getString("correo"),rs.getString("telefono"),rs.getString("descripcion"),
-             rs.getString("direccion_incidente"),rs.getString("barrio"),rs.getString("id_comuna"),(Double)rs.getObject("lat"),(Double)rs.getObject("lon"),
-             rs.getObject("creado_en",OffsetDateTime.class),rs.getObject("autorizacion_envio_en",OffsetDateTime.class),rs.getString("matricula_cuenta_servicio"),fotos),id);
+        var r=jdbc.queryForMap("""
+            SELECT r.id_usuario,r.descripcion,r.direccion_incidente,r.id_comuna,r.creado_en,r.autorizacion_envio_en,
+             r.matricula_cuenta_servicio,b.nombre AS barrio,ST_Y(r.ubicacion) AS lat,ST_X(r.ubicacion) AS lon
+            FROM reporte r LEFT JOIN barrio b ON b.id_barrio=r.id_barrio WHERE r.id_reporte=?
+            """,id);
+        var datos=DatosDelCiudadano.cargar(jdbc,((Number)r.get("id_usuario")).longValue())
+            .entidad(ruta.entidad()).categoria(ruta.categoria()).descripcion((String)r.get("descripcion"))
+            .direccionIncidente((String)r.get("direccion_incidente")).barrio((String)r.get("barrio"))
+            .comuna(r.get("id_comuna")==null?null:((Number)r.get("id_comuna")).intValue())
+            .latitud((Double)r.get("lat")).longitud((Double)r.get("lon"))
+            .creadoEn(fechaHora(r.get("creado_en"))).autorizacion(fechaHora(r.get("autorizacion_envio_en")))
+            .matricula((String)r.get("matricula_cuenta_servicio")).fotos(fotos).build();
+        return new DatosDelReporte(datos,GrupoPlantilla.de(ruta));
+    }
+    private static OffsetDateTime fechaHora(Object valor) {
+        if(valor==null) return null;
+        if(valor instanceof OffsetDateTime o) return o;
+        if(valor instanceof java.sql.Timestamp t) return t.toInstant().atOffset(java.time.ZoneOffset.UTC);
+        throw new IllegalStateException("Fecha con tipo inesperado: "+valor.getClass());
     }
 
     /** Reclamo corto con SKIP LOCKED; ninguna transacción de BD permanece abierta durante la llamada HTTP. */
@@ -132,20 +177,21 @@ public class EnvioReporteServicio {
             var reporte=jdbc.queryForMap("SELECT id_categoria,emergencia FROM reporte WHERE id_reporte=?",intento.get("id_reporte"));
             var actual=rutas.resolver(((Number)reporte.get("id_categoria")).intValue(),(Boolean)reporte.get("emergencia"));
             if(!actual.permiteCorreo() || !actual.acceso().equals(intento.get("destino")))
-                throw new CorreoNoEnviadoException("El canal ya no permite envío",false);
+                throw new CanalCerrado();
             Integer previos=jdbc.queryForObject("SELECT count(*) FROM registro_envio_correo WHERE id_reporte=? AND id_registro_envio<?",Integer.class,intento.get("id_reporte"),id);
             OffsetDateTime primero=jdbc.queryForObject("SELECT min(creado_en) FROM registro_envio_correo WHERE id_reporte=?",OffsetDateTime.class,intento.get("id_reporte"));
             if(previos!=null && previos>0 && Duration.between(primero,OffsetDateTime.now()).compareTo(Duration.ofHours(23))>=0)
                 throw new CorreoNoEnviadoException("Ventana de idempotencia vencida; requiere conciliación",false);
-            CorreoSaliente mensaje=json.readValue((String)intento.get("mensaje_json"),CorreoSaliente.class);
+            CorreoSaliente mensaje=aDestinoDePrueba(json.readValue((String)intento.get("mensaje_json"),CorreoSaliente.class),destinoPrueba);
             proveedor=enviador.enviar(mensaje);
             if(proveedor==null || proveedor.isBlank()) throw new CorreoNoEnviadoException("Proveedor sin confirmación",true);
         } catch(Exception fallo) {
             boolean reintentable=fallo instanceof CorreoNoEnviadoException c && c.reintentable();
+            String error=fallo instanceof CanalCerrado ? CANAL_CERRADO : "El proveedor no confirmó el envío";
             tx.executeWithoutResult(status->jdbc.update("""
                 UPDATE registro_envio_correo SET id_estado_envio=(SELECT id_estado_envio FROM estado_envio WHERE nombre='FALLIDO'),
-                error='El proveedor no confirmó el envío',reintentable=?,procesando=FALSE WHERE id_registro_envio=?
-                """,reintentable,id));
+                error=?,reintentable=?,procesando=FALSE WHERE id_registro_envio=?
+                """,error,reintentable,id));
             return;
         }
         final String aceptado=proveedor;
@@ -170,5 +216,29 @@ public class EnvioReporteServicio {
                 """,id,aceptado);
         });
     }
+    /**
+     * Con destino de prueba, el correo no sale a la entidad real: va a esa dirección, con «[PRUEBA]» en el
+     * asunto y una línea que dice a quién habría llegado. Sin destino de prueba devuelve el mismo correo.
+     */
+    static CorreoSaliente aDestinoDePrueba(CorreoSaliente c, String destinoPrueba) {
+        if (destinoPrueba == null || destinoPrueba.isBlank()) return c;
+        String aviso = "CORREO DE PRUEBA: el destino real habría sido " + String.join(", ", c.para()) + ".";
+        String html = c.html() == null || c.html().isBlank() ? c.html()
+                : "<p><strong>" + org.springframework.web.util.HtmlUtils.htmlEscape(aviso) + "</strong></p>" + c.html();
+        return new CorreoSaliente(List.of(destinoPrueba.trim()), "[PRUEBA] " + c.asunto(), aviso + "\n\n" + c.texto(),
+                html, c.nombreRemitente(), c.responderA(), c.claveIdempotencia());
+    }
+
+    /** Un reporte que repite uno ya resuelto no sale sin al menos una foto: la que se declaró al crearlo pudo no llegar. */
+    private void exigirEvidencia(long id) {
+        boolean sinFoto = Boolean.TRUE.equals(jdbc.queryForObject(
+                "SELECT requiere_evidencia AND NOT EXISTS (SELECT 1 FROM evidencia_reporte e WHERE e.id_reporte = reporte.id_reporte) FROM reporte WHERE id_reporte = ?",
+                Boolean.class, id));
+        if (sinFoto) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, Codigos.EVIDENCIA_REQUERIDA,
+                    Codigos.MSG_EVIDENCIA_REQUERIDA, "fotos");
+        }
+    }
+
     private static ApiException error(String m){ return new ApiException(HttpStatus.CONFLICT,"CONFLICTO",m); }
 }

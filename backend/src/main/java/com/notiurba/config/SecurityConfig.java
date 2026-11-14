@@ -39,7 +39,7 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(a -> a
-                .requestMatchers("/api/health", "/api/auth/**").permitAll()
+                .requestMatchers("/api/health", "/api/auth/**", "/api/catalogos/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated())
             .exceptionHandling(e -> e
@@ -58,11 +58,13 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource(
             @Value("${notiurba.cors.allowed-origins}") String[] origenes) {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(origenes));
+        // Patrones, no orígenes exactos: aceptan una dirección completa («https://notiurba.netlify.app») o un
+        // comodín como «https://deploy-preview-*--notiurba.netlify.app» (una vista previa nueva por cada PR)
+        config.setAllowedOriginPatterns(List.of(origenes));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         // Sin esto el navegador (Netlify → Render) no deja leer Location en el 201 de crear reporte
-        config.setExposedHeaders(List.of("Location"));
+        config.setExposedHeaders(List.of("Location", "Retry-After"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", config);
         return source;

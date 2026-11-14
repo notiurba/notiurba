@@ -50,14 +50,24 @@ confirmarse con el equipo.
   Reply-To; no se le envía copia). Decidido el 29/10/2026 (ADR-0002). Si Resend rechaza, registra el fallo (RF-15).
 - **RF-13** (**Descartado el 29/10/2026**, ADR-0002): el borrador que el ciudadano enviaba
   desde su correo se reemplaza por el envío con Resend (RF-12).
-- **RF-14** (Esencial, Estable | EDT 7.6): el correo incluye comuna, categoría,
-  descripción, coordenadas, enlace al mapa, enlace a la foto y código de seguimiento.
+- **RF-14** (Esencial, Estable | EDT 7.6; modificado en NOT-130): el correo es una carta formal en
+  primera persona del ciudadano con la plantilla de su grupo (A, B o C): datos del ciudadano, hechos o
+  solicitud, ubicación con comuna, coordenadas y mapa, fecha y fotos. Sin código de seguimiento, sin
+  «NotiUrba» y sin dependencia.
 - **RF-15** (Esencial, Estable | EDT 7.6, 7.2): enviar en segundo plano y registrar de
   cada envío destinatario, fecha, hora y resultado (enviado/fallido).
 - **RF-16** (Condicional, Estable | EDT 6.6, 7.6): mostrar al ciudadano si el correo fue
   enviado o falló.
-- **RF-17** (Condicional, Puede cambiar | EDT 7.6): para categorías sin destinatario
-  confirmado, mostrar el canal oficial de la entidad en lugar de enviar el correo.
+- **RF-17** (Esencial; modificado en NOT-130): mostrar todos los canales oficiales verificados de la
+  entidad, ordenados, con su finalidad, horario y acción directa (WhatsApp, teléfono, web, oficina).
+- **RF-26** (NOT-130): omitir filas vacías; fecha «9 de noviembre de 2026, 10:07 a. m.» y coordenadas
+  con 5 decimales.
+- **RF-27** (NOT-130): hasta 3 miniaturas con enlace y texto alternativo; versión en texto plano.
+- **RF-28** (NOT-130): enviar por correo solo al CAIC y a Centroaguas (evidencia de respuesta).
+- **RF-29** (NOT-130): «Copiar mi mensaje» cuando el correo rebotó o falló.
+- **RF-30** (NOT-130): vista previa de solo lectura del mensaje antes de enviar; no guarda nada.
+- **RF-31** (NOT-130): cada canal guarda finalidad, orden, horario, fuente y fecha de verificación.
+- **RF-32** (NOT-130): atajo: gas, energía y aseo van del paso 1 a sus canales, sin crear reporte.
 
 ### Panel administrativo
 
@@ -114,5 +124,17 @@ para rebotes (R.05).
   pedir documento y dirección.
 - **Eventos comunitarios**: sin dependencia ni destinatario; decidir si se quitan del
   MVP o se registran sin envío.
+
+## Agregados en NOT-132 (13/11/2026)
+
+- **RNF-04 (ajuste)**: el registro responde en 2 s o menos sin esperar el correo de verificación (medido: 0,35 s; antes ~10 s).
+- **RF-01 (ajuste)**: si el correo de verificación falla, la cuenta igual queda creada y se puede pedir otro enlace.
+- **RF-33**: el log registra en qué paso falló «Continuar con Google», sin datos personales.
+- **RF-34**: 3 intentos fallidos de ingreso en 5 minutos bloquean ese correo 5 minutos.
+- **RF-35**: máximo 2 reportes por cuenta al día (día de Colombia).
+- **RF-36**: aviso de reporte parecido: misma categoría, cerca (5 a 15 m según la categoría), últimos 30 días, de cualquier cuenta y sin resolver. Se puede enviar de todas maneras.
+- **RF-37**: el administrador consulta y ajusta todos estos valores en «Configuración».
+- **RF-38**: cada situación del ingreso muestra un mensaje claro, sin lenguaje técnico.
+- **RF-39**: si se repite un problema ya resuelto en ese lugar, el reporte exige al menos una foto.
 
 Fuente: pestaña «Requisitos funcionales y limitación de comunas» del Google Doc.

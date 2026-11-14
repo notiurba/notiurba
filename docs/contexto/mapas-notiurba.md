@@ -32,7 +32,7 @@ Asignacion de reportes y estados:
 - El diagnostico posterior reemplaza `fuera_zona_urbana` por `sin_determinar`: la interfaz informa Comuna sin determinar, sin inferir que el punto esta fuera de Tulua. Ver [diagnostico de limites](diagnostico-limites-notiurba.md) para el inventario actualizado, areas y comparacion visual P-28.
 - Los popups de asignaciones interiores corresponden a la capa provisional. La interfaz identifica expresamente POT 2015 y su validacion pendiente. Comuna 10 tiene un color propio.
 
-Comprobaciones: `node --test src/utils/geoUtils.test.mjs` prueba interiores, exteriores, huecos, limites compartidos, solapamientos, el punto interior de comuna 10, un solapamiento real 03/10 y los reportes ficticios. `npm run lint` y `npm run build` pasan. La comprobacion en React-Leaflet mostro diez poligonos y diez marcadores; popup Comuna 10 con codigo 10, filtros por Basuras/En revision, calor y controles de capas funcionan sin errores de consola.
+Comprobaciones: `node --test src/compartido/geo/geoUtils.test.mjs` prueba interiores, exteriores, huecos, limites compartidos, solapamientos, el punto interior de comuna 10, un solapamiento real 03/10 y los reportes ficticios. `npm run lint` y `npm run build` pasan. La comprobacion en React-Leaflet mostro diez poligonos y diez marcadores; popup Comuna 10 con codigo 10, filtros por Basuras/En revision, calor y controles de capas funcionan sin errores de consola.
 
 Pendiente: contrastar limites y denominaciones con Planeacion Municipal, confirmar su equivalencia administrativa y vigencia, revisar solapamientos/huecos y definir precision aceptable para puntos cercanos a limites. La fuente completa se usa provisionalmente sin mezclar una comuna POT con nueve DANE.
 
