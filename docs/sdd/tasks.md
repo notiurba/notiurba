@@ -80,11 +80,11 @@
 | Q-13 | Webhook | Rebote real con la dirección de pruebas de Resend | Registro de Resend en 200 y detalle con «El correo no llegó», canales y «Copiar mi mensaje» | [ ] |
 | Q-14 | Detalle del reporte (NOT-131) | Revisar el bloque «Correo a la entidad» con reportes enviados, rebotados y por otro canal, a 360 y 1366 px | Se ve bien y sin palabras técnicas | [ ] |
 | Q-15 | Regresión | `mvn clean test` (con la base desechable y `DB_*`), `pnpm test`, `pnpm lint`, `pnpm build`, `qa-panel.sh`, subagente `code-reviewer` | Todo en verde; hallazgos corregidos | [ ] |
-| Q-17 | Aviso de privacidad | Abrirlo desde el registro, Ajustes y el paso final del reporte | Siempre la versión 3 de la app, sin marcadores «PENDIENTE» | [ ] |
-| Q-18 | Dirección de correspondencia | Escribir más de 100 caracteres en el registro, en Completar perfil y en Editar datos | El límite y el contador se ven; no se pierde texto sin aviso | [ ] |
-| Q-19 | Ubicación opcional | Paso 2 con «Otro / no clasificado» | El mensaje deja claro que no es obligatorio | [ ] |
-| Q-20 | Aviso del ciudadano | Con una cuenta: «Actualizar mi reporte» → «Ya se resolvió»; con el administrador: abrir el panel | Etiqueta en la lista, aviso destacado en el detalle, estado sin cambios; al responder el administrador la etiqueta desaparece | [ ] |
-| Q-21 | Cierre | Con Q-01 a Q-20 en verde: archivar el SDD, actualizar Google Doc/Sheet y pasar NOT-131 a Done en Linear | Historia cerrada | [ ] |
+| Q-16 | Aviso de privacidad | Abrirlo desde el registro, Ajustes y el paso final del reporte | Siempre la versión 3 de la app, sin marcadores «PENDIENTE» | [ ] |
+| Q-17 | Dirección de correspondencia | Escribir más de 100 caracteres en el registro, en Completar perfil y en Editar datos | El límite y el contador se ven; no se pierde texto sin aviso | [ ] |
+| Q-18 | Ubicación opcional | Paso 2 con «Otro / no clasificado» | El mensaje deja claro que no es obligatorio | [ ] |
+| Q-19 | Aviso del ciudadano | Con una cuenta: «Actualizar mi reporte» → «Ya se resolvió»; con el administrador: abrir el panel | Etiqueta en la lista, aviso destacado en el detalle, estado sin cambios; al responder el administrador la etiqueta desaparece | [ ] |
+| Q-20 | Cierre | Con Q-01 a Q-19 en verde: archivar el SDD, actualizar Google Doc/Sheet y pasar NOT-131 a Done en Linear | Historia cerrada | [ ] |
 
 ## Pruebas finales (Fase 5)
 
@@ -115,7 +115,7 @@
 | --- | --- | --- |
 | 2026-11-13 | Spec y plan aprobados; tareas escritas | spec.md, plan.md, tasks.md |
 | 2026-11-13 | Revisión de código: el detalle ofrece «Reintentar envío» y canales para otro canal; CA-08 ajustado a reintento por la persona; guía con casillas previas y prueba de rebote real | spec.md, tasks.md, 14-activar-envio-real.md |
-| 2026-11-13 | Tras la prueba en producción de Andrés: Anexo A del spec y del plan, tareas T-07 a T-18 y matriz de QA Q-01 a Q-21 (borrador, pendiente de aprobación) | spec.md, plan.md, tasks.md |
-| 2026-11-14 | Implementados T-07 y T-09 a T-17; revisión con code-reviewer (selector del panel, resumen del paso 4, simulador, mapa accesible, correo con tablas y una línea en blanco) corregida. Quedan T-08 (Google) y T-18 (webhook), que necesitan a Andrés, y el QA Q-01 a Q-21 | tasks.md |
+| 2026-11-13 | Tras la prueba en producción de Andrés: Anexo A del spec y del plan, tareas T-07 a T-18 y matriz de QA Q-01 a Q-20 (borrador, pendiente de aprobación) | spec.md, plan.md, tasks.md |
+| 2026-11-14 | Implementados T-07 y T-09 a T-17; revisión con code-reviewer (selector del panel, resumen del paso 4, simulador, mapa accesible, correo con tablas y una línea en blanco) corregida. Quedan T-08 (Google) y T-18 (webhook), que necesitan a Andrés, y el QA Q-01 a Q-20 | tasks.md |
 | 2026-11-14 | T-08: consulta de solo lectura a Neon. La cuenta de `andreslopezv1m@gmail.com` existe desde el 3 nov y Google se vinculó a ella por correo (comportamiento previsto). No hay error de vinculación | tasks.md |
-| 2026-11-14 | Segunda tanda de hallazgos: T-19 a T-22 (aviso de privacidad, dirección, ubicación opcional, aviso del ciudadano al administrador) y QA Q-17 a Q-20. Límite diario con borrador y rediseño: fuera del MVP | spec.md, tasks.md |
+| 2026-11-14 | Segunda tanda de hallazgos: T-19 a T-22 (aviso de privacidad, dirección, ubicación opcional, aviso del ciudadano al administrador) y QA Q-16 a Q-19. Límite diario con borrador y rediseño: fuera del MVP | spec.md, tasks.md |
