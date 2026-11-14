@@ -8,11 +8,10 @@ import Boton from '../../compartido/componentes/Boton'
 import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
 import useCargar from '../../compartido/hooks/useCargar'
 import { formatearFecha, formatearFechaHora } from '../../compartido/utilidades/fechas'
-import { ESTADOS_REPORTE, ESTADO_ENVIADO, textoLugar } from '../../compartido/utilidades/reportes'
+import { ESTADOS_REPORTE, ESTADO_ENVIADO, estadosSiguientes, lugarDelReporte } from '../../compartido/utilidades/reportes'
 import './Reportes.css'
 
 const ESTADOS = ['Todos', ...ESTADOS_REPORTE]
-const ESTADOS_EDITABLES = ESTADOS_REPORTE.slice(1)
 const DIAS_SIN_RESPUESTA = 15
 const DIA_MS = 24 * 60 * 60 * 1000
 
@@ -155,25 +154,26 @@ export default function Reportes() {
 }
 
 function Detalle({ reporte, pestana, setPestana, alGuardar }) {
-  const [nuevo, setNuevo] = useState(reporte.estado)
+  const opciones = estadosSiguientes(reporte.estado)
+  const [nuevo, setNuevo] = useState(opciones[0] ?? '')
   const [observacion, setObservacion] = useState('')
   const [guardando, setGuardando] = useState(false)
   const guardarUnaVez = useUnaVez(guardar)
   const [mensaje, setMensaje] = useState('')
-  const [fallo, setFallo] = useState(false)
+  const [fallo, setFallo] = useState('')
 
   async function guardar(e) {
     e.preventDefault()
     setGuardando(true)
-    setFallo(false)
+    setFallo('')
     setMensaje('')
     try {
       await cambiarEstadoReporte(reporte.codigoSeguimiento, nuevo, observacion.trim() || undefined)
       setMensaje('Estado actualizado.')
       setObservacion('')
       alGuardar()
-    } catch {
-      setFallo(true)
+    } catch (error) {
+      setFallo(error?.mensaje || 'No pudimos guardar el cambio. Intente de nuevo.')
     } finally {
       setGuardando(false)
     }
@@ -201,7 +201,7 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
       {pestana === 'resumen' ? (
         <dl className="adm-rep__datos">
           <dt>Tipo</dt><dd>{reporte.categoria}</dd>
-          <dt>Ubicación</dt><dd>{textoLugar(reporte)}</dd>
+          <dt>Ubicación</dt><dd>{lugarDelReporte(reporte)}</dd>
           <dt>Descripción</dt><dd>{reporte.descripcion}</dd>
           <dt>Creado</dt><dd>{formatearFecha(reporte.creadoEn)}</dd>
           {reporte.radicadoOficial && (<><dt>Radicado oficial</dt><dd>{reporte.radicadoOficial}</dd></>)}
@@ -217,12 +217,15 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
         </ol>
       )}
 
+      {opciones.length === 0 ? (
+        <p className="adm-rep__vacio">Este reporte ya está resuelto: no admite más cambios.</p>
+      ) : (
       <form className="adm-rep__cambio" onSubmit={guardarUnaVez}>
         <h3>Cambiar estado</h3>
         <label>
           Nuevo estado
           <select value={nuevo} onChange={(e) => setNuevo(e.target.value)}>
-            {ESTADOS_EDITABLES.map((e) => (
+            {opciones.map((e) => (
               <option key={e}>{e}</option>
             ))}
           </select>
@@ -231,12 +234,13 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
           Observación (opcional)
           <textarea rows={3} value={observacion} onChange={(e) => setObservacion(e.target.value)} />
         </label>
-        {fallo && <Aviso variante="error">No pudimos guardar el cambio. Intente de nuevo.</Aviso>}
+        {fallo && <Aviso variante="error">{fallo}</Aviso>}
         {mensaje && <Aviso variante="exito">{mensaje}</Aviso>}
-        <Boton type="submit" cargando={guardando} textoCargando="Guardando…" disabled={nuevo === reporte.estado}>
+        <Boton type="submit" cargando={guardando} textoCargando="Guardando…" disabled={!nuevo}>
           Guardar cambio
         </Boton>
       </form>
+      )}
     </div>
   )
 }

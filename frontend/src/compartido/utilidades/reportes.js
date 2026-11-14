@@ -11,3 +11,18 @@ export const puedeActualizar = (reporte) => reporte.estado === ESTADO_ENVIADO ||
 // «Dirección · Barrio · Comuna 3», sin los datos que falten.
 export const textoLugar = (reporte) =>
   [reporte.direccion, reporte.barrio, reporte.idComuna && `Comuna ${reporte.idComuna}`].filter(Boolean).join(' · ')
+
+// Lo que se lee en el detalle: el lugar escrito, el punto del mapa o, si no hay nada, que no hay ubicación.
+export const lugarDelReporte = (reporte) =>
+  textoLugar(reporte) || (reporte.latitud != null && reporte.longitud != null ? 'Punto marcado en el mapa' : 'Sin ubicación')
+
+// La API recibe el estado como identificador, no como la etiqueta que se lee en pantalla.
+const IDENTIFICADORES = { Recibido: 'RECIBIDO', Enviado: 'ENVIADO', 'En trámite': 'EN_TRAMITE', Resuelto: 'RESUELTO' }
+export const identificadorEstado = (estado) => IDENTIFICADORES[estado] ?? estado
+
+// A qué estado puede pasar el administrador a mano: no se retrocede y «Enviado» lo pone el envío del correo.
+export const estadosSiguientes = (estado) => {
+  const actual = ESTADOS_REPORTE.indexOf(estado)
+  return ESTADOS_REPORTE.filter((e, i) => i > actual && e !== ESTADO_ENVIADO)
+}
+
