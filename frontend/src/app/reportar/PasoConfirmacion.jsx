@@ -175,8 +175,8 @@ export default function PasoConfirmacion() {
   }
 
   const barrio = barrios.find(b => String(b.idBarrio) === borrador.idBarrio)
-  const lugar = categoria?.requiereUbicacion === false ? 'No requerida'
-    : [borrador.direccion, barrio?.nombre, borrador.latitud != null && 'Punto marcado en el mapa'].filter(Boolean).join(' · ')
+  const lugar = [borrador.direccion, barrio?.nombre, borrador.latitud != null && 'Punto marcado en el mapa'].filter(Boolean).join(' · ')
+    || (categoria?.requiereUbicacion === false ? 'Sin ubicación' : '')
   const accion = guardado ? 'Reintentar' : ruta?.permiteCorreo ? 'Guardar y enviar' : 'Guardar reporte'
   const avisoParecido = parecido && textoDuplicado(parecido)
   const avisoLimite = limite && textoLimiteDiario(limite)

@@ -39,7 +39,7 @@ export function validarFoto(archivo, fotosActuales) {
 }
 
 // Cuerpo que espera POST /api/reportes (contrato 3.4). Las fotos se suben aparte, una por una.
-// Sin punto en el mapa (categorías que no piden ubicación) se omiten latitud y longitud.
+// Lo que la persona marcó (punto, barrio, dirección) se envía; lo que no puso se omite.
 // totalFotos y confirmarDuplicado solo viajan si se pasan (la vista previa pone totalFotos por su cuenta).
 export function armarSolicitudReporte(b, { autorizaEnvio = false, emergencia = false, categoria, totalFotos, confirmarDuplicado = false } = {}) {
   const solicitud = {

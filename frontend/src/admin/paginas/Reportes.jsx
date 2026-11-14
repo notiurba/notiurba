@@ -8,7 +8,7 @@ import Boton from '../../compartido/componentes/Boton'
 import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
 import useCargar from '../../compartido/hooks/useCargar'
 import { formatearFecha, formatearFechaHora } from '../../compartido/utilidades/fechas'
-import { ESTADOS_REPORTE, ESTADO_ENVIADO, comunasConReportes, estadosConReportes, estadosSiguientes, lugarDelReporte } from '../../compartido/utilidades/reportes'
+import { ESTADOS_REPORTE, ESTADO_ENVIADO, comunasConReportes, estadoElegido, estadosConReportes, estadosSiguientes, lugarDelReporte } from '../../compartido/utilidades/reportes'
 import './Reportes.css'
 
 const ESTADOS = ['Todos', ...ESTADOS_REPORTE]
@@ -155,7 +155,8 @@ export default function Reportes() {
 
 function Detalle({ reporte, pestana, setPestana, alGuardar }) {
   const opciones = estadosSiguientes(reporte.estado)
-  const [nuevo, setNuevo] = useState(opciones[0] ?? '')
+  const [elegido, setElegido] = useState('')
+  const nuevo = estadoElegido(opciones, elegido)
   const [observacion, setObservacion] = useState('')
   const [guardando, setGuardando] = useState(false)
   const guardarUnaVez = useUnaVez(guardar)
@@ -224,7 +225,7 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
         <h3>Cambiar estado</h3>
         <label>
           Nuevo estado
-          <select value={nuevo} onChange={(e) => setNuevo(e.target.value)}>
+          <select value={nuevo} onChange={(e) => setElegido(e.target.value)}>
             {opciones.map((e) => (
               <option key={e}>{e}</option>
             ))}
@@ -235,12 +236,12 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
           <textarea rows={3} value={observacion} onChange={(e) => setObservacion(e.target.value)} />
         </label>
         {fallo && <Aviso variante="error">{fallo}</Aviso>}
-        {mensaje && <Aviso variante="exito">{mensaje}</Aviso>}
         <Boton type="submit" cargando={guardando} textoCargando="Guardando…" disabled={!nuevo}>
           Guardar cambio
         </Boton>
       </form>
       )}
+      {mensaje && <Aviso variante="exito">{mensaje}</Aviso>}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { ESTADOS_REPORTE, comunasConReportes, estadosConReportes, estadosSiguientes, identificadorEstado, lugarDelReporte, puedeActualizar, textoLugar } from './reportes.js'
+import { ESTADOS_REPORTE, comunasConReportes, estadoElegido, estadosConReportes, etiquetaEstado, estadosSiguientes, identificadorEstado, lugarDelReporte, puedeActualizar, textoLugar } from './reportes.js'
 
 test('solo se puede actualizar un reporte enviado o en trámite', () => {
   assert.equal(puedeActualizar({ estado: 'Enviado' }), true)
@@ -49,5 +49,19 @@ test('los filtros del panel solo ofrecen lo que tiene reportes', () => {
   const cuenta = (e) => cuentas[e]
   assert.deepEqual(estadosConReportes(['Todos', ...ESTADOS_REPORTE], cuenta, 'Todos'), ['Todos', 'Recibido', 'Enviado'])
   assert.deepEqual(estadosConReportes(['Todos', ...ESTADOS_REPORTE], cuenta, 'Resuelto'), ['Todos', 'Recibido', 'Enviado', 'Resuelto'])
+})
+
+test('de identificador a etiqueta y de vuelta, para los cuatro estados', () => {
+  for (const estado of ESTADOS_REPORTE) assert.equal(etiquetaEstado(identificadorEstado(estado)), estado)
+  assert.equal(etiquetaEstado('EN_TRAMITE'), 'En trámite')
+  assert.equal(etiquetaEstado('OTRO'), 'OTRO')
+})
+
+test('el selector del panel no se queda en un estado que ya no se puede elegir', () => {
+  assert.equal(estadoElegido(['En trámite', 'Resuelto'], ''), 'En trámite')
+  assert.equal(estadoElegido(['En trámite', 'Resuelto'], 'Resuelto'), 'Resuelto')
+  // Tras pasar a «En trámite» solo queda «Resuelto»: el valor viejo no se reenvía.
+  assert.equal(estadoElegido(['Resuelto'], 'En trámite'), 'Resuelto')
+  assert.equal(estadoElegido([], 'En trámite'), '')
 })
 

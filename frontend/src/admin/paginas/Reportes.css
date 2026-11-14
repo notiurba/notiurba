@@ -21,6 +21,7 @@
 .adm-rep__tabla th, .adm-rep__tabla td { padding: var(--nu-esp-14) var(--nu-esp-16); text-align: left; border-bottom: 1px solid var(--nu-borde-encabezado); }
 .adm-rep__tabla th { background: var(--nu-superficie-atenuada); color: var(--nu-texto-secundario); font-weight: 700; }
 .adm-rep__tabla tbody tr:hover { background: var(--nu-superficie-app); }
+.adm-rep__tabla tbody tr.adm-rep__fila--activa, .adm-rep__tabla tbody tr.adm-rep__fila--activa:hover { background: var(--nu-marca-seleccion); }
 .adm-rep__fila--activa { background: var(--nu-marca-seleccion); }
 .adm-rep__abrir { background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: var(--nu-admin-acento); cursor: pointer; text-decoration: underline; }
 .adm-rep__detalle { background: var(--nu-superficie-base); border: 1px solid var(--nu-borde-tarjeta); border-radius: 12px; padding: var(--nu-esp-20); box-shadow: 0 1px 3px rgba(15, 23, 41, 0.08); }

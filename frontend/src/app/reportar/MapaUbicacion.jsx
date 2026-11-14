@@ -101,7 +101,7 @@ export default function MapaUbicacion({ latitud, longitud, alElegir, error }) {
       tabIndex={0}
       onKeyDown={elegirConTeclado}
       aria-label={TEXTOS_UBICACION.etiquetaMapa}
-      aria-describedby={`ubicacion-instruccion${error ? ' ubicacion-error' : ''}`}
+      aria-describedby={`ubicacion-instruccion ubicacion-teclado${error ? ' ubicacion-error' : ''}`}
       aria-invalid={error ? true : undefined}
     />
   )

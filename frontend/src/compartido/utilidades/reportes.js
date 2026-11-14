@@ -17,8 +17,13 @@ export const lugarDelReporte = (reporte) =>
   textoLugar(reporte) || (reporte.latitud != null && reporte.longitud != null ? 'Punto marcado en el mapa' : 'Sin ubicación')
 
 // La API recibe el estado como identificador, no como la etiqueta que se lee en pantalla.
-const IDENTIFICADORES = { Recibido: 'RECIBIDO', Enviado: 'ENVIADO', 'En trámite': 'EN_TRAMITE', Resuelto: 'RESUELTO' }
-export const identificadorEstado = (estado) => IDENTIFICADORES[estado] ?? estado
+export const identificadorEstado = (estado) =>
+  ESTADOS_REPORTE.includes(estado) ? estado.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/ /g, '_') : estado
+// Lo contrario: de «EN_TRAMITE» a «En trámite».
+export const etiquetaEstado = (identificador) => ESTADOS_REPORTE.find((e) => identificadorEstado(e) === identificador) ?? identificador
+
+// El estado que muestra el selector del panel: el elegido si sigue siendo posible; si no, el primero que se puede.
+export const estadoElegido = (opciones, elegido) => (opciones.includes(elegido) ? elegido : (opciones[0] ?? ''))
 
 // A qué estado puede pasar el administrador a mano: no se retrocede y «Enviado» lo pone el envío del correo.
 export const estadosSiguientes = (estado) => {

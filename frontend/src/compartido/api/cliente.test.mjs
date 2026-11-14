@@ -9,6 +9,7 @@ let guardarToken
 let obtenerToken
 let iniciarSesion
 let obtenerBarrios
+let cambiarEstadoReporte
 let llamadas
 
 const respuestaJson = (estado, cuerpo) =>
@@ -33,6 +34,7 @@ before(async () => {
   obtenerToken = sesion.obtenerToken
   ;({ iniciarSesion } = await server.ssrLoadModule('/src/compartido/api/auth.js'))
   ;({ obtenerBarrios } = await server.ssrLoadModule('/src/compartido/api/catalogos.js'))
+  ;({ cambiarEstadoReporte } = await server.ssrLoadModule('/src/compartido/api/reportes.js'))
 })
 
 after(async () => { await server?.close() })
@@ -159,3 +161,13 @@ test('login válido es público y mantiene correo/password del contrato', async 
   }
   assert.equal((await iniciarSesion('qa@example.invalid', 'solo-prueba-local')).rol, 'CIUDADANO')
 })
+
+test('el panel manda el estado como identificador y la observación puede faltar', async () => {
+  const cuerpos = []
+  globalThis.fetch = async (_url, opciones) => { cuerpos.push(JSON.parse(opciones.body)); return respuestaJson(200, {}) }
+  await cambiarEstadoReporte('NU-000008', 'En trámite', 'Revisado')
+  await cambiarEstadoReporte('NU-000008', 'Resuelto', undefined)
+  assert.deepEqual(cuerpos[0], { estado: 'EN_TRAMITE', observacion: 'Revisado' })
+  assert.deepEqual(cuerpos[1], { estado: 'RESUELTO' })
+})
+

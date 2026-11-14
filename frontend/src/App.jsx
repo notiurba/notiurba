@@ -14,6 +14,7 @@ import RutaProtegida from './compartido/auth/RutaProtegida'
 import SoloSinSesion from './compartido/auth/SoloSinSesion'
 import { AccesoConRetorno, RetornoDesdePerfil } from './compartido/auth/NavegacionAcceso'
 import RutasApp from './app/rutas'
+import { subirAlInicio } from './compartido/utilidades/navegacion'
 import EstadoApi from './compartido/paginas/EstadoApi'
 
 // El flujo de reportes (con el mapa) y el panel se descargan solo cuando alguien entra a esas rutas.
@@ -24,7 +25,7 @@ const RutasAdmin = lazy(() => import('./admin/rutas'))
 // Cada pantalla nueva empieza arriba, no donde estaba el scroll de la anterior.
 function SubirAlCambiarDePantalla() {
   const { pathname } = useLocation()
-  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  useEffect(() => { subirAlInicio() }, [pathname])
   return null
 }
 
