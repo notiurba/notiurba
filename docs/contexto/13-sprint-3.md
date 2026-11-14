@@ -22,7 +22,7 @@ NOT-137.
 | NOT-130 | [Mejora] Correo claro y completo en la entidad (hecho 12 nov; en PR) | 5 |
 | NOT-131 | [Mejora] Envío real a las entidades y marcar rebotes (PR #38 integrado 14 nov; abierta: ajustes y QA) | 3 |
 | NOT-132 | [Mejora] Registro e ingreso rápidos y sin abusos (hecho 13 nov; en PR) | 5 |
-| NOT-133 | [EDT 10.3] Versión final desplegada y respaldo de datos | 3 |
+| NOT-133 | [EDT 10.3] Versión final desplegada y respaldo de datos (~90 % el 14 nov; falta la verificación final a mano y la etiqueta del fin del sprint) | 3 |
 
 ### Katherine — frontend (21)
 
