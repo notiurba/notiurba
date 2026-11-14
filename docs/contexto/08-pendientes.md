@@ -27,6 +27,11 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 
 ## Después del MVP (decidido no hacerlo ahora)
 
+- **Pantallas de carga y animaciones** (decidido por Andrés el 14/11/2026): hoy, al registrarse o enviar un reporte, no se ve
+  cuánto hay que esperar (Render puede tardar más de 2 minutos en despertar). Falta un indicador de progreso o animación en las
+  esperas largas. Lo básico («servidor despertando») sigue en NOT-137; la animación completa queda fuera del MVP.
+- **Mensajes de éxito y de error más completos y consistentes** en toda la app (confirmaciones y errores claros en cada acción).
+  Lo básico ya existe; la revisión completa del tono y los textos queda para después (relacionada con NOT-138).
 - **Limitar los avisos de «reporte parecido» por cuenta** (por ejemplo, 20 por hora). Hoy ese aviso
   no cuenta contra el tope diario, así que se podría probar muchos puntos y leer el resumen de
   140 caracteres de reportes de otras personas (nunca quién lo escribió). Andrés decidió el
@@ -78,7 +83,7 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
   ocultarlo en producción.
 - Normalizar tildes en los textos de la interfaz (parte de NOT-138).
 - Colección Postman (`docs/api/`) sin los endpoints nuevos (NOT-141).
-- Rotar la clave de administrador de desarrollo (NOT-133). `MAIL_FROM` y `MAIL_TEST_TO` ya se quitaron de Render.
+- Respaldos automáticos y programados de Neon (hoy el respaldo es manual, ver la guía de despliegue). `MAIL_FROM` y `MAIL_TEST_TO` ya se quitaron de Render.
 - Pull request #27 de Amelia (`fix/registro-pr20`) quedó superada por el #30: contiene evidencias
   pesadas (`docs/validacion`, `output/`, PDF) y 11 conflictos con `develop`. Conviene cerrarla y
   rehacer solo lo útil en PR pequeños. Su prueba `CatalogoCargaBarriosIT` espera 135 barrios; son 133.

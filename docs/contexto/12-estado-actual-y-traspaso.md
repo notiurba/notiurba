@@ -69,7 +69,7 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
 | ~~Aviso de rebotes en el detalle del reporte~~: hecho el 13/11/2026, en PR. Queda activar el envío real ([guía](14-activar-envio-real.md)) | NOT-131 |
 | ~~Registro lento, error de Google en celular, límites y duplicados~~: hecho el 13/11/2026, en PR | NOT-132 |
 | **Ajustes tras la prueba de Andrés (14/11/2026):** el panel no deja cambiar el estado, ingreso con Google que mostró datos de otra cuenta, mapa que no aparece con ubicación opcional, pasos que no suben al inicio, atrás desde privacidad, lugar vacío, filtros del panel, textos del paso 3, correo HTML y UI del panel. Hechos y integrados (PR #39 y #40). **El QA lo ejecuta Amelia**: `docs/sdd/historico/NOT-131-envio-real-y-rebotes/tasks.md` (sección «QA», Q-01 a Q-19) | NOT-131 (Done en Linear) |
-| Despliegue final, respaldo de la base, administrador real (hoy usa `ADMIN_DEV_PASSWORD`) | NOT-133 |
+| Despliegue final, respaldo de la base, administrador real. Código y guía hechos ([15-guia-de-despliegue.md](15-guia-de-despliegue.md)); falta ejecutarlos en producción (respaldo, cambio del administrador, retirar `ADMIN_DEV_PASSWORD`, etiqueta en `main`) | NOT-133 (en Todo por decisión de Andrés) |
 | La app no es PWA instalable (no hay manifiesto ni service worker) | NOT-134 |
 | Pulido: «servidor despertando», reintento de foto, GPS 10 s, atribución OSM, tono y accesibilidad | NOT-137, NOT-138, NOT-139 |
 | Pruebas del panel, de punta a punta y colección Postman al día | NOT-140, NOT-141 |
@@ -116,7 +116,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 
 ## 5. Producción: variables y reglas de oro
 
-- Render: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `ADMIN_DEV_PASSWORD`,
+- Render: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`,
   `GOOGLE_CLIENT_ID`, `CORS_ORIGINS` (`https://notiurba.netlify.app,https://deploy-preview-*--notiurba.netlify.app`),
   `RECUPERACION_ENLACE`, `VERIFICACION_ENLACE` (`https://notiurba.netlify.app/app/verificar-correo`),
   `RESEND_API_KEY`, `RESEND_REMITENTE`, `RESEND_PRUEBA_DESTINO`, `NOTIURBA_ENVIO_REPORTES_HABILITADO`,
