@@ -59,7 +59,7 @@ permita repetir todo. El envío real a las entidades queda activable con un paso
 - **CA-05** — _Dado_ que una base nueva ya no recibe la clave de desarrollo, _cuando_ se crea desde cero,
   _entonces_ el admin sembrado no queda con una clave conocida (clave aleatoria) y la guía explica cómo crear el
   administrador real.
-- **CA-06** — _Dada_ la versión final, _entonces_ está etiquetada en `main` y el commit en producción es ese.
+- **CA-06** — _Dada_ la versión final, _entonces_ está etiquetada en `main` y el commit en producción es ese. **Ajuste (14 nov):** la etiqueta se crea al finalizar el sprint, nueva y sobre el último commit; no se mueve `v1.0.0`.
 - **CA-07** — _Dada_ la versión desplegada, _entonces_ `/api/health` responde, CORS acepta el sitio y las vistas
   previas, y el registro, el reporte con foto y el panel funcionan (lista de verificación escrita y ejecutada).
 - **CA-08** — _Dado_ el envío real, _entonces_ la guía `14-activar-envio-real.md` queda enlazada desde la guía de
@@ -89,7 +89,7 @@ permita repetir todo. El envío real a las entidades queda activable con un paso
   Neon de correo, nombre y clave, con branch de respaldo antes).
 - [PENDIENTE] ¿A nombre de quién y con qué correo queda el administrador real? — lo escribe Andrés en Neon; no se
   guarda en el repo.
-- [PENDIENTE] Etiqueta: `v1.0.0` o versión previa (CA-06) — decide: Andrés, tras integrar el PR #42.
+- **Decidido (14 nov):** las etiquetas se crean al finalizar el sprint, con el último commit del repo; las anteriores no se tocan.
 
 ## 9. Aprobación
 

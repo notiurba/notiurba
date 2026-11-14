@@ -90,7 +90,7 @@ Reglas del flujo:
 ## Stack fijado
 
 - **Backend:** Java 21 + Spring Boot 3.3 (web, data-jpa, security, validation).
-- **Geo:** PostgreSQL 16 + PostGIS 3.4 (índice GiST), Hibernate Spatial.
+- **Geo:** PostgreSQL + PostGIS 3.4 (índice GiST), Hibernate Spatial. Pruebas con la imagen 16-3.4; Neon (producción) corre PostgreSQL 18, y para respaldar con `pg_dump` hace falta la versión 18 (guía 15).
 - **Seguridad:** Spring Security + JWT (jjwt).
 - **Frontend:** React 19 + Vite 8 + react-router 7 (`vite-plugin-pwa` todavía no está instalado: la app aún no es instalable, NOT-134). Gestor de paquetes: **pnpm** (no usar npm; no subir `package-lock.json`).
 - **Mapas:** Leaflet 1.9 + OpenStreetMap + Leaflet.heat.

@@ -17,7 +17,7 @@ Contexto general: `docs/contexto/12-estado-actual-y-traspaso.md`. Trabaje en una
    migraciones de otra rama y Flyway falla.
 4. `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el mismo comando:
    ejecútelo con `env -i` y solo las variables necesarias.
-5. Meta de referencia (14 nov 2026): 454 pruebas, 0 fallos, con una base PostGIS desechable y estas variables a la vez: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `ADMIN_DEV_PASSWORD` y `NOTIURBA_TEST_DB_*` (apuntan a una base `notiurba_test*`). Sin `DB_*` solo corren unas 278: las pruebas con Spring se omiten en silencio. `AdminIntegracionTest` pide `DB_URL` a una base llamada `notiurba_test_admin_bootstrap`. Quedan fuera `MigrationIntegrationTest` (va con `env -i`) y las que piden credenciales reales (Cloudinary, base con TLS).
+5. Meta de referencia (14 nov 2026): 458 pruebas, 0 fallos, con una base PostGIS desechable y estas variables a la vez: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `ADMIN_DEV_PASSWORD` y `NOTIURBA_TEST_DB_*` (apuntan a una base `notiurba_test*`). Sin `DB_*` solo corren unas 278: las pruebas con Spring se omiten en silencio. `AdminIntegracionTest` pide `DB_URL` a una base llamada `notiurba_test_admin_bootstrap`. Quedan fuera `MigrationIntegrationTest` (va con `env -i`) y las que piden credenciales reales (Cloudinary, base con TLS).
    Para no omitir las 10 de enrutamiento: cree una base `notiurba_test_<algo>` en `notiurba-db` con `postgis` y
    `pgcrypto` y pase `NOTIURBA_TEST_DB_URL`, `NOTIURBA_TEST_DB_USER` y `NOTIURBA_TEST_DB_PASSWORD`; bórrela al final.
    QA de punta a punta con el jar: `tools/qa-panel-admin/qa-panel.sh` (panel) y `tools/qa-correo-reporte/qa-correo.sh`
@@ -37,6 +37,8 @@ Nunca npm ni `package-lock.json`. `VITE_USAR_MOCKS=true` simula la API solo en d
 - Los scripts `backend/scripts/generar-*.py` convierten un CSV/GeoJSON en una migración.
 
 ## Producción
+
+- Neon corre **PostgreSQL 18**: para `pg_dump` y restaurar usa la imagen `postgis/postgis:18-3.6` y quita las líneas `SET (pg_attver=…)` (ver guía 15, sección 4). Etiquetas de versión: una nueva al finalizar el sprint; nunca mover ni borrar las anteriores.
 
 - Render Free duerme: la primera llamada tarda 60 a 90 s. `curl -m 90` y espere.
 - Salud: `GET https://notiurba-api.onrender.com/api/health`. CORS: `curl -i -X OPTIONS .../api/auth/login

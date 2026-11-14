@@ -6,7 +6,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) (aprobada) |
 | Plan | [plan.md](plan.md) (aprobado) |
-| Estado general | **Parte A hecha y revisada; Parte B (producción) pendiente** (NOT-133 sigue en «Todo» en Linear por decisión de Andrés) |
+| Estado general | **Parte A y casi toda la Parte B hechas (14 nov); faltan T-13 (etiqueta al fin del sprint) y T-14 (verificación a mano)** (NOT-133 sigue en «Todo» en Linear por decisión de Andrés) |
 | Última actualización | 2026-11-14 |
 
 ## Cómo se usa
@@ -35,11 +35,11 @@
 
 | ID | Tarea | Quién | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-09 | Respaldo de Neon y restauración en un contenedor `postgis` vacío; comparar conteos de usuarios, reportes, comunas y barrios; borrar el volcado | Andrés (yo guío) | CA-02 | conteos iguales, anotados en la guía | [ ] |
-| T-10 | Medir el arranque en frío (servidor dormido) y con el aviso activo; ejecutar el workflow a mano | Andrés (yo guío) | CA-03 | tiempos anotados en la guía | [ ] |
-| T-11 | Branch de respaldo en Neon → `SELECT` del correo → `UPDATE` del admin real (Andrés López) → probar inicio de sesión | Andrés | CA-04 | login con la cuenta real | [ ] |
-| T-12 | Borrar `ADMIN_DEV_PASSWORD` de Render y comprobar que el servidor arranca | Andrés | CA-04 | `/api/health` 200 tras el despliegue | [ ] |
-| T-13 | Integrar el PR #42, decidir `v1.0.0` o versión previa y crear la etiqueta; ver que Render use ese commit | Andrés | CA-06 | etiqueta = último commit de `main` | [ ] |
+| T-09 | Respaldo de Neon y restauración en un contenedor `postgis` vacío; comparar conteos de usuarios, reportes, comunas y barrios; borrar el volcado | Andrés (yo guío) | CA-02 | conteos iguales, anotados en la guía | [x] |
+| T-10 | Medir el arranque en frío (servidor dormido) y con el aviso activo; ejecutar el workflow a mano | Andrés (yo guío) | CA-03 | tiempos anotados en la guía | [x] |
+| T-11 | Branch de respaldo en Neon → `SELECT` del correo → `UPDATE` del admin real (Andrés López) → probar inicio de sesión | Andrés | CA-04 | login con la cuenta real | [x] |
+| T-12 | Borrar `ADMIN_DEV_PASSWORD` de Render y comprobar que el servidor arranca | Andrés | CA-04 | `/api/health` 200 tras el despliegue | [x] |
+| T-13 | Integrar `develop` en `main` (PR #42 y #45, hecho) y, **al finalizar el sprint**, crear una etiqueta nueva con el último commit; ver que Render use ese commit | Andrés | CA-06 | etiqueta = último commit de `main` | [~] |
 | T-14 | Ejecutar `tools/verificar-despliegue.sh` y la lista manual (registro, reporte con foto, panel) | Andrés / Amelia | CA-07 | lista marcada | [ ] |
 | T-15 | Activar el envío real cuando Andrés lo decida (guía 14); no es parte de esta historia | Andrés | CA-08 | — | [ ] |
 
@@ -68,4 +68,5 @@
 | Fecha | Cambio | Documento |
 | --- | --- | --- |
 | 2026-11-14 | Tareas escritas con spec y plan aprobados | tasks.md |
+| 2026-11-14 | Parte B ejecutada: respaldo restaurado (6/6/10/133, migración 22), administrador real, variable retirada, arranque en frío 155 s, `develop` en `main` (#42, #45), ramas protegidas; la etiqueta pasa al fin del sprint | tasks.md, spec.md |
 | 2026-11-14 | Revisión de código: el aviso usa `/api/admin/ping` cada 5 min (no gasta Neon), el script de admin valida los datos, el script de verificación no da falsos positivos, pruebas sin base se ejecutan siempre | tasks.md, plan.md |
