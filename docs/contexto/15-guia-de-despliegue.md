@@ -91,11 +91,14 @@ Los respaldos contienen datos personales. **No se suben al repo, no se pegan en 
 3. Mantenerlo hasta confirmar que el cambio salió bien. Es la protección de la sección 5.
 
 ### Copia a un archivo (`pg_dump`)
+Neon corre PostgreSQL **18** (el 14/11/2026 respondió 18.7). El `pg_dump` y la base de restauración deben ser de la versión 18 o mayor:
+con la imagen 16 falla con «server version mismatch».
+
 1. Con Docker abierto, en la terminal (la cadena se lee de la variable sin mostrarla):
 
 ```bash
 read -rs NEON_URL; export NEON_URL
-docker run --rm -e NEON_URL postgis/postgis:16-3.4 sh -c 'pg_dump --format=custom --no-owner --no-privileges "$NEON_URL"' > respaldo.dump
+docker run --rm -e NEON_URL postgis/postgis:18-3.6 sh -c 'pg_dump --format=custom --no-owner --no-privileges "$NEON_URL"' > respaldo.dump
 ls -lh respaldo.dump
 ```
 
@@ -105,13 +108,18 @@ ls -lh respaldo.dump
 1. Levantar un PostgreSQL desechable y restaurar:
 
 ```bash
-docker run -d --name notiurba-restauracion -e POSTGRES_PASSWORD=prueba postgis/postgis:16-3.4
+docker run -d --name notiurba-restauracion -e POSTGRES_PASSWORD=prueba postgis/postgis:18-3.6
 until docker exec notiurba-restauracion pg_isready -U postgres >/dev/null 2>&1; do sleep 2; done
 docker exec notiurba-restauracion createdb -U postgres restaurada
-docker exec -i notiurba-restauracion pg_restore -U postgres --no-owner -d restaurada < respaldo.dump
+docker exec -i notiurba-restauracion pg_restore -f - --no-owner < respaldo.dump \
+  | grep -v 'SET (pg_attver=' \
+  | docker exec -i notiurba-restauracion psql -U postgres -d restaurada -q
 ```
 
-   Avisos de «ya existe» sobre la extensión PostGIS se pueden ignorar.
+   **Por qué no se usa `pg_restore -d` directo:** el volcado de Neon trae una opción propia de Neon
+   (`ALTER COLUMN … SET (pg_attver=…)`) que un PostgreSQL normal rechaza («unrecognized parameter»), y cada tabla que la
+   lleva no se crea. El `grep -v` quita esas líneas y el resto se restaura completo. Si al restaurar aparecen errores,
+   revisa que no haya otra opción rara en el volcado.
 2. Comparar los conteos en Neon y en la copia restaurada. La consulta es la misma:
 
 ```sql
@@ -130,7 +138,8 @@ docker rm -f notiurba-restauracion && rm respaldo.dump
 ```
 
 ### Resultado de la última comprobación
-_(se completa al ejecutarla: fecha, tamaño del archivo y conteos iguales)_
+14/11/2026: archivo de 215 KB (PostgreSQL 18.7 en Neon). Restaurado en una base vacía sin errores. Conteos iguales en Neon y en la
+copia: 6 usuarios, 6 reportes, 10 comunas, 133 barrios y última migración 22. El archivo y la base de prueba se borraron.
 
 ## 5. Administrador real
 
@@ -154,7 +163,7 @@ read -rs CLAVE_ADMIN;     export CLAVE_ADMIN
 
 ```bash
 docker run --rm -i -e NEON_URL -e CORREO_ADMIN -e NOMBRES_ADMIN -e APELLIDOS_ADMIN -e CLAVE_ADMIN \
-  postgis/postgis:16-3.4 sh -c 'psql "$NEON_URL"' <<'SQL'
+  postgis/postgis:18-3.6 sh -c 'psql "$NEON_URL"' <<'SQL'
 \set ON_ERROR_STOP on
 \set correo `printenv CORREO_ADMIN`
 \set nombres `printenv NOMBRES_ADMIN`
@@ -213,7 +222,7 @@ Notas:
     Neon se suspenda solo, para no gastar sus horas gratis.
 - **Horas del plan:** Render Free da 750 horas al mes y un servicio encendido todo el mes usa ~744. Si faltan horas,
   se desactiva el flujo y se acepta el arranque en frío.
-- **Arranque en frío medido:** el 14/11/2026 una primera llamada con el servidor dormido superó los 120 s. Con el
+- **Arranque en frío medido:** el 14/11/2026 una primera llamada con el servidor dormido superó los 120 s, y el arranque de un despliegue en Render tardó 124 s («Started NotiUrbaApplication in 124.397 seconds»). Con el
   servidor despierto, `/api/health` responde en menos de 0,3 s.
   _(se completa con la medición final con y sin aviso)_
 - Mientras el servidor despierta, el navegador no recibe encabezados CORS y la app muestra «No pudimos comunicarnos con
