@@ -1,5 +1,7 @@
 package com.notiurba.reporte;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.springframework.http.HttpStatus;
@@ -35,22 +37,39 @@ public class ReporteServicio {
     private final UsuarioRepository usuarios;
     private final CatalogosRegistro catalogos;
     private final AsignadorDeComuna asignador;
+    private final LimiteDiarioServicio limite;
+    private final DuplicadoServicio duplicados;
 
     public ReporteServicio(ReporteRepositorio repositorio, UsuarioRepository usuarios, CatalogosRegistro catalogos,
-            AsignadorDeComuna asignador) {
+            AsignadorDeComuna asignador, LimiteDiarioServicio limite, DuplicadoServicio duplicados) {
         this.repositorio = repositorio;
         this.usuarios = usuarios;
         this.catalogos = catalogos;
         this.asignador = asignador;
+        this.limite = limite;
+        this.duplicados = duplicados;
     }
 
     @Transactional
     public ReporteCreadoResponse crear(String correoUsuario, CrearReporteRequest p) {
         if (!Boolean.TRUE.equals(p.autorizaEnvio())) throw error("Debes autorizar la remisión", "autorizaEnvio");
         Borrador b = validar(correoUsuario, p);
+        // Una cuenta a la vez: así dos envíos simultáneos no se saltan el tope diario
+        repositorio.bloquearCiudadano(b.idUsuario());
+        limite.verificar(b.idUsuario());
+        if (!Boolean.TRUE.equals(p.confirmarDuplicado())) {
+            duplicados.buscarSinResolver(b.idUsuario(), b.idCategoria(), b.latitud(), b.longitud()).ifPresent(parecido -> {
+                throw avisoDeDuplicado(parecido);
+            });
+        }
+        boolean requiereEvidencia = duplicados.repiteResuelto(b.idCategoria(), b.latitud(), b.longitud());
+        if (requiereEvidencia && (p.totalFotos() == null || p.totalFotos() < 1)) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, Codigos.EVIDENCIA_REQUERIDA,
+                    Codigos.MSG_EVIDENCIA_REQUERIDA, "totalFotos");
+        }
         ReporteCreadoResponse creado = repositorio.insertar(new ReporteRepositorio.NuevoReporte(
                 b.idUsuario(), b.idCategoria(), b.idBarrio(), b.descripcion(), b.latitud(), b.longitud(),
-                b.direccionIncidente(), b.matricula(), vacioANulo(p.radicadoOficial())));
+                b.direccionIncidente(), b.matricula(), vacioANulo(p.radicadoOficial()), requiereEvidencia));
         repositorio.prepararEnrutamiento(creado.codigoSeguimiento(), b.emergencia());
         return creado;
     }
@@ -111,6 +130,21 @@ public class ReporteServicio {
         return new Borrador(idUsuario, idCategoria, categoria, idBarrio, latitud, longitud, comunaDelPunto, descripcion,
                 vacioANulo(p.direccionIncidente()), matricula,
                 repositorio.esEmergencia(idCategoria, descripcion, Boolean.TRUE.equals(p.emergencia())));
+    }
+
+    /** Solo datos base del parecido; el código únicamente si es de la misma persona (nunca la identidad de otra). */
+    private static ApiException avisoDeDuplicado(DuplicadoServicio.Parecido parecido) {
+        Map<String, Object> datos = new LinkedHashMap<>();
+        datos.put("esPropio", parecido.propio());
+        datos.put("cantidad", parecido.cantidad());
+        datos.put("estadoExistente", parecido.estado());
+        datos.put("creadoEn", parecido.fecha());
+        datos.put("descripcion", parecido.resumen());
+        if (parecido.propio()) {
+            datos.put("codigoExistente", parecido.codigo());
+        }
+        return new ApiException(HttpStatus.CONFLICT, Codigos.POSIBLE_DUPLICADO,
+                "Ya hay un reporte parecido en este lugar. Si es otro problema, puedes enviarlo de todas maneras.", null, datos);
     }
 
     /** Un reporte propio por código. No existe y «es de otra persona» dan exactamente la misma respuesta. */

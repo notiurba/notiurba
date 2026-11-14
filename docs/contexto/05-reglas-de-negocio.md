@@ -65,4 +65,11 @@ regla cambia, se actualiza aquí y en su pestaña de origen.
 - **RN-21**: el MVP tiene un solo rol de administrador; la Alcaldía y las empresas no
   acceden al panel.
 
+## Límites contra el abuso (NOT-132, 13/11/2026)
+
+- **RN-22**: la distancia de «reporte parecido» depende de la categoría y es ajustable; nunca es menor a 5 m (máximo 500 m).
+- **RN-23**: los valores de los límites viven en la base, no en el código, y solo el administrador los cambia dentro de rangos seguros.
+- **RN-24**: ningún mensaje para el ciudadano muestra códigos, números de estado ni palabras técnicas («servidor», «token», «API»…). Dice qué pasó y qué hacer.
+- Botones de un solo clic: todo botón que envía datos se bloquea desde el primer clic hasta la respuesta.
+
 Fuente: pestaña «Reglas de negocio» del Google Doc.

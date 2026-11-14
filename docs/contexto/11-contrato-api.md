@@ -26,6 +26,7 @@ Toda respuesta de error tiene el mismo cuerpo:
 - `codigo`: texto estable que usa el frontend para decidir qué hacer. No cambia.
 - `mensaje`: en español, listo para mostrar al ciudadano. Nunca trae detalles internos.
 - `campo`: nombre del campo con el problema, o `null`.
+- `datos` (opcional, NOT-132): objeto con cifras que el frontend usa para explicar mejor el error (segundos de espera, intentos que quedan, datos base de un reporte parecido). **Solo aparece en los errores que lo dicen abajo**; en los demás no viene. Nunca trae datos personales de otra persona.
 - Si fallan varios campos se devuelve el primero en el orden del formulario (el orden de los campos de la petición).
 
 | HTTP | codigo | campo | Cuándo |
@@ -33,7 +34,11 @@ Toda respuesta de error tiene el mismo cuerpo:
 | 400 | VALIDACION | el campo | Dato faltante, mal formado o fuera de regla; también cuerpo que no es JSON (campo null) |
 | 400 | ENLACE_INVALIDO | token | Enlace de recuperación no válido o vencido |
 | 401 | NO_AUTENTICADO | null | Sin token, inválido o vencido; también token de Google o de registro con Google inválido |
-| 401 | CREDENCIALES_INVALIDAS | null | Login fallido. No dice cuál dato falló |
+| 401 | CREDENCIALES_INVALIDAS | null | Login fallido. No dice cuál dato falló. Trae `datos.intentosRestantes` (cuántos fallos más antes del bloqueo) |
+| 429 | INTENTOS_EXCEDIDOS | null | Demasiados intentos de login con ese correo. `datos.esperarSegundos`, `datos.bloqueadoHasta` (fecha-hora ISO en UTC) y el encabezado `Retry-After` (segundos). Mismo comportamiento para correos que no existen o que son solo de Google |
+| 429 | LIMITE_DIARIO_REPORTES | null | La cuenta ya envió el máximo de reportes del día (día de Colombia). `datos.maximo` y `datos.vuelveEn` (inicio del día siguiente, con la hora de Colombia) |
+| 409 | POSIBLE_DUPLICADO | null | Hay un reporte parecido (misma categoría, cerca, reciente, sin resolver). Se puede enviar igual con `confirmarDuplicado: true`. `datos`: ver 3.4 |
+| 422 | EVIDENCIA_REQUERIDA | totalFotos | Se repite un problema que ya se había resuelto en ese lugar y el reporte no lleva ninguna foto |
 | 403 | SIN_PERMISO | null | El rol no alcanza |
 | 403 | CORREO_NO_VERIFICADO | null | Login con contraseña correcta, pero el correo aún no se confirmó |
 | 404 | NO_ENCONTRADO | null | No existe o no es suyo (mismo mensaje en ambos casos) |
@@ -75,13 +80,15 @@ Entrada (en este orden):
 - `declaraMayorEdad`: obligatorio, `true`; si falta o es `false` responde 400 VALIDACION con `campo: "declaraMayorEdad"` (implementado en NOT-75, también en `POST /api/auth/google/completar`). En pantalla es la misma casilla del aviso, de un solo clic: «Soy mayor de 18 años y acepto el tratamiento de mis datos personales (Ley 1581). Ver aviso de privacidad» (también en «completar perfil» de Google). La base no guarda un campo aparte para esta declaración: queda en la fecha y la versión del aviso aceptado (`acepto_privacidad_en`, `id_aviso_privacidad`).
 - «Confirmar contraseña» se valida solo en el frontend.
 
-Salida: 201 `{ correo, mensaje }` **sin token**: la cuenta se crea, se envía un correo con el enlace de confirmación y el ciudadano no puede ingresar hasta confirmarlo (decisión 1, sección 6). Cada registro gasta 1 correo de Resend (el plan gratuito permite 100 al día, compartidos con los reportes, las recuperaciones de contraseña y los reenvíos).
+Salida: 201 `{ correo, mensaje }` **sin token**: la cuenta se crea, se envía un correo con el enlace de confirmación y el ciudadano no puede ingresar hasta confirmarlo (decisión 1, sección 6). Cada registro gasta 1 correo de Resend (el plan gratuito permite 100 al día, compartidos con los reportes, las recuperaciones de contraseña y los reenvíos). El correo sale **después** de guardar la cuenta y en segundo plano (`@TransactionalEventListener` AFTER_COMMIT + `@Async`): la respuesta no espera a Resend, así que el registro responde en menos de un segundo aunque el correo tarde, y si el envío falla la cuenta ya existe y se puede pedir el reenvío (NOT-132).
 Errores: 400 VALIDACION, 409 CORREO_YA_REGISTRADO, 409 DOCUMENTO_YA_REGISTRADO.
 
 ### 3.2 Login — `POST /api/auth/login` — EXISTE
 Público. Entrada: `correo`, `password` (obligatorios).
 Salida: 200 `{ token, rol }` con rol CIUDADANO o ADMIN.
-Errores: 400 VALIDACION; 401 CREDENCIALES_INVALIDAS (también para cuentas creadas solo con Google, que no tienen contraseña); 403 CORREO_NO_VERIFICADO (solo se dice después de acertar la contraseña, para no revelar qué cuentas existen).
+Errores: 400 VALIDACION; 401 CREDENCIALES_INVALIDAS (también para cuentas creadas solo con Google, que no tienen contraseña); 403 CORREO_NO_VERIFICADO (solo se dice después de acertar la contraseña, para no revelar qué cuentas existen); 429 INTENTOS_EXCEDIDOS.
+
+Límite de intentos (NOT-132, RF-34): se cuenta **por correo** (sin distinguir mayúsculas), no por IP ni por cuenta, y se aplica igual si el correo no existe o es solo de Google, para no revelar qué cuentas hay. Por defecto, 3 fallos dentro de 5 minutos bloquean ese correo 5 minutos (el administrador ajusta los tres valores, ver 5.5). Mientras dure el bloqueo no se mira la contraseña: responde 429 aunque sea la correcta. Un fallo viejo (fuera de la ventana) deja de contar. El 401 trae `datos.intentosRestantes`; con 1 el frontend avisa «le queda 1 intento». Un ingreso correcto, o restablecer la contraseña por el enlace del correo, borra el conteo y levanta el bloqueo. El 429 trae `Retry-After` (segundos, entero hacia arriba) y el mensaje dice los minutos que faltan sin lenguaje técnico. La tabla `intento_login` guarda el correo normalizado y las fechas; no guarda contraseñas ni IP.
 
 ### 3.3 Lista de categorías — `GET /api/categorias` — EXISTE
 JWT de cualquier rol (*propuesto*: mantenerlo con sesión).
@@ -100,6 +107,8 @@ Entrada:
 - `direccionIncidente`: opcional, máx. 300.
 - `matriculaCuentaServicio`: opcional, máx. 50; solo categorías de empresas de servicios públicos (trigger B6).
 - `radicadoOficial`: opcional, máx. 50.
+- `totalFotos`: opcional, 0 a 3 (por defecto 0). Cuántas fotos va a subir el ciudadano después de crear el reporte; sirve para decidir si falta la evidencia que se exige al repetir un problema ya resuelto (ver abajo). Es una declaración: la comprobación real se repite al enviar el reporte.
+- `confirmarDuplicado`: opcional, `true`/`false` (por defecto `false`). Con `true` el ciudadano confirma que su reporte es otro problema y se omite el aviso de reporte parecido (no el tope diario ni la evidencia).
 - `autorizaEnvio`: obligatorio, `true`. Autoriza enviar el reporte a la entidad a nombre del ciudadano y con sus datos (RN-07). El servidor guarda la fecha-hora en `autorizacion_envio_en`. Es la única autorización: no hay una segunda ni se envía copia al ciudadano (decidido el 01/11/2026). Texto de la casilla del paso 4: «Autorizo a NotiUrba a enviar este reporte a la entidad competente, a mi nombre y con mis datos, ubicación y fotos (con enlace público). La entidad podrá responderme a mi correo. Ver aviso de privacidad».
 
 Salida: 201 con `Location: /api/reportes/NU-000123` y un cuerpo mínimo `{ codigoSeguimiento, estado, creadoEn, vigenteHasta }` leído de la base tras guardar, en estado «Recibido». El código lo asigna el trigger de la base, no Java. El reporte completo se obtiene con 3.6 (NOT-89).
@@ -110,7 +119,13 @@ La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02). Se guard
 - Más lejos que eso de toda comuna: 422 FUERA_DE_COBERTURA y no se guarda nada.
 - Las comunas sin polígono no participan. Si **ninguna** tiene polígono, no se puede decidir: no se rechaza y la comuna sale del barrio.
 Detalle técnico: la base exige `autorizacion_envio_en <= creado_en`, así que el servidor debe fijar ambas fechas con el mismo instante.
-Errores: 400 VALIDACION, 401, 422 FUERA_DE_COBERTURA (se aplica en cuanto `comuna.geom` tenga polígonos; mientras todos estén en NULL el reporte se guarda).
+Errores: 400 VALIDACION, 401, 422 FUERA_DE_COBERTURA (se aplica en cuanto `comuna.geom` tenga polígonos; mientras todos estén en NULL el reporte se guarda), 429 LIMITE_DIARIO_REPORTES, 409 POSIBLE_DUPLICADO, 422 EVIDENCIA_REQUERIDA.
+
+Controles contra el abuso (NOT-132, RF-35, RF-36, RF-39, RN-22). Se aplican en este orden, después de validar el cuerpo, y todo el crear va en una transacción que bloquea la fila del ciudadano (dos peticiones a la vez no pueden pasar del tope):
+1. **Tope diario por cuenta** (429 LIMITE_DIARIO_REPORTES). Por defecto 2 reportes por cuenta y por día de Colombia (de 00:00 a 24:00, hora de Bogotá). Cuenta los reportes creados ese día por esa cuenta, incluidos los no enviados. `datos { maximo, vuelveEn }`. Mensaje: «Hoy ya enviaste 2 reportes, que es el máximo por día. Podrás enviar otro desde mañana.»
+2. **Reporte parecido** (409 POSIBLE_DUPLICADO), solo si hay punto GPS y la categoría exige ubicación, y no viene `confirmarDuplicado: true`. Es parecido el reporte de **cualquier cuenta** (también la propia) con la **misma categoría**, a una distancia menor o igual a la de esa categoría (`distancia_duplicado`, de 5 a 500 m; valores iniciales en 5.5: 5 m en vías y en basuras, 8 m en señalización, 10 m en alumbrado, riesgo sanitario y acueducto, 15 m en riesgo de desastres, gas, energía y aseo; Tuluá es pequeña y en el centro los problemas se repiten muy cerca, por eso las distancias son cortas), creado en los últimos `duplicado_ventana_dias` días (por defecto 30) y que **no esté «Resuelto»**. La búsqueda usa PostGIS (`ST_DWithin` sobre `geography` con una caja previa que aprovecha el índice GiST `ix_reporte_ubicacion`; con 10 000 reportes tarda menos de 100 ms). `datos` lleva solo datos base, nunca la identidad ni los datos de otra persona: `esPropio` (true si alguno es de la misma cuenta), `cantidad` (cuántos parecidos hay), `estadoExistente` (el del más reciente), `creadoEn` (fecha, sin hora), `descripcion` (resumen de hasta 140 caracteres, cortado en palabra) y `codigoExistente` **solo si es propio**. Con `confirmarDuplicado: true` se guarda igual.
+3. **Evidencia al repetir un problema resuelto** (422 EVIDENCIA_REQUERIDA, campo `totalFotos`). Si en ese punto, con la misma categoría, la misma distancia hay un reporte de cualquier cuenta que ya está «Resuelto» y que pasó a ese estado dentro de la misma ventana de días, el reporte nuevo debe llevar al menos 1 foto: se exige `totalFotos >= 1` al crear y se vuelve a comprobar con las fotos reales al enviar (`POST /api/reportes/{codigo}/enviar` responde 422 si no hay ninguna). El reporte se marca `requiere_evidencia = true`. `confirmarDuplicado` no sustituye la foto. Mensaje: «En este lugar ya se resolvió un reporte parecido. Si el problema sigue o volvió, agrega una foto de hoy que lo muestre.»
+Las tres reglas se aplican al crear; no cambian los reportes que ya existen.
 
 ### 3.5 Subir foto — `POST /api/reportes/{codigo}/fotos` — EXISTE
 JWT, solo el autor del reporte. `multipart/form-data`, parte `foto`:
@@ -153,7 +168,7 @@ Aviso de rebotes:
 - `POST /api/webhooks/resend` — EXISTE (`ReboteController`, V16), pero rechaza todo mientras `RESEND_WEBHOOK_SECRET` no esté puesta en Render. Público (sin JWT) pero protegido: se valida la firma del evento con un secreto (`RESEND_WEBHOOK_SECRET`) y se rechaza lo que no esté firmado. Si Resend avisa de un rebote o de una queja, el envío pasa a FALLIDO con su motivo y se avisa al ciudadano (decisión 3). Los nombres exactos de los eventos se confirman en la documentación de Resend al implementar. Requiere guardar el identificador que Resend da a cada envío: hoy `registro_envio_correo` no tiene columna para eso (migración nueva).
 
 Mensaje y canales — EXISTEN (NOT-130, 12 nov 2026; detalle en `docs/sdd/historico/NOT-130-correo-claro-y-canales/`):
-- `POST /api/reportes/vista-previa` — ciudadano con sesión. Entrada: `idCategoria`, `latitud`, `longitud`, `idBarrio`, `descripcion`, `direccionIncidente`, `matriculaCuentaServicio`, `totalFotos` (0 a 3). Salida 200 `{ asunto, texto, secciones: [ { id, etiqueta, valor, paso } ], permiteCorreo, ruta }`; `paso` es `categoria`, `ubicacion` o `detalles` (a dónde vuelve «Editar»). **No guarda nada ni envía nada.** Aplica las mismas reglas que `POST /api/reportes` y la misma plantilla que el correo, así que el texto es idéntico salvo la hora y los enlaces de las fotos (aún no subidas). «Olor a gas» en la categoría de gas se trata como emergencia (ruta al 164). Errores: 400 VALIDACION con `campo`, 401, 422 FUERA_DE_COBERTURA. La categoría 15 no tiene ruta: 400 con campo `idCategoria` (pendiente del equipo).
+- `POST /api/reportes/vista-previa` — ciudadano con sesión. Entrada: `idCategoria`, `latitud`, `longitud`, `idBarrio`, `descripcion`, `direccionIncidente`, `matriculaCuentaServicio`, `totalFotos` (0 a 3). Salida 200 `{ asunto, texto, secciones: [ { id, etiqueta, valor, paso } ], permiteCorreo, ruta, requiereEvidencia }`; `requiereEvidencia` es `true` si en ese punto se repite un problema ya resuelto (el frontend avisa que hace falta una foto antes de enviar; NOT-132); `paso` es `categoria`, `ubicacion` o `detalles` (a dónde vuelve «Editar»). **No guarda nada ni envía nada.** Aplica las mismas reglas que `POST /api/reportes` y la misma plantilla que el correo, así que el texto es idéntico salvo la hora y los enlaces de las fotos (aún no subidas). «Olor a gas» en la categoría de gas se trata como emergencia (ruta al 164). Errores: 400 VALIDACION con `campo`, 401, 422 FUERA_DE_COBERTURA. La categoría 15 no tiene ruta: 400 con campo `idCategoria` (pendiente del equipo).
 - `GET /api/reportes/{codigo}/mensaje` — solo el autor. Salida 200 `{ asunto, texto }`: el mensaje encolado (tal como se envió, también los de formato anterior) o, si aún no hay envío, el que se enviaría con las fotos reales. Para «Copiar mi mensaje» cuando el correo rebota o falla. Errores: 400 con campo `codigo` si está mal escrito, 401, 404 (no existe o es de otra persona).
 - `GET /api/enrutamiento/categorias[/{id}]` y `GET /api/reportes/{codigo}/envio` suman a `ruta` los campos `esEmpresa` y `canales: [ { tipo, acceso, finalidad, horario, detalle } ]`, con los canales activos no-correo de la entidad en orden. El frontend usa `permiteCorreo` en el paso 1: si es falso (gas, energía y aseo), muestra los canales y no crea reporte.
 - El correo a la entidad pasa a tono formal, sin código NU-…, sin la palabra NotiUrba y sin dependencia. Asunto: «Petición ciudadana – [categoría] – [barrio], Comuna [n]» (spec, Anexo B).
@@ -179,6 +194,7 @@ Todos bajo `/api/admin/...`, rol ADMIN. Los tres endpoints de estados y vigencia
 - `GET /api/admin/reportes/{codigo}`.
 - `PATCH /api/admin/reportes/{codigo}/estado` - EXISTE. Estado y observación (RF-20); ver 5.1.
 - `GET` y `PUT /api/admin/configuracion/vigencia` - EXISTEN (RF-21); ver 5.1.
+- `GET` y `PUT /api/admin/configuracion/limites` - EXISTEN (NOT-132, RF-37); ver 5.5.
 - `GET /api/admin/mapa` (RF-22) — EXISTE (NOT-129); ver 5.2.
 - `GET /api/admin/mapa/calor` (RF-23) — EXISTE (NOT-129); ver 5.3.
 - `GET /api/admin/estadisticas` (RF-24) — EXISTE (NOT-129); ver 5.4.
@@ -298,7 +314,7 @@ Respuesta 200:
     {
       "codigoSeguimiento": "NU-000035",
       "estado": "Recibido",
-      "categoria": { "idCategoria": 1, "nombre": "Vías, huecos y andenes" },
+      "categoria": { "idCategoria": 1, "nombre": "Vías, huecos, andenes e infraestructura" },
       "barrio": { "idBarrio": 12, "nombre": "Salesiano" },
       "comuna": 5,
       "latitud": 4.0867,
@@ -354,7 +370,7 @@ Respuesta 200:
     "totalPaginas": 2,
     "items": [
       { "posicion": 1, "comuna": 5, "total": 4,
-        "categoriaPrincipal": { "idCategoria": 1, "nombre": "Vías, huecos y andenes" } }
+        "categoriaPrincipal": { "idCategoria": 1, "nombre": "Vías, huecos, andenes e infraestructura" } }
     ]
   }
 }
@@ -404,7 +420,7 @@ Respuesta 200:
     { "estado": "En trámite", "total": 2 },
     { "estado": "Resuelto", "total": 3 }
   ],
-  "porCategoria": [ { "idCategoria": 1, "categoria": "Vías, huecos y andenes", "total": 5 } ],
+  "porCategoria": [ { "idCategoria": 1, "categoria": "Vías, huecos, andenes e infraestructura", "total": 5 } ],
   "porComuna": [ { "comuna": 1, "total": 2 }, { "comuna": 2, "total": 3 } ]
 }
 ```
@@ -424,6 +440,36 @@ Respuesta 200:
 - QA de punta a punta contra el servidor real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones); las
   cuatro rutas del panel responden en 6 a 11 ms.
 
+### 5.5 Límites contra el abuso — IMPLEMENTADOS (NOT-132, RF-37, RN-23)
+
+`GET` y `PUT /api/admin/configuracion/limites`. JWT con rol ADMIN (401 sin sesión, 403 a un ciudadano). Reúne en una sola pantalla del panel todo lo que el administrador ajusta de los controles de 3.2 y 3.4.
+
+Forma (la misma en la lectura y en la escritura):
+
+    {
+      "login": { "intentosMaximos": 3, "ventanaMinutos": 5, "bloqueoMinutos": 5 },
+      "reportesMaximosPorDia": 2,
+      "duplicados": {
+        "ventanaDias": 30,
+        "categorias": [ { "idCategoria": 1, "nombre": "Vías, huecos, andenes e infraestructura", "metros": 5 }, … ]
+      }
+    }
+
+Rangos (los mismos que hace respetar la base con restricciones `CHECK`):
+
+| Campo | Rango | Valor inicial |
+| --- | --- | --- |
+| `login.intentosMaximos` | 1 a 10 | 3 |
+| `login.ventanaMinutos` | 1 a 60 | 5 |
+| `login.bloqueoMinutos` | 1 a 60 | 5 |
+| `reportesMaximosPorDia` | 1 a 50 | 2 |
+| `duplicados.ventanaDias` | 1 a 30 | 30 |
+| `duplicados.categorias[].metros` | 5 a 500 | 5 vías (1) y basuras (3); 8 señalización (4); 10 alumbrado (2), riesgo sanitario (5) y acueducto (11); 15 riesgo de desastres (8), gas (12), energía (13) y aseo (14) |
+
+`categorias` lista las 10 categorías que exigen ubicación (las demás no tienen punto que comparar y no se revisan).
+
+`PUT`: **todo o nada**. Se validan todos los campos y, si alguno falla, no se guarda nada. Respuesta 200 con la misma forma, ya guardada. Cada valor guarda quién lo cambió y cuándo (`id_usuario_actualiza`, `actualizado_en`); no hay un historial aparte. Los valores se leen de la base en cada petición, así que un cambio vale de inmediato, sin reiniciar. Errores: 400 VALIDACION con `campo` (`intentosMaximos`, `ventanaMinutos`, `bloqueoMinutos`, `reportesMaximosPorDia`, `ventanaDias`, `categorias.<id>.metros`, o `login`, `duplicados` y `categorias` si falta el bloque; un valor que no es un número entero llega como cuerpo mal formado: VALIDACION con `campo` nulo), 401, 403.
+
 ## 6. Decisiones propuestas (no cerradas)
 
 1. **Decidido (01/11/2026):** verificación de correo en el MVP. Quien se registra con correo y contraseña recibe un enlace de confirmación y no ingresa hasta usarlo. Evita que alguien envíe reportes con los datos de otra persona. Cuesta un correo por registro (comparte los 100 diarios con reportes y recuperaciones). Con Google no hace falta: Google ya garantiza el correo.
@@ -437,6 +483,7 @@ Respuesta 200:
 9. **Decidido (01/11/2026):** el correo se envía tras una interfaz propia (`EnviadorCorreo`) con una implementación que llama a la API HTTP de Resend, igual que `EnviadorEnlaceRecuperacion`. Evita el bloqueo de puertos de Render y no suma complejidad al ciudadano. Lo mismo para las fotos: una interfaz y una implementación con Cloudinary. **Implementado el 01/11/2026** (`EnviadorCorreo`, `EnviadorCorreoResend`); se quitó `spring-boot-starter-mail`. Falta conectarlo a la recuperación de contraseña y al endpoint `enviar`.
 10. **Decidido (01/11/2026):** aviso de privacidad **versión 3** como el vigente (migración V12; el mismo texto está en `frontend/src/compartido/textos/avisoPrivacidad.js` y una prueba comprueba que coincidan). Responsable: equipo NotiUrba, Universidad del Valle, sede Tuluá; canales: Ajustes y notiurba@gmail.com. Al eliminar la cuenta los datos se borran de inmediato, salvo los correos ya enviados a la entidad. Vigencia del reporte: 30 días. Detalle y puntos por validar con el docente o un asesor jurídico: ADR-0008.
 11. **Decidido (07/11/2026):** «Actualizar mi reporte» sigue el Figma y el frontend: dos avisos (`RESPUESTA`, `RESUELTO`) más el radicado opcional, en `PATCH /api/reportes/{codigo}/actualizacion` (reemplaza al `PATCH /api/reportes/{codigo}` que solo guardaba el radicado). El aviso del ciudadano NO cambia el estado oficial: queda como nota en `historial_estado` con el estado vigente; solo el administrador cambia estados (NOT-19). No requiere migración.
+12. **Decidido (13/11/2026, NOT-132):** controles contra el abuso, todos ajustables por el administrador (5.5). Login: 3 fallos en 5 minutos bloquean el correo 5 minutos. Reportes: máximo 2 por **cuenta** y por día de Colombia. Parecidos: misma categoría, cerca (5 a 15 m según la categoría), últimos 30 días, de **cualquier cuenta**, sin contar los ya resueltos; el ciudadano puede enviar de todas maneras. Si se repite un problema ya resuelto, la foto pasa a ser obligatoria (no reabre la decisión 8: sigue opcional en el resto de casos). Los textos de los avisos los afina el líder con el equipo de UX.
 
 ## 7. Discrepancias y brechas
 
@@ -486,3 +533,17 @@ Sin columnas nuevas (ya existen y alcanzan):
 - Foto opcional: `categoria.requiere_evidencia` queda en `false` en todas.
 
 Datos (no columnas) de la misma migración: marcar `correo_verificado_en` en las cuentas que ya existen (como el administrador sembrado), para que puedan seguir ingresando cuando el login exija correo verificado.
+
+### 8.1 Migración V22 (NOT-132): límites y duplicados
+
+Aditiva: no borra ni cambia datos existentes.
+
+| Qué | Detalle |
+| --- | --- |
+| 5 claves nuevas en `configuracion` | `login_intentos_maximos` (3), `login_ventana_minutos` (5), `login_bloqueo_minutos` (5), `reportes_maximos_por_dia` (2), `duplicado_ventana_dias` (30). Cada una con su `CHECK` de rango (sección 5.5) |
+| Tabla `distancia_duplicado` | `id_categoria` (PK, FK a `categoria`), `metros` (SMALLINT, 5 a 500), `id_usuario_actualiza`, `actualizado_en`. Una fila por categoría que exige ubicación (10 filas) |
+| Tabla `intento_login` | `correo_normalizado` (PK), `fallidos`, `primer_fallo_en`, `bloqueado_hasta`, `actualizado_en`. Sin contraseñas ni IP; no depende de que el correo exista |
+| Columna `reporte.requiere_evidencia` | BOOLEAN NOT NULL, por defecto `false`. La pone el sistema cuando el reporte repite un problema ya resuelto |
+| Índice `ix_reporte_usuario_creado` | sobre `reporte (id_usuario, creado_en)`, para contar los reportes de una cuenta en el día |
+
+Nota: `categoria.requiere_evidencia` (la decisión 8, foto siempre opcional) **no cambia**. La obligación de foto de NOT-132 es otra cosa: depende del lugar y de si se repite un problema resuelto, no de la categoría, y vive en `reporte.requiere_evidencia`.

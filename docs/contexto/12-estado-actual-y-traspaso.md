@@ -1,4 +1,4 @@
-# Estado actual y traspaso (9 de noviembre de 2026)
+# Estado actual y traspaso (13 de noviembre de 2026)
 
 > Para quien llegue nuevo (persona o IA): lea este archivo primero. Resume qué funciona, qué
 > falta, cómo se corre y se prueba todo, y qué se aprendió trabajando con Andrés. El detalle
@@ -48,6 +48,12 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
   al CAIC y a Centroaguas (`info@`). Si rebota o falla, la pantalla final ofrece los canales y «Copiar
   mi mensaje». Probado el 12/11/2026 con correos reales a la bandeja de pruebas (Gmail, 360 px y escritorio).
 - Catálogos públicos: tipos de documento y 133 barrios históricos (PMGR 2020).
+- Registro rápido y sin abusos (NOT-132, 13/11/2026, rama `feature/not-132-registro-rapido-y-sin-abusos`):
+  el registro responde en 0,35 s (el correo sale en segundo plano); 3 fallos de ingreso en 5 min bloquean
+  ese correo 5 min con cuenta regresiva; máximo 2 reportes por cuenta al día; aviso de reporte parecido
+  entre cuentas («Enviar de todas maneras» o «Cancelar reporte»); foto obligatoria si se repite un
+  problema resuelto; el administrador ajusta todo en «Configuración» (V22). Los botones que envían datos
+  se bloquean al primer clic (`useUnaVez`). Probado contra el backend local (15 de 15 comprobaciones).
 
 ## 3. Qué falta (lo que cubre el Sprint 3)
 
@@ -57,7 +63,7 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
 | Mapa de reportes y mapa de calor del panel con datos reales | NOT-135, NOT-136 |
 | Correo a la entidad confuso (matrícula siempre, fecha cruda, coordenadas largas, filas vacías, fotos solo como enlaces) | NOT-130 |
 | Envío real a las entidades, rebotes (falta `RESEND_WEBHOOK_SECRET`) | NOT-131 |
-| Registro lento (~10 s), error de Google en celular, límite de intentos de login, límite diario y duplicados (R.06) | NOT-132 |
+| ~~Registro lento, error de Google en celular, límites y duplicados~~: hecho el 13/11/2026, en PR | NOT-132 |
 | Despliegue final, respaldo de la base, administrador real (hoy usa `ADMIN_DEV_PASSWORD`) | NOT-133 |
 | La app no es PWA instalable (no hay manifiesto ni service worker) | NOT-134 |
 | Pulido: «servidor despertando», reintento de foto, GPS 10 s, atribución OSM, tono y accesibilidad | NOT-137, NOT-138, NOT-139 |
@@ -80,19 +86,21 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el
   mismo comando: ejecútelo en un entorno limpio (`env -i ...`).
 - Una base desechable: contenedor `postgis/postgis:16-3.4`. Docker Desktop debe estar abierto.
-- Última corrida completa (12/11/2026, rama de NOT-130): 361 pruebas, 0 fallos, 2 omitidas
-  (proveedores reales). Las 9 de enrutamiento y la de migración de enrutamiento solo corren con
+- Última corrida completa (13/11/2026, rama de NOT-132): 424 pruebas, 0 fallos, 12 omitidas
+  (proveedores reales y enrutamiento sin base `notiurba_test*`). Las 9 de enrutamiento y la de migración de enrutamiento solo corren con
   `NOTIURBA_TEST_DB_URL` apuntando a una base `notiurba_test*` (con `postgis` y `pgcrypto`); sin ella
   se omiten y no cuentan como pasadas.
 - QA de punta a punta del panel contra el jar real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones).
 - QA de punta a punta del mensaje a la entidad: `tools/qa-correo-reporte/qa-correo.sh` (40 verificaciones;
   no envía correos).
-- Errores de la API: formato único `{codigo, mensaje, campo}` (`ApiException`; en pruebas use
+- Para probar un tope o un bloqueo sin esperar minutos: las pruebas usan un `Clock` de prueba
+  (`RelojConfig`); a mano, baje los valores en «Configuración» del panel.
+- Errores de la API: formato único `{codigo, mensaje, campo}` (con `datos` opcional desde NOT-132) (`ApiException`; en pruebas use
   `getReason()`).
 
 ### Frontend (`frontend/`, React 19 + Vite 8, pnpm)
 
-- `pnpm install`, `pnpm dev`, `pnpm test` (node --test, 156 pruebas), `pnpm lint`, `pnpm build`.
+- `pnpm install`, `pnpm dev`, `pnpm test` (node --test, 207 pruebas), `pnpm lint`, `pnpm build`.
   No use npm ni suba `package-lock.json`.
 - Con `VITE_USAR_MOCKS=true` en desarrollo la API se simula (`src/simulacion/`); el build de
   producción no incluye esa carpeta.
@@ -131,9 +139,19 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - «No pudimos comunicarnos con el servidor» sale **solo** cuando el navegador no recibe
   respuesta (`fetch` falla): Render dormido, mala red o CORS. No es un error de lógica. El ingreso
   con Google falló así en un celular; desde otro equipo `/api/auth/google` respondía bien (CORS
-  correcto y 401 ante un token falso). La causa no está confirmada.
-- El registro tarda ~10 s: BCrypt con poca CPU y el correo de verificación se envía dentro de la
-  transacción de `RegistroServicio.registrar` (`VerificacionServicio.emitirYEnviar`).
+  correcto y 401 ante un token falso). **Diagnóstico del 13/11/2026 (NOT-132):** la primera llamada a
+  `/api/health` con Render dormido no respondió en 90 s; después, el preflight desde
+  `https://notiurba.netlify.app` dio 200 con los encabezados CORS correctos y un `POST /api/auth/google`
+  con un token falso respondió 401 en 1,4 s. O sea: ni Google ni CORS fallan; la causa más probable es
+  el **arranque en frío de Render** (mientras despierta responde un error sin encabezados CORS, y el
+  navegador lo ve como «sin respuesta»). Queda para la historia de pulido el aviso «servidor despertando»;
+  desde este cambio el backend deja en el log el paso y el tipo de cada fallo de Google (sin datos
+  personales; ver `GoogleAuthServicio`), para confirmarlo si vuelve a pasar con Render despierto.
+- El registro tardaba ~10 s: el correo de verificación se enviaba dentro de la transacción de
+  `RegistroServicio.registrar`. Desde NOT-132 se crea el token dentro y el envío sale después de
+  confirmar, en otro hilo (`EnvioCorreoVerificacion`): con un correo de 6 s la respuesta tarda menos de
+  0,7 s (prueba `RegistroRapidoIntegracionTest`). El cifrado de la contraseña (BCrypt) sigue en la
+  petición.
 - La categoría 15 («Solicitud de información») está activa sin ruta de envío: crear un reporte
   funciona, pero la vista previa responde 400. Decide el equipo: desactivarla o darle ruta al CAIC.
 - El rebote real llega después por el webhook (NOT-131): mostrar canales y «Copiar mi mensaje» en el

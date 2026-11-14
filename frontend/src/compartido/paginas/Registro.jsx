@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useUnaVez from '../hooks/useUnaVez'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { estadoRetornoReporte } from '../auth/retornoReporte'
 import { registrarCuenta } from '../api/auth'
@@ -41,6 +42,7 @@ export default function Registro() {
   const { datos, errores, setErrores, cambiar, errorDeCampo } = useFormulario(DATOS_INICIALES)
   const [errorGeneral, setErrorGeneral] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const crearCuentaUnaVez = useUnaVez(crearCuenta)
   const tipos = useCargar(obtenerTiposDocumento)
   const barrios = useCargar(obtenerBarrios)
 
@@ -113,7 +115,7 @@ export default function Registro() {
       />
 
       <FormularioPantalla
-        alEnviar={paso === 1 ? continuar : crearCuenta}
+        alEnviar={paso === 1 ? continuar : crearCuentaUnaVez}
         acciones={
           <>
             <Boton

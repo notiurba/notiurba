@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import useUnaVez from '../../compartido/hooks/useUnaVez'
 import { cambiarEstadoReporte, listarTodosLosReportes } from '../../compartido/api/reportes'
 import ChipEstado from '../../compartido/componentes/ChipEstado'
 import Filtro from '../../compartido/componentes/Filtro'
@@ -157,6 +158,7 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
   const [nuevo, setNuevo] = useState(reporte.estado)
   const [observacion, setObservacion] = useState('')
   const [guardando, setGuardando] = useState(false)
+  const guardarUnaVez = useUnaVez(guardar)
   const [mensaje, setMensaje] = useState('')
   const [fallo, setFallo] = useState(false)
 
@@ -215,7 +217,7 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
         </ol>
       )}
 
-      <form className="adm-rep__cambio" onSubmit={guardar}>
+      <form className="adm-rep__cambio" onSubmit={guardarUnaVez}>
         <h3>Cambiar estado</h3>
         <label>
           Nuevo estado

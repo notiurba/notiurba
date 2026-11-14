@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { iniciarSesionConGoogle } from '../../api/auth'
 import { guardarToken } from '../../auth/sesion'
+import { avisoDeGoogle } from '../../auth/errorLogin'
 import { destinoTrasAutenticacion, estadoRetornoReporte } from '../../auth/retornoReporte'
+import { TEXTOS_INGRESO, TITULOS_INGRESO } from '../../textos/ingreso'
 import Aviso from '../avisos/Aviso'
 import Boton from '../Boton'
 import { IconoGoogle } from '../Iconos'
@@ -32,19 +34,25 @@ function cargarScriptGoogle() {
   })
 }
 
-function BotonGoogleReal() {
+function BotonGoogleReal({ alFallar }) {
   const navigate = useNavigate()
   const { state } = useLocation()
   const siguiente = estadoRetornoReporte(state?.siguiente ?? null)?.siguiente
   const contenedor = useRef(null)
-  const [error, setError] = useState('')
+  const [error, setError] = useState(null)
+  // La función de la pantalla puede cambiar en cada render: se guarda aparte para no recargar el botón de Google.
+  const alFallarActual = useRef(alFallar)
+  useEffect(() => {
+    alFallarActual.current = alFallar
+  }, [alFallar])
 
   useEffect(() => {
     let activo = true
+    const avisar = (aviso) => (alFallarActual.current ? alFallarActual.current(aviso) : setError(aviso))
 
     // Google devuelve el credential; la API responde la sesión o «PERFIL_INCOMPLETO» (cuenta nueva).
     async function alRecibirCredencial({ credential }) {
-      setError('')
+      avisar(null)
       try {
         const respuesta = await iniciarSesionConGoogle(credential)
         if (respuesta.estado === 'PERFIL_INCOMPLETO') {
@@ -54,7 +62,7 @@ function BotonGoogleReal() {
         guardarToken(respuesta.token)
         navigate(destinoTrasAutenticacion(respuesta.rol, siguiente ?? null), { replace: true })
       } catch (fallo) {
-        setError(fallo.mensaje ?? 'No pudimos ingresar con Google. Inténtelo de nuevo.')
+        avisar(avisoDeGoogle(fallo))
       }
     }
 
@@ -70,7 +78,7 @@ function BotonGoogleReal() {
           width: Math.min(400, contenedor.current.offsetWidth || 320),
         })
       })
-      .catch(() => activo && setError('No pudimos cargar Google. Revise su conexión.'))
+      .catch(() => activo && avisar({ titulo: TITULOS_INGRESO.google, mensaje: TEXTOS_INGRESO.googleNoCargo }))
 
     return () => {
       activo = false
@@ -80,14 +88,19 @@ function BotonGoogleReal() {
   return (
     <>
       <div ref={contenedor} style={{ display: 'flex', justifyContent: 'center' }} />
-      {error && <Aviso variante="error">{error}</Aviso>}
+      {error && (
+        <Aviso variante="error" titulo={error.titulo}>
+          {error.mensaje}
+        </Aviso>
+      )}
     </>
   )
 }
 
-export default function BotonGoogle() {
+// alFallar: si la pantalla tiene su propia zona de aviso (el ingreso), el error de Google va allí.
+export default function BotonGoogle({ alFallar }) {
   const { state } = useLocation()
-  if (!SIMULANDO && ID_CLIENTE) return <BotonGoogleReal />
+  if (!SIMULANDO && ID_CLIENTE) return <BotonGoogleReal alFallar={alFallar} />
 
   const propiedades = SIMULANDO
     ? { to: '/completar-perfil', state: { correo: 'nombre@gmail.com', ...estadoRetornoReporte(state?.siguiente ?? null) } }

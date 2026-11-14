@@ -78,3 +78,42 @@ test('el flujo simulado conserva las cuentas y solo consulta el catálogo públi
     await server.close()
   }
 })
+
+test('la simulación cubre el bloqueo del ingreso y los avisos nuevos del reporte', async () => {
+  const server = await createServer({
+    server: { middlewareMode: true, ws: false }, appType: 'custom',
+    define: { 'import.meta.env.VITE_USAR_MOCKS': '"true"' },
+  })
+  const originalStorage = globalThis.localStorage
+  const memoria = new Map()
+  globalThis.localStorage = { getItem: k => memoria.get(k) ?? null,
+    setItem: (k, v) => memoria.set(k, String(v)), removeItem: k => memoria.delete(k) }
+  try {
+    const { peticion } = await server.ssrLoadModule('/src/compartido/api/cliente.js')
+    const { iniciarSesion } = await server.ssrLoadModule('/src/compartido/api/auth.js')
+    const { guardarToken } = await server.ssrLoadModule('/src/compartido/auth/sesion.js')
+    const post = (ruta, cuerpo) => peticion(ruta, { method: 'POST', body: JSON.stringify(cuerpo) })
+
+    await assert.rejects(() => iniciarSesion('ciudadano@correo.com', 'mala'), e => e.estado === 401 && e.datos.intentosRestantes === 2)
+    await assert.rejects(() => iniciarSesion('ciudadano@correo.com', 'mala'), e => e.datos.intentosRestantes === 1)
+    await assert.rejects(() => iniciarSesion('ciudadano@correo.com', 'mala'), e => e.estado === 429 && e.datos.esperarSegundos > 0)
+    await assert.rejects(() => iniciarSesion('ciudadano@correo.com', 'Clave1234'), e => e.codigo === 'INTENTOS_EXCEDIDOS')
+    await assert.rejects(() => iniciarSesion('bloqueado@correo.com', 'Clave1234'), e => e.codigo === 'INTENTOS_EXCEDIDOS')
+
+    guardarToken((await iniciarSesion('admin@correo.com', 'Clave1234')).token)
+    const base = { idCategoria: 1, latitud: 4.08, longitud: -76.19, autorizaEnvio: true }
+    await assert.rejects(() => post('/api/reportes', { ...base, descripcion: 'Un hueco parecido al de ayer' }),
+      e => e.codigo === 'POSIBLE_DUPLICADO' && e.datos.esPropio === false && !('codigoExistente' in e.datos))
+    await assert.rejects(() => post('/api/reportes', { ...base, descripcion: 'Un hueco parecido mío de ayer' }),
+      e => e.datos.esPropio === true && e.datos.codigoExistente === 'NU-000001')
+    await assert.rejects(() => post('/api/reportes', { ...base, descripcion: 'Ya llegué al límite de hoy' }),
+      e => e.codigo === 'LIMITE_DIARIO_REPORTES' && e.datos.maximo === 2)
+    await assert.rejects(() => post('/api/reportes', { ...base, descripcion: 'El hueco resuelto volvió a salir' }),
+      e => e.codigo === 'EVIDENCIA_REQUERIDA')
+    const previa = await post('/api/reportes/vista-previa', { ...base, descripcion: 'El hueco resuelto volvió a salir' })
+    assert.equal(previa.requiereEvidencia, true)
+  } finally {
+    globalThis.localStorage = originalStorage
+    await server.close()
+  }
+})

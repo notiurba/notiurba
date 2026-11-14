@@ -3,7 +3,7 @@ import { cerrarSesion } from '../../compartido/auth/sesion'
 import Boton from '../../compartido/componentes/Boton'
 import './LayoutAdmin.css'
 
-// Marco del panel: cabecera con las dos secciones (Reportes y Mapa de calor) y «Cerrar sesión».
+// Marco del panel: cabecera con las secciones (Reportes, Mapa de calor y Configuración) y «Cerrar sesión».
 export default function LayoutAdmin() {
   const navigate = useNavigate()
 
@@ -22,6 +22,7 @@ export default function LayoutAdmin() {
         <nav className="admin__pestanas" aria-label="Secciones del panel">
           <NavLink to="/admin" end>Reportes</NavLink>
           <NavLink to="/admin/mapa">Mapa de calor</NavLink>
+          <NavLink to="/admin/configuracion">Configuración</NavLink>
         </nav>
         <span className="admin__rol">Administrador · todas las comunas</span>
         <Boton variante="secundario" onClick={salir}>Cerrar sesión</Boton>

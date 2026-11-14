@@ -1,0 +1,23 @@
+.adm-conf { display: flex; flex-direction: column; gap: var(--nu-esp-16); max-width: 880px; }
+.adm-conf h1, .adm-conf h2 { margin: 0 0 var(--nu-esp-8); color: var(--nu-texto-principal); }
+.adm-conf__titulo p { margin: 0; color: var(--nu-texto-secundario); }
+.adm-conf__bloque { background: var(--nu-superficie-base); border: 1px solid var(--nu-borde-tarjeta); border-radius: 12px; padding: var(--nu-esp-16); }
+.adm-conf__fila { display: flex; flex-wrap: wrap; gap: var(--nu-esp-16); }
+.adm-conf__campo { display: flex; flex-direction: column; gap: var(--nu-esp-4); min-width: 180px; }
+.adm-conf__campo label { font-size: 14px; font-weight: 600; color: var(--nu-texto-secundario); }
+.adm-conf__entrada { display: flex; align-items: center; gap: var(--nu-esp-8); }
+.adm-conf__entrada span { font-size: 14px; color: var(--nu-texto-tenue); }
+.adm-conf input {
+  font: inherit; width: 88px; padding: var(--nu-esp-8) var(--nu-esp-10); border: 1px solid var(--nu-borde-campo);
+  border-radius: 8px; background: var(--nu-superficie-base); color: var(--nu-texto-principal);
+}
+.adm-conf input[aria-invalid='true'] { border-color: var(--nu-peligro-texto); }
+.adm-conf__ayuda { margin: 0; font-size: 13px; color: var(--nu-texto-tenue); }
+.adm-conf__error { margin: 0; font-size: 13px; font-weight: 600; color: var(--nu-peligro-texto); }
+.adm-conf__tabla-caja { overflow-x: auto; margin-top: var(--nu-esp-12); }
+.adm-conf__tabla { width: 100%; border-collapse: collapse; font-size: 14px; }
+.adm-conf__tabla caption { text-align: left; font-weight: 600; color: var(--nu-texto-secundario); padding-bottom: var(--nu-esp-8); }
+.adm-conf__tabla th, .adm-conf__tabla td { padding: var(--nu-esp-8) var(--nu-esp-12); text-align: left; border-bottom: 1px solid var(--nu-borde-encabezado); }
+.adm-conf__tabla thead th { color: var(--nu-texto-tenue); font-weight: 700; }
+.adm-conf__tabla tbody th { font-weight: 600; color: var(--nu-texto-principal); }
+.adm-conf__acciones { display: flex; justify-content: flex-end; }

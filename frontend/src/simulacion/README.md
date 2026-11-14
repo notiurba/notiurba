@@ -20,14 +20,20 @@ catálogos de barrios: se consultan en lectura a la API real para no ofrecer res
    borre esa clave en las herramientas del navegador. Una ruta no simulada da `MOCK_NO_DISPONIBLE`,
    salvo el catálogo público de barrios, que usa la API real.
 3. Cuentas de prueba para el login (contraseña `Clave1234`): `ciudadano@correo.com` entra a `/app` y
-   `admin@correo.com` entra a `/admin`. Otro correo → «no encontramos una cuenta»; otra contraseña →
-   «no es correcta».
-4. Datos que provocan errores en el registro: el correo `repetido@correo.com` devuelve «ya registrado»
+   `admin@correo.com` entra a `/admin`. Otro correo u otra contraseña → «no coinciden», igual que
+   el servicio real (no dice cuál dato falló).
+   Límite de intentos: 3 fallos seguidos con un mismo correo lo bloquean 5 minutos (con cuenta regresiva);
+   el correo `bloqueado@correo.com` sale bloqueado desde el primer intento.
+4. Palabras en la descripción del reporte que provocan los avisos al crear: «parecido» (de otra persona,
+   ya enviado), «parecidos» (3 parecidos), «parecido mío» (propio, con su código), «sin enviar» (junto con
+   «parecido»: aún no sale a la entidad), «límite» (tope del día) y «resuelto» (pide foto; la vista
+   previa lo avisa y sin foto no deja enviar). «Enviar de todas maneras» guarda el reporte.
+5. Datos que provocan errores en el registro: el correo `repetido@correo.com` devuelve «ya registrado»
    y el documento `1098765432` devuelve «ya existe una cuenta con este documento».
-5. Las rutas simuladas están en `src/simulacion/index.js`. Cuando Andrés publique un endpoint se borra
+6. Las rutas simuladas están en `src/simulacion/index.js`. Cuando Andrés publique un endpoint se borra
    su línea y la pantalla usa la API real sin otro cambio.
-6. El build de producción **no incluye** esta carpeta.
-7. **Para eliminar la simulación:** borre la carpeta `src/simulacion/` completa. `api/cliente.js` la
+7. El build de producción **no incluye** esta carpeta.
+8. **Para eliminar la simulación:** borre la carpeta `src/simulacion/` completa. `api/cliente.js` la
    busca con `import.meta.glob` y, si no está, usa la API real. Además, para dejar el código limpio:
    quite la rama `SIMULANDO` de `compartido/componentes/acceso/BotonGoogle.jsx`, la variable
    `VITE_USAR_MOCKS` de `.env.example` y los comentarios que citan este archivo.
@@ -46,7 +52,7 @@ No copiar sus IDs a la base ni reasignar borradores por coincidencia numérica.
 
 | Pantalla | Endpoint | Estado | Envía | Recibe | Archivos |
 |---|---|---|---|---|---|
-| Login | `POST /api/auth/login` | EXISTE | `correo`, `password` | `{ token, rol }` · 401 si no coinciden. **Propuesto:** el 401 trae `campo` (`correo` o `password`) para mostrar el error bajo la casilla | `datos/auth/login.ok.*.json`, `datos/auth/login.error.*.json` |
+| Login | `POST /api/auth/login` | EXISTE | `correo`, `password` | `{ token, rol }` · 401 `CREDENCIALES_INVALIDAS` con `datos.intentosRestantes` (no dice cuál dato falló) · 403 sin confirmar · 429 `INTENTOS_EXCEDIDOS` | `datos/auth/login.ok.*.json`, `datos/auth/login.error.correo-no-verificado.json`; el 401 y el 429 los arma `index.js` |
 | Registro | `POST /api/auth/registro` | PROPUESTO | `nombres`, `apellidos`, `idTipoDocumento`, `numeroDocumento`, `idBarrio`, `direccionCorrespondencia`, `correo`, `telefono?`, `password`, `aceptaPrivacidad` | mensaje de éxito · error con `campo` | `datos/auth/registro.*.json` |
 | Verificar correo | por definir | PROPUESTO | — | el prototipo muestra «Abrir mi correo» y «Reenviar enlace» | — |
 | Completar perfil (Google) | `POST /api/auth/google/completar` | EXISTE (campos por confirmar) | `nombres`, `apellidos`, `idTipoDocumento`, `numeroDocumento`, `telefono?`, `idBarrio`, `direccionCorrespondencia`, `aceptaPrivacidad` | sesión `{ token, rol }` | `datos/auth/google.completar-perfil.solicitud.json` |

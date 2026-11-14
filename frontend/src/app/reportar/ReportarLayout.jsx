@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { startTransition, useCallback, useEffect, useState } from 'react'
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { obtenerBarrios } from '../../compartido/api/catalogos'
 import { estadoSesion } from '../../compartido/auth/sesion'
 import Aviso from '../../compartido/componentes/avisos/Aviso'
@@ -7,7 +7,7 @@ import Boton from '../../compartido/componentes/Boton'
 import * as api from '../servicios/correoReportes'
 import useCargar from '../../compartido/hooks/useCargar'
 import MarcoApp from '../componentes/MarcoApp'
-import { borrarBorrador, guardarBorrador, leerBorrador, guardarAvance, leerGuardado } from './borrador'
+import { aplicarCambio, borrarBorrador, guardarBorrador, leerBorrador, guardarAvance, leerGuardado } from './borrador'
 import { prepararCategorias } from './catalogo'
 import { redireccionPorCategoria } from './destino'
 
@@ -23,8 +23,12 @@ export default function ReportarLayout() {
   const categorias = useCargar(cargarCategorias)
   const barrios = useCargar(cargarBarrios)
   const { pathname } = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => guardarBorrador(borrador), [borrador])
+
+  // Estable entre renders: algunos pasos la usan dentro de un efecto.
+  const cambiar = useCallback((parcial) => setBorrador((anterior) => aplicarCambio(anterior, parcial)), [])
 
   const limpiar = useCallback(() => {
     borrarBorrador()
@@ -48,19 +52,19 @@ export default function ReportarLayout() {
   const contexto = {
     borrador,
     // Cambia solo los campos que se pasan: cambiar({ descripcion: '…' })
-    cambiar: (parcial) => setBorrador((anterior) => {
-      if (parcial.idCategoria !== undefined && parcial.idCategoria !== anterior.idCategoria) {
-        return { ...anterior, ...parcial, matricula: '', emergencia: false,
-          latitud: null, longitud: null, idBarrio: '', direccion: '' }
-      }
-      return { ...anterior, ...parcial }
-    }),
+    cambiar,
     fotos,
     setFotos,
     guardado,
     conservarGuardado,
     // Después de enviar o cancelar, el borrador queda vacío.
     limpiar,
+    // «Cancelar reporte»: descarta el borrador y vuelve al inicio (paso 1 y aviso de reporte parecido).
+    // En una sola transición: así el paso abierto no alcanza a redirigir con el borrador ya vacío.
+    cancelarReporte: () => startTransition(() => {
+      limpiar()
+      navigate('/')
+    }),
     categorias: categorias.datos,
     // Si no hay barrios disponibles se conserva la alternativa del punto en el mapa.
     barrios: barrios.datos ?? [],

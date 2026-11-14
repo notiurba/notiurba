@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useUnaVez from '../../compartido/hooks/useUnaVez'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { eliminarMiCuenta, eliminarMisDatos, obtenerPerfil } from '../../compartido/api/usuario'
 import { cerrarSesion } from '../../compartido/auth/sesion'
@@ -30,6 +31,7 @@ export default function Ajustes() {
   const { datos: perfil } = useCargar(obtenerPerfil)
   const [hoja, setHoja] = useState(null) // 'datos' | 'cuenta' | null
   const [trabajando, setTrabajando] = useState(false)
+  const confirmarUnaVez = useUnaVez(confirmar)
   const [fallo, setFallo] = useState(false)
   const [mensaje, setMensaje] = useState(state?.mensaje ?? '')
 
@@ -123,7 +125,7 @@ export default function Ajustes() {
       <HojaConfirmacion
         abierta={hoja === 'datos'}
         alCancelar={() => setHoja(null)}
-        alConfirmar={confirmar}
+        alConfirmar={confirmarUnaVez}
         icono={<IconoAlerta tamano={30} />}
         tono="peligro"
         titulo="¿Eliminar sus datos?"
@@ -137,7 +139,7 @@ export default function Ajustes() {
       <HojaConfirmacion
         abierta={hoja === 'cuenta'}
         alCancelar={() => setHoja(null)}
-        alConfirmar={confirmar}
+        alConfirmar={confirmarUnaVez}
         icono={<IconoAlerta tamano={30} />}
         tono="peligro"
         titulo="¿Eliminar su cuenta?"

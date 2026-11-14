@@ -47,7 +47,12 @@ public class ManejadorErrores extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     ResponseEntity<ErrorApi> negocio(ApiException e) {
-        return respuesta(e.getStatusCode(), new ErrorApi(e.getCodigo(), e.getReason(), e.getCampo()));
+        var cuerpo = new ErrorApi(e.getCodigo(), e.getReason(), e.getCampo(), e.getDatos());
+        var respuesta = ResponseEntity.status(e.getStatusCode());
+        if (e.getDatos() != null && e.getDatos().get("esperarSegundos") instanceof Number segundos) {
+            respuesta.header(HttpHeaders.RETRY_AFTER, String.valueOf(segundos.longValue()));
+        }
+        return respuesta.body(cuerpo);
     }
 
     @ExceptionHandler(ResponseStatusException.class)

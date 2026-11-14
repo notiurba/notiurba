@@ -40,7 +40,8 @@ export function validarFoto(archivo, fotosActuales) {
 
 // Cuerpo que espera POST /api/reportes (contrato 3.4). Las fotos se suben aparte, una por una.
 // Sin punto en el mapa (categorías que no piden ubicación) se omiten latitud y longitud.
-export function armarSolicitudReporte(b, { autorizaEnvio = false, emergencia = false, categoria } = {}) {
+// totalFotos y confirmarDuplicado solo viajan si se pasan (la vista previa pone totalFotos por su cuenta).
+export function armarSolicitudReporte(b, { autorizaEnvio = false, emergencia = false, categoria, totalFotos, confirmarDuplicado = false } = {}) {
   const solicitud = {
     idCategoria: Number(b.idCategoria),
     descripcion: b.descripcion.trim(),
@@ -55,6 +56,8 @@ export function armarSolicitudReporte(b, { autorizaEnvio = false, emergencia = f
   if (pideUbicacion && b.idBarrio) solicitud.idBarrio = Number(b.idBarrio)
   if (pideUbicacion && b.direccion.trim()) solicitud.direccionIncidente = b.direccion.trim()
   if (categoria?.admiteMatricula !== false && b.matricula.trim()) solicitud.matriculaCuentaServicio = b.matricula.trim()
+  if (Number.isInteger(totalFotos)) solicitud.totalFotos = totalFotos
+  if (confirmarDuplicado === true) solicitud.confirmarDuplicado = true
   return solicitud
 }
 

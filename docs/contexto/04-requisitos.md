@@ -125,4 +125,16 @@ para rebotes (R.05).
 - **Eventos comunitarios**: sin dependencia ni destinatario; decidir si se quitan del
   MVP o se registran sin envío.
 
+## Agregados en NOT-132 (13/11/2026)
+
+- **RNF-04 (ajuste)**: el registro responde en 2 s o menos sin esperar el correo de verificación (medido: 0,35 s; antes ~10 s).
+- **RF-01 (ajuste)**: si el correo de verificación falla, la cuenta igual queda creada y se puede pedir otro enlace.
+- **RF-33**: el log registra en qué paso falló «Continuar con Google», sin datos personales.
+- **RF-34**: 3 intentos fallidos de ingreso en 5 minutos bloquean ese correo 5 minutos.
+- **RF-35**: máximo 2 reportes por cuenta al día (día de Colombia).
+- **RF-36**: aviso de reporte parecido: misma categoría, cerca (5 a 15 m según la categoría), últimos 30 días, de cualquier cuenta y sin resolver. Se puede enviar de todas maneras.
+- **RF-37**: el administrador consulta y ajusta todos estos valores en «Configuración».
+- **RF-38**: cada situación del ingreso muestra un mensaje claro, sin lenguaje técnico.
+- **RF-39**: si se repite un problema ya resuelto en ese lugar, el reporte exige al menos una foto.
+
 Fuente: pestaña «Requisitos funcionales y limitación de comunas» del Google Doc.

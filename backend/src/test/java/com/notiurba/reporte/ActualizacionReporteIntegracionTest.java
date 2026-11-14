@@ -82,7 +82,7 @@ class ActualizacionReporteIntegracionTest {
 
     private String crearReporte() throws Exception {
         String cuerpo = "{\"idCategoria\":1,\"latitud\":4.0867,\"longitud\":-76.1950,\"idBarrio\":" + idBarrio
-                + ",\"descripcion\":\"Hay un hueco enorme frente al parque\",\"autorizaEnvio\":true}";
+                + ",\"descripcion\":\"Hay un hueco enorme frente al parque\",\"autorizaEnvio\":true,\"confirmarDuplicado\":true}";
         MvcResult r = mvc.perform(post("/api/reportes").header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON).content(cuerpo)).andReturn();
         assertThat(r.getResponse().getStatus()).isEqualTo(201);

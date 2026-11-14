@@ -58,9 +58,24 @@ test('una respuesta sin el formato del contrato da un mensaje genérico en espa�
   globalThis.fetch = async () => new Response('<html>Bad gateway</html>', { status: 502 })
   await assert.rejects(() => peticion('/api/health'), (e) => {
     assert.equal(e.codigo, 'RESPUESTA_INESPERADA')
-    assert.match(e.message, /inesperado/)
+    assert.match(e.message, /no está respondiendo/)
+    assert.doesNotMatch(e.message, /servidor|gateway/i)
     return true
   })
+})
+
+test('un error con datos los conserva y sin datos quedan en null', async () => {
+  globalThis.fetch = async () => respuestaJson(429, { codigo: 'INTENTOS_EXCEDIDOS', mensaje: 'Demasiados intentos.', campo: null,
+    datos: { esperarSegundos: 120, bloqueadoHasta: '2026-11-13T20:42:00Z' } })
+  await assert.rejects(() => peticion('/api/auth/login', { method: 'POST', body: '{}' }), (e) => {
+    assert.equal(e.estado, 429)
+    assert.deepEqual(e.datos, { esperarSegundos: 120, bloqueadoHasta: '2026-11-13T20:42:00Z' })
+    return true
+  })
+  globalThis.fetch = async () => respuestaJson(400, { codigo: 'VALIDACION', mensaje: 'Falta el correo', campo: 'correo' })
+  await assert.rejects(() => peticion('/api/auth/login', { method: 'POST', body: '{}' }), (e) => e.datos === null)
+  globalThis.fetch = async () => respuestaJson(400, { codigo: 'VALIDACION', mensaje: 'x', campo: null, datos: ['no', 'es', 'objeto'] })
+  await assert.rejects(() => peticion('/api/auth/login', { method: 'POST', body: '{}' }), (e) => e.datos === null)
 })
 
 test('sin red se lanza SIN_CONEXION', async () => {

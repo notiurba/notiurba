@@ -29,6 +29,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.notiurba.auth.IntentosLoginServicio;
 import com.notiurba.usuario.Rol;
 import com.notiurba.usuario.TipoToken;
 import com.notiurba.usuario.TipoTokenRepository;
@@ -50,13 +51,14 @@ class RecuperacionServicioTest {
     @Mock private EnviadorEnlaceRecuperacion enviador;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(4);
+    private final IntentosLoginServicio intentos = mock(IntentosLoginServicio.class);
     private final TipoToken recuperacion = mock(TipoToken.class);
     private RecuperacionServicio servicio;
 
     @BeforeEach
     void preparar() {
         servicio = new RecuperacionServicio(usuarioRepository, tokenRepository, tipoTokenRepository,
-                passwordEncoder, enviador, ENLACE);
+                passwordEncoder, enviador, intentos, ENLACE);
         lenient().when(tipoTokenRepository.findByNombre(TipoToken.RECUPERACION_CONTRASENA))
                 .thenReturn(Optional.of(recuperacion));
     }
@@ -157,6 +159,7 @@ class RecuperacionServicioTest {
 
         assertThat(passwordEncoder.matches("NuevaClave2026", usuario.getPasswordHash())).isTrue();
         assertThat(vigente.getUsadoEn()).isNotNull();
+        verify(intentos).limpiar(usuario.getCorreo());
     }
 
     @Test

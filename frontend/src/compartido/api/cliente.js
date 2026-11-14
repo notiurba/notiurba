@@ -5,8 +5,8 @@ export { ErrorApi }
 export const EVENTO_SESION_TERMINADA = 'notiurba:sesion-terminada'
 export const URL_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
 
-const MENSAJE_SIN_CONEXION = 'No pudimos comunicarnos con el servidor. Revise su conexión e intente de nuevo.'
-const MENSAJE_RESPUESTA_RARA = 'El servidor respondió algo inesperado. Intente de nuevo en un momento.'
+const MENSAJE_SIN_CONEXION = 'No hay conexión a internet. Revise su conexión e inténtelo de nuevo.'
+const MENSAJE_RESPUESTA_RARA = 'NotiUrba no está respondiendo en este momento. Inténtelo de nuevo en unos minutos.'
 
 async function leerError(respuesta) {
   const cuerpo = await respuesta.json().catch(() => null)

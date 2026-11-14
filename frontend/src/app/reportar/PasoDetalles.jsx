@@ -11,9 +11,10 @@ import HojaInferior from '../../compartido/componentes/avisos/HojaInferior'
 import { IconoCamara, IconoImagen, IconoImagenError, IconoPapelera } from '../../compartido/componentes/Iconos'
 import PasosBarra from '../../compartido/componentes/PasosBarra'
 import BotonIcono from '../../compartido/componentes/BotonIcono'
+import { TEXTOS_DESCRIPCION, TEXTOS_FOTO } from '../../compartido/textos/reporte'
 import { reducirFoto } from '../../compartido/utilidades/fotos'
 import { LIMITES } from '../../compartido/validaciones/campos'
-import { MAX_DESCRIPCION, MAX_FOTOS, MIN_DESCRIPCION, validarDetalles, validarFoto, validarUbicacion } from '../../compartido/validaciones/reporte'
+import { MAX_DESCRIPCION, MAX_FOTOS, validarDetalles, validarFoto, validarUbicacion } from '../../compartido/validaciones/reporte'
 import ResumenCategoria from './ResumenCategoria'
 import { useReporte } from './useReporte'
 import './Reportar.css'
@@ -29,7 +30,8 @@ function MiniaturaFoto({ foto, numero }) {
   return <img ref={imagen} alt={`Vista previa de la foto ${numero}`} />
 }
 
-// Paso 3 de 4: descripción (obligatoria), fotos (opcionales) y matrícula del servicio (opcional).
+// Paso 3 de 4: descripción (obligatoria), fotos (opcionales; obligatorias si se repite un problema ya resuelto)
+// y matrícula del servicio (opcional).
 export default function PasoDetalles() {
   const navigate = useNavigate()
   const { borrador, cambiar, fotos, setFotos, categorias } = useReporte()
@@ -87,13 +89,12 @@ export default function PasoDetalles() {
       >
         <PasosBarra paso={3} total={4} etiqueta="Descripción y fotografías" />
         <ResumenCategoria categoria={categoria} />
-        <h2 className="reportar__titulo">Cuéntenos más</h2>
+        <h2 className="reportar__titulo">{TEXTOS_DESCRIPCION.titulo}</h2>
 
         <div>
           <AreaTexto
             id="descripcion"
-            etiqueta="Descripción"
-            placeholder="Describa qué ocurre, desde cuándo y dónde."
+            etiqueta={TEXTOS_DESCRIPCION.etiqueta}
             maxLength={MAX_DESCRIPCION}
             value={borrador.descripcion}
             onChange={(e) => {
@@ -101,8 +102,16 @@ export default function PasoDetalles() {
               setErrores({})
             }}
             error={errores.descripcion}
-            ayuda={`Escriba entre ${MIN_DESCRIPCION} y ${MAX_DESCRIPCION} caracteres. No incluya datos personales de terceros.`}
+            ayuda={<>{TEXTOS_DESCRIPCION.guia}<br />{TEXTOS_DESCRIPCION.reglas}</>}
           />
+          {/* La guía queda a la vista también cuando el campo muestra un error. */}
+          {errores.descripcion && (
+            <p className="campo__ayuda">
+              {TEXTOS_DESCRIPCION.guia}
+              <br />
+              {TEXTOS_DESCRIPCION.reglas}
+            </p>
+          )}
           <p className="detalles__contador" aria-live="polite">
             {borrador.descripcion.length}/{MAX_DESCRIPCION}
           </p>
@@ -110,8 +119,9 @@ export default function PasoDetalles() {
 
         <div className="detalles__fotos">
           <span className="detalles__etiqueta">
-            Foto del problema <span>(opcional)</span>
+            {TEXTOS_FOTO.etiqueta} <span>{borrador.fotoObligatoria ? TEXTOS_FOTO.obligatoria : TEXTOS_FOTO.opcional}</span>
           </span>
+          <p className="reportar__mensaje">{borrador.fotoObligatoria ? TEXTOS_FOTO.ayudaObligatoria : TEXTOS_FOTO.ayuda}</p>
           <div className="detalles__botones">
             <Boton variante="secundario" disabled={reduciendo} onClick={() => entradaCamara.current.click()}>
               <IconoCamara tamano={20} />

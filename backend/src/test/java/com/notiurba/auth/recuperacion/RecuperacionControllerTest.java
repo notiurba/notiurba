@@ -22,6 +22,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.notiurba.auth.IntentosLoginServicio;
 import com.notiurba.config.SecurityConfig;
 import com.notiurba.seguridad.JwtProveedor;
 import com.notiurba.usuario.Rol;
@@ -43,6 +44,7 @@ class RecuperacionControllerTest {
     @MockBean private TokenVerificacionRepository tokenRepository;
     @MockBean private TipoTokenRepository tipoTokenRepository;
     @MockBean private EnviadorEnlaceRecuperacion enviador;
+    @MockBean private IntentosLoginServicio intentosLogin;
 
     private MockHttpServletResponse recuperar(String correo) throws Exception {
         return mvc.perform(post("/api/auth/recuperar").contentType(MediaType.APPLICATION_JSON)

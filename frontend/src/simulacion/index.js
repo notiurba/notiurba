@@ -11,8 +11,6 @@ import tiposDocumento from './datos/catalogos/tipos-documento.json'
 import loginAdmin from './datos/auth/login.ok.admin.json'
 import loginCiudadano from './datos/auth/login.ok.ciudadano.json'
 import loginSinVerificar from './datos/auth/login.error.correo-no-verificado.json'
-import loginCorreoNoExiste from './datos/auth/login.error.correo-no-existe.json'
-import loginPasswordIncorrecta from './datos/auth/login.error.password-incorrecta.json'
 import recuperarOk from './datos/auth/recuperar.ok.json'
 import registroOk from './datos/auth/registro.ok.json'
 import correoRepetido from './datos/auth/registro.error.correo-repetido.json'
@@ -28,8 +26,47 @@ function crearErrorApi(estado, cuerpo = {}, ruta = '') {
     codigo: cuerpo.codigo ?? (estado === 400 ? 'VALIDACION' : `HTTP_${estado}`),
     mensaje: cuerpo.mensaje ?? `El servidor respondió algo inesperado (${estado} ${ruta})`.trim(),
     campo: cuerpo.campo ?? null,
+    datos: cuerpo.datos ?? null,
   })
 }
+
+// Límites contra el abuso, simulados igual que el servicio: 3 fallos de login bloquean ese correo 5 minutos.
+const fallosLogin = new Map()
+const CORREO_BLOQUEADO = 'bloqueado@correo.com'
+
+// Valores iniciales de la migración V22 (contrato 5.5).
+let limitesSimulados = {
+  login: { intentosMaximos: 3, ventanaMinutos: 5, bloqueoMinutos: 5 },
+  reportesMaximosPorDia: 2,
+  duplicados: { ventanaDias: 30, categorias: [
+    [1, 'Vías, huecos, andenes e infraestructura', 5], [2, 'Alumbrado, espacio público, convivencia y seguridad', 10],
+    [3, 'Basuras, ambiente, árboles y contaminación', 5], [4, 'Señalización, semáforos y tránsito', 8],
+    [5, 'Riesgo sanitario y salud pública', 10], [8, 'Riesgo de desastres', 15], [11, 'Acueducto y alcantarillado', 10],
+    [12, 'Gas natural', 15], [13, 'Energía eléctrica', 15], [14, 'Aseo (falla del servicio)', 15],
+  ].map(([idCategoria, nombre, metros]) => ({ idCategoria, nombre, metros })) },
+}
+
+function bloqueoLogin(hasta, ruta) {
+  return crearErrorApi(429, { codigo: 'INTENTOS_EXCEDIDOS', mensaje: 'Demasiados intentos.',
+    datos: { esperarSegundos: Math.ceil((hasta - Date.now()) / 1000), bloqueadoHasta: new Date(hasta).toISOString() } }, ruta)
+}
+
+function contarFallo(correo, ruta) {
+  const { intentosMaximos, bloqueoMinutos } = limitesSimulados.login
+  const fallos = (fallosLogin.get(correo)?.fallos ?? 0) + 1
+  if (fallos >= intentosMaximos) {
+    const hasta = Date.now() + bloqueoMinutos * 60_000
+    fallosLogin.set(correo, { fallos: 0, hasta })
+    return bloqueoLogin(hasta, ruta)
+  }
+  fallosLogin.set(correo, { fallos, hasta: null })
+  return crearErrorApi(401, { codigo: 'CREDENCIALES_INVALIDAS', mensaje: 'Correo o contraseña incorrectos.',
+    datos: { intentosRestantes: intentosMaximos - fallos } }, ruta)
+}
+
+// Palabras en la descripción que provocan los avisos nuevos al crear un reporte (ver README).
+const pide = (cuerpo, palabra) => (cuerpo.descripcion ?? '').toLowerCase().includes(palabra)
+const hoyMenos = (dias) => new Date(Date.now() - dias * 86400000).toISOString().slice(0, 10)
 
 const ESPERA_MS = 500 // pausa para que se vean los estados de carga
 
@@ -105,13 +142,17 @@ const RUTAS = [
   ['GET', '/api/categorias', () => categorias],
 
   ['POST', '/api/auth/login', (cuerpo, _p, ruta) => {
-    if (cuerpo.correo === CORREO_SIN_VERIFICAR && cuerpo.password === PASSWORD_PRUEBA) {
+    const correo = (cuerpo.correo ?? '').trim().toLowerCase()
+    if (correo === CORREO_BLOQUEADO) throw bloqueoLogin(Date.now() + limitesSimulados.login.bloqueoMinutos * 60_000, ruta)
+    const hasta = fallosLogin.get(correo)?.hasta
+    if (hasta && hasta > Date.now()) throw bloqueoLogin(hasta, ruta)
+    if (correo === CORREO_SIN_VERIFICAR && cuerpo.password === PASSWORD_PRUEBA) {
       throw crearErrorApi(403, loginSinVerificar, ruta)
     }
-    const cuenta = CUENTAS[cuerpo.correo]
-    if (!cuenta) throw crearErrorApi(401, loginCorreoNoExiste, ruta)
-    if (cuerpo.password !== PASSWORD_PRUEBA) throw crearErrorApi(401, loginPasswordIncorrecta, ruta)
-    almacen.iniciarSesion(cuerpo.correo)
+    const cuenta = CUENTAS[correo]
+    if (!cuenta || cuerpo.password !== PASSWORD_PRUEBA) throw contarFallo(correo, ruta)
+    fallosLogin.delete(correo)
+    almacen.iniciarSesion(correo)
     return cuenta
   }],
   ['POST', '/api/auth/registro', (cuerpo, _p, ruta) => {
@@ -151,7 +192,7 @@ const RUTAS = [
     }
     const destino = resolverRuta(cuerpo.idCategoria, cuerpo.emergencia === true)
     const { asunto, texto } = mensajeSimulado(destino.categoria, cuerpo.descripcion.trim(), cuerpo.totalFotos)
-    return { asunto, texto, permiteCorreo: destino.permiteCorreo, ruta: destino, secciones: [
+    return { asunto, texto, permiteCorreo: destino.permiteCorreo, ruta: destino, requiereEvidencia: pide(cuerpo, 'resuelto'), secciones: [
       { id: 'categoria', etiqueta: 'Categoría', valor: destino.categoria, paso: 'categoria' },
       { id: 'descripcion', etiqueta: 'Hechos', valor: cuerpo.descripcion.trim(), paso: 'detalles' }] }
   }],
@@ -161,6 +202,22 @@ const RUTAS = [
     }
     if (cuerpo.autorizaEnvio !== true) {
       throw crearErrorApi(400, { mensaje: 'Debes autorizar el envío del reporte.', campo: 'autorizaEnvio' }, ruta)
+    }
+    if (pide(cuerpo, 'límite') || pide(cuerpo, 'limite')) {
+      const maximo = limitesSimulados.reportesMaximosPorDia
+      throw crearErrorApi(429, { codigo: 'LIMITE_DIARIO_REPORTES', mensaje: 'Hoy ya enviaste el máximo de reportes.',
+        datos: { maximo, vuelveEn: hoyMenos(-1) + 'T00:00-05:00' } }, ruta)
+    }
+    if (pide(cuerpo, 'parecido') && cuerpo.confirmarDuplicado !== true) {
+      const propio = pide(cuerpo, 'parecido mío')
+      throw crearErrorApi(409, { codigo: 'POSIBLE_DUPLICADO', mensaje: 'Ya hay un reporte parecido en este lugar.', datos: {
+        esPropio: propio, cantidad: pide(cuerpo, 'parecidos') ? 3 : 1, estadoExistente: pide(cuerpo, 'sin enviar') ? 'Recibido' : 'Enviado',
+        creadoEn: hoyMenos(1), descripcion: 'Hueco grande frente a la panadería de la esquina, las motos frenan de golpe',
+        ...(propio ? { codigoExistente: 'NU-000001' } : {}) } }, ruta)
+    }
+    if (pide(cuerpo, 'resuelto') && !(cuerpo.totalFotos > 0)) {
+      throw crearErrorApi(422, { codigo: 'EVIDENCIA_REQUERIDA', campo: 'totalFotos',
+        mensaje: 'En este lugar ya se resolvió un reporte parecido.' }, ruta)
     }
     const { codigoSeguimiento, estado, creadoEn } = almacen.crearReporte(cuerpo)
     // Contrato 3.4: la creación devuelve solo lo mínimo; el detalle se pide aparte (3.6).
@@ -202,6 +259,19 @@ const RUTAS = [
   }],
 
   // Panel de administración: todos los reportes y cambio de estado con observación.
+  ['GET', '/api/admin/configuracion/limites', () => limitesSimulados],
+  ['PUT', '/api/admin/configuracion/limites', (cuerpo, _p, ruta) => {
+    const metros = cuerpo.duplicados?.categorias ?? []
+    const malo = metros.find((c) => !(c.metros >= 5 && c.metros <= 500))
+    if (malo) {
+      throw crearErrorApi(400, { codigo: 'VALIDACION', campo: `categorias.${malo.idCategoria}.metros`,
+        mensaje: 'La distancia debe estar entre 5 y 500 metros.' }, ruta)
+    }
+    limitesSimulados = { login: cuerpo.login, reportesMaximosPorDia: cuerpo.reportesMaximosPorDia, duplicados: {
+      ventanaDias: cuerpo.duplicados.ventanaDias,
+      categorias: limitesSimulados.duplicados.categorias.map((c) => ({ ...c, metros: metros.find((m) => m.idCategoria === c.idCategoria)?.metros ?? c.metros })) } }
+    return limitesSimulados
+  }],
   ['GET', '/api/admin/reportes', () => almacen.listarReportes()],
   ['PATCH', '/api/admin/reportes/:codigo/estado', (cuerpo, { codigo }) =>
     almacen.cambiarEstado(codigo, cuerpo.estado, cuerpo.observacion || null)],
