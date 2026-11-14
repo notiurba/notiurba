@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.env.RandomValuePropertySource;
 import org.springframework.boot.env.YamlPropertySourceLoader;
@@ -32,16 +31,22 @@ class AdminSemillaIntegracionTest {
 
     private BaseDeDatosTemporal bd;
 
-    @BeforeEach
-    void crear() {
-        bd = BaseDeDatosTemporal.crearOOmitir();
-    }
-
     @AfterEach
     void borrar() throws SQLException {
         if (bd != null) {
             bd.borrar();
         }
+    }
+
+    private DataSource baseNueva() {
+        bd = BaseDeDatosTemporal.crearOOmitir();
+        return bd.fuente();
+    }
+
+    private static boolean sirve(JdbcTemplate jdbc, String clave) {
+        return Boolean.TRUE.equals(jdbc.queryForObject(
+                "SELECT password_hash = crypt(?, password_hash) FROM usuario WHERE correo = 'admin.dev@notiurba.local'",
+                Boolean.class, clave));
     }
 
     /** Lee application.yml sin variables de entorno, como un servidor al que le falta ADMIN_DEV_PASSWORD. */
@@ -81,22 +86,20 @@ class AdminSemillaIntegracionTest {
     }
 
     @Test
-    void unaBaseNuevaNoQuedaConUnaClaveConocida() throws IOException {
-        DataSource fuente = bd.fuente();
-        Flyway.configure().dataSource(fuente).placeholders(Map.of("adminPassword", claveSinVariable()))
-                .load().migrate();
+    void unaBaseNuevaSiembraElAdminConLaClaveAleatoriaYNoConUnaConocida() throws IOException {
+        DataSource fuente = baseNueva();
+        String generada = claveSinVariable();
+        Flyway.configure().dataSource(fuente).placeholders(Map.of("adminPassword", generada)).load().migrate();
 
         var jdbc = new JdbcTemplate(fuente);
-        Boolean sirveLaConocida = jdbc.queryForObject(
-                "SELECT password_hash = crypt(?, password_hash) FROM usuario WHERE correo = 'admin.dev@notiurba.local'",
-                Boolean.class, CLAVE_DE_DESARROLLO);
 
-        assertThat(sirveLaConocida).isFalse();
+        assertThat(sirve(jdbc, generada)).isTrue();
+        assertThat(sirve(jdbc, CLAVE_DE_DESARROLLO)).isFalse();
     }
 
     @Test
-    void unaBaseQueYaTieneV4NoRechazaUnaClaveDistinta() throws IOException {
-        DataSource fuente = bd.fuente();
+    void unaBaseQueYaTieneV4NoRechazaUnaClaveDistintaNiCambiaLaClave() throws IOException {
+        DataSource fuente = baseNueva();
         Flyway.configure().dataSource(fuente).placeholders(Map.of("adminPassword", CLAVE_DE_DESARROLLO))
                 .load().migrate();
 
@@ -106,5 +109,6 @@ class AdminSemillaIntegracionTest {
         assertThatCode(() -> Flyway.configure().dataSource(fuente)
                 .placeholders(Map.of("adminPassword", claveSinVariable())).load().validate())
                 .doesNotThrowAnyException();
+        assertThat(sirve(new JdbcTemplate(fuente), CLAVE_DE_DESARROLLO)).isTrue();
     }
 }
