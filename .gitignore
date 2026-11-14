@@ -16,3 +16,5 @@ baseline-maven.log
 edt51-latency.json
 external-results/
 !**/.env.validation.example
+# Copias de la base (traen datos personales)
+*.dump
