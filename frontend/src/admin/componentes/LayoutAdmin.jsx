@@ -24,7 +24,6 @@ export default function LayoutAdmin() {
           <NavLink to="/admin/mapa">Mapa de calor</NavLink>
           <NavLink to="/admin/configuracion">Configuración</NavLink>
         </nav>
-        <span className="admin__rol">Administrador · todas las comunas</span>
         <Boton variante="secundario" onClick={salir}>Cerrar sesión</Boton>
       </header>
       <main className="admin__contenido">

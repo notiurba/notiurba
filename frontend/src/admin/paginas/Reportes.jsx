@@ -8,7 +8,7 @@ import Boton from '../../compartido/componentes/Boton'
 import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
 import useCargar from '../../compartido/hooks/useCargar'
 import { formatearFecha, formatearFechaHora } from '../../compartido/utilidades/fechas'
-import { ESTADOS_REPORTE, ESTADO_ENVIADO, estadosSiguientes, lugarDelReporte } from '../../compartido/utilidades/reportes'
+import { ESTADOS_REPORTE, ESTADO_ENVIADO, comunasConReportes, estadosConReportes, estadosSiguientes, lugarDelReporte } from '../../compartido/utilidades/reportes'
 import './Reportes.css'
 
 const ESTADOS = ['Todos', ...ESTADOS_REPORTE]
@@ -30,7 +30,7 @@ export default function Reportes() {
   const [pestana, setPestana] = useState('resumen')
 
   const reportes = useMemo(() => datos ?? [], [datos])
-  const comunas = [...new Set(reportes.map((r) => r.idComuna))].sort((a, b) => a - b)
+  const comunas = comunasConReportes(reportes)
   const categorias = [...new Set(reportes.map((r) => r.categoria))]
 
   // Los filtros de arriba (sin el de estado) deciden los números de las pestañas de estado.
@@ -92,7 +92,7 @@ export default function Reportes() {
         </div>
 
         <div className="adm-rep__estados">
-          {ESTADOS.map((e) => (
+          {estadosConReportes(ESTADOS, cuenta, estado).map((e) => (
             <Filtro key={e} activo={estado === e} onClick={() => setEstado(e)}>
               {e} ({cuenta(e)})
             </Filtro>
@@ -125,7 +125,7 @@ export default function Reportes() {
                       </button>
                     </td>
                     <td>{r.categoria}</td>
-                    <td className="adm-rep__extra">Comuna {r.idComuna}</td>
+                    <td className="adm-rep__extra">{r.idComuna != null ? `Comuna ${r.idComuna}` : 'Sin comuna'}</td>
                     <td className="adm-rep__extra">{formatearFecha(r.creadoEn)}</td>
                     <td><ChipEstado estado={r.estado} /></td>
                   </tr>

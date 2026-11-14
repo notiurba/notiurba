@@ -26,3 +26,9 @@ export const estadosSiguientes = (estado) => {
   return ESTADOS_REPORTE.filter((e, i) => i > actual && e !== ESTADO_ENVIADO)
 }
 
+// Filtros del panel: solo lo que tiene reportes. «Todos» y el estado elegido se quedan aunque estén en cero.
+export const comunasConReportes = (reportes) =>
+  [...new Set(reportes.map((r) => r.idComuna).filter((c) => c != null))].sort((a, b) => a - b)
+export const estadosConReportes = (estados, cuenta, elegido) =>
+  estados.filter((e) => e === 'Todos' || e === elegido || cuenta(e) > 0)
+

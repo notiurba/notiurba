@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { ESTADOS_REPORTE, estadosSiguientes, identificadorEstado, lugarDelReporte, puedeActualizar, textoLugar } from './reportes.js'
+import { ESTADOS_REPORTE, comunasConReportes, estadosConReportes, estadosSiguientes, identificadorEstado, lugarDelReporte, puedeActualizar, textoLugar } from './reportes.js'
 
 test('solo se puede actualizar un reporte enviado o en trámite', () => {
   assert.equal(puedeActualizar({ estado: 'Enviado' }), true)
@@ -40,5 +40,14 @@ test('un reporte sin lugar escrito dice si hay punto en el mapa o que no tiene u
   assert.equal(lugarDelReporte({ latitud: 4.08, longitud: -76.19 }), 'Punto marcado en el mapa')
   assert.equal(lugarDelReporte({ latitud: null, longitud: null }), 'Sin ubicación')
   assert.equal(lugarDelReporte({}), 'Sin ubicación')
+})
+
+test('los filtros del panel solo ofrecen lo que tiene reportes', () => {
+  const reportes = [{ idComuna: 7 }, { idComuna: 4 }, { idComuna: 7 }, { idComuna: null }]
+  assert.deepEqual(comunasConReportes(reportes), [4, 7])
+  const cuentas = { Todos: 6, Recibido: 3, Enviado: 3, 'En trámite': 0, Resuelto: 0 }
+  const cuenta = (e) => cuentas[e]
+  assert.deepEqual(estadosConReportes(['Todos', ...ESTADOS_REPORTE], cuenta, 'Todos'), ['Todos', 'Recibido', 'Enviado'])
+  assert.deepEqual(estadosConReportes(['Todos', ...ESTADOS_REPORTE], cuenta, 'Resuelto'), ['Todos', 'Recibido', 'Enviado', 'Resuelto'])
 })
 
