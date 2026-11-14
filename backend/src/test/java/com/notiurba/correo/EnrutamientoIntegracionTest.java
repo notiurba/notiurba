@@ -138,6 +138,99 @@ class EnrutamientoIntegracionTest {
         assertThat(jdbc.queryForObject("SELECT count(*) FROM evento_correo WHERE id_evento=?",Integer.class,id)).isEqualTo(1);
         jdbc.update("DELETE FROM evento_correo WHERE id_evento=?",id);
     }
+    @Test void conDestinoDePruebaLaColaEnviaSoloAEsaDireccionConPrueba() {
+        String codigo=reporte(1,false);
+        org.springframework.test.util.ReflectionTestUtils.setField(servicio,"destinoPrueba","bandeja@example.test");
+        when(proveedor.enviar(any())).thenReturn("fake-"+UUID.randomUUID());
+        servicio.solicitar(correo,codigo);servicio.procesarSiguiente();
+        var enviado=org.mockito.ArgumentCaptor.forClass(CorreoSaliente.class);verify(proveedor).enviar(enviado.capture());
+        assertThat(enviado.getValue().para()).containsExactly("bandeja@example.test");
+        assertThat(enviado.getValue().asunto()).startsWith("[PRUEBA] ");
+        assertThat(enviado.getValue().texto()).contains("servicioalciudadano@tulua.gov.co");
+        assertThat(servicio.consultar(correo,codigo).estado()).isEqualTo("ENVIADO");
+    }
+    @Test void sinDestinoDePruebaLaColaEnviaAlDestinoDeLaRutaYMarcaEnviado() {
+        String codigo=reporte(1,false);
+        when(proveedor.enviar(any())).thenReturn("fake-"+UUID.randomUUID());
+        servicio.solicitar(correo,codigo);servicio.procesarSiguiente();
+        var enviado=org.mockito.ArgumentCaptor.forClass(CorreoSaliente.class);verify(proveedor).enviar(enviado.capture());
+        assertThat(enviado.getValue().para()).containsExactly("servicioalciudadano@tulua.gov.co");
+        assertThat(enviado.getValue().asunto()).doesNotContain("[PRUEBA]");
+        assertThat(enviado.getValue().texto()).doesNotContain("CORREO DE PRUEBA");
+        assertThat(servicio.consultar(correo,codigo).estado()).isEqualTo("ENVIADO");
+        assertThat(estadoGeneral(codigo)).isEqualTo("Enviado");
+    }
+
+    static final String CLAVE_WEBHOOK="secreto-sintetico";
+    static final String SECRETO_WEBHOOK="whsec_"+java.util.Base64.getEncoder().encodeToString(CLAVE_WEBHOOK.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    static String firmar(String id,String ts,String cuerpo) throws Exception {
+        var mac=javax.crypto.Mac.getInstance("HmacSHA256");
+        mac.init(new javax.crypto.spec.SecretKeySpec(CLAVE_WEBHOOK.getBytes(java.nio.charset.StandardCharsets.UTF_8),"HmacSHA256"));
+        return "v1,"+java.util.Base64.getEncoder().encodeToString(mac.doFinal((id+"."+ts+"."+cuerpo).getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+    }
+    String ahora(){return Long.toString(java.time.Instant.now().getEpochSecond());}
+    /** Un reporte ya enviado; devuelve {codigo, idProveedor}. */
+    String[] reporteEnviado() {
+        String codigo=reporte(1,false),idProveedor="fake-"+UUID.randomUUID();
+        when(proveedor.enviar(any())).thenReturn(idProveedor);servicio.solicitar(correo,codigo);servicio.procesarSiguiente();
+        return new String[]{codigo,idProveedor};
+    }
+    void esperaError(org.springframework.http.HttpStatus estado,String codigoError,org.junit.jupiter.api.function.Executable llamada) {
+        var e=Assertions.assertThrows(com.notiurba.web.error.ApiException.class,llamada);
+        assertThat(e.getStatusCode()).isEqualTo(estado);assertThat(e.getCodigo()).isEqualTo(codigoError);
+    }
+    @Test void avisoSinFirmaConFirmaFalsaOVencidaSeRechazaYNoCambiaNada() throws Exception {
+        var enviado=reporteEnviado();
+        String id="evt-"+UUID.randomUUID(),ts=ahora(),body="{\"type\":\"email.bounced\",\"data\":{\"email_id\":\""+enviado[1]+"\"}}";
+        var webhook=new ReboteController(SECRETO_WEBHOOK,jdbc,new ObjectMapper());
+        esperaError(org.springframework.http.HttpStatus.UNAUTHORIZED,"FIRMA_INVALIDA",()->webhook.recibir(id,ts,null,body));
+        esperaError(org.springframework.http.HttpStatus.UNAUTHORIZED,"FIRMA_INVALIDA",()->webhook.recibir(id,ts,"v1,AAAA",body));
+        String vieja=Long.toString(java.time.Instant.now().getEpochSecond()-3600);
+        esperaError(org.springframework.http.HttpStatus.UNAUTHORIZED,"FIRMA_INVALIDA",()->webhook.recibir(id,vieja,firmar(id,vieja,body),body));
+        var sinSecreto=new ReboteController("",jdbc,new ObjectMapper());
+        esperaError(org.springframework.http.HttpStatus.UNAUTHORIZED,"FIRMA_INVALIDA",()->sinSecreto.recibir(id,ts,firmar(id,ts,body),body));
+        assertThat(servicio.consultar(correo,enviado[0]).estado()).isEqualTo("ENVIADO");
+        assertThat(servicio.consultar(correo,enviado[0]).rebote()).isFalse();
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM evento_correo WHERE id_evento=?",Integer.class,id)).isZero();
+    }
+    @Test void quejaFirmadaTambienMarcaReboteYOtrosEventosSeIgnoran() throws Exception {
+        var enviado=reporteEnviado();
+        var webhook=new ReboteController(SECRETO_WEBHOOK,jdbc,new ObjectMapper());
+        String entregado="evt-"+UUID.randomUUID(),ts=ahora(),cuerpoEntregado="{\"type\":\"email.delivered\",\"data\":{\"email_id\":\""+enviado[1]+"\"}}";
+        webhook.recibir(entregado,ts,firmar(entregado,ts,cuerpoEntregado),cuerpoEntregado);
+        assertThat(servicio.consultar(correo,enviado[0]).rebote()).isFalse();
+        String queja="evt-"+UUID.randomUUID(),cuerpoQueja="{\"type\":\"email.complained\",\"data\":{\"email_id\":\""+enviado[1]+"\"}}";
+        webhook.recibir(queja,ts,firmar(queja,ts,cuerpoQueja),cuerpoQueja);
+        var estado=servicio.consultar(correo,enviado[0]);
+        assertThat(estado.rebote()).isTrue();assertThat(estado.estado()).isEqualTo("FALLIDO");assertThat(estado.reintentable()).isFalse();
+        assertThat(estado.motivo()).isEqualTo("No pudimos entregar el correo a la entidad.");
+        assertThat(estadoGeneral(enviado[0])).isEqualTo("Enviado");
+        jdbc.update("DELETE FROM evento_correo WHERE id_evento=?",queja);
+    }
+    @Test void avisoFirmadoConIdentificadorVacioOExcesivoEsInvalido() throws Exception {
+        var webhook=new ReboteController(SECRETO_WEBHOOK,jdbc,new ObjectMapper());
+        for(String email:new String[]{"","x".repeat(101)}) {
+            String id="evt-"+UUID.randomUUID(),ts=ahora(),body="{\"type\":\"email.bounced\",\"data\":{\"email_id\":\""+email+"\"}}";
+            esperaError(org.springframework.http.HttpStatus.BAD_REQUEST,"VALIDACION",()->webhook.recibir(id,ts,firmar(id,ts,body),body));
+        }
+    }
+    @Test void falloNoReintentableQuedaFallidoConMotivoAmableYNoSeReintentaSolo() {
+        String codigo=reporte(1,false);
+        when(proveedor.enviar(any())).thenThrow(new CorreoNoEnviadoException("datos inválidos",false));
+        servicio.solicitar(correo,codigo);servicio.procesarSiguiente();servicio.procesarSiguiente();
+        verify(proveedor,times(1)).enviar(any());
+        var estado=servicio.consultar(correo,codigo);
+        assertThat(estado.estado()).isEqualTo("FALLIDO");assertThat(estado.reintentable()).isFalse();
+        assertThat(estado.motivo()).isEqualTo("No pudimos entregar el correo a la entidad.");
+        assertThat(estadoGeneral(codigo)).isEqualTo("Recibido");
+        assertThatThrownBy(()->servicio.solicitar(correo,codigo)).isInstanceOf(com.notiurba.web.error.ApiException.class);
+    }
+    @Test void estadoYMensajeDeUnReporteAjenoDanNoEncontrado() {
+        String codigo=reporte(1,false);
+        for(org.junit.jupiter.api.function.Executable llamada:new org.junit.jupiter.api.function.Executable[]{
+            ()->servicio.consultar("otra@example.test",codigo),()->servicio.mensaje("otra@example.test",codigo)})
+            esperaError(org.springframework.http.HttpStatus.NOT_FOUND,"NO_ENCONTRADO",llamada);
+    }
     String estadoGeneral(String codigo){return jdbc.queryForObject("SELECT e.nombre FROM reporte r JOIN estado_reporte e USING(id_estado_reporte) WHERE codigo_seguimiento=?",String.class,codigo);}
 
     @Test void colaDeshabilitadaConservaPendienteSinLlamarAlProveedor() {
