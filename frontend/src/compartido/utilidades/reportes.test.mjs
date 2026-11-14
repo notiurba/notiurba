@@ -75,3 +75,9 @@ test('el aviso del ciudadano se ve hasta que el administrador responde o el repo
   assert.equal(avisoDelCiudadano({ estado: 'Recibido' }), null)
 })
 
+test('con un aviso del ciudadano el selector empieza en el primer avance, no en «mantener»', () => {
+  assert.equal(estadoElegido(['En trámite', 'Resuelto'], '', 'Resuelto'), 'Resuelto')
+  assert.equal(estadoElegido(['En trámite', 'Resuelto'], 'En trámite', 'Resuelto'), 'En trámite')
+  assert.deepEqual(estadosSiguientes('En trámite'), ['Resuelto'])
+})
+

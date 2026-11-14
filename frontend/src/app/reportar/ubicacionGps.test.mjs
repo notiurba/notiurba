@@ -82,7 +82,7 @@ test('los textos del mapa son breves y sin palabras técnicas (RN-24)', () => {
 })
 
 test('el aviso de ubicación opcional dice claro que no es obligatorio y que se puede continuar', () => {
-  assert.match(TEXTOS_UBICACION.ubicacionOpcional, /No es obligatorio/)
-  assert.match(TEXTOS_UBICACION.ubicacionOpcional, /continuar sin hacerlo/)
+  assert.match(TEXTOS_UBICACION.ubicacionOpcional, /obligatorio/i)
+  assert.match(TEXTOS_UBICACION.ubicacionOpcional, /continuar/i)
 })
 

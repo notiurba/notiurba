@@ -195,3 +195,14 @@ export function borrarTodo() {
     // ignorar
   }
 }
+
+// La persona avisa algo: queda una nota a su nombre con el estado que ya tenía (no cambia el estado oficial).
+export function agregarNotaDelCiudadano(codigo, observacion, radicado = null) {
+  const reporte = buscarReporte(codigo)
+  if (radicado) reporte.radicadoOficial = radicado
+  reporte.historial = [...reporte.historial,
+    { estado: reporte.estado, observacion, cambiadoEn: new Date().toISOString(), delCiudadano: true }]
+  guardar()
+  return reporte
+}
+

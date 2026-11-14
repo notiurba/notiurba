@@ -42,9 +42,5 @@
 
 .adm-rep__etiqueta-aviso {
   display: inline-block; margin-left: var(--nu-esp-8); padding: 2px var(--nu-esp-8); border-radius: 999px;
-  font-size: 12px; font-weight: 700; background: var(--nu-alerta-fondo); border: 1px solid var(--nu-alerta-borde); color: var(--nu-alerta-texto);
-}
-.adm-rep__aviso-total {
-  padding: var(--nu-esp-4) var(--nu-esp-12); border-radius: 999px; font-size: 13px; font-weight: 700;
-  background: var(--nu-info-fondo); border: 1px solid var(--nu-info-borde); color: var(--nu-info-texto);
+  font-size: 13px; font-weight: 700; background: var(--nu-alerta-fondo); border: 1px solid var(--nu-alerta-borde); color: var(--nu-alerta-texto);
 }

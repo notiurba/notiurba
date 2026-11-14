@@ -43,7 +43,6 @@ export default function Reportes() {
   const visibles = estado === 'Todos' ? base : base.filter((r) => r.estado === estado)
   const cuenta = (e) => (e === 'Todos' ? base.length : base.filter((r) => r.estado === e).length)
   const atrasados = reportes.filter(sinRespuesta).length
-  const conAviso = reportes.filter((r) => avisoDelCiudadano(r)).length
   const abierto = reportes.find((r) => r.codigoSeguimiento === elegido)
 
   if (cargando && !datos) return <p className="cargando-texto">Cargando reportes…</p>
@@ -60,7 +59,6 @@ export default function Reportes() {
       <section className="adm-rep__lista">
         <div className="adm-rep__titulo">
           <h1>Reportes</h1>
-          {conAviso > 0 && <span className="adm-rep__aviso-total">{conAviso} con aviso del ciudadano</span>}
           {atrasados > 0 && (
             <span className="adm-rep__atraso">
               {atrasados} con más de {DIAS_SIN_RESPUESTA} días sin respuesta
@@ -121,11 +119,12 @@ export default function Reportes() {
                       <button
                         type="button"
                         className="adm-rep__abrir"
+                        aria-describedby={avisoDelCiudadano(r) ? `aviso-${r.codigoSeguimiento}` : undefined}
                         onClick={() => { setElegido(r.codigoSeguimiento); setPestana('resumen') }}
                       >
                         {r.codigoSeguimiento}
                       </button>
-                      {avisoDelCiudadano(r) && <span className="adm-rep__etiqueta-aviso">Aviso del ciudadano</span>}
+                      {avisoDelCiudadano(r) && <span id={`aviso-${r.codigoSeguimiento}`} className="adm-rep__etiqueta-aviso">Aviso del ciudadano</span>}
                     </td>
                     <td>{r.categoria}</td>
                     <td className="adm-rep__extra">{r.idComuna != null ? `Comuna ${r.idComuna}` : 'Sin comuna'}</td>
@@ -160,7 +159,10 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
   const opciones = estadosSiguientes(reporte.estado)
   const aviso = avisoDelCiudadano(reporte)
   const [elegido, setElegido] = useState('')
-  const nuevo = estadoElegido(opciones, elegido)
+  // Con un aviso del ciudadano se puede responder sin cambiar el estado, dejando una observación.
+  const todas = aviso ? [reporte.estado, ...opciones] : opciones
+  const nuevo = estadoElegido(todas, elegido, opciones[0])
+  const soloAnotar = nuevo === reporte.estado
   const [observacion, setObservacion] = useState('')
   const [guardando, setGuardando] = useState(false)
   const guardarUnaVez = useUnaVez(guardar)
@@ -169,6 +171,10 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
 
   async function guardar(e) {
     e.preventDefault()
+    if (soloAnotar && !observacion.trim()) {
+      setFallo('Escriba la observación para dejar constancia.')
+      return
+    }
     setGuardando(true)
     setFallo('')
     setMensaje('')
@@ -190,7 +196,7 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
       <ChipEstado estado={reporte.estado} />
       {aviso && (
         <Aviso variante="alerta" titulo="Aviso del ciudadano">
-          {aviso.observacion} Para confirmarlo, cambie el estado o deje una observación.
+          {aviso.observacion} Responda cambiando el estado o dejando una observación.
         </Aviso>
       )}
       <div className="adm-rep__pestanas" role="tablist">
@@ -235,8 +241,8 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
         <label>
           Nuevo estado
           <select value={nuevo} onChange={(e) => setElegido(e.target.value)}>
-            {opciones.map((e) => (
-              <option key={e}>{e}</option>
+            {todas.map((e) => (
+              <option key={e} value={e}>{e === reporte.estado ? `Mantener «${e}» y solo anotar` : e}</option>
             ))}
           </select>
         </label>

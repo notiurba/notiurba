@@ -23,7 +23,7 @@ export const identificadorEstado = (estado) =>
 export const etiquetaEstado = (identificador) => ESTADOS_REPORTE.find((e) => identificadorEstado(e) === identificador) ?? identificador
 
 // El estado que muestra el selector del panel: el elegido si sigue siendo posible; si no, el primero que se puede.
-export const estadoElegido = (opciones, elegido) => (opciones.includes(elegido) ? elegido : (opciones[0] ?? ''))
+export const estadoElegido = (opciones, elegido, inicial = opciones[0] ?? '') => (opciones.includes(elegido) ? elegido : inicial)
 
 // A qué estado puede pasar el administrador a mano: no se retrocede y «Enviado» lo pone el envío del correo.
 export const estadosSiguientes = (estado) => {
