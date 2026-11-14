@@ -1,0 +1,15 @@
+name: Mantener despierto el servidor
+# Render Free duerme el servidor tras 15 min sin tráfico. Este aviso lo consulta cada 10 min.
+# Si GitHub pausa el aviso por falta de actividad (60 días), se reactiva desde Actions > Run workflow.
+"on":
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+permissions: {}
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Consultar /api/health
+        run: curl --fail --silent --show-error --max-time 120 --retry 2 --retry-delay 10 https://notiurba-api.onrender.com/api/health
