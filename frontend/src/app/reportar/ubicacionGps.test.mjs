@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { describirErrorGps, obtenerPosicionGps } from './ubicacionGps.js'
+import { TEXTOS_UBICACION, describirErrorGps, etiquetaContinuarUbicacion, obtenerPosicionGps } from './ubicacionGps.js'
 
 // Dobles explícitos de la API: estos casos no son permisos ni GPS de un dispositivo físico.
 test('resuelve coordenadas y solicita una lectura nueva con espera máxima de 15 segundos', async () => {
@@ -67,3 +67,17 @@ test('rechaza coordenadas inválidas sin fabricar ni guardar un punto', async ()
     await assert.rejects(obtenerPosicionGps(geo), e => e.codigo === 'NO_DISPONIBLE')
   }
 })
+
+test('con ubicación opcional el botón dice «sin ubicación» solo si la persona no puso nada', () => {
+  const vacio = { pideUbicacion: false, hayPunto: false, hayBarrio: false, hayDireccion: false }
+  assert.equal(etiquetaContinuarUbicacion(vacio), 'Continuar sin ubicación')
+  for (const dato of ['hayPunto', 'hayBarrio', 'hayDireccion']) assert.equal(etiquetaContinuarUbicacion({ ...vacio, [dato]: true }), 'Continuar')
+  assert.equal(etiquetaContinuarUbicacion({ ...vacio, pideUbicacion: true }), 'Continuar')
+})
+
+test('los textos del mapa son breves y sin palabras técnicas (RN-24)', () => {
+  assert.ok(TEXTOS_UBICACION.instruccionMapa.length < 50)
+  assert.ok(TEXTOS_UBICACION.etiquetaMapa.length < 50)
+  for (const texto of Object.values(TEXTOS_UBICACION)) assert.doesNotMatch(texto, /servidor|token|\bapi\b|cors|http|error \d/i)
+})
+

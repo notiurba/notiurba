@@ -47,6 +47,10 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
   una carta formal en primera persona (plantillas A, B y C, sin «NotiUrba» ni código) y solo se envía
   al CAIC y a Centroaguas (`info@`). Si rebota o falla, la pantalla final ofrece los canales y «Copiar
   mi mensaje». Probado el 12/11/2026 con correos reales a la bandeja de pruebas (Gmail, 360 px y escritorio).
+  Desde NOT-131 (PR #38, 14/11/2026) el detalle del reporte muestra el resultado del correo («Correo a la entidad»,
+  «El correo no llegó», «Reintentar envío», canales y «Copiar mi mensaje») y hay una guía para activar el envío
+  real: [14-activar-envio-real.md](14-activar-envio-real.md). El webhook de Resend está registrado, pero **falta
+  comprobarlo con un rebote real** (QA Q-13).
 - Catálogos públicos: tipos de documento y 133 barrios históricos (PMGR 2020).
 - Registro rápido y sin abusos (NOT-132, 13/11/2026, rama `feature/not-132-registro-rapido-y-sin-abusos`):
   el registro responde en 0,35 s (el correo sale en segundo plano); 3 fallos de ingreso en 5 min bloquean
@@ -64,6 +68,7 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
 | Correo a la entidad confuso (matrícula siempre, fecha cruda, coordenadas largas, filas vacías, fotos solo como enlaces) | NOT-130 |
 | ~~Aviso de rebotes en el detalle del reporte~~: hecho el 13/11/2026, en PR. Queda activar el envío real ([guía](14-activar-envio-real.md)) | NOT-131 |
 | ~~Registro lento, error de Google en celular, límites y duplicados~~: hecho el 13/11/2026, en PR | NOT-132 |
+| **Ajustes tras la prueba de Andrés (14/11/2026):** el panel no deja cambiar el estado, ingreso con Google que mostró datos de otra cuenta, mapa que no aparece con ubicación opcional, pasos que no suben al inicio, atrás desde privacidad, lugar vacío, filtros del panel, textos del paso 3, correo HTML y UI del panel. Plan y QA en `docs/sdd/tasks.md` (PR 2) | NOT-131 (abierta) |
 | Despliegue final, respaldo de la base, administrador real (hoy usa `ADMIN_DEV_PASSWORD`) | NOT-133 |
 | La app no es PWA instalable (no hay manifiesto ni service worker) | NOT-134 |
 | Pulido: «servidor despertando», reintento de foto, GPS 10 s, atribución OSM, tono y accesibilidad | NOT-137, NOT-138, NOT-139 |
@@ -86,8 +91,12 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el
   mismo comando: ejecútelo en un entorno limpio (`env -i ...`).
 - Una base desechable: contenedor `postgis/postgis:16-3.4`. Docker Desktop debe estar abierto.
-- Última corrida completa (13/11/2026, rama de NOT-132): 424 pruebas, 0 fallos, 12 omitidas
-  (proveedores reales y enrutamiento sin base `notiurba_test*`). Las 9 de enrutamiento y la de migración de enrutamiento solo corren con
+- Última corrida completa (14/11/2026, rama de ajustes de NOT-131, con las bases desechables y `DB_*`): 451 pruebas,
+  0 fallos, 2 omitidas (proveedores reales). `MigrationIntegrationTest`, `SpatialIntegrationTest` y `CloudinaryIntegrationTest`
+  no corren sin credenciales reales (dan error por falta de configuración, ajeno al código). `AdminIntegracionTest` exige la
+  base `notiurba_test_admin_bootstrap` en `DB_URL`. Sin `DB_*` solo corren 278: las
+  pruebas con Spring se omiten en silencio. Antes (NOT-132): 424 pruebas, 12 omitidas.
+  Enrutamiento sin base `notiurba_test*`: Las 9 de enrutamiento y la de migración de enrutamiento solo corren con
   `NOTIURBA_TEST_DB_URL` apuntando a una base `notiurba_test*` (con `postgis` y `pgcrypto`); sin ella
   se omiten y no cuentan como pasadas.
 - QA de punta a punta del panel contra el jar real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones).
@@ -100,7 +109,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 
 ### Frontend (`frontend/`, React 19 + Vite 8, pnpm)
 
-- `pnpm install`, `pnpm dev`, `pnpm test` (node --test, 207 pruebas), `pnpm lint`, `pnpm build`.
+- `pnpm install`, `pnpm dev`, `pnpm test` (node --test, 226 pruebas), `pnpm lint`, `pnpm build`.
   No use npm ni suba `package-lock.json`.
 - Con `VITE_USAR_MOCKS=true` en desarrollo la API se simula (`src/simulacion/`); el build de
   producción no incluye esa carpeta.
@@ -117,7 +126,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   la entidad real. Para quitarla y volver a ponerla, sigue [14-activar-envio-real.md](14-activar-envio-real.md).
 - Netlify: `VITE_API_URL` y `VITE_GOOGLE_CLIENT_ID`.
 - Las migraciones aplicadas **no se editan**: se corrige con una migración nueva. Hoy van
-  V1 a V20 en `develop` y V21 en la rama de NOT-130 (la siguiente es V22).
+  V1 a V22 en `develop` (la siguiente es V23).
 
 ## 6. Datos de negocio que se confunden fácil
 

@@ -18,6 +18,7 @@ import documentoRepetido from './datos/auth/registro.error.documento-repetido.js
 import enlaceVencido from './datos/auth/restablecer.error.enlace-vencido.json'
 import verificarVencido from './datos/auth/verificar.error.enlace-vencido.json'
 import reenviarOk from './datos/auth/reenviar-verificacion.ok.json'
+import { etiquetaEstado } from '../compartido/utilidades/reportes'
 
 // Arma un ErrorApi con el cuerpo que daría el servidor.
 function crearErrorApi(estado, cuerpo = {}, ruta = '') {
@@ -274,7 +275,7 @@ const RUTAS = [
   }],
   ['GET', '/api/admin/reportes', () => almacen.listarReportes()],
   ['PATCH', '/api/admin/reportes/:codigo/estado', (cuerpo, { codigo }) =>
-    almacen.cambiarEstado(codigo, cuerpo.estado, cuerpo.observacion || null)],
+    almacen.cambiarEstado(codigo, etiquetaEstado(cuerpo.estado), cuerpo.observacion || null)],
 ]
 
 // Convierte '/api/reportes/:codigo' en una expresión que reconoce la ruta y saca el parámetro.

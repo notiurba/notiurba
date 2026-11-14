@@ -7,7 +7,7 @@ import BotonIcono from '../../compartido/componentes/BotonIcono'
 import ChipEstado from '../../compartido/componentes/ChipEstado'
 import { IconoCopiar, IconoCorreo, IconoX } from '../../compartido/componentes/Iconos'
 import useCargar from '../../compartido/hooks/useCargar'
-import { textoLugar } from '../../compartido/utilidades/reportes'
+import { lugarDelReporte } from '../../compartido/utilidades/reportes'
 import { estadoCorreo } from '../servicios/correoReportes'
 import { ofrecerOtrosCanales, presentacionCorreo } from '../componentes/estadoCorreo'
 import OtrosCanales from '../componentes/OtrosCanales'
@@ -86,7 +86,7 @@ export default function ReporteEnviado() {
             </div>
             <div className="enviado__fila">
               <span>Lugar</span>
-              <strong>{textoLugar(reporte) || 'Punto marcado en el mapa'}</strong>
+              <strong>{lugarDelReporte(reporte)}</strong>
             </div>
           </>
         )}

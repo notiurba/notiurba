@@ -58,6 +58,34 @@ class PlantillaReporteTest {
     }
 
     @Test
+    void laDescripcionLaUbicacionLaFechaYLaEvidenciaVanSeparadasPorUnEspacio() {
+        Mensaje m = plantilla.componer(completo().build(), GrupoPlantilla.A);
+
+        assertThat(m.texto()).contains("Hechos: Hay un hueco grande frente al colegio.\n\nUbicación: ",
+                "-76.19500\n\nFecha del registro: 9 de noviembre de 2026, 10:07 a. m.\n\nEvidencia: 2 fotografías.\n");
+        List<String> orden = List.of("Hechos", "Ubicación", "Fecha del registro", "Evidencia");
+        int anterior = -1;
+        for (String etiqueta : orden) {
+            int posicion = m.html().indexOf(etiqueta + ":</strong>");
+            assertThat(posicion).as(etiqueta).isGreaterThan(anterior);
+            anterior = posicion;
+        }
+        assertThat(m.html().split("<p style=\"margin:0 0 14px\">", -1)).hasSize(5);
+    }
+
+    @Test
+    void elHtmlTienePresentacionInstitucionalSinMarcaNiCodigo() {
+        Mensaje a = plantilla.componer(completo().build(), GrupoPlantilla.A);
+        Mensaje b = plantilla.componer(completo().build(), GrupoPlantilla.B);
+
+        assertThat(a.html()).contains("bgcolor=\"#0a2f6b\"", ">Petición ciudadana</div>", ">Vías, huecos y andenes</div>",
+                "border-left:4px solid #0a2f6b", "role=\"presentation\"").doesNotContainIgnoringCase(">NotiUrba").doesNotContainIgnoringCase("NotiUrba<");
+        assertThat(b.html()).contains(">Solicitud ciudadana</div>");
+        assertThat(a.html()).doesNotContain("NU-", "Dependencia");
+        assertThat(a.html().indexOf("Respetados señores")).isGreaterThan(a.html().indexOf("Petición ciudadana"));
+    }
+
+    @Test
     void omiteLasFilasOpcionalesVaciasYLaEvidenciaSinFotos() {
         Mensaje m = plantilla.componer(completo().telefono(" ").direccionIncidente(null).fotos(List.of()).build(),
                 GrupoPlantilla.A);
@@ -67,6 +95,13 @@ class PlantillaReporteTest {
                 .doesNotContain("Evidencia", "Fotografía", " ·  · ", "null");
         assertThat(m.html()).doesNotContain("<img", "Evidencia", "null");
         assertThat(m.secciones()).extracting(Seccion::id).doesNotContain("evidencia", "matricula");
+    }
+
+    @Test
+    void sinEvidenciaHayUnaSolaLineaEnBlancoAntesDeLaSolicitud() {
+        Mensaje m = plantilla.componer(completo().fotos(List.of()).build(), GrupoPlantilla.A);
+
+        assertThat(m.texto()).contains("10:07 a. m.\n\nSolicito atender").doesNotContain("\n\n\n");
     }
 
     @Test
@@ -97,7 +132,7 @@ class PlantillaReporteTest {
         Mensaje m = plantilla.componer(completo().barrio(null).comuna(null).direccionIncidente(null).build(), GrupoPlantilla.A);
 
         assertThat(m.texto()).contains("Ubicación: https://www.openstreetmap.org/?mlat=4.08672&mlon=-76.19500 · 4.08672, -76.19500\n");
-        assertThat(m.html()).contains("<strong>Ubicación:</strong> <a href=");
+        assertThat(m.html()).contains("Ubicación:</strong> <a href=");
     }
 
     @Test

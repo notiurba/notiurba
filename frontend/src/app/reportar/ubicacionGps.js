@@ -1,11 +1,16 @@
 export const TEXTOS_UBICACION = {
-  antesDelPermiso: 'Podemos utilizar su ubicación para indicar dónde ocurrió el problema. También puede seleccionar el lugar manualmente en el mapa.',
-  instruccionMapa: 'Toque el mapa para colocar o cambiar el marcador.',
-  ayudaTeclado: 'Con teclado, use las flechas para desplazar el mapa y pulse Enter o Espacio para seleccionar el centro.',
+  instruccionMapa: 'Toque el mapa para marcar el lugar.',
+  etiquetaMapa: 'Mapa para marcar el lugar del problema',
+  ayudaTeclado: 'Con teclado, use las flechas para mover el mapa y Enter para marcar el centro.',
+  ubicacionOpcional: 'En este tipo de reporte marcar el lugar es opcional.',
   volverUbicar: 'Volver a obtener mi ubicación',
   puntoRequerido: 'Marque el punto donde ocurrió el problema antes de continuar.',
   puntoOBarrio: 'Marque el punto donde ocurrió el problema o seleccione un barrio antes de continuar.',
 }
+
+// El botón del paso 2: «Continuar sin ubicación» solo si es opcional y la persona no puso nada.
+export const etiquetaContinuarUbicacion = ({ pideUbicacion, hayPunto, hayBarrio, hayDireccion }) =>
+  pideUbicacion || hayPunto || hayBarrio || hayDireccion ? 'Continuar' : 'Continuar sin ubicación'
 
 // Se interpreta el código de Geolocation, nunca el texto técnico del navegador.
 export function describirErrorGps(error) {

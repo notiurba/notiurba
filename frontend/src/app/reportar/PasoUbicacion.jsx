@@ -13,7 +13,7 @@ import { validarUbicacion } from '../../compartido/validaciones/reporte'
 import MapaUbicacion from './MapaUbicacion'
 import ResumenCategoria from './ResumenCategoria'
 import { useReporte } from './useReporte'
-import { obtenerPosicionGps, TEXTOS_UBICACION } from './ubicacionGps'
+import { etiquetaContinuarUbicacion, obtenerPosicionGps, TEXTOS_UBICACION } from './ubicacionGps'
 import './Reportar.css'
 import './PasoUbicacion.css'
 
@@ -71,11 +71,11 @@ export default function PasoUbicacion() {
     if (encontrados.punto && borrador.latitud == null && borrador.longitud == null && !borrador.idBarrio) {
       encontrados.punto = barrios.length ? TEXTOS_UBICACION.puntoOBarrio : TEXTOS_UBICACION.puntoRequerido
     }
-    if (pideUbicacion && borrador.idBarrio && !barrios.some(b => String(b.idBarrio) === borrador.idBarrio)) {
+    if (borrador.idBarrio && !barrios.some(b => String(b.idBarrio) === borrador.idBarrio)) {
       if (cargandoBarrios) {
         encontrados.punto = 'Espere a que termine de cargar la lista para comprobar el barrio seleccionado.'
-      } else if (hayPunto && !encontrados.punto) {
-        // Un punto válido permite continuar sin enviar un ID obsoleto del borrador.
+      } else if ((hayPunto && !encontrados.punto) || !pideUbicacion) {
+        // Un punto válido (o una ubicación opcional) permite continuar sin enviar un ID obsoleto del borrador.
         cambiar({ idBarrio: '' })
       } else {
         encontrados.punto = 'Seleccione un barrio disponible o marque el lugar en el mapa.'
@@ -91,21 +91,19 @@ export default function PasoUbicacion() {
 
       <FormularioPantalla
         alEnviar={continuar}
-        acciones={<Boton type="submit">{pideUbicacion ? 'Continuar' : 'Continuar sin ubicación'}</Boton>}
+        acciones={<Boton type="submit">{etiquetaContinuarUbicacion({ pideUbicacion, hayPunto, hayBarrio: Boolean(barrio), hayDireccion: Boolean(borrador.direccion.trim()) })}</Boton>}
       >
         <PasosBarra paso={2} total={4} etiqueta="Ubicación" />
         <ResumenCategoria categoria={categoria} />
-        <h2 className="reportar__titulo">{pideUbicacion ? '¿Dónde ocurrió?' : 'Ubicación no requerida'}</h2>
-        {!pideUbicacion && <Aviso>Para este tipo de reporte la ubicación es opcional. Si quiere, márquela en el mapa: ayuda a ubicar el problema. Si no, pase al siguiente paso.</Aviso>}
-        {pideUbicacion && <>
+        <h2 className="reportar__titulo">¿Dónde ocurrió?</h2>
+        {!pideUbicacion && <Aviso>{TEXTOS_UBICACION.ubicacionOpcional}</Aviso>}
         {import.meta.env.DEV && import.meta.env.VITE_USAR_MOCKS === 'true' && (
           <Aviso titulo="Modo demostración">
             La lista contiene barrios de prueba y no representa el catálogo real de Tuluá.
           </Aviso>
         )}
-        <p id="ubicacion-explicacion" className="reportar__mensaje">{TEXTOS_UBICACION.antesDelPermiso}</p>
         <p id="ubicacion-instruccion" className="reportar__mensaje">{TEXTOS_UBICACION.instruccionMapa}</p>
-        <p id="ubicacion-teclado" className="reportar__mensaje">{TEXTOS_UBICACION.ayudaTeclado}</p>
+        <p id="ubicacion-teclado" className="solo-lector">{TEXTOS_UBICACION.ayudaTeclado}</p>
 
         <MapaUbicacion latitud={borrador.latitud} longitud={borrador.longitud} alElegir={elegirPunto} error={errores.punto} />
         {errores.punto && (
@@ -114,7 +112,7 @@ export default function PasoUbicacion() {
           </p>
         )}
 
-        <Boton variante="secundario" onClick={usarGps} cargando={buscandoGps} textoCargando="Buscando su ubicación…" aria-describedby="ubicacion-explicacion">
+        <Boton variante="secundario" onClick={usarGps} cargando={buscandoGps} textoCargando="Buscando su ubicación…">
           <IconoUbicacion tamano={20} />
           {gpsIntentado || hayPunto ? TEXTOS_UBICACION.volverUbicar : 'Usar mi ubicación actual (GPS)'}
         </Boton>
@@ -129,7 +127,7 @@ export default function PasoUbicacion() {
         {(hayPunto || barrio) && (
           <Aviso titulo="Ubicación seleccionada">
             {hayPunto ? 'Punto marcado en el mapa. ' : `Barrio ${barrio.nombre}. `}
-            El servidor comprobará la cobertura y asignará la comuna al guardar.
+            Comprobaremos la cobertura y asignaremos la comuna al guardar.
           </Aviso>
         )}
         {hayPunto && <Boton variante="texto" onClick={() => elegirPunto(null, null)}>Quitar punto y elegir barrio</Boton>}
@@ -157,10 +155,10 @@ export default function PasoUbicacion() {
           <Selector
             id="idBarrio"
             etiqueta="Barrio"
-            opcional={hayPunto}
+            opcional={hayPunto || !pideUbicacion}
             disabled={cargandoBarrios}
             marcador="Seleccione el barrio"
-            ayuda="Si no marcó un lugar, seleccione un barrio disponible."
+            ayuda={pideUbicacion ? 'Si no marcó un lugar, seleccione un barrio disponible.' : undefined}
             opciones={barrios.map((b) => ({ valor: b.idBarrio, texto: b.nombre }))}
             value={borrador.idBarrio}
             onChange={(e) => cambiar({ idBarrio: e.target.value })}
@@ -170,7 +168,6 @@ export default function PasoUbicacion() {
         {errorBarrios && <Aviso variante="error" titulo="No pudimos cargar los barrios">
           Puede marcar el lugar en el mapa. <button type="button" className="enlace-boton" onClick={recargarCatalogos}>Reintentar</button>
         </Aviso>}
-        </>}
       </FormularioPantalla>
 
       <HojaInferior

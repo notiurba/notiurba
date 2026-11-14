@@ -14,7 +14,7 @@ import HojaActualizarReporte from '../componentes/HojaActualizarReporte'
 import OtrosCanales from '../componentes/OtrosCanales'
 import { resumenCorreoDetalle } from '../componentes/estadoCorreo'
 import { enviar, estadoCorreo } from '../servicios/correoReportes'
-import { puedeActualizar, textoLugar } from '../../compartido/utilidades/reportes'
+import { lugarDelReporte, puedeActualizar } from '../../compartido/utilidades/reportes'
 import './DetalleReporte.css'
 
 // Seguimiento de un reporte: datos, estado actual e historial de cambios.
@@ -74,7 +74,7 @@ function DetalleDeReporte({ codigo }) {
             </div>
             <div>
               <dt>Lugar</dt>
-              <dd>{textoLugar(reporte)}</dd>
+              <dd>{lugarDelReporte(reporte)}</dd>
             </div>
             <div>
               <dt>Descripción</dt>

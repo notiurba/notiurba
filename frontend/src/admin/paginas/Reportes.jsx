@@ -8,11 +8,10 @@ import Boton from '../../compartido/componentes/Boton'
 import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
 import useCargar from '../../compartido/hooks/useCargar'
 import { formatearFecha, formatearFechaHora } from '../../compartido/utilidades/fechas'
-import { ESTADOS_REPORTE, ESTADO_ENVIADO, textoLugar } from '../../compartido/utilidades/reportes'
+import { ESTADOS_REPORTE, ESTADO_ENVIADO, comunasConReportes, estadoElegido, estadosConReportes, estadosSiguientes, lugarDelReporte } from '../../compartido/utilidades/reportes'
 import './Reportes.css'
 
 const ESTADOS = ['Todos', ...ESTADOS_REPORTE]
-const ESTADOS_EDITABLES = ESTADOS_REPORTE.slice(1)
 const DIAS_SIN_RESPUESTA = 15
 const DIA_MS = 24 * 60 * 60 * 1000
 
@@ -31,7 +30,7 @@ export default function Reportes() {
   const [pestana, setPestana] = useState('resumen')
 
   const reportes = useMemo(() => datos ?? [], [datos])
-  const comunas = [...new Set(reportes.map((r) => r.idComuna))].sort((a, b) => a - b)
+  const comunas = comunasConReportes(reportes)
   const categorias = [...new Set(reportes.map((r) => r.categoria))]
 
   // Los filtros de arriba (sin el de estado) deciden los números de las pestañas de estado.
@@ -93,7 +92,7 @@ export default function Reportes() {
         </div>
 
         <div className="adm-rep__estados">
-          {ESTADOS.map((e) => (
+          {estadosConReportes(ESTADOS, cuenta, estado).map((e) => (
             <Filtro key={e} activo={estado === e} onClick={() => setEstado(e)}>
               {e} ({cuenta(e)})
             </Filtro>
@@ -126,7 +125,7 @@ export default function Reportes() {
                       </button>
                     </td>
                     <td>{r.categoria}</td>
-                    <td className="adm-rep__extra">Comuna {r.idComuna}</td>
+                    <td className="adm-rep__extra">{r.idComuna != null ? `Comuna ${r.idComuna}` : 'Sin comuna'}</td>
                     <td className="adm-rep__extra">{formatearFecha(r.creadoEn)}</td>
                     <td><ChipEstado estado={r.estado} /></td>
                   </tr>
@@ -155,25 +154,27 @@ export default function Reportes() {
 }
 
 function Detalle({ reporte, pestana, setPestana, alGuardar }) {
-  const [nuevo, setNuevo] = useState(reporte.estado)
+  const opciones = estadosSiguientes(reporte.estado)
+  const [elegido, setElegido] = useState('')
+  const nuevo = estadoElegido(opciones, elegido)
   const [observacion, setObservacion] = useState('')
   const [guardando, setGuardando] = useState(false)
   const guardarUnaVez = useUnaVez(guardar)
   const [mensaje, setMensaje] = useState('')
-  const [fallo, setFallo] = useState(false)
+  const [fallo, setFallo] = useState('')
 
   async function guardar(e) {
     e.preventDefault()
     setGuardando(true)
-    setFallo(false)
+    setFallo('')
     setMensaje('')
     try {
       await cambiarEstadoReporte(reporte.codigoSeguimiento, nuevo, observacion.trim() || undefined)
       setMensaje('Estado actualizado.')
       setObservacion('')
       alGuardar()
-    } catch {
-      setFallo(true)
+    } catch (error) {
+      setFallo(error?.mensaje || 'No pudimos guardar el cambio. Intente de nuevo.')
     } finally {
       setGuardando(false)
     }
@@ -201,7 +202,7 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
       {pestana === 'resumen' ? (
         <dl className="adm-rep__datos">
           <dt>Tipo</dt><dd>{reporte.categoria}</dd>
-          <dt>Ubicación</dt><dd>{textoLugar(reporte)}</dd>
+          <dt>Ubicación</dt><dd>{lugarDelReporte(reporte)}</dd>
           <dt>Descripción</dt><dd>{reporte.descripcion}</dd>
           <dt>Creado</dt><dd>{formatearFecha(reporte.creadoEn)}</dd>
           {reporte.radicadoOficial && (<><dt>Radicado oficial</dt><dd>{reporte.radicadoOficial}</dd></>)}
@@ -217,12 +218,15 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
         </ol>
       )}
 
+      {opciones.length === 0 ? (
+        <p className="adm-rep__vacio">Este reporte ya está resuelto: no admite más cambios.</p>
+      ) : (
       <form className="adm-rep__cambio" onSubmit={guardarUnaVez}>
         <h3>Cambiar estado</h3>
         <label>
           Nuevo estado
-          <select value={nuevo} onChange={(e) => setNuevo(e.target.value)}>
-            {ESTADOS_EDITABLES.map((e) => (
+          <select value={nuevo} onChange={(e) => setElegido(e.target.value)}>
+            {opciones.map((e) => (
               <option key={e}>{e}</option>
             ))}
           </select>
@@ -231,12 +235,13 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
           Observación (opcional)
           <textarea rows={3} value={observacion} onChange={(e) => setObservacion(e.target.value)} />
         </label>
-        {fallo && <Aviso variante="error">No pudimos guardar el cambio. Intente de nuevo.</Aviso>}
-        {mensaje && <Aviso variante="exito">{mensaje}</Aviso>}
-        <Boton type="submit" cargando={guardando} textoCargando="Guardando…" disabled={nuevo === reporte.estado}>
+        {fallo && <Aviso variante="error">{fallo}</Aviso>}
+        <Boton type="submit" cargando={guardando} textoCargando="Guardando…" disabled={!nuevo}>
           Guardar cambio
         </Boton>
       </form>
+      )}
+      {mensaje && <Aviso variante="exito">{mensaje}</Aviso>}
     </div>
   )
 }

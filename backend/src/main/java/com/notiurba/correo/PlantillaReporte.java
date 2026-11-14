@@ -125,37 +125,45 @@ public class PlantillaReporte {
                 + (contacto == null ? "" : " Recibiré respuesta en " + contacto + ".");
 
         StringBuilder t = new StringBuilder();
+        String titulo = grupo == GrupoPlantilla.B ? "Solicitud ciudadana" : "Petición ciudadana";
         StringBuilder h = new StringBuilder("<!doctype html><html lang=\"es\"><head><meta charset=\"utf-8\">"
                 + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>" + esc(asunto) + "</title></head>"
-                + "<body style=\"margin:0;padding:0;background:#ffffff;color:#1f2937;font-family:Arial,Helvetica,sans-serif;"
-                + "font-size:15px;line-height:1.5\"><div style=\"max-width:600px;margin:0 auto;padding:16px;"
-                + "overflow-wrap:anywhere;word-break:break-word\">");
+                + "<body style=\"margin:0;padding:0;background:#eef2f7;color:#1f2937;font-family:Arial,Helvetica,sans-serif;"
+                + "font-size:15px;line-height:1.6\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" "
+                + "style=\"background:#eef2f7\"><tr><td align=\"center\" style=\"padding:16px\">"
+                + "<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"width:100%;max-width:600px\">"
+                + "<tr><td bgcolor=\"#0a2f6b\" style=\"background:#0a2f6b;color:#ffffff;padding:24px 28px;border-radius:12px 12px 0 0\">"
+                + "<div style=\"font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#cfe0ff\">" + esc(titulo) + "</div>"
+                + "<div style=\"font-size:22px;font-weight:bold;margin-top:4px\">" + esc(limpio(d.categoria())) + "</div></td></tr>"
+                + "<tr><td bgcolor=\"#ffffff\" style=\"background:#ffffff;padding:28px;border:1px solid #d9e2ef;border-top:0;"
+                + "border-radius:0 0 12px 12px;overflow-wrap:anywhere;word-break:break-word\">");
         if (grupo == GrupoPlantilla.C) {
             t.append("Señores\n").append(limpio(d.entidad())).append("\n\n");
-            h.append("<p>Señores<br>").append(esc(limpio(d.entidad()))).append("</p>");
+            h.append("<p style=\"margin:0 0 16px\">Señores<br>").append(esc(limpio(d.entidad()))).append("</p>");
         }
         parrafo(t, h, "Respetados señores:");
         parrafo(t, h, intro);
 
         String descripcion = d.descripcion() == null ? "" : d.descripcion().trim();
-        t.append(etiqueta).append(": ").append(descripcion).append('\n');
-        h.append("<p><strong>").append(etiqueta).append(":</strong> ").append(esc(descripcion).replace("\n", "<br>")).append("<br>");
+        h.append("<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:20px 0\"><tr>"
+                + "<td bgcolor=\"#f3f7fd\" style=\"background:#f3f7fd;border-left:4px solid #0a2f6b;padding:16px 18px\">");
+        t.append(etiqueta).append(": ").append(descripcion).append("\n\n");
+        fila(h, etiqueta, esc(descripcion).replace("\n", "<br>"));
         if (ubicacion != null || hayPunto) {
-            t.append("Ubicación: ").append(unir(" · ", ubicacion, mapa, coordenadas)).append('\n');
-            h.append("<strong>Ubicación:</strong> ").append(ubicacion == null ? "" : esc(ubicacion));
+            t.append("Ubicación: ").append(unir(" · ", ubicacion, mapa, coordenadas)).append("\n\n");
+            StringBuilder lugar = new StringBuilder(ubicacion == null ? "" : esc(ubicacion));
             if (hayPunto) {
-                h.append(ubicacion == null ? "" : " · ").append("<a href=\"").append(esc(mapa))
+                lugar.append(ubicacion == null ? "" : " · ").append("<a href=\"").append(esc(mapa))
                         .append("\" style=\"color:#0a2f6b\">Ver en el mapa</a> · ").append(esc(coordenadas));
             }
-            h.append("<br>");
+            fila(h, "Ubicación", lugar.toString());
         }
-        t.append("Fecha del registro: ").append(fecha).append('\n');
-        h.append("<strong>Fecha del registro:</strong> ").append(esc(fecha));
+        t.append("Fecha del registro: ").append(fecha).append("\n\n");
+        fila(h, "Fecha del registro", esc(fecha));
         if (evidencia != null) {
             t.append("Evidencia: ").append(evidencia).append(".\n");
-            h.append("<br><strong>Evidencia:</strong> ").append(evidencia).append('.');
+            fila(h, "Evidencia", evidencia + ".");
         }
-        h.append("</p>");
 
         int n = 0;
         StringBuilder miniaturas = new StringBuilder();
@@ -165,18 +173,19 @@ public class PlantillaReporte {
             t.append("Fotografía ").append(n).append(": ").append(foto).append('\n');
             miniaturas.append("<a href=\"").append(esc(foto)).append("\"><img src=\"").append(esc(miniatura(foto)))
                     .append("\" alt=\"Fotografía ").append(n).append(" del reporte\" width=\"160\" style=\"display:inline-block;")
-                    .append("width:160px;max-width:100%;height:auto;border:0;margin:0 8px 8px 0\"></a>");
+                    .append("width:160px;max-width:100%;height:auto;border:0;border-radius:6px;margin:0 8px 8px 0\"></a>");
             enlaces.append(n > 1 ? " · " : "").append("<a href=\"").append(esc(foto)).append("\" style=\"color:#0a2f6b\">Fotografía ")
                     .append(n).append("</a>");
         }
-        if (n > 0) h.append("<p>").append(miniaturas).append("<br>").append(enlaces).append("</p>");
-        t.append('\n');
+        if (n > 0) h.append("<p style=\"margin:0\">").append(miniaturas).append("<br>").append(enlaces).append("</p>");
+        h.append("</td></tr></table>");
+        if (evidencia != null) t.append('\n');
 
         parrafo(t, h, solicitud);
         parrafo(t, h, autorizo);
         String firma = unir(" · ", limpio(d.nombre()), documento);
         t.append("Atentamente,\n").append(firma);
-        h.append("<p>Atentamente,<br>").append(esc(firma)).append("</p></div></body></html>");
+        h.append("<p style=\"margin:0\">Atentamente,<br>").append(esc(firma)).append("</p></td></tr></table></td></tr></table></body></html>");
 
         List<Seccion> secciones = new ArrayList<>();
         secciones.add(new Seccion("categoria", "Categoría", limpio(d.categoria()), "categoria"));
@@ -221,7 +230,13 @@ public class PlantillaReporte {
 
     private static void parrafo(StringBuilder texto, StringBuilder html, String contenido) {
         texto.append(contenido).append("\n\n");
-        html.append("<p>").append(esc(contenido)).append("</p>");
+        html.append("<p style=\"margin:0 0 16px\">").append(esc(contenido)).append("</p>");
+    }
+
+    /** Una fila del recuadro de datos: etiqueta en azul y su valor, con aire entre filas. */
+    private static void fila(StringBuilder html, String etiqueta, String valorHtml) {
+        html.append("<p style=\"margin:0 0 14px\"><strong style=\"color:#0a2f6b\">").append(etiqueta).append(":</strong> ")
+                .append(valorHtml).append("</p>");
     }
 
     private static String unir(String separador, String... partes) {

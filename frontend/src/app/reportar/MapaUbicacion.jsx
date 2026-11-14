@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { CENTRO_TULUA, comunasTulua } from '../../compartido/geo/comunasTulua'
 import { estiloComuna } from '../../compartido/geo/estiloComunas'
 import { identificarComunaPorCoordenadas } from '../../compartido/geo/geoUtils'
+import { TEXTOS_UBICACION } from './ubicacionGps'
 import './MapaUbicacion.css'
 
 // Marcador dibujado con SVG (así no hay que empaquetar las imágenes por defecto de Leaflet).
@@ -99,7 +100,7 @@ export default function MapaUbicacion({ latitud, longitud, alElegir, error }) {
       role="application"
       tabIndex={0}
       onKeyDown={elegirConTeclado}
-      aria-label="Mapa para marcar el lugar del problema"
+      aria-label={TEXTOS_UBICACION.etiquetaMapa}
       aria-describedby={`ubicacion-instruccion ubicacion-teclado${error ? ' ubicacion-error' : ''}`}
       aria-invalid={error ? true : undefined}
     />

@@ -1,3 +1,4 @@
+import { identificadorEstado } from '../utilidades/reportes'
 import { peticion } from './cliente'
 
 // Las pantallas usan un reporte «plano» (categoria como texto, barrio como texto, idComuna). La API
@@ -75,5 +76,5 @@ export const listarTodosLosReportes = async () =>
 export const cambiarEstadoReporte = (codigo, estado, observacion) =>
   peticion(`/api/admin/reportes/${encodeURIComponent(codigo)}/estado`, {
     method: 'PATCH',
-    body: JSON.stringify({ estado, observacion }),
+    body: JSON.stringify({ estado: identificadorEstado(estado), observacion }),
   })

@@ -117,3 +117,44 @@ IDs `RF-16a` y `RNF-xx` se confirman contra `docs/contexto/04` y `05` al planifi
 - [x] La especificación está completa y sin ambigüedades.
 - [x] Las preguntas abiertas están resueltas o aceptadas como riesgo.
 - [x] **Aprobada por el usuario** → se puede pasar a `plan.md`.
+
+## Anexo A — Ajustes tras la prueba en producción (13 nov 2026)
+
+> **Estado: Aprobado por Andrés el 14 nov 2026.** Andrés probó la app publicada (celular y panel) y encontró
+> lo siguiente. Todo se resuelve dentro de NOT-131; la historia no pasa a Done en Linear hasta que el QA de `tasks.md`
+> (sección «QA») salga completo. Mapa de calor del panel: es NOT-136, no entra aquí. Copia del correo al ciudadano:
+> sigue sin enviarse (decidido; el correo sale solo a la entidad, con el correo de la persona en «Responder a»).
+
+### Errores
+
+- **CA-11** — _Dado_ un administrador en el panel, _cuando_ cambia el estado de un reporte con o sin observación,
+  _entonces_ el cambio se guarda y aparece en el historial. La observación es opcional de verdad; si falta, el historial
+  guarda una frase por defecto. Si algo falla, el mensaje dice por qué (no solo «Intente de nuevo»).
+- **CA-12** — _Dado_ que una persona entra con Google, _entonces_ ve solo su cuenta: si el correo de Google no tiene cuenta,
+  pasa a completar su perfil con sus datos de Google y nunca ve datos de otra persona. Si hay una vinculación equivocada
+  en la base, se corrige con aprobación de Andrés antes de tocar datos.
+- **CA-13** — _Dado_ un tipo de reporte con ubicación opcional, _cuando_ llega al paso 2, _entonces_ ve el mapa y puede marcar
+  un punto si quiere, o seguir sin marcarlo.
+- **CA-14** — _Dado_ que la persona avanza o retrocede de paso, _entonces_ la pantalla vuelve al inicio.
+- **CA-15** — _Dado_ que la persona abre el aviso de privacidad desde Ajustes, _cuando_ pulsa atrás, _entonces_ vuelve a Ajustes.
+- **CA-16** — _Dado_ un reporte sin ubicación, _cuando_ se ve su detalle (ciudadano y panel), _entonces_ el lugar dice
+  «Sin ubicación» y no queda vacío.
+- **CA-17** — _Dado_ el panel de reportes, _entonces_ los filtros de tipo y de comuna muestran solo las opciones que tienen
+  reportes.
+- **CA-22** — _Dado_ el webhook de Resend, _entonces_ se comprueba de punta a punta: el registro de entregas en Resend muestra
+  200, y un correo que rebota de verdad marca el reporte como «El correo no llegó» en el detalle.
+
+### Mejoras de pantalla y correo
+
+- **CA-18** — Descripción del paso 3: el cuadro tiene texto de ejemplo (placeholder), el contador de caracteres va a la
+  derecha, en la misma fila del título del campo, y el texto de ayuda es corto.
+- **CA-19** — Mapa del paso 2: las instrucciones son breves y pensadas para el celular (sin explicar el teclado).
+- **CA-20** — Correo a la entidad: hay espacio entre la descripción, la fecha del registro y la evidencia, y el HTML tiene
+  presentación institucional (encabezado azul, secciones separadas). Se mantiene el contenido de la carta formal: sin código
+  de seguimiento y sin la palabra NotiUrba (decisión de NOT-130). El texto plano lleva una línea en blanco entre cada fila (hechos, ubicación, fecha y evidencia), con el mismo contenido. El HTML usa tablas para verse bien también en Outlook.
+- **CA-21** — Panel del administrador: más espacio entre elementos (por ejemplo, los filtros), colores con más contraste y
+  sin la etiqueta «Administrador · todas las comunas». Un rediseño completo queda en `08-pendientes.md`.
+
+### Fuera de alcance de este anexo
+
+- Mapa de calor del panel (NOT-136), copia del correo al ciudadano, rediseño completo del panel.

@@ -75,6 +75,8 @@ test('ningún texto del reporte usa palabras técnicas ni códigos (RN-24)', () 
 })
 
 test('la ayuda de la descripción trae su ejemplo y avisa que un resumen puede verse', () => {
-  assert.match(TEXTOS_DESCRIPCION.guia, /Ejemplo:/)
+  assert.match(TEXTOS_DESCRIPCION.ejemplo, /^Ej\./)
+  assert.ok(TEXTOS_DESCRIPCION.guia.length < 70, 'la guía es corta')
+  assert.ok(TEXTOS_DESCRIPCION.reglas.length < 170, 'las reglas son cortas')
   assert.match(TEXTOS_DESCRIPCION.reglas, /resumen de lo que escriba, sin su nombre/)
 })

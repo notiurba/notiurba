@@ -112,3 +112,17 @@ Las pruebas existentes (backend 424, frontend 207) deben seguir pasando. Al fina
 - [x] No introduce otro framework ni otra base de datos.
 - [x] Contrato de API y migración revisados.
 - [x] **Aprobado por el usuario** → se puede pasar a `tasks.md`.
+
+## Anexo A — Enfoque de los ajustes tras la prueba (aprobado 14 nov 2026)
+
+- **Primero entender, después arreglar.** El error del panel y el de Google se reproducen y se explican antes de cambiar
+  código: el del panel falló aun con observación escrita, así que la causa no es solo el campo (hay que mirar la respuesta
+  real de la API); el de Google se revisa con una consulta de **solo lectura** a las tablas de usuario e identidad externa.
+- **Cada error lleva una prueba que lo reproduce** antes de la corrección (backend con la base desechable; frontend con
+  `node --test`).
+- **Sin migración prevista.** Si arreglar Google exige corregir datos de producción, se pide aprobación y se hace un
+  respaldo en Neon antes.
+- **Correo:** solo cambia el HTML (`PlantillaReporte`); el texto plano y el asunto no cambian.
+- **Panel:** ajustes de CSS y de listas de filtros; sin rediseño.
+- **QA:** vista previa de Netlify del PR (celular a 360 px y computador a 1366 px) y el script `tools/qa-panel-admin/qa-panel.sh`
+  contra el jar real.

@@ -1,5 +1,5 @@
 .detalles__contador {
-  margin: calc(var(--nu-esp-2) * -1) 0 0;
+  margin-left: auto;
   text-align: right;
   font-size: 13px;
   color: var(--nu-texto-secundario);
