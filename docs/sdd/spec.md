@@ -120,7 +120,7 @@ IDs `RF-16a` y `RNF-xx` se confirman contra `docs/contexto/04` y `05` al planifi
 
 ## Anexo A — Ajustes tras la prueba en producción (13 nov 2026)
 
-> **Estado: Borrador, pendiente de aprobación de Andrés.** Andrés probó la app publicada (celular y panel) y encontró
+> **Estado: Aprobado por Andrés el 14 nov 2026.** Andrés probó la app publicada (celular y panel) y encontró
 > lo siguiente. Todo se resuelve dentro de NOT-131; la historia no pasa a Done en Linear hasta que el QA de `tasks.md`
 > (sección «QA») salga completo. Mapa de calor del panel: es NOT-136, no entra aquí. Copia del correo al ciudadano:
 > sigue sin enviarse (decidido; el correo sale solo a la entidad, con el correo de la persona en «Responder a»).
@@ -151,7 +151,7 @@ IDs `RF-16a` y `RNF-xx` se confirman contra `docs/contexto/04` y `05` al planifi
 - **CA-19** — Mapa del paso 2: las instrucciones son breves y pensadas para el celular (sin explicar el teclado).
 - **CA-20** — Correo a la entidad: hay espacio entre la descripción, la fecha del registro y la evidencia, y el HTML tiene
   presentación institucional (encabezado azul, secciones separadas). Se mantiene el contenido de la carta formal: sin código
-  de seguimiento y sin la palabra NotiUrba (decisión de NOT-130). El texto plano sigue igual para quien no vea HTML.
+  de seguimiento y sin la palabra NotiUrba (decisión de NOT-130). El texto plano lleva una línea en blanco entre cada fila (hechos, ubicación, fecha y evidencia), con el mismo contenido. El HTML usa tablas para verse bien también en Outlook.
 - **CA-21** — Panel del administrador: más espacio entre elementos (por ejemplo, los filtros), colores con más contraste y
   sin la etiqueta «Administrador · todas las comunas». Un rediseño completo queda en `08-pendientes.md`.
 

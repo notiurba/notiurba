@@ -91,8 +91,10 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el
   mismo comando: ejecútelo en un entorno limpio (`env -i ...`).
 - Una base desechable: contenedor `postgis/postgis:16-3.4`. Docker Desktop debe estar abierto.
-- Última corrida completa (13/11/2026, rama de NOT-131, con la base desechable y `DB_*`): 433 pruebas, 0 fallos;
-  2 errores por falta de credenciales reales (Cloudinary y base con TLS), ajenos al código. Sin `DB_*` solo corren 278: las
+- Última corrida completa (14/11/2026, rama de ajustes de NOT-131, con las bases desechables y `DB_*`): 451 pruebas,
+  0 fallos, 2 omitidas (proveedores reales). `MigrationIntegrationTest`, `SpatialIntegrationTest` y `CloudinaryIntegrationTest`
+  no corren sin credenciales reales (dan error por falta de configuración, ajeno al código). `AdminIntegracionTest` exige la
+  base `notiurba_test_admin_bootstrap` en `DB_URL`. Sin `DB_*` solo corren 278: las
   pruebas con Spring se omiten en silencio. Antes (NOT-132): 424 pruebas, 12 omitidas.
   Enrutamiento sin base `notiurba_test*`: Las 9 de enrutamiento y la de migración de enrutamiento solo corren con
   `NOTIURBA_TEST_DB_URL` apuntando a una base `notiurba_test*` (con `postgis` y `pgcrypto`); sin ella
@@ -107,7 +109,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 
 ### Frontend (`frontend/`, React 19 + Vite 8, pnpm)
 
-- `pnpm install`, `pnpm dev`, `pnpm test` (node --test, 215 pruebas), `pnpm lint`, `pnpm build`.
+- `pnpm install`, `pnpm dev`, `pnpm test` (node --test, 226 pruebas), `pnpm lint`, `pnpm build`.
   No use npm ni suba `package-lock.json`.
 - Con `VITE_USAR_MOCKS=true` en desarrollo la API se simula (`src/simulacion/`); el build de
   producción no incluye esa carpeta.

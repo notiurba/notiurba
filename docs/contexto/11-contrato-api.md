@@ -231,8 +231,9 @@ Respuesta 200 (ejemplo):
 - `estado` usa los identificadores RECIBIDO, ENVIADO, EN_TRAMITE y RESUELTO;
   se resuelven contra los nombres existentes del catálogo PostgreSQL. Los DTO
   ciudadanos mantienen sus etiquetas actuales (Recibido, Enviado, En trámite, Resuelto).
-- `observacion` es obligatoria, no puede contener solo espacios y admite hasta
-  1000 caracteres; se recortan los espacios exteriores antes de guardarla.
+- `observacion` es opcional y admite hasta 1000 caracteres; se recortan los espacios
+  exteriores antes de guardarla. Si falta o solo trae espacios, el historial guarda
+  «Estado actualizado por el administrador.» (cambio del 14 nov 2026).
 - Se permiten RECIBIDO → EN_TRAMITE/RESUELTO, ENVIADO → EN_TRAMITE/RESUELTO
   y EN_TRAMITE → RESUELTO. RECIBIDO → ENVIADO se reserva a la aceptación de Resend.
 - Se puede añadir una observación sin cambiar el estado mientras no esté RESUELTO.

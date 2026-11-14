@@ -113,7 +113,7 @@ Las pruebas existentes (backend 424, frontend 207) deben seguir pasando. Al fina
 - [x] Contrato de API y migración revisados.
 - [x] **Aprobado por el usuario** → se puede pasar a `tasks.md`.
 
-## Anexo A — Enfoque de los ajustes tras la prueba (borrador)
+## Anexo A — Enfoque de los ajustes tras la prueba (aprobado 14 nov 2026)
 
 - **Primero entender, después arreglar.** El error del panel y el de Google se reproducen y se explican antes de cambiar
   código: el del panel falló aun con observación escrita, así que la causa no es solo el campo (hay que mirar la respuesta
