@@ -29,6 +29,7 @@ class EnrutamientoIntegracionTest {
             .load().migrate();
         jdbc=new JdbcTemplate(ds);rutas=new EnrutamientoServicio(jdbc);proveedor=mock(EnviadorCorreo.class);
         servicio=new EnvioReporteServicio(jdbc,new TransactionTemplate(new DataSourceTransactionManager(ds)),rutas,new PlantillaReporte(),proveedor,new ObjectMapper().findAndRegisterModules(),true);
+        jdbc.update("DELETE FROM registro_envio_correo WHERE id_estado_envio=(SELECT id_estado_envio FROM estado_envio WHERE nombre='PENDIENTE')");
         correo="prueba-"+UUID.randomUUID()+"@example.test";
         usuario=jdbc.queryForObject("""
             INSERT INTO usuario(nombres,apellidos,id_tipo_documento,numero_documento,id_barrio,direccion_correspondencia,
@@ -36,7 +37,11 @@ class EnrutamientoIntegracionTest {
             VALUES ('Ana','Prueba',1,?,(SELECT min(id_barrio) FROM barrio),'Dirección sintética',?,'no-login',1,1,now()) RETURNING id_usuario
             """,Long.class,UUID.randomUUID().toString().substring(0,25),correo);
     }
-    @AfterEach void limpiarSoloDatosSinteticos(){if(jdbc!=null && usuario>0)jdbc.update("DELETE FROM usuario WHERE id_usuario=?",usuario);}
+    @AfterEach void limpiarSoloDatosSinteticos(){
+        if(jdbc==null) return;
+        jdbc.update("DELETE FROM evento_correo WHERE id_evento LIKE 'evt-%'");
+        if(usuario>0)jdbc.update("DELETE FROM usuario WHERE id_usuario=?",usuario);
+    }
     String reporte(int categoria,boolean emergencia) {
         return jdbc.queryForObject("""
             INSERT INTO reporte(id_usuario,id_categoria,id_barrio,descripcion,autorizacion_envio_en,emergencia)
@@ -128,11 +133,9 @@ class EnrutamientoIntegracionTest {
     @Test void reboteFirmadoNoRetrocedeHistorialYEsIdempotente() throws Exception {
         String codigo=reporte(1,false),idProveedor="fake-"+UUID.randomUUID();
         when(proveedor.enviar(any())).thenReturn(idProveedor);servicio.solicitar(correo,codigo);servicio.procesarSiguiente();
-        String clave="secreto-sintetico",secret="whsec_"+java.util.Base64.getEncoder().encodeToString(clave.getBytes(java.nio.charset.StandardCharsets.UTF_8));
         String id="evt-"+UUID.randomUUID(),ts=Long.toString(java.time.Instant.now().getEpochSecond()),body="{\"type\":\"email.bounced\",\"data\":{\"email_id\":\""+idProveedor+"\"}}";
-        var mac=javax.crypto.Mac.getInstance("HmacSHA256");mac.init(new javax.crypto.spec.SecretKeySpec(clave.getBytes(java.nio.charset.StandardCharsets.UTF_8),"HmacSHA256"));
-        String firma="v1,"+java.util.Base64.getEncoder().encodeToString(mac.doFinal((id+"."+ts+"."+body).getBytes(java.nio.charset.StandardCharsets.UTF_8)));
-        var webhook=new ReboteController(secret,jdbc,new ObjectMapper());webhook.recibir(id,ts,firma,body);webhook.recibir(id,ts,firma,body);
+        String firma=firmar(id,ts,body);
+        var webhook=new ReboteController(SECRETO_WEBHOOK,jdbc,new ObjectMapper());webhook.recibir(id,ts,firma,body);webhook.recibir(id,ts,firma,body);
         assertThat(estadoGeneral(codigo)).isEqualTo("Enviado");assertThat(servicio.consultar(correo,codigo).rebote()).isTrue();
         assertThat(servicio.consultar(correo,codigo).estado()).isEqualTo("FALLIDO");
         assertThat(jdbc.queryForObject("SELECT count(*) FROM evento_correo WHERE id_evento=?",Integer.class,id)).isEqualTo(1);
@@ -169,11 +172,12 @@ class EnrutamientoIntegracionTest {
         return "v1,"+java.util.Base64.getEncoder().encodeToString(mac.doFinal((id+"."+ts+"."+cuerpo).getBytes(java.nio.charset.StandardCharsets.UTF_8)));
     }
     String ahora(){return Long.toString(java.time.Instant.now().getEpochSecond());}
-    /** Un reporte ya enviado; devuelve {codigo, idProveedor}. */
-    String[] reporteEnviado() {
+    record ReporteEnviado(String codigo,String idProveedor) { }
+    /** Un reporte ya aceptado por el proveedor. */
+    ReporteEnviado reporteEnviado() {
         String codigo=reporte(1,false),idProveedor="fake-"+UUID.randomUUID();
         when(proveedor.enviar(any())).thenReturn(idProveedor);servicio.solicitar(correo,codigo);servicio.procesarSiguiente();
-        return new String[]{codigo,idProveedor};
+        return new ReporteEnviado(codigo,idProveedor);
     }
     void esperaError(org.springframework.http.HttpStatus estado,String codigoError,org.junit.jupiter.api.function.Executable llamada) {
         var e=Assertions.assertThrows(com.notiurba.web.error.ApiException.class,llamada);
@@ -181,31 +185,46 @@ class EnrutamientoIntegracionTest {
     }
     @Test void avisoSinFirmaConFirmaFalsaOVencidaSeRechazaYNoCambiaNada() throws Exception {
         var enviado=reporteEnviado();
-        String id="evt-"+UUID.randomUUID(),ts=ahora(),body="{\"type\":\"email.bounced\",\"data\":{\"email_id\":\""+enviado[1]+"\"}}";
+        String id="evt-"+UUID.randomUUID(),ts=ahora(),body="{\"type\":\"email.bounced\",\"data\":{\"email_id\":\""+enviado.idProveedor()+"\"}}";
         var webhook=new ReboteController(SECRETO_WEBHOOK,jdbc,new ObjectMapper());
         esperaError(org.springframework.http.HttpStatus.UNAUTHORIZED,"FIRMA_INVALIDA",()->webhook.recibir(id,ts,null,body));
         esperaError(org.springframework.http.HttpStatus.UNAUTHORIZED,"FIRMA_INVALIDA",()->webhook.recibir(id,ts,"v1,AAAA",body));
         String vieja=Long.toString(java.time.Instant.now().getEpochSecond()-3600);
         esperaError(org.springframework.http.HttpStatus.UNAUTHORIZED,"FIRMA_INVALIDA",()->webhook.recibir(id,vieja,firmar(id,vieja,body),body));
+        String alterado=body.replace("bounced","delivered");
+        esperaError(org.springframework.http.HttpStatus.UNAUTHORIZED,"FIRMA_INVALIDA",()->webhook.recibir(id,ts,firmar(id,ts,body),alterado));
+        esperaError(org.springframework.http.HttpStatus.UNAUTHORIZED,"FIRMA_INVALIDA",()->webhook.recibir(id,"no-es-numero",firmar(id,"no-es-numero",body),body));
+        String futuro=Long.toString(java.time.Instant.now().getEpochSecond()+3600);
+        esperaError(org.springframework.http.HttpStatus.UNAUTHORIZED,"FIRMA_INVALIDA",()->webhook.recibir(id,futuro,firmar(id,futuro,body),body));
+        esperaError(org.springframework.http.HttpStatus.UNAUTHORIZED,"FIRMA_INVALIDA",()->webhook.recibir(null,ts,firmar(id,ts,body),body));
         var sinSecreto=new ReboteController("",jdbc,new ObjectMapper());
         esperaError(org.springframework.http.HttpStatus.UNAUTHORIZED,"FIRMA_INVALIDA",()->sinSecreto.recibir(id,ts,firmar(id,ts,body),body));
-        assertThat(servicio.consultar(correo,enviado[0]).estado()).isEqualTo("ENVIADO");
-        assertThat(servicio.consultar(correo,enviado[0]).rebote()).isFalse();
+        assertThat(servicio.consultar(correo,enviado.codigo()).estado()).isEqualTo("ENVIADO");
+        assertThat(servicio.consultar(correo,enviado.codigo()).rebote()).isFalse();
         assertThat(jdbc.queryForObject("SELECT count(*) FROM evento_correo WHERE id_evento=?",Integer.class,id)).isZero();
     }
     @Test void quejaFirmadaTambienMarcaReboteYOtrosEventosSeIgnoran() throws Exception {
         var enviado=reporteEnviado();
         var webhook=new ReboteController(SECRETO_WEBHOOK,jdbc,new ObjectMapper());
-        String entregado="evt-"+UUID.randomUUID(),ts=ahora(),cuerpoEntregado="{\"type\":\"email.delivered\",\"data\":{\"email_id\":\""+enviado[1]+"\"}}";
+        String entregado="evt-"+UUID.randomUUID(),ts=ahora(),cuerpoEntregado="{\"type\":\"email.delivered\",\"data\":{\"email_id\":\""+enviado.idProveedor()+"\"}}";
         webhook.recibir(entregado,ts,firmar(entregado,ts,cuerpoEntregado),cuerpoEntregado);
-        assertThat(servicio.consultar(correo,enviado[0]).rebote()).isFalse();
-        String queja="evt-"+UUID.randomUUID(),cuerpoQueja="{\"type\":\"email.complained\",\"data\":{\"email_id\":\""+enviado[1]+"\"}}";
+        assertThat(servicio.consultar(correo,enviado.codigo()).rebote()).isFalse();
+        String queja="evt-"+UUID.randomUUID(),cuerpoQueja="{\"type\":\"email.complained\",\"data\":{\"email_id\":\""+enviado.idProveedor()+"\"}}";
         webhook.recibir(queja,ts,firmar(queja,ts,cuerpoQueja),cuerpoQueja);
-        var estado=servicio.consultar(correo,enviado[0]);
+        var estado=servicio.consultar(correo,enviado.codigo());
         assertThat(estado.rebote()).isTrue();assertThat(estado.estado()).isEqualTo("FALLIDO");assertThat(estado.reintentable()).isFalse();
         assertThat(estado.motivo()).isEqualTo("No pudimos entregar el correo a la entidad.");
-        assertThat(estadoGeneral(enviado[0])).isEqualTo("Enviado");
+        assertThat(estadoGeneral(enviado.codigo())).isEqualTo("Enviado");
         jdbc.update("DELETE FROM evento_correo WHERE id_evento=?",queja);
+    }
+    @Test void elAvisoQueLlegaAntesDeGuardarLaAceptacionTambienMarcaElRebote() {
+        String codigo=reporte(1,false),idProveedor="fake-"+UUID.randomUUID();
+        jdbc.update("INSERT INTO evento_correo(id_evento,id_envio_proveedor) VALUES (?,?)","evt-"+UUID.randomUUID(),idProveedor);
+        when(proveedor.enviar(any())).thenReturn(idProveedor);
+        servicio.solicitar(correo,codigo);servicio.procesarSiguiente();
+        var estado=servicio.consultar(correo,codigo);
+        assertThat(estado.estado()).isEqualTo("FALLIDO");assertThat(estado.rebote()).isTrue();
+        assertThat(estadoGeneral(codigo)).isEqualTo("Enviado");
     }
     @Test void avisoFirmadoConIdentificadorVacioOExcesivoEsInvalido() throws Exception {
         var webhook=new ReboteController(SECRETO_WEBHOOK,jdbc,new ObjectMapper());
