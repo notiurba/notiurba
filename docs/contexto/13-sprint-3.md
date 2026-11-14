@@ -11,7 +11,7 @@ usabilidad y accesibilidad, despliegue final e informe. No hay más sprints desp
 ## Reparto: 14 historias, 65 puntos
 
 El Sprint 2 cerró con 55 puntos; este va cargado (Linear muestra ~309 % de capacidad). Si hay que
-recortar, lo más fácil es NOT-131 (depende del docente), parte del manual de NOT-142 y bajar
+recortar, lo más fácil es parte del manual de NOT-142 y bajar
 NOT-137.
 
 ### Andrés — backend y GIS (21)
@@ -59,14 +59,13 @@ NOT-137.
 - Hasta 3 fotos por reporte (ya implementado).
 - El correo a las entidades sigue siendo formal; el tono cercano es de la app y de los correos al
   ciudadano.
-- `RESEND_PRUEBA_DESTINO` sigue puesta hasta que el equipo y el docente autoricen el envío real.
+- `RESEND_PRUEBA_DESTINO` sigue puesta hasta que Andrés active el envío real (ya no se espera al CAIC ni al docente).
 
 ## Por decidir (lo decide el equipo, no una IA)
 
 - Límite diario de reportes por ciudadano, número de intentos de login antes de bloquear y
   distancia para considerar un reporte duplicado (NOT-132).
 - Si el correo al ciudadano por cambio de estado entra al MVP (no se verificó en el código).
-- Cuándo y con qué autorización se activa el envío real al CAIC (NOT-131).
 
 ## Plantilla de historia (formato de los Sprint 1 y 2)
 

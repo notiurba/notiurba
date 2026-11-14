@@ -41,7 +41,7 @@ Nunca npm ni `package-lock.json`. `VITE_USAR_MOCKS=true` simula la API solo en d
 - Render Free duerme: la primera llamada tarda 60 a 90 s. `curl -m 90` y espere.
 - Salud: `GET https://notiurba-api.onrender.com/api/health`. CORS: `curl -i -X OPTIONS .../api/auth/login
   -H "Origin: https://notiurba.netlify.app" -H "Access-Control-Request-Method: POST"`.
-- Correo: `RESEND_PRUEBA_DESTINO` debe seguir puesta; el envío real exige autorización del equipo y el docente.
+- Correo: `RESEND_PRUEBA_DESTINO` debe seguir puesta; el envío real lo activa Andrés con `docs/contexto/14-activar-envio-real.md`. Guía de despliegue, respaldo y administrador real: `docs/contexto/15-guia-de-despliegue.md`; comprobación rápida: `tools/verificar-despliegue.sh`.
 - «No pudimos comunicarnos con el servidor» = el navegador no recibió respuesta (Render dormido, red o CORS).
 - Nunca imprima ni pegue secretos; las variables van en Render/Netlify, no en el repo.
 
