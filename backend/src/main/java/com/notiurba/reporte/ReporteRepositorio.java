@@ -28,6 +28,12 @@ public class ReporteRepositorio {
     /** Texto para el ciudadano: el detalle técnico de registro_envio_correo.error no sale de la API. */
     static final String MOTIVO_ENVIO_FALLIDO = "No pudimos entregar el correo a la entidad.";
 
+    /** La nota es «del ciudadano» si la escribió la persona dueña del reporte y esa persona no es administradora. */
+    static final String SQL_NOTA_DEL_CIUDADANO = """
+            (h.id_usuario_cambia = r.id_usuario AND NOT EXISTS (
+                SELECT 1 FROM usuario u JOIN rol ro ON ro.id_rol = u.id_rol
+                 WHERE u.id_usuario = r.id_usuario AND ro.nombre = 'ADMIN'))""";
+
     private final NamedParameterJdbcTemplate jdbc;
 
     /** Una emergencia la marca el ciudadano o la delata la descripción en una categoría de gas. */
@@ -182,11 +188,10 @@ public class ReporteRepositorio {
 
     private List<ReporteDetalleResponse.CambioDeEstado> historial(long idReporte) {
         return jdbc.query("""
-                SELECT e.nombre AS estado, h.observacion, h.cambiado_en,
-                       (h.id_usuario_cambia IS NOT NULL AND h.id_usuario_cambia = r.id_usuario) AS del_ciudadano
+                SELECT e.nombre AS estado, h.observacion, h.cambiado_en, %s AS del_ciudadano
                   FROM historial_estado h JOIN estado_reporte e ON e.id_estado_reporte = h.id_estado_reporte
                   JOIN reporte r ON r.id_reporte = h.id_reporte
-                 WHERE h.id_reporte = :id ORDER BY h.cambiado_en, h.id_historial_estado""",
+                 WHERE h.id_reporte = :id ORDER BY h.cambiado_en, h.id_historial_estado""".formatted(SQL_NOTA_DEL_CIUDADANO),
                 new MapSqlParameterSource("id", idReporte),
                 (rs, i) -> new ReporteDetalleResponse.CambioDeEstado(rs.getString("estado"),
                         rs.getString("observacion"), rs.getObject("cambiado_en", OffsetDateTime.class),

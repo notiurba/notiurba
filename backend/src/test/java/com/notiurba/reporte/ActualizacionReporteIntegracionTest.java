@@ -127,6 +127,21 @@ class ActualizacionReporteIntegracionTest {
     }
 
     @Test
+    void laNotaDelCiudadanoNuncaQuedaAntesDeUnaRespuestaMasNuevaDelAdministrador() throws Exception {
+        String codigo = crearReporte();
+        jdbc.update("""
+                INSERT INTO historial_estado (id_reporte, id_estado_reporte, observacion, cambiado_en)
+                SELECT id_reporte, id_estado_reporte, 'Respuesta del administrador', now() + interval '1 minute'
+                  FROM reporte WHERE codigo_seguimiento = ?""", codigo);
+
+        JsonNode historial = leer(actualizar(token, codigo, "{\"tipo\":\"RESUELTO\"}")).get("historial");
+
+        JsonNode ultimo = historial.get(historial.size() - 1);
+        assertThat(ultimo.get("observacion").asText()).contains("ya se resolvió");
+        assertThat(ultimo.get("delCiudadano").asBoolean()).isTrue();
+    }
+
+    @Test
     void yaSeResolvioNoPasaElReporteAResuelto() throws Exception {
         String codigo = crearReporte();
 
