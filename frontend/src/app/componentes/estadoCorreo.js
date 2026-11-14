@@ -52,10 +52,14 @@ export const ofrecerOtrosCanales = (envio) => Boolean(envio?.rebote || envio?.es
 export function resumenCorreoDetalle(envio) {
   if (!envio?.estado) return null
   const { clase, etiqueta, subtitulo, mensaje } = presentacionCorreo(envio)
-  const otrosCanales = ofrecerOtrosCanales(envio)
-  const sinSalir = otrosCanales && !envio.rebote
-  return { clase, etiqueta, subtitulo, otrosCanales,
-    mensaje: sinSalir ? 'Su reporte quedó guardado, pero el correo no salió a la entidad.' : mensaje }
+  const porOtroCanal = envio.estado === 'NO_ENVIADO_CORREO'
+  const reintentar = envio.estado === 'SIN_SOLICITAR' || (envio.estado === 'FALLIDO' && Boolean(envio.reintentable) && !envio.rebote)
+  const otrosCanales = porOtroCanal || (ofrecerOtrosCanales(envio) && !reintentar)
+  let texto = mensaje
+  if (envio.estado === 'ENVIADO') texto = 'Enviamos su reporte a la entidad.'
+  else if (otrosCanales && !envio.rebote && !porOtroCanal) texto = 'Su reporte quedó guardado, pero el correo no salió a la entidad.'
+  return { clase, etiqueta, subtitulo, otrosCanales, reintentar, mensaje: texto,
+    titulo: porOtroCanal ? 'Canal de atención' : 'Correo a la entidad' }
 }
 
 export const textoParaCopiar = (mensaje) => `Asunto: ${mensaje.asunto}\n\n${mensaje.texto}`

@@ -114,6 +114,14 @@
 .detalle__correo--enviado {
   background: var(--nu-estado-enviado-fondo);
   border-color: var(--nu-estado-enviado-borde);
+  color: var(--nu-estado-enviado-texto);
+}
+
+.detalle__correo--pendiente,
+.detalle__correo--externo {
+  background: var(--nu-info-fondo);
+  border-color: var(--nu-info-borde);
+  color: var(--nu-info-texto);
 }
 
 .detalle__correo--rebote,

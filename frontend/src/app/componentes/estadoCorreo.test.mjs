@@ -113,3 +113,23 @@ test('los textos del detalle no usan palabras técnicas', () => {
     assert.doesNotMatch(`${r.etiqueta} ${r.subtitulo} ${r.mensaje}`, /servidor|token|\bapi\b|rebote|webhook|resend|FALLIDO|\b[45]\d\d\b/i)
   }
 })
+
+test('el detalle de un reporte que sigue por otro canal muestra los canales y no habla de correo', () => {
+  const r = resumenCorreoDetalle({ estado: 'NO_ENVIADO_CORREO', ruta: { mensaje: 'Use el canal oficial.' } })
+  assert.equal(r.otrosCanales, true)
+  assert.equal(r.reintentar, false)
+  assert.equal(r.titulo, 'Canal de atención')
+  assert.equal(resumenCorreoDetalle({ estado: 'ENVIADO' }).titulo, 'Correo a la entidad')
+})
+test('el detalle ofrece reintentar si el fallo pudo ser pasajero o si nunca se pidió el envío', () => {
+  const pasajero = resumenCorreoDetalle({ estado: 'FALLIDO', rebote: false, reintentable: true })
+  assert.equal(pasajero.reintentar, true)
+  assert.equal(pasajero.otrosCanales, false)
+  assert.match(pasajero.mensaje, /intentarlo de nuevo/)
+  assert.equal(resumenCorreoDetalle({ estado: 'SIN_SOLICITAR' }).reintentar, true)
+  for (const e of [{ estado: 'ENVIADO' }, { estado: 'PENDIENTE' }, { estado: 'FALLIDO', rebote: true, reintentable: true }, { estado: 'FALLIDO', reintentable: false }])
+    assert.equal(resumenCorreoDetalle(e).reintentar, false)
+})
+test('el detalle no manda a «Mis reportes» cuando ya está en el reporte', () => {
+  assert.doesNotMatch(resumenCorreoDetalle({ estado: 'ENVIADO' }).mensaje, /Mis reportes/)
+})
