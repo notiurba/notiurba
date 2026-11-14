@@ -126,3 +126,10 @@ Las pruebas existentes (backend 424, frontend 207) deben seguir pasando. Al fina
 - **Panel:** ajustes de CSS y de listas de filtros; sin rediseño.
 - **QA:** vista previa de Netlify del PR (celular a 360 px y computador a 1366 px) y el script `tools/qa-panel-admin/qa-panel.sh`
   contra el jar real.
+- **Aviso del ciudadano al administrador (T-22):** sin migración. `historial[].delCiudadano` se calcula en la consulta (la
+  nota es de quien es dueño del reporte y no es administrador). La nota del ciudadano usa el mismo reloj monótono que las del
+  administrador (`GREATEST(clock_timestamp(), último asiento)`), para que nunca quede antes de una respuesta más nueva. El panel
+  solo muestra etiqueta y aviso; no hay contador, filtro ni notificaciones, y el estado nunca cambia solo.
+- **Aviso de privacidad (T-19):** la causa era un archivo estático en `frontend/public/` que Netlify sirve antes que la ruta de
+  la app; una prueba exige que `public/` solo tenga los archivos permitidos.
+

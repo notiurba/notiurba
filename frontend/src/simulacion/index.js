@@ -255,8 +255,10 @@ const RUTAS = [
   }],
   // La persona avisa que la entidad respondió o que ya se resolvió (pantalla «Actualizar mi reporte»).
   ['PATCH', '/api/reportes/:codigo/actualizacion', (cuerpo, { codigo }) => {
-    const estado = cuerpo.tipo === 'RESUELTO' ? 'Resuelto' : 'En trámite'
-    return almacen.cambiarEstado(codigo, estado, 'Actualizado por la persona que reportó', cuerpo.radicado || null)
+    const texto = cuerpo.tipo === 'RESUELTO'
+      ? 'El ciudadano avisó que su reporte ya se resolvió. El estado oficial lo confirma el administrador.'
+      : 'El ciudadano avisó que la entidad le respondió.'
+    return almacen.agregarNotaDelCiudadano(codigo, texto, cuerpo.radicado || null)
   }],
 
   // Panel de administración: todos los reportes y cambio de estado con observación.

@@ -91,7 +91,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el
   mismo comando: ejecútelo en un entorno limpio (`env -i ...`).
 - Una base desechable: contenedor `postgis/postgis:16-3.4`. Docker Desktop debe estar abierto.
-- Última corrida completa (14/11/2026, rama de ajustes de NOT-131, con las bases desechables y `DB_*`): 451 pruebas,
+- Última corrida completa (14/11/2026, rama de ajustes de NOT-131, con las bases desechables y `DB_*`): 454 pruebas,
   0 fallos, 2 omitidas (proveedores reales). `MigrationIntegrationTest`, `SpatialIntegrationTest` y `CloudinaryIntegrationTest`
   no corren sin credenciales reales (dan error por falta de configuración, ajeno al código). `AdminIntegracionTest` exige la
   base `notiurba_test_admin_bootstrap` en `DB_URL`. Sin `DB_*` solo corren 278: las
@@ -109,7 +109,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 
 ### Frontend (`frontend/`, React 19 + Vite 8, pnpm)
 
-- `pnpm install`, `pnpm dev`, `pnpm test` (node --test, 226 pruebas), `pnpm lint`, `pnpm build`.
+- `pnpm install`, `pnpm dev`, `pnpm test` (node --test, 230 pruebas), `pnpm lint`, `pnpm build`.
   No use npm ni suba `package-lock.json`.
 - Con `VITE_USAR_MOCKS=true` en desarrollo la API se simula (`src/simulacion/`); el build de
   producción no incluye esa carpeta.

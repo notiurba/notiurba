@@ -64,8 +64,10 @@ public class ActualizacionReporteServicio {
         }
         // Nota en el historial con el estado ACTUAL: no avanza ni retrocede nada (B11) y el administrador la ve
         jdbc.update("""
-                INSERT INTO historial_estado (id_reporte, id_estado_reporte, observacion, id_usuario_cambia)
-                SELECT id_reporte, id_estado_reporte, :observacion, :usuario FROM reporte WHERE id_reporte = :id""",
+                INSERT INTO historial_estado (id_reporte, id_estado_reporte, observacion, id_usuario_cambia, cambiado_en)
+                SELECT id_reporte, id_estado_reporte, :observacion, :usuario,
+                       GREATEST(clock_timestamp(), (SELECT max(cambiado_en) FROM historial_estado WHERE id_reporte = :id))
+                  FROM reporte WHERE id_reporte = :id""",
                 new MapSqlParameterSource().addValue("id", idReporte).addValue("usuario", idUsuario)
                         .addValue("observacion", observacion(tipo, radicado)));
 

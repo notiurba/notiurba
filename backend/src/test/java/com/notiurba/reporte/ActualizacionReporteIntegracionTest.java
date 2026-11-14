@@ -117,11 +117,28 @@ class ActualizacionReporteIntegracionTest {
         assertThat(historial.get(1).get("estado").asText()).isEqualTo("Recibido");
         assertThat(historial.get(1).get("observacion").asText())
                 .contains("la entidad le respondió").contains("Radicado: GAC-003660-26");
+        assertThat(historial.get(0).get("delCiudadano").asBoolean()).isFalse();     // el primer asiento es del sistema
+        assertThat(historial.get(1).get("delCiudadano").asBoolean()).isTrue();      // la nota la escribió la persona
         // la nota queda a nombre del ciudadano que la escribió
         assertThat(jdbc.queryForObject("""
                 SELECT count(*) FROM historial_estado h JOIN reporte r USING (id_reporte)
                  WHERE r.codigo_seguimiento = ? AND h.id_usuario_cambia IS NOT NULL""", Integer.class, codigo))
                 .isEqualTo(1);
+    }
+
+    @Test
+    void laNotaDelCiudadanoNuncaQuedaAntesDeUnaRespuestaMasNuevaDelAdministrador() throws Exception {
+        String codigo = crearReporte();
+        jdbc.update("""
+                INSERT INTO historial_estado (id_reporte, id_estado_reporte, observacion, cambiado_en)
+                SELECT id_reporte, id_estado_reporte, 'Respuesta del administrador', now() + interval '1 minute'
+                  FROM reporte WHERE codigo_seguimiento = ?""", codigo);
+
+        JsonNode historial = leer(actualizar(token, codigo, "{\"tipo\":\"RESUELTO\"}")).get("historial");
+
+        JsonNode ultimo = historial.get(historial.size() - 1);
+        assertThat(ultimo.get("observacion").asText()).contains("ya se resolvió");
+        assertThat(ultimo.get("delCiudadano").asBoolean()).isTrue();
     }
 
     @Test

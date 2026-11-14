@@ -8,7 +8,7 @@ import Boton from '../../compartido/componentes/Boton'
 import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
 import useCargar from '../../compartido/hooks/useCargar'
 import { formatearFecha, formatearFechaHora } from '../../compartido/utilidades/fechas'
-import { ESTADOS_REPORTE, ESTADO_ENVIADO, comunasConReportes, estadoElegido, estadosConReportes, estadosSiguientes, lugarDelReporte } from '../../compartido/utilidades/reportes'
+import { ESTADOS_REPORTE, ESTADO_ENVIADO, avisoDelCiudadano, comunasConReportes, estadoElegido, estadosConReportes, estadosSiguientes, lugarDelReporte } from '../../compartido/utilidades/reportes'
 import './Reportes.css'
 
 const ESTADOS = ['Todos', ...ESTADOS_REPORTE]
@@ -119,10 +119,12 @@ export default function Reportes() {
                       <button
                         type="button"
                         className="adm-rep__abrir"
+                        aria-describedby={avisoDelCiudadano(r) ? `aviso-${r.codigoSeguimiento}` : undefined}
                         onClick={() => { setElegido(r.codigoSeguimiento); setPestana('resumen') }}
                       >
                         {r.codigoSeguimiento}
                       </button>
+                      {avisoDelCiudadano(r) && <span id={`aviso-${r.codigoSeguimiento}`} className="adm-rep__etiqueta-aviso">Aviso del ciudadano</span>}
                     </td>
                     <td>{r.categoria}</td>
                     <td className="adm-rep__extra">{r.idComuna != null ? `Comuna ${r.idComuna}` : 'Sin comuna'}</td>
@@ -155,8 +157,12 @@ export default function Reportes() {
 
 function Detalle({ reporte, pestana, setPestana, alGuardar }) {
   const opciones = estadosSiguientes(reporte.estado)
+  const aviso = avisoDelCiudadano(reporte)
   const [elegido, setElegido] = useState('')
-  const nuevo = estadoElegido(opciones, elegido)
+  // Con un aviso del ciudadano se puede responder sin cambiar el estado, dejando una observación.
+  const todas = aviso ? [reporte.estado, ...opciones] : opciones
+  const nuevo = estadoElegido(todas, elegido, opciones[0])
+  const soloAnotar = nuevo === reporte.estado
   const [observacion, setObservacion] = useState('')
   const [guardando, setGuardando] = useState(false)
   const guardarUnaVez = useUnaVez(guardar)
@@ -165,6 +171,10 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
 
   async function guardar(e) {
     e.preventDefault()
+    if (soloAnotar && !observacion.trim()) {
+      setFallo('Escriba la observación para dejar constancia.')
+      return
+    }
     setGuardando(true)
     setFallo('')
     setMensaje('')
@@ -184,6 +194,11 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
     <div>
       <h2>{reporte.codigoSeguimiento}</h2>
       <ChipEstado estado={reporte.estado} />
+      {aviso && (
+        <Aviso variante="alerta" titulo="Aviso del ciudadano">
+          {aviso.observacion} Responda cambiando el estado o dejando una observación.
+        </Aviso>
+      )}
       <div className="adm-rep__pestanas" role="tablist">
         {['resumen', 'historial'].map((p) => (
           <button
@@ -226,8 +241,8 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
         <label>
           Nuevo estado
           <select value={nuevo} onChange={(e) => setElegido(e.target.value)}>
-            {opciones.map((e) => (
-              <option key={e}>{e}</option>
+            {todas.map((e) => (
+              <option key={e} value={e}>{e === reporte.estado ? `Mantener «${e}» y solo anotar` : e}</option>
             ))}
           </select>
         </label>

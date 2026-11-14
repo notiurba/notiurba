@@ -8,7 +8,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) |
 | Plan | [plan.md](plan.md) |
-| Estado general | **PR 1 integrado (#38). PR 2: T-07 y T-09 a T-17 hechos; faltan T-08, T-18 y el QA** |
+| Estado general | **PR 1 integrado (#38). PR 2: T-07 a T-17 y T-19 a T-22 hechos; falta T-18 (webhook) y el QA** |
 | Última actualización | 2026-11-13 |
 
 ## Cómo se usa
@@ -41,7 +41,7 @@
 | ID | Tarea | Capa | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
 | T-07 | **Panel: no deja cambiar el estado.** Reproducir con la API real y con la base desechable (falló aun con observación escrita). Corregir la causa. Hacer la observación opcional de verdad (frase por defecto en el historial) y mostrar el motivo del fallo en vez de «Intente de nuevo» | Backend + Frontend | CA-11 | Prueba de integración que reproduce el fallo; `AdminIntegracionTest`; prueba del panel | [x] |
-| T-08 | **Google: datos de otra persona.** Consulta de solo lectura (con visto bueno de Andrés) a `usuario` e `identidad_externa` del correo `andreslopezv1m@gmail.com`; explicar qué vinculó la cuenta. Corregir la causa; si hay datos mal vinculados, proponer la corrección y pedir aprobación antes de tocar producción | Backend | CA-12 | Prueba nueva en `GoogleAuthServicioTest` (correo sin cuenta → perfil incompleto; identidad ya vinculada → su propia cuenta) | [ ] |
+| T-08 | **Google: datos de otra persona.** Consulta de solo lectura (con visto bueno de Andrés) a `usuario` e `identidad_externa` del correo `andreslopezv1m@gmail.com`; explicar qué vinculó la cuenta. Corregir la causa; si hay datos mal vinculados, proponer la corrección y pedir aprobación antes de tocar producción | Backend | CA-12 | Prueba nueva en `GoogleAuthServicioTest` (correo sin cuenta → perfil incompleto; identidad ya vinculada → su propia cuenta) | [x] Sin cambio de código (14 nov 2026): el correo ya tenía cuenta (id 4, creada el 3 nov) y Google se vinculó a ella el 14 nov 02:17 UTC, que es la prueba de Andrés. Solo hay una identidad de Google en toda la base. Falta que Andrés confirme de dónde salían los datos «Prueba Render» |
 | T-09 | **Paso 2:** mostrar siempre el mapa; en los tipos con ubicación opcional se puede marcar un punto o seguir sin marcarlo | Frontend | CA-13 | Prueba de `PasoUbicacion` y revisión en el celular | [x] |
 | T-10 | **Cada cambio de paso sube al inicio** de la pantalla (adelante y atrás) | Frontend | CA-14 | Prueba de la lógica de paso y revisión en el celular | [x] |
 | T-11 | **Atrás desde el aviso de privacidad** vuelve a Ajustes | Frontend | CA-15 | Prueba de navegación y revisión en el celular | [x] |
@@ -52,6 +52,10 @@
 | T-16 | **Correo:** espacio entre descripción, fecha y evidencia, y HTML con presentación institucional azul (sin código ni «NotiUrba»); texto plano sin cambios | Backend | CA-20 | `PlantillaReporteTest` (espaciado, sin código ni «NotiUrba», texto plano igual); vista real en Gmail | [x] |
 | T-17 | **Panel (UI):** más espacio, mejor contraste, quitar «Administrador · todas las comunas» | Frontend | CA-21 | Revisión visual a 1366 px y a 1024 px | [x] |
 | T-18 | **Webhook:** con Andrés, abrir el registro de entregas de Resend y comprobar el estado (200 / 401 / tiempo agotado); si el secreto no coincide, corregirlo; probar un rebote real (guía, paso 2) y comprobarlo en el detalle | Ops + Docs | CA-22 | Registro de Resend en 200 y detalle con «El correo no llegó»; guía ajustada con lo aprendido | [ ] |
+| T-19 | **Aviso de privacidad:** eliminar `frontend/public/aviso-privacidad.html` (la propuesta con marcadores que Netlify servía en vez de la pantalla de la app) y una prueba que impide archivos `.html` en `public/` | Frontend | CA-23 | `publico.test.mjs`; comprobar `/aviso-privacidad` en producción tras el despliegue | [x] |
+| T-20 | **Dirección de correspondencia:** confirmar en qué pantalla se vio sin límite; hoy el registro tiene tope de 100 con contador y las demás 150 | Frontend | CA-26 | Prueba de `CamposResidencia`, si hay que cambiar algo | [x] El contador n/límite va a la derecha del título en las tres pantallas (100 en el registro, 150 en las demás) |
+| T-21 | **Ubicación opcional:** mensaje más claro de que no es obligatorio | Frontend | CA-24 | `ubicacionGps.test.mjs` y revisión en el celular | [x] |
+| T-22 | **Aviso del ciudadano visible al administrador:** el historial marca qué notas son del ciudadano; el panel muestra la etiqueta «Aviso del ciudadano» y destaca el aviso en el detalle. Sin cambio automático de estado y sin notificaciones | Backend + Frontend | CA-25 | `ActualizacionReporteIntegracionTest`, `reportes.test.mjs` y revisión en el panel | [x] |
 
 ## QA (obligatorio antes de cerrar NOT-131)
 
@@ -76,12 +80,16 @@
 | Q-13 | Webhook | Rebote real con la dirección de pruebas de Resend | Registro de Resend en 200 y detalle con «El correo no llegó», canales y «Copiar mi mensaje» | [ ] |
 | Q-14 | Detalle del reporte (NOT-131) | Revisar el bloque «Correo a la entidad» con reportes enviados, rebotados y por otro canal, a 360 y 1366 px | Se ve bien y sin palabras técnicas | [ ] |
 | Q-15 | Regresión | `mvn clean test` (con la base desechable y `DB_*`), `pnpm test`, `pnpm lint`, `pnpm build`, `qa-panel.sh`, subagente `code-reviewer` | Todo en verde; hallazgos corregidos | [ ] |
-| Q-16 | Cierre | Con Q-01 a Q-15 en verde: archivar el SDD, actualizar Google Doc/Sheet y pasar NOT-131 a Done en Linear | Historia cerrada | [ ] |
+| Q-16 | Aviso de privacidad | Abrirlo desde el registro, Ajustes y el paso final del reporte | Siempre la versión 3 de la app, sin marcadores «PENDIENTE» | [ ] |
+| Q-17 | Dirección de correspondencia | Escribir más de 100 caracteres en el registro, en Completar perfil y en Editar datos | El límite y el contador se ven; no se pierde texto sin aviso | [ ] |
+| Q-18 | Ubicación opcional | Paso 2 con «Otro / no clasificado» | El mensaje deja claro que no es obligatorio | [ ] |
+| Q-19 | Aviso del ciudadano | Con una cuenta: «Actualizar mi reporte» → «Ya se resolvió»; con el administrador: abrir el panel | Etiqueta en la lista, aviso destacado en el detalle, estado sin cambios; al responder el administrador la etiqueta desaparece | [ ] |
+| Q-20 | Cierre | Con Q-01 a Q-19 en verde: archivar el SDD, actualizar Google Doc/Sheet y pasar NOT-131 a Done en Linear | Historia cerrada | [ ] |
 
 ## Pruebas finales (Fase 5)
 
 - [x] Todos los criterios CA-01 a CA-10 verificados (tabla de trazabilidad abajo).
-- [x] Backend: 451 pruebas, 0 fallos, 2 omitidas (PR 1: 433; PR 2: 451 con las bases desechables). Frontend: 226 pruebas, lint y build en verde.
+- [x] Backend: 454 pruebas, 0 fallos, 2 omitidas (PR 1: 433; PR 2: 454 con las bases desechables). Frontend: 230 pruebas, lint y build en verde.
 - [ ] Verificación manual en local (detalle con envío en camino, enviado y rebotado; español, 360 px y 1366 px).
 - [x] Revisión con el subagente `code-reviewer` y hallazgos corregidos (1, 2, 3, 5, 6, 7, 8, 9 y 10; ver registro).
 - [x] Documentos actualizados: `spec.md`, `plan.md`, `docs/contexto/`.
@@ -107,5 +115,10 @@
 | --- | --- | --- |
 | 2026-11-13 | Spec y plan aprobados; tareas escritas | spec.md, plan.md, tasks.md |
 | 2026-11-13 | Revisión de código: el detalle ofrece «Reintentar envío» y canales para otro canal; CA-08 ajustado a reintento por la persona; guía con casillas previas y prueba de rebote real | spec.md, tasks.md, 14-activar-envio-real.md |
-| 2026-11-13 | Tras la prueba en producción de Andrés: Anexo A del spec y del plan, tareas T-07 a T-18 y matriz de QA Q-01 a Q-16 (borrador, pendiente de aprobación) | spec.md, plan.md, tasks.md |
-| 2026-11-14 | Implementados T-07 y T-09 a T-17; revisión con code-reviewer (selector del panel, resumen del paso 4, simulador, mapa accesible, correo con tablas y una línea en blanco) corregida. Quedan T-08 (Google) y T-18 (webhook), que necesitan a Andrés, y el QA Q-01 a Q-16 | tasks.md |
+| 2026-11-13 | Tras la prueba en producción de Andrés: Anexo A del spec y del plan, tareas T-07 a T-18 y matriz de QA Q-01 a Q-20 (borrador, pendiente de aprobación) | spec.md, plan.md, tasks.md |
+| 2026-11-14 | Implementados T-07 y T-09 a T-17; revisión con code-reviewer (selector del panel, resumen del paso 4, simulador, mapa accesible, correo con tablas y una línea en blanco) corregida. Quedan T-08 (Google) y T-18 (webhook), que necesitan a Andrés, y el QA Q-01 a Q-20 | tasks.md |
+| 2026-11-14 | T-08: consulta de solo lectura a Neon. La cuenta de `andreslopezv1m@gmail.com` existe desde el 3 nov y Google se vinculó a ella por correo (comportamiento previsto). No hay error de vinculación | tasks.md |
+| 2026-11-14 | Segunda tanda de hallazgos: T-19 a T-22 (aviso de privacidad, dirección, ubicación opcional, aviso del ciudadano al administrador) y QA Q-16 a Q-19. Límite diario con borrador y rediseño: fuera del MVP | spec.md, tasks.md |
+| 2026-11-14 | Implementados T-19 (se elimina el HTML estático que tapaba el aviso de privacidad en Netlify), T-21 y T-22 (marca `delCiudadano` en el historial y etiqueta en el panel). T-20 sin cambios a la espera de Andrés | tasks.md |
+| 2026-11-14 | Revisión de T-19 a T-22 corregida: la nota del ciudadano usa el reloj monótono, un administrador dueño del reporte no cuenta como ciudadano, el selector permite «Mantener el estado y solo anotar», se quitó el contador, la prueba de `public/` usa lista de permitidos y el simulador ya no cambia el estado | spec.md, plan.md, tasks.md |
+| 2026-11-14 | T-20: el contador de la dirección de correspondencia pasó a la fila del título, como en la descripción. Los commits posteriores al PR #39 viajan en un PR nuevo | tasks.md |

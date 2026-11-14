@@ -63,6 +63,7 @@ class ListadoReportesIntegracionTest {
     private long idAna;
     private String tokenAna;
     private long idLuis;
+    private long idAdmin;
     private String tokenLuis;
     private String tokenAdmin;
 
@@ -74,7 +75,7 @@ class ListadoReportesIntegracionTest {
         String admin = "admin-" + UUID.randomUUID() + "@prueba.com";
         idAna = DatosDePrueba.usuario(jdbc, idBarrio, ana, DatosDePrueba.CIUDADANO);
         idLuis = DatosDePrueba.usuario(jdbc, idBarrio, luis, DatosDePrueba.CIUDADANO);
-        DatosDePrueba.usuario(jdbc, idBarrio, admin, DatosDePrueba.ADMIN);
+        idAdmin = DatosDePrueba.usuario(jdbc, idBarrio, admin, DatosDePrueba.ADMIN);
         tokenAna = jwt.generar(ana, "CIUDADANO");
         tokenLuis = jwt.generar(luis, "CIUDADANO");
         tokenAdmin = jwt.generar(admin, "ADMIN");
@@ -183,6 +184,54 @@ class ListadoReportesIntegracionTest {
         assertThat(ana.get("fotos")).hasSize(2);
         assertThat(ana.get("historial")).hasSize(2);
         assertThat(ana.get("historial").get(1).get("estado").asText()).isEqualTo("Enviado");
+    }
+
+    @Test
+    void elPanelMarcaLasNotasDelCiudadanoYNoLasDelAdministrador() throws Exception {
+        Reporte deAna = DatosDePrueba.reporte(jdbc, idAna, 1, idBarrio, 2);
+        jdbc.update("""
+                INSERT INTO historial_estado (id_reporte, id_estado_reporte, observacion, id_usuario_cambia)
+                SELECT id_reporte, id_estado_reporte, 'El ciudadano avisó que su reporte ya se resolvió.', ?
+                  FROM reporte WHERE codigo_seguimiento = ?""", idAna, deAna.codigo());
+        jdbc.update("""
+                INSERT INTO historial_estado (id_reporte, id_estado_reporte, observacion, id_usuario_cambia)
+                SELECT id_reporte, id_estado_reporte, 'Revisado por la entidad.', ?
+                  FROM reporte WHERE codigo_seguimiento = ?""", idAdmin, deAna.codigo());
+
+        JsonNode ana = null;
+        for (JsonNode r : leer(pedir("/api/admin/reportes", tokenAdmin))) {
+            if (r.get("codigoSeguimiento").asText().equals(deAna.codigo())) {
+                ana = r;
+            }
+        }
+
+        assertThat(ana).isNotNull();
+        JsonNode historial = ana.get("historial");
+        assertThat(historial).hasSize(3);
+        assertThat(historial.get(0).get("delCiudadano").asBoolean()).isFalse();
+        assertThat(historial.get(1).get("delCiudadano").asBoolean()).isTrue();
+        assertThat(historial.get(2).get("delCiudadano").asBoolean()).isFalse();
+    }
+
+    @Test
+    void unaNotaDeUnAdministradorSobreSuPropioReporteNoSeMarcaComoDelCiudadano() throws Exception {
+        Reporte delAdmin = DatosDePrueba.reporte(jdbc, idAdmin, 1, idBarrio, 1);
+        jdbc.update("""
+                INSERT INTO historial_estado (id_reporte, id_estado_reporte, observacion, id_usuario_cambia)
+                SELECT id_reporte, id_estado_reporte, 'Revisado por la entidad.', ?
+                  FROM reporte WHERE codigo_seguimiento = ?""", idAdmin, delAdmin.codigo());
+
+        JsonNode propio = null;
+        for (JsonNode r : leer(pedir("/api/admin/reportes", tokenAdmin))) {
+            if (r.get("codigoSeguimiento").asText().equals(delAdmin.codigo())) {
+                propio = r;
+            }
+        }
+
+        assertThat(propio).isNotNull();
+        for (JsonNode asiento : propio.get("historial")) {
+            assertThat(asiento.get("delCiudadano").asBoolean()).isFalse();
+        }
     }
 
     @Test

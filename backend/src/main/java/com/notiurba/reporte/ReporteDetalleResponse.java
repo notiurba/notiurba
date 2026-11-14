@@ -31,7 +31,8 @@ public record ReporteDetalleResponse(
     public record Foto(Integer orden, String url) {
     }
 
-    public record CambioDeEstado(String estado, String observacion, OffsetDateTime cambiadoEn) {
+    /** `delCiudadano`: la nota la escribió la persona dueña del reporte («Actualizar mi reporte»), no un administrador. */
+    public record CambioDeEstado(String estado, String observacion, OffsetDateTime cambiadoEn, boolean delCiudadano) {
     }
 
     /** Estado del correo a la entidad: PENDIENTE, ENVIADO o FALLIDO; motivo solo si falló (RF-16). */

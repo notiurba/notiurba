@@ -23,7 +23,7 @@ export const identificadorEstado = (estado) =>
 export const etiquetaEstado = (identificador) => ESTADOS_REPORTE.find((e) => identificadorEstado(e) === identificador) ?? identificador
 
 // El estado que muestra el selector del panel: el elegido si sigue siendo posible; si no, el primero que se puede.
-export const estadoElegido = (opciones, elegido) => (opciones.includes(elegido) ? elegido : (opciones[0] ?? ''))
+export const estadoElegido = (opciones, elegido, inicial = opciones[0] ?? '') => (opciones.includes(elegido) ? elegido : inicial)
 
 // A qué estado puede pasar el administrador a mano: no se retrocede y «Enviado» lo pone el envío del correo.
 export const estadosSiguientes = (estado) => {
@@ -36,4 +36,11 @@ export const comunasConReportes = (reportes) =>
   [...new Set(reportes.map((r) => r.idComuna).filter((c) => c != null))].sort((a, b) => a - b)
 export const estadosConReportes = (estados, cuenta, elegido) =>
   estados.filter((e) => e === 'Todos' || e === elegido || cuenta(e) > 0)
+
+// El aviso que la persona dejó en «Actualizar mi reporte» y que el administrador aún no respondió: la última nota del
+// historial es suya y el reporte no está resuelto. No cambia el estado; solo le avisa al administrador.
+export const avisoDelCiudadano = (reporte) => {
+  const ultimo = reporte.historial?.at(-1)
+  return ultimo?.delCiudadano === true && reporte.estado !== ESTADO_RESUELTO ? ultimo : null
+}
 

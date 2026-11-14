@@ -108,13 +108,16 @@ public class ListadoReportesRepositorio {
                 });
         Map<Long, List<ReporteDetalleResponse.CambioDeEstado>> historial = new LinkedHashMap<>();
         jdbc.query("""
-                SELECT h.id_reporte, e.nombre AS estado, h.observacion, h.cambiado_en
+                SELECT h.id_reporte, e.nombre AS estado, h.observacion, h.cambiado_en,
+                       %s AS del_ciudadano
                   FROM historial_estado h JOIN estado_reporte e ON e.id_estado_reporte = h.id_estado_reporte
-                 WHERE h.id_reporte IN (:ids) ORDER BY h.cambiado_en, h.id_historial_estado""",
+                  JOIN reporte r ON r.id_reporte = h.id_reporte
+                 WHERE h.id_reporte IN (:ids) ORDER BY h.cambiado_en, h.id_historial_estado""".formatted(ReporteRepositorio.SQL_NOTA_DEL_CIUDADANO),
                 ids, rs -> {
                     historial.computeIfAbsent(rs.getLong("id_reporte"), k -> new ArrayList<>())
                             .add(new ReporteDetalleResponse.CambioDeEstado(rs.getString("estado"),
-                                    rs.getString("observacion"), rs.getObject("cambiado_en", OffsetDateTime.class)));
+                                    rs.getString("observacion"), rs.getObject("cambiado_en", OffsetDateTime.class),
+                                    rs.getBoolean("del_ciudadano")));
                 });
         Map<Long, ReporteDetalleResponse.Envio> envios = new LinkedHashMap<>();
         jdbc.query("""

@@ -194,3 +194,6 @@
   caret-color: var(--nu-texto-principal);
   transition: background-color 9999s ease-in-out 0s;
 }
+
+/* Contador de caracteres a la derecha del título del campo, siempre a la vista mientras se escribe. */
+.campo__contador { margin-left: auto; font-size: 13px; color: var(--nu-texto-secundario); }

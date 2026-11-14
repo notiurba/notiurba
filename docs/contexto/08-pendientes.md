@@ -36,6 +36,9 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 - **Límite de intentos por IP o por dispositivo:** hoy es solo por correo, así que alguien podría
   bloquear el correo de otra persona por 5 minutos; aceptado en la spec de NOT-132.
 
+- **Guardar un reporte como borrador cuando se llega al tope diario** (2 reportes por cuenta al día). Hoy el texto del reporte
+  se conserva mientras la pestaña siga abierta (se guarda en el navegador) y el aviso lo dice; las fotos no. Un borrador que
+  sobreviva al cierre del navegador o viva en el servidor es trabajo de un día, con decisiones de privacidad (Andrés, 14/11/2026).
 - **Rediseño completo del panel del administrador** (identidad visual, tablas y filtros más cuidados). En NOT-131 solo
   se ajusta espaciado, contraste y etiquetas (Andrés, 14/11/2026).
 - **Mapa de calor del panel** ya existe en el backend; falta la pantalla (NOT-136).
