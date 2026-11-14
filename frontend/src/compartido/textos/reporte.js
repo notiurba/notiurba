@@ -14,10 +14,10 @@ export function fechaCorta(iso) {
 export const TEXTOS_DESCRIPCION = {
   titulo: 'Cuéntenos qué pasa',
   etiqueta: '¿Qué problema quiere reportar?',
-  guia:
-    'Aquí explicará el problema: qué está pasando, desde cuándo y a quién afecta. Ejemplo: Hay un hueco grande en la calle desde hace dos semanas y las motos frenan de golpe para esquivarlo.',
+  ejemplo: 'Ej. Hay un hueco grande en la calle desde hace dos semanas y las motos frenan de golpe.',
+  guia: 'Cuente qué pasa, desde cuándo y a quién afecta.',
   reglas:
-    `Entre ${MIN_DESCRIPCION} y ${MAX_DESCRIPCION} caracteres. No hace falta repetir la dirección: ya marcó el lugar. No escriba datos de otras personas. Un resumen de lo que escriba, sin su nombre, puede mostrarse a otras personas que reporten lo mismo.`,
+    `Entre ${MIN_DESCRIPCION} y ${MAX_DESCRIPCION} caracteres. No escriba datos de otras personas. Un resumen de lo que escriba, sin su nombre, puede verlo quien reporte lo mismo.`,
 }
 
 export const TEXTOS_FOTO = {

@@ -48,13 +48,12 @@ export function armarSolicitudReporte(b, { autorizaEnvio = false, emergencia = f
     autorizaEnvio: autorizaEnvio === true,
     emergencia: emergencia === true,
   }
-  const pideUbicacion = categoria?.requiereUbicacion !== false
-  if (pideUbicacion && b.latitud != null && b.longitud != null) {
+  if (b.latitud != null && b.longitud != null) {
     solicitud.latitud = b.latitud
     solicitud.longitud = b.longitud
   }
-  if (pideUbicacion && b.idBarrio) solicitud.idBarrio = Number(b.idBarrio)
-  if (pideUbicacion && b.direccion.trim()) solicitud.direccionIncidente = b.direccion.trim()
+  if (b.idBarrio) solicitud.idBarrio = Number(b.idBarrio)
+  if (b.direccion.trim()) solicitud.direccionIncidente = b.direccion.trim()
   if (categoria?.admiteMatricula !== false && b.matricula.trim()) solicitud.matriculaCuentaServicio = b.matricula.trim()
   if (Number.isInteger(totalFotos)) solicitud.totalFotos = totalFotos
   if (confirmarDuplicado === true) solicitud.confirmarDuplicado = true

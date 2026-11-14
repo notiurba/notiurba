@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { lazy, Suspense, useEffect } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import Bienvenida from './compartido/paginas/Bienvenida'
 import Login from './compartido/paginas/Login'
 import AvisoPrivacidad from './compartido/paginas/AvisoPrivacidad'
@@ -21,8 +21,17 @@ const RutasReportar = lazy(() => import('./app/reportar/rutas'))
 // El panel se descarga solo cuando alguien entra a /admin (el ciudadano nunca baja ese código).
 const RutasAdmin = lazy(() => import('./admin/rutas'))
 
+// Cada pantalla nueva empieza arriba, no donde estaba el scroll de la anterior.
+function SubirAlCambiarDePantalla() {
+  const { pathname } = useLocation()
+  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  return null
+}
+
 function App() {
   return (
+    <>
+    <SubirAlCambiarDePantalla />
     <Routes>
       <Route path="/" element={<SoloSinSesion><Bienvenida /></SoloSinSesion>} />
       <Route path="/login" element={<SoloSinSesion><AccesoConRetorno><Login /></AccesoConRetorno></SoloSinSesion>} />
@@ -67,6 +76,7 @@ function App() {
       />
       <Route path="*" element={<NoEncontrada />} />
     </Routes>
+    </>
   )
 }
 

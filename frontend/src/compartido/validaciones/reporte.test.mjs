@@ -72,11 +72,14 @@ test('ni el consentimiento de registro ni el constructor infieren autorización 
   assert.ok(validarConfirmacionReporte(b, { idCategoria: 2 }, true).idCategoria)
 })
 
-test('el payload omite ubicación y matrícula residuales según la ruta y comunica emergencia', () => {
+test('con ubicación opcional el lugar que la persona marcó sí se envía; la matrícula solo si la ruta la admite', () => {
   const b = { idCategoria: '6', descripcion: 'Construcción sin licencia', latitud: 4.1, longitud: -76.2, idBarrio: '5', direccion: 'Calle 10', matricula: '123' }
   const solicitud = armarSolicitudReporte(b, { autorizaEnvio: true, emergencia: true, categoria: { requiereUbicacion: false, admiteMatricula: false } })
   assert.equal(solicitud.emergencia, true)
-  for (const campo of ['latitud', 'longitud', 'idBarrio', 'direccionIncidente', 'matriculaCuentaServicio']) assert.equal(campo in solicitud, false)
+  assert.deepEqual([solicitud.latitud, solicitud.longitud, solicitud.idBarrio, solicitud.direccionIncidente], [4.1, -76.2, 5, 'Calle 10'])
+  assert.equal('matriculaCuentaServicio' in solicitud, false)
+  const sinLugar = armarSolicitudReporte({ ...b, latitud: null, longitud: null, idBarrio: '', direccion: '' }, { categoria: { requiereUbicacion: false } })
+  for (const campo of ['latitud', 'longitud', 'idBarrio', 'direccionIncidente']) assert.equal(campo in sinLugar, false)
 })
 
 test('armarSolicitudReporte omite punto y barrio cuando no los hay', () => {

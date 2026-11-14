@@ -91,21 +91,18 @@ export default function PasoUbicacion() {
 
       <FormularioPantalla
         alEnviar={continuar}
-        acciones={<Boton type="submit">{pideUbicacion ? 'Continuar' : 'Continuar sin ubicación'}</Boton>}
+        acciones={<Boton type="submit">{pideUbicacion || hayPunto || barrio ? 'Continuar' : 'Continuar sin ubicación'}</Boton>}
       >
         <PasosBarra paso={2} total={4} etiqueta="Ubicación" />
         <ResumenCategoria categoria={categoria} />
-        <h2 className="reportar__titulo">{pideUbicacion ? '¿Dónde ocurrió?' : 'Ubicación no requerida'}</h2>
-        {!pideUbicacion && <Aviso>Para este tipo de reporte la ubicación es opcional. Si quiere, márquela en el mapa: ayuda a ubicar el problema. Si no, pase al siguiente paso.</Aviso>}
-        {pideUbicacion && <>
+        <h2 className="reportar__titulo">{pideUbicacion ? '¿Dónde ocurrió?' : '¿Dónde ocurrió? (opcional)'}</h2>
+        {!pideUbicacion && <Aviso>{TEXTOS_UBICACION.ubicacionOpcional}</Aviso>}
         {import.meta.env.DEV && import.meta.env.VITE_USAR_MOCKS === 'true' && (
           <Aviso titulo="Modo demostración">
             La lista contiene barrios de prueba y no representa el catálogo real de Tuluá.
           </Aviso>
         )}
-        <p id="ubicacion-explicacion" className="reportar__mensaje">{TEXTOS_UBICACION.antesDelPermiso}</p>
         <p id="ubicacion-instruccion" className="reportar__mensaje">{TEXTOS_UBICACION.instruccionMapa}</p>
-        <p id="ubicacion-teclado" className="reportar__mensaje">{TEXTOS_UBICACION.ayudaTeclado}</p>
 
         <MapaUbicacion latitud={borrador.latitud} longitud={borrador.longitud} alElegir={elegirPunto} error={errores.punto} />
         {errores.punto && (
@@ -114,7 +111,7 @@ export default function PasoUbicacion() {
           </p>
         )}
 
-        <Boton variante="secundario" onClick={usarGps} cargando={buscandoGps} textoCargando="Buscando su ubicación…" aria-describedby="ubicacion-explicacion">
+        <Boton variante="secundario" onClick={usarGps} cargando={buscandoGps} textoCargando="Buscando su ubicación…">
           <IconoUbicacion tamano={20} />
           {gpsIntentado || hayPunto ? TEXTOS_UBICACION.volverUbicar : 'Usar mi ubicación actual (GPS)'}
         </Boton>
@@ -157,10 +154,10 @@ export default function PasoUbicacion() {
           <Selector
             id="idBarrio"
             etiqueta="Barrio"
-            opcional={hayPunto}
+            opcional={hayPunto || !pideUbicacion}
             disabled={cargandoBarrios}
             marcador="Seleccione el barrio"
-            ayuda="Si no marcó un lugar, seleccione un barrio disponible."
+            ayuda={pideUbicacion ? 'Si no marcó un lugar, seleccione un barrio disponible.' : undefined}
             opciones={barrios.map((b) => ({ valor: b.idBarrio, texto: b.nombre }))}
             value={borrador.idBarrio}
             onChange={(e) => cambiar({ idBarrio: e.target.value })}
@@ -170,7 +167,6 @@ export default function PasoUbicacion() {
         {errorBarrios && <Aviso variante="error" titulo="No pudimos cargar los barrios">
           Puede marcar el lugar en el mapa. <button type="button" className="enlace-boton" onClick={recargarCatalogos}>Reintentar</button>
         </Aviso>}
-        </>}
       </FormularioPantalla>
 
       <HojaInferior

@@ -101,6 +101,8 @@ export default function PasoDetalles() {
               cambiar({ descripcion: e.target.value })
               setErrores({})
             }}
+            placeholder={TEXTOS_DESCRIPCION.ejemplo}
+            acciones={<span className="detalles__contador" aria-live="polite">{borrador.descripcion.length}/{MAX_DESCRIPCION}</span>}
             error={errores.descripcion}
             ayuda={<>{TEXTOS_DESCRIPCION.guia}<br />{TEXTOS_DESCRIPCION.reglas}</>}
           />
@@ -112,9 +114,6 @@ export default function PasoDetalles() {
               {TEXTOS_DESCRIPCION.reglas}
             </p>
           )}
-          <p className="detalles__contador" aria-live="polite">
-            {borrador.descripcion.length}/{MAX_DESCRIPCION}
-          </p>
         </div>
 
         <div className="detalles__fotos">
