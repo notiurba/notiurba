@@ -2,7 +2,7 @@ export const TEXTOS_UBICACION = {
   instruccionMapa: 'Toque el mapa para marcar el lugar.',
   etiquetaMapa: 'Mapa para marcar el lugar del problema',
   ayudaTeclado: 'Con teclado, use las flechas para mover el mapa y Enter para marcar el centro.',
-  ubicacionOpcional: 'En este tipo de reporte marcar el lugar es opcional.',
+  ubicacionOpcional: 'No es obligatorio marcar el lugar en este tipo de reporte: puede continuar sin hacerlo. Si lo marca, ayuda a la entidad a ubicar el problema.',
   volverUbicar: 'Volver a obtener mi ubicación',
   puntoRequerido: 'Marque el punto donde ocurrió el problema antes de continuar.',
   puntoOBarrio: 'Marque el punto donde ocurrió el problema o seleccione un barrio antes de continuar.',

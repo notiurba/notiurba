@@ -81,3 +81,8 @@ test('los textos del mapa son breves y sin palabras técnicas (RN-24)', () => {
   for (const texto of Object.values(TEXTOS_UBICACION)) assert.doesNotMatch(texto, /servidor|token|\bapi\b|cors|http|error \d/i)
 })
 
+test('el aviso de ubicación opcional dice claro que no es obligatorio y que se puede continuar', () => {
+  assert.match(TEXTOS_UBICACION.ubicacionOpcional, /No es obligatorio/)
+  assert.match(TEXTOS_UBICACION.ubicacionOpcional, /continuar sin hacerlo/)
+})
+
