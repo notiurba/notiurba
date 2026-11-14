@@ -89,7 +89,7 @@
 ## Pruebas finales (Fase 5)
 
 - [x] Todos los criterios CA-01 a CA-10 verificados (tabla de trazabilidad abajo).
-- [x] Backend: 451 pruebas, 0 fallos, 2 omitidas (PR 1: 433; PR 2: 451 con las bases desechables). Frontend: 226 pruebas, lint y build en verde.
+- [x] Backend: 454 pruebas, 0 fallos, 2 omitidas (PR 1: 433; PR 2: 454 con las bases desechables). Frontend: 230 pruebas, lint y build en verde.
 - [ ] Verificación manual en local (detalle con envío en camino, enviado y rebotado; español, 360 px y 1366 px).
 - [x] Revisión con el subagente `code-reviewer` y hallazgos corregidos (1, 2, 3, 5, 6, 7, 8, 9 y 10; ver registro).
 - [x] Documentos actualizados: `spec.md`, `plan.md`, `docs/contexto/`.
@@ -120,3 +120,5 @@
 | 2026-11-14 | T-08: consulta de solo lectura a Neon. La cuenta de `andreslopezv1m@gmail.com` existe desde el 3 nov y Google se vinculó a ella por correo (comportamiento previsto). No hay error de vinculación | tasks.md |
 | 2026-11-14 | Segunda tanda de hallazgos: T-19 a T-22 (aviso de privacidad, dirección, ubicación opcional, aviso del ciudadano al administrador) y QA Q-16 a Q-19. Límite diario con borrador y rediseño: fuera del MVP | spec.md, tasks.md |
 | 2026-11-14 | Implementados T-19 (se elimina el HTML estático que tapaba el aviso de privacidad en Netlify), T-21 y T-22 (marca `delCiudadano` en el historial y etiqueta en el panel). T-20 sin cambios a la espera de Andrés | tasks.md |
+| 2026-11-14 | Revisión de T-19 a T-22 corregida: la nota del ciudadano usa el reloj monótono, un administrador dueño del reporte no cuenta como ciudadano, el selector permite «Mantener el estado y solo anotar», se quitó el contador, la prueba de `public/` usa lista de permitidos y el simulador ya no cambia el estado | spec.md, plan.md, tasks.md |
+

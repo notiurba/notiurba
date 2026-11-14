@@ -164,8 +164,9 @@ IDs `RF-16a` y `RNF-xx` se confirman contra `docs/contexto/04` y `05` al planifi
   marcar el lugar y que puede continuar sin hacerlo.
 - **CA-25** — _Dado_ que una persona avisa «Ya se resolvió» o «Me respondieron» en «Actualizar mi reporte», _cuando_ el
   administrador abre el panel, _entonces_ ve una etiqueta «Aviso del ciudadano» en la lista y el aviso destacado en el
-  detalle. El estado **no** cambia solo: la etiqueta desaparece cuando el administrador responde (cambia el estado o deja una
-  observación).
+  detalle. El estado **no** cambia solo: la etiqueta desaparece cuando el administrador responde: cambia el estado o, con la opción
+  «Mantener el estado y solo anotar», deja una observación (obligatoria en ese caso). Una nota de un administrador nunca
+  cuenta como «del ciudadano».
 - **CA-26** — _Dado_ el campo de dirección de correspondencia, _entonces_ el límite y el contador se ven mientras se escribe
   (ya existen en el registro: 100 caracteres). Si en otra pantalla el límite no se ve, se corrige. [Por confirmar con Andrés: en
   qué pantalla vio el campo sin límite.]
