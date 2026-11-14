@@ -155,6 +155,21 @@ IDs `RF-16a` y `RNF-xx` se confirman contra `docs/contexto/04` y `05` al planifi
 - **CA-21** — Panel del administrador: más espacio entre elementos (por ejemplo, los filtros), colores con más contraste y
   sin la etiqueta «Administrador · todas las comunas». Un rediseño completo queda en `08-pendientes.md`.
 
+### Segunda tanda de hallazgos (14 nov 2026, de la prueba en el celular)
+
+- **CA-23** — _Dado_ que la persona abre el aviso de privacidad (desde el registro, Ajustes o el envío), _entonces_ ve el aviso
+  vigente (versión 3) y nunca una propuesta con marcadores como «[RESPONSABLE PENDIENTE DE DEFINIR]». Causa: un archivo
+  estático (`frontend/public/aviso-privacidad.html`) tapaba la pantalla de la app en Netlify; se elimina.
+- **CA-24** — _Dado_ un tipo de reporte con ubicación opcional, _entonces_ el paso 2 dice con claridad que no es obligatorio
+  marcar el lugar y que puede continuar sin hacerlo.
+- **CA-25** — _Dado_ que una persona avisa «Ya se resolvió» o «Me respondieron» en «Actualizar mi reporte», _cuando_ el
+  administrador abre el panel, _entonces_ ve una etiqueta «Aviso del ciudadano» en la lista y el aviso destacado en el
+  detalle. El estado **no** cambia solo: la etiqueta desaparece cuando el administrador responde (cambia el estado o deja una
+  observación).
+- **CA-26** — _Dado_ el campo de dirección de correspondencia, _entonces_ el límite y el contador se ven mientras se escribe
+  (ya existen en el registro: 100 caracteres). Si en otra pantalla el límite no se ve, se corrige. [Por confirmar con Andrés: en
+  qué pantalla vio el campo sin límite.]
+
 ### Fuera de alcance de este anexo
 
 - Mapa de calor del panel (NOT-136), copia del correo al ciudadano, rediseño completo del panel.
