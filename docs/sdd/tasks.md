@@ -6,7 +6,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) (aprobada) |
 | Plan | [plan.md](plan.md) (aprobado) |
-| Estado general | **Sin iniciar** (NOT-133 sigue en «Todo» en Linear por decisión de Andrés) |
+| Estado general | **Parte A hecha y revisada; Parte B (producción) pendiente** (NOT-133 sigue en «Todo» en Linear por decisión de Andrés) |
 | Última actualización | 2026-11-14 |
 
 ## Cómo se usa
@@ -22,14 +22,14 @@
 
 | ID | Tarea | Quién | Cubre | Prueba | Estado |
 | --- | --- | --- | --- | --- | --- |
-| T-01 | Prueba que falla primero: una base nueva debe arrancar sin `ADMIN_DEV_PASSWORD` y la clave vieja del admin sembrado no debe servir | Claude | CA-05 | prueba de integración nueva | [ ] |
-| T-02 | `application.yml`: `adminPassword: ${ADMIN_DEV_PASSWORD:${random.uuid}}`; comprobar que Flyway no rechaza V4 en una base que ya la tiene | Claude | CA-04, CA-05 | T-01 en verde + migración sobre base con V4 | [ ] |
-| T-03 | Workflow `.github/workflows/mantener-despierto.yml` (cron cada 10 min + manual, `curl` a `/api/health`, sin secretos) | Claude | CA-03 | revisión del YAML; se ejecuta a mano tras integrarse | [ ] |
-| T-04 | `tools/verificar-despliegue.sh`: salud y CORS (sitio y vista previa) con `curl`, sin secretos | Claude | CA-07 | se ejecuta contra producción | [ ] |
-| T-05 | `docs/contexto/15-guia-de-despliegue.md`: Netlify, Render, Neon, Cloudinary, Resend, Google, variables (solo nombres), aviso periódico, vuelta atrás; enlaza a `14-activar-envio-real.md` | Claude | CA-01, CA-08 | `grep` de secretos + variables contra `application.yml` | [ ] |
-| T-06 | En la guía: procedimiento de respaldo (branch de Neon + `pg_dump`) y restauración en base vacía con conteos de comparación | Claude | CA-02 | se ejecuta en T-09 | [ ] |
-| T-07 | En la guía: script del administrador real con variables de `psql` (sin valores en el repo), `SELECT` previo del correo, columnas verificadas en `10-modelo-de-datos.md` | Claude | CA-04 | se ejecuta en T-11 | [ ] |
-| T-08 | Actualizar `02-stack`, `04-requisitos` (RNF nuevos), `08-pendientes` (respaldos automáticos), `12-estado-actual`, `13-sprint-3`, `14-activar-envio-real` (quitar espera del CAIC), `CLAUDE.md` y la skill `notiurba-pruebas-y-despliegue` | Claude | CA-01, CA-08 | revisión cruzada | [ ] |
+| T-01 | Prueba que falla primero: una base nueva debe arrancar sin `ADMIN_DEV_PASSWORD` y la clave vieja del admin sembrado no debe servir | Claude | CA-05 | prueba de integración nueva | [x] |
+| T-02 | `application.yml`: `adminPassword: ${ADMIN_DEV_PASSWORD:${random.uuid}}`; comprobar que Flyway no rechaza V4 en una base que ya la tiene | Claude | CA-04, CA-05 | T-01 en verde + migración sobre base con V4 | [x] |
+| T-03 | Workflow `.github/workflows/mantener-despierto.yml` (cron cada 5 min + manual, `curl` a `/api/admin/ping` esperando 401, sin secretos; solo corre desde `main`) | Claude | CA-03 | revisión del YAML; se ejecuta a mano tras integrarse | [x] |
+| T-04 | `tools/verificar-despliegue.sh`: salud y CORS (sitio y vista previa) con `curl`, sin secretos | Claude | CA-07 | se ejecuta contra producción | [x] |
+| T-05 | `docs/contexto/15-guia-de-despliegue.md`: Netlify, Render, Neon, Cloudinary, Resend, Google, variables (solo nombres), aviso periódico, vuelta atrás; enlaza a `14-activar-envio-real.md` | Claude | CA-01, CA-08 | `grep` de secretos + variables contra `application.yml` | [x] |
+| T-06 | En la guía: procedimiento de respaldo (branch de Neon + `pg_dump`) y restauración en base vacía con conteos de comparación | Claude | CA-02 | se ejecuta en T-09 | [x] |
+| T-07 | En la guía: script del administrador real con variables de `psql` (sin valores en el repo), `SELECT` previo del correo, columnas verificadas en `10-modelo-de-datos.md` | Claude | CA-04 | se ejecuta en T-11 | [x] |
+| T-08 | Actualizar `02-stack`, `04-requisitos` (RNF nuevos), `08-pendientes` (respaldos automáticos), `12-estado-actual`, `13-sprint-3`, `14-activar-envio-real` (quitar espera del CAIC), `CLAUDE.md` y la skill `notiurba-pruebas-y-despliegue` | Claude | CA-01, CA-08 | revisión cruzada | [x] |
 
 ### Parte B — operación en producción (después de integrar la Parte A)
 
@@ -68,3 +68,4 @@
 | Fecha | Cambio | Documento |
 | --- | --- | --- |
 | 2026-11-14 | Tareas escritas con spec y plan aprobados | tasks.md |
+| 2026-11-14 | Revisión de código: el aviso usa `/api/admin/ping` cada 5 min (no gasta Neon), el script de admin valida los datos, el script de verificación no da falsos positivos, pruebas sin base se ejecutan siempre | tasks.md, plan.md |

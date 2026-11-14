@@ -15,7 +15,7 @@ Casi todo es documentación y operación, con **un cambio mínimo de código** y
 
 1. `application.yml`: `ADMIN_DEV_PASSWORD` deja de ser obligatoria; si falta, toma un valor aleatorio
    (`${ADMIN_DEV_PASSWORD:${random.uuid}}`). Así se puede borrar de Render y una base nueva no queda con clave conocida.
-2. Workflow `.github/workflows/mantener-despierto.yml`: llama a `/api/health` cada 10 min.
+2. Workflow `.github/workflows/mantener-despierto.yml`: llama a `/api/admin/ping` (responde 401, sin tocar la base) cada 5 min. Solo corre desde `main`.
 3. Guía `docs/contexto/15-guia-de-despliegue.md` con respaldo, restauración, admin real, arranque en frío y lista de verificación.
 4. Script de lista de verificación `tools/verificar-despliegue.sh` (solo `curl`: salud y CORS; sin secretos).
 
@@ -48,7 +48,7 @@ Sin cambios de stack. Solo GitHub Actions, que el repo ya usa (`edt51-validation
 
 ### Integraciones y configuración
 - **Variables:** sin nuevas. Se **retira** `ADMIN_DEV_PASSWORD` de Render (después de verificar que el arranque funciona sin ella y de convertir al admin).
-- **Workflow** (`schedule: cron "*/10 * * * *"` + `workflow_dispatch`): `curl -fsS -m 120 https://notiurba-api.onrender.com/api/health`. Sin secretos. Si falla, el job falla y GitHub avisa por correo.
+- **Workflow** (`schedule: cron "*/5 * * * *"` + `workflow_dispatch`): `curl` a `/api/admin/ping` y acepta 401 o 403 (no usa la base, para no gastar las horas de Neon). Sin secretos. Si falla, el job falla y GitHub avisa por correo.
 - **Resend / Cloudinary:** no se tocan. `RESEND_PRUEBA_DESTINO` sigue puesta; el envío real lo activa Andrés con `14-activar-envio-real.md`.
 
 ### Documentación

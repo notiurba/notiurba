@@ -23,7 +23,9 @@ El backend necesita 1 a 4 antes de arrancar. El frontend necesita la dirección 
 
 ### Neon (base de datos)
 1. Crear un proyecto (PostgreSQL 16). Copiar la **cadena de conexión directa** (no la de pooler) y guardarla en un lugar
-   privado: se usa como `DB_URL`, `DB_USER` y `DB_PASSWORD`.
+   privado. Neon la entrega como `postgresql://usuario:clave@host/base?sslmode=require`; el backend la pide separada:
+   `DB_URL` = `jdbc:postgresql://host/base?sslmode=require` (con el prefijo `jdbc:` y sin usuario ni clave),
+   `DB_USER` = el usuario y `DB_PASSWORD` = la clave.
 2. No hay que crear tablas: Flyway aplica las migraciones (V1 en adelante) al arrancar el backend. V1 activa PostGIS.
 3. El administrador inicial lo siembra V4 con la clave de `ADMIN_DEV_PASSWORD`, o con una clave aleatoria si la variable
    no existe. En ese caso se crea el administrador real con la sección 5.
@@ -103,8 +105,8 @@ ls -lh respaldo.dump
 1. Levantar un PostgreSQL desechable y restaurar:
 
 ```bash
-docker run -d --name notiurba-restauracion -e POSTGRES_PASSWORD=prueba -p 55433:5432 postgis/postgis:16-3.4
-sleep 8
+docker run -d --name notiurba-restauracion -e POSTGRES_PASSWORD=prueba postgis/postgis:16-3.4
+until docker exec notiurba-restauracion pg_isready -U postgres >/dev/null 2>&1; do sleep 2; done
 docker exec notiurba-restauracion createdb -U postgres restaurada
 docker exec -i notiurba-restauracion pg_restore -U postgres --no-owner -d restaurada < respaldo.dump
 ```
@@ -146,8 +148,9 @@ read -r  APELLIDOS_ADMIN; export APELLIDOS_ADMIN
 read -rs CLAVE_ADMIN;     export CLAVE_ADMIN
 ```
 
-3. Ejecutar. El cambio solo se confirma si el correo nuevo **no existe** ya como otra cuenta y se actualiza **una**
-   fila; si no, se deshace y no cambia nada:
+3. Ejecutar. El cambio solo se confirma si los datos son válidos (correo con forma de correo, nombres y apellidos no
+   vacíos, clave de 12 caracteres o más), el correo nuevo **no existe** ya como otra cuenta y se actualiza **una** fila;
+   si no, se deshace y no cambia nada:
 
 ```bash
 docker run --rm -i -e NEON_URL -e CORREO_ADMIN -e NOMBRES_ADMIN -e APELLIDOS_ADMIN -e CLAVE_ADMIN \
@@ -158,12 +161,15 @@ docker run --rm -i -e NEON_URL -e CORREO_ADMIN -e NOMBRES_ADMIN -e APELLIDOS_ADM
 \set apellidos `printenv APELLIDOS_ADMIN`
 \set clave `printenv CLAVE_ADMIN`
 BEGIN;
-SELECT NOT EXISTS (SELECT 1 FROM usuario WHERE lower(correo) = lower(:'correo')) AS libre \gset
+SELECT NOT EXISTS (SELECT 1 FROM usuario WHERE lower(correo) = lower(:'correo')) AS libre,
+       (:'correo' ~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'
+        AND length(btrim(:'nombres')) > 0 AND length(btrim(:'apellidos')) > 0
+        AND length(:'clave') >= 12) AS valido \gset
 WITH cambio AS (
   UPDATE usuario
      SET correo = :'correo', nombres = :'nombres', apellidos = :'apellidos',
          password_hash = crypt(:'clave', gen_salt('bf')), correo_verificado_en = now()
-   WHERE correo = 'admin.dev@notiurba.local' AND id_rol = 2 AND :'libre'::boolean
+   WHERE correo = 'admin.dev@notiurba.local' AND id_rol = 2 AND :'libre'::boolean AND :'valido'::boolean
   RETURNING 1)
 SELECT (count(*) = 1) AS hecho FROM cambio \gset
 \if :hecho
@@ -171,7 +177,11 @@ SELECT (count(*) = 1) AS hecho FROM cambio \gset
   \echo 'Listo: el administrador real quedó configurado.'
 \else
   ROLLBACK;
-  \echo 'No se cambió nada: el correo ya existe como otra cuenta, o ya no queda la cuenta sembrada.'
+  \if :valido
+    \echo 'No se cambió nada: el correo ya existe como otra cuenta, o ya no queda la cuenta sembrada.'
+  \else
+    \echo 'No se cambió nada: revisa que el correo tenga forma de correo, que nombres y apellidos no estén vacíos y que la clave tenga 12 caracteres o más.'
+  \endif
 \endif
 SQL
 ```
@@ -184,15 +194,23 @@ SQL
 Notas:
 - Si el correo ya existe como cuenta de ciudadano o de Google, el cambio no se hace. Hay que usar otro correo o resolver
   esa cuenta antes.
-- La contraseña vieja deja de servir en cuanto se confirma el cambio.
+- La contraseña vieja deja de servir para **iniciar sesión** en cuanto se confirma el cambio. Pero una sesión ya abierta
+  con la cuenta vieja sigue valiendo hasta 60 minutos (el servidor no consulta la base en cada llamada). Si se sospecha
+  de la clave vieja, cambiar `JWT_SECRET` en Render cierra todas las sesiones.
 - El nombre, el correo y la clave del administrador **no** se escriben en el repo.
 
 ## 6. Render Free: servidor dormido y arranque en frío
 
 - Render Free duerme el servicio tras 15 minutos sin tráfico. La primera llamada despierta el servidor.
-- **Aviso periódico:** el flujo `.github/workflows/mantener-despierto.yml` consulta `/api/health` cada 10 minutos para que no
-  se duerma. Se ve en GitHub → Actions. Si falla, GitHub avisa por correo. Si GitHub lo pausa por falta de actividad
-  del repo (60 días), se reactiva con «Run workflow».
+- **Aviso periódico:** el flujo `.github/workflows/mantener-despierto.yml` consulta el servidor cada 5 minutos para que no
+  se duerma. Se ve en GitHub → Actions. Si falla, GitHub avisa por correo.
+  - **Solo corre desde `main`** (la rama por defecto del repo): hasta que el flujo llegue a `main`, no hace nada. Mientras
+    tanto se puede lanzar a mano con «Run workflow».
+  - GitHub no garantiza la hora exacta de los avisos programados: pueden retrasarse. Reduce las veces que se duerme,
+    pero no las elimina. Si hace falta más seguridad, se añade un servicio externo gratis (por ejemplo cron-job.org).
+  - Si GitHub lo pausa por falta de actividad del repo (60 días), se reactiva con «Run workflow».
+  - Consulta una ruta protegida (`/api/admin/ping`, responde 401) y **no toca la base**: despierta a Render y deja que
+    Neon se suspenda solo, para no gastar sus horas gratis.
 - **Horas del plan:** Render Free da 750 horas al mes y un servicio encendido todo el mes usa ~744. Si faltan horas,
   se desactiva el flujo y se acepta el arranque en frío.
 - **Arranque en frío medido:** el 14/11/2026 una primera llamada con el servidor dormido superó los 120 s. Con el
