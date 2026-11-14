@@ -62,7 +62,7 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
 | ~~Rutas del mapa, del mapa de calor y de estadísticas~~ hechas en la rama `feature/not-129-api-mapa-calor-estadisticas` (falta mezclar en `develop`) | NOT-129 |
 | Mapa de reportes y mapa de calor del panel con datos reales | NOT-135, NOT-136 |
 | Correo a la entidad confuso (matrícula siempre, fecha cruda, coordenadas largas, filas vacías, fotos solo como enlaces) | NOT-130 |
-| Envío real a las entidades, rebotes (falta `RESEND_WEBHOOK_SECRET`) | NOT-131 |
+| ~~Aviso de rebotes en el detalle del reporte~~: hecho el 13/11/2026, en PR. Queda activar el envío real ([guía](14-activar-envio-real.md)) | NOT-131 |
 | ~~Registro lento, error de Google en celular, límites y duplicados~~: hecho el 13/11/2026, en PR | NOT-132 |
 | Despliegue final, respaldo de la base, administrador real (hoy usa `ADMIN_DEV_PASSWORD`) | NOT-133 |
 | La app no es PWA instalable (no hay manifiesto ni service worker) | NOT-134 |
@@ -111,10 +111,10 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   `GOOGLE_CLIENT_ID`, `CORS_ORIGINS` (`https://notiurba.netlify.app,https://deploy-preview-*--notiurba.netlify.app`),
   `RECUPERACION_ENLACE`, `VERIFICACION_ENLACE` (`https://notiurba.netlify.app/app/verificar-correo`),
   `RESEND_API_KEY`, `RESEND_REMITENTE`, `RESEND_PRUEBA_DESTINO`, `NOTIURBA_ENVIO_REPORTES_HABILITADO`,
-  `CLOUDINARY_*`. `MAIL_FROM` y `MAIL_TEST_TO` son restos sin uso. `RESEND_WEBHOOK_SECRET` **no está puesta**.
+  `RESEND_WEBHOOK_SECRET` (puesta el 13/11/2026), `CLOUDINARY_*`. `MAIL_FROM` y `MAIL_TEST_TO` ya se borraron.
 - **`RESEND_PRUEBA_DESTINO` debe seguir puesta** mientras dure la etapa de pruebas: con valor,
   el correo de cada reporte sale a la bandeja de pruebas de Andrés (asunto «[PRUEBA]») y no a
-  la entidad real. Quitarla exige autorización del equipo y del docente (historia NOT-131).
+  la entidad real. Para quitarla y volver a ponerla, sigue [14-activar-envio-real.md](14-activar-envio-real.md).
 - Netlify: `VITE_API_URL` y `VITE_GOOGLE_CLIENT_ID`.
 - Las migraciones aplicadas **no se editan**: se corrige con una migración nueva. Hoy van
   V1 a V20 en `develop` y V21 en la rama de NOT-130 (la siguiente es V22).
@@ -154,8 +154,8 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   petición.
 - La categoría 15 («Solicitud de información») está activa sin ruta de envío: crear un reporte
   funciona, pero la vista previa responde 400. Decide el equipo: desactivarla o darle ruta al CAIC.
-- El rebote real llega después por el webhook (NOT-131): mostrar canales y «Copiar mi mensaje» en el
-  detalle del reporte queda para esa historia.
+- El rebote real llega por el webhook de Resend (registrado el 13/11/2026) y el detalle del reporte
+  muestra «El correo no llegó» con los canales y «Copiar mi mensaje».
 - **Canales (V21, 12/11/2026):** cada canal guarda finalidad, orden, horario, fuente y fecha de
   verificación. Uno que no sirve no se borra: queda inactivo con el motivo. Revíselos cada cierto
   tiempo (cambian sin aviso).

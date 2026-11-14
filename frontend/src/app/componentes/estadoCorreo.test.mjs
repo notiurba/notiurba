@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { presentacionCorreo, enlaceCanal, nombreCanal, accionCanal, ofrecerOtrosCanales, textoParaCopiar, copiarMensaje } from './estadoCorreo.js'
+import { presentacionCorreo, enlaceCanal, nombreCanal, accionCanal, ofrecerOtrosCanales, resumenCorreoDetalle, textoParaCopiar, copiarMensaje } from './estadoCorreo.js'
 
 test('guardar un reporte no equivale a correo enviado', () => {
   assert.equal(presentacionCorreo(null).etiqueta, 'Sin enviar')
@@ -81,4 +81,55 @@ test('copiar mi mensaje: con ClipboardItem, con writeText y, si falla, deja el t
 test('nombre y acción también entienden la ruta antigua ({ canal })', () => {
   assert.equal(accionCanal({ canal: 'Teléfono', acceso: '164' }), 'Llamar al 164')
   assert.equal(nombreCanal({ canal: 'Teléfono', acceso: '164' }), 'Teléfono')
+})
+
+test('el detalle no muestra bloque de correo si no hay dato del envío', () => {
+  assert.equal(resumenCorreoDetalle(null), null)
+  assert.equal(resumenCorreoDetalle({}), null)
+})
+test('el detalle con el correo en camino o enviado no ofrece otros canales ni habla de fallo', () => {
+  for (const estado of ['PENDIENTE', 'ENVIADO']) {
+    const r = resumenCorreoDetalle({ estado })
+    assert.equal(r.otrosCanales, false)
+    assert.doesNotMatch(r.mensaje, /no (llegó|salió|pudo)/i)
+  }
+  assert.equal(resumenCorreoDetalle({ estado: 'ENVIADO' }).etiqueta, 'Enviado')
+})
+test('el detalle con rebote dice que no llegó y ofrece otros canales', () => {
+  const r = resumenCorreoDetalle({ estado: 'FALLIDO', rebote: true, reintentable: false })
+  assert.equal(r.etiqueta, 'No entregado')
+  assert.equal(r.subtitulo, 'El correo no llegó a la entidad')
+  assert.equal(r.otrosCanales, true)
+})
+test('el detalle con un envío fallido sin rebote ofrece otros canales y no manda a reintentar', () => {
+  const r = resumenCorreoDetalle({ estado: 'FALLIDO', rebote: false, reintentable: false })
+  assert.equal(r.otrosCanales, true)
+  assert.doesNotMatch(r.mensaje, /intentarlo de nuevo/i)
+  assert.match(r.mensaje, /no salió a la entidad/)
+})
+test('los textos del detalle no usan palabras técnicas', () => {
+  for (const envio of [{ estado: 'PENDIENTE' }, { estado: 'ENVIADO' }, { estado: 'FALLIDO' }, { estado: 'FALLIDO', rebote: true }]) {
+    const r = resumenCorreoDetalle(envio)
+    assert.doesNotMatch(`${r.etiqueta} ${r.subtitulo} ${r.mensaje}`, /servidor|token|\bapi\b|rebote|webhook|resend|FALLIDO|\b[45]\d\d\b/i)
+  }
+})
+
+test('el detalle de un reporte que sigue por otro canal muestra los canales y no habla de correo', () => {
+  const r = resumenCorreoDetalle({ estado: 'NO_ENVIADO_CORREO', ruta: { mensaje: 'Use el canal oficial.' } })
+  assert.equal(r.otrosCanales, true)
+  assert.equal(r.reintentar, false)
+  assert.equal(r.titulo, 'Canal de atención')
+  assert.equal(resumenCorreoDetalle({ estado: 'ENVIADO' }).titulo, 'Correo a la entidad')
+})
+test('el detalle ofrece reintentar si el fallo pudo ser pasajero o si nunca se pidió el envío', () => {
+  const pasajero = resumenCorreoDetalle({ estado: 'FALLIDO', rebote: false, reintentable: true })
+  assert.equal(pasajero.reintentar, true)
+  assert.equal(pasajero.otrosCanales, false)
+  assert.match(pasajero.mensaje, /intentarlo de nuevo/)
+  assert.equal(resumenCorreoDetalle({ estado: 'SIN_SOLICITAR' }).reintentar, true)
+  for (const e of [{ estado: 'ENVIADO' }, { estado: 'PENDIENTE' }, { estado: 'FALLIDO', rebote: true, reintentable: true }, { estado: 'FALLIDO', reintentable: false }])
+    assert.equal(resumenCorreoDetalle(e).reintentar, false)
+})
+test('el detalle no manda a «Mis reportes» cuando ya está en el reporte', () => {
+  assert.doesNotMatch(resumenCorreoDetalle({ estado: 'ENVIADO' }).mensaje, /Mis reportes/)
 })

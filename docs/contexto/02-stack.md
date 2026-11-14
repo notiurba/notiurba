@@ -88,6 +88,6 @@ Render: `RESEND_API_KEY` y `RESEND_REMITENTE`. Resend también acepta SMTP por 2
 - Hosting desplegado y fotos con Cloudinary: el almacén (`AlmacenFotos`) y el endpoint de subida (NOT-52) están hechos. Probado en producción el 01/11/2026: una foto subida desde Render con las variables `CLOUDINARY_*` ya puestas, y su URL pública cargó sin sesión.
 - Instalar `vite-plugin-pwa` y definir el manifiesto sin guardar teselas de OSM (NOT-134).
 - Conectar el mapa de calor (Leaflet.heat 0.2.0, ya en el panel con datos de prueba) a la API real (NOT-136).
-- Resend desde Render: probado y funcionando; en producción todo sale a la bandeja de pruebas (NOT-131).
+- Resend desde Render: probado y funcionando; en producción todo sale a la bandeja de pruebas hasta activar el envío real (ver [14-activar-envio-real.md](14-activar-envio-real.md)).
 
 Fuente: pestaña «Stack tecnológico» del Google Doc.

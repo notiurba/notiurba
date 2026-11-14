@@ -8,16 +8,33 @@ import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
 import IconoCategoria from '../../compartido/componentes/IconoCategoria'
 import { IconoDocumento, IconoLapiz } from '../../compartido/componentes/Iconos'
 import useCargar from '../../compartido/hooks/useCargar'
+import useUnaVez from '../../compartido/hooks/useUnaVez'
 import { formatearFechaHora } from '../../compartido/utilidades/fechas'
 import HojaActualizarReporte from '../componentes/HojaActualizarReporte'
+import OtrosCanales from '../componentes/OtrosCanales'
+import { resumenCorreoDetalle } from '../componentes/estadoCorreo'
+import { enviar, estadoCorreo } from '../servicios/correoReportes'
 import { puedeActualizar, textoLugar } from '../../compartido/utilidades/reportes'
 import './DetalleReporte.css'
 
 // Seguimiento de un reporte: datos, estado actual e historial de cambios.
 export default function DetalleReporte() {
   const { codigo } = useParams()
+  // Con otro código se parte de cero: no se queda el correo del reporte anterior.
+  return <DetalleDeReporte key={codigo} codigo={codigo} />
+}
+
+function DetalleDeReporte({ codigo }) {
   const cargador = useCallback(() => obtenerReporte(codigo), [codigo])
   const { datos: reporte, cargando, error, recargar } = useCargar(cargador)
+  // El correo es información extra: si no se puede consultar, el seguimiento se ve igual.
+  const cargadorCorreo = useCallback(() => estadoCorreo(codigo).catch(() => null), [codigo])
+  const { datos: envio, recargar: recargarCorreo } = useCargar(cargadorCorreo)
+  const correo = resumenCorreoDetalle(envio)
+  const reintentarUnaVez = useUnaVez(async () => {
+    try { await enviar(codigo) } catch { /* el estado que se recarga dice cómo quedó */ }
+    recargarCorreo()
+  })
   const [actualizando, setActualizando] = useState(null)
   const noExiste = error?.estado === 404
 
@@ -70,6 +87,16 @@ export default function DetalleReporte() {
               </div>
             )}
           </dl>
+
+          {correo && (
+            <section className={`detalle__correo detalle__correo--${correo.clase}`} aria-labelledby="detalle-correo-titulo">
+              <h3 id="detalle-correo-titulo" className="detalle__subtitulo">{correo.titulo}</h3>
+              <p className="detalle__correo-etiqueta">{correo.etiqueta}</p>
+              <p>{correo.mensaje}</p>
+              {correo.reintentar && <Boton variante="secundario" onClick={reintentarUnaVez}>Reintentar envío</Boton>}
+            </section>
+          )}
+          {correo?.otrosCanales && <OtrosCanales codigo={reporte.codigoSeguimiento} ruta={envio.ruta} />}
 
           <h3 className="detalle__subtitulo">Historial</h3>
           <ol className="detalle__historial">

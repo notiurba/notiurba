@@ -24,7 +24,7 @@ export default function OtrosCanales({ codigo, ruta }) {
 
   return (
     <section className="otros-canales" aria-labelledby="otros-canales-titulo">
-      <h2 id="otros-canales-titulo">Hágalo llegar a {ruta?.entidad ?? 'la entidad'} por otro canal</h2>
+      <h3 id="otros-canales-titulo">Hágalo llegar a {ruta?.entidad ?? 'la entidad'} por otro canal</h3>
       <ListaCanales canales={ruta?.canales} />
       <Boton variante="secundario" onClick={copiar} cargando={estado.cargando} textoCargando="Copiando…">
         <IconoCopiar tamano={20} />

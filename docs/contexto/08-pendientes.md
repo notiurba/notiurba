@@ -11,8 +11,9 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 - API y pantallas del mapa de reportes, del mapa de calor y de las estadísticas (NOT-129, 135, 136).
 - ~~Correo claro (NOT-130)~~: hecho el 12/11/2026 (carta formal, canales por entidad, vista previa).
   Queda: verificar el WhatsApp de Gases de Occidente; decidir la categoría 15 (activa sin ruta).
-- Envío real a las entidades y aviso de rebotes; hoy todo sale a la bandeja de pruebas (NOT-131).
-  Incluye mostrar canales y «Copiar mi mensaje» en el detalle del reporte cuando llegue el rebote.
+- ~~Aviso de rebotes (NOT-131)~~: hecho el 13/11/2026 (detalle con «El correo no llegó», canales y «Copiar mi mensaje»;
+  webhook de Resend registrado). Queda activar el envío real con la guía [14-activar-envio-real.md](14-activar-envio-real.md);
+  hoy todo sale a la bandeja de pruebas.
 - ~~Registro rápido, diagnóstico de Google en celular, límite de intentos, límite diario y
   duplicados (NOT-132)~~: backend y frontend hechos el 13/11/2026 en la rama
   `feature/not-132-registro-rapido-y-sin-abusos`; faltan las pruebas finales y el cierre.
@@ -69,8 +70,7 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
   ocultarlo en producción.
 - Normalizar tildes en los textos de la interfaz (parte de NOT-138).
 - Colección Postman (`docs/api/`) sin los endpoints nuevos (NOT-141).
-- Quitar de Render `MAIL_FROM` y `MAIL_TEST_TO` (sin uso) y rotar la clave de administrador
-  de desarrollo (NOT-133).
+- Rotar la clave de administrador de desarrollo (NOT-133). `MAIL_FROM` y `MAIL_TEST_TO` ya se quitaron de Render.
 - Pull request #27 de Amelia (`fix/registro-pr20`) quedó superada por el #30: contiene evidencias
   pesadas (`docs/validacion`, `output/`, PDF) y 11 conflictos con `develop`. Conviene cerrarla y
   rehacer solo lo útil en PR pequeños. Su prueba `CatalogoCargaBarriosIT` espera 135 barrios; son 133.
