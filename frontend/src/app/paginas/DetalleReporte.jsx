@@ -10,6 +10,9 @@ import { IconoDocumento, IconoLapiz } from '../../compartido/componentes/Iconos'
 import useCargar from '../../compartido/hooks/useCargar'
 import { formatearFechaHora } from '../../compartido/utilidades/fechas'
 import HojaActualizarReporte from '../componentes/HojaActualizarReporte'
+import OtrosCanales from '../componentes/OtrosCanales'
+import { resumenCorreoDetalle } from '../componentes/estadoCorreo'
+import { estadoCorreo } from '../servicios/correoReportes'
 import { puedeActualizar, textoLugar } from '../../compartido/utilidades/reportes'
 import './DetalleReporte.css'
 
@@ -18,6 +21,10 @@ export default function DetalleReporte() {
   const { codigo } = useParams()
   const cargador = useCallback(() => obtenerReporte(codigo), [codigo])
   const { datos: reporte, cargando, error, recargar } = useCargar(cargador)
+  // El correo es información extra: si no se puede consultar, el seguimiento se ve igual.
+  const cargadorCorreo = useCallback(() => estadoCorreo(codigo).catch(() => null), [codigo])
+  const { datos: envio } = useCargar(cargadorCorreo)
+  const correo = resumenCorreoDetalle(envio)
   const [actualizando, setActualizando] = useState(null)
   const noExiste = error?.estado === 404
 
@@ -70,6 +77,15 @@ export default function DetalleReporte() {
               </div>
             )}
           </dl>
+
+          {correo && (
+            <section className={`detalle__correo detalle__correo--${correo.clase}`} aria-labelledby="detalle-correo-titulo">
+              <h3 id="detalle-correo-titulo" className="detalle__subtitulo">Correo a la entidad</h3>
+              <p className="detalle__correo-etiqueta">{correo.etiqueta}</p>
+              <p>{correo.mensaje}</p>
+            </section>
+          )}
+          {correo?.otrosCanales && <OtrosCanales codigo={reporte.codigoSeguimiento} ruta={envio.ruta} />}
 
           <h3 className="detalle__subtitulo">Historial</h3>
           <ol className="detalle__historial">

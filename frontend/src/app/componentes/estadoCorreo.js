@@ -48,6 +48,16 @@ export function accionCanal(canal) {
 // Si el correo no llegó, la persona puede usar otro canal con el mismo mensaje.
 export const ofrecerOtrosCanales = (envio) => Boolean(envio?.rebote || envio?.estado === 'FALLIDO')
 
+// El bloque «Correo a la entidad» del detalle del reporte. Sin dato del correo no se muestra nada.
+export function resumenCorreoDetalle(envio) {
+  if (!envio?.estado) return null
+  const { clase, etiqueta, subtitulo, mensaje } = presentacionCorreo(envio)
+  const otrosCanales = ofrecerOtrosCanales(envio)
+  const sinSalir = otrosCanales && !envio.rebote
+  return { clase, etiqueta, subtitulo, otrosCanales,
+    mensaje: sinSalir ? 'Su reporte quedó guardado, pero el correo no salió a la entidad.' : mensaje }
+}
+
 export const textoParaCopiar = (mensaje) => `Asunto: ${mensaje.asunto}\n\n${mensaje.texto}`
 
 // Safari solo copia dentro del toque: con ClipboardItem la copia empieza ya y espera el texto.

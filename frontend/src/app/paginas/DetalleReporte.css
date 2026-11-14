@@ -92,3 +92,33 @@
   font-size: 13px;
   color: var(--nu-texto-tenue);
 }
+
+.detalle__correo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nu-esp-4);
+  padding: var(--nu-esp-12) var(--nu-esp-16);
+  border: 1px solid var(--nu-borde-tarjeta);
+  border-radius: var(--nu-radio-xl);
+}
+
+.detalle__correo p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.detalle__correo-etiqueta {
+  font-weight: 700;
+}
+
+.detalle__correo--enviado {
+  background: var(--nu-estado-enviado-fondo);
+  border-color: var(--nu-estado-enviado-borde);
+}
+
+.detalle__correo--rebote,
+.detalle__correo--fallido {
+  background: var(--nu-alerta-fondo);
+  border-color: var(--nu-alerta-borde);
+  color: var(--nu-alerta-texto);
+}
