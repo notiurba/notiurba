@@ -117,6 +117,8 @@ class ActualizacionReporteIntegracionTest {
         assertThat(historial.get(1).get("estado").asText()).isEqualTo("Recibido");
         assertThat(historial.get(1).get("observacion").asText())
                 .contains("la entidad le respondió").contains("Radicado: GAC-003660-26");
+        assertThat(historial.get(0).get("delCiudadano").asBoolean()).isFalse();     // el primer asiento es del sistema
+        assertThat(historial.get(1).get("delCiudadano").asBoolean()).isTrue();      // la nota la escribió la persona
         // la nota queda a nombre del ciudadano que la escribió
         assertThat(jdbc.queryForObject("""
                 SELECT count(*) FROM historial_estado h JOIN reporte r USING (id_reporte)

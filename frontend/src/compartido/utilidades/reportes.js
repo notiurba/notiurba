@@ -37,3 +37,10 @@ export const comunasConReportes = (reportes) =>
 export const estadosConReportes = (estados, cuenta, elegido) =>
   estados.filter((e) => e === 'Todos' || e === elegido || cuenta(e) > 0)
 
+// El aviso que la persona dejó en «Actualizar mi reporte» y que el administrador aún no respondió: la última nota del
+// historial es suya y el reporte no está resuelto. No cambia el estado; solo le avisa al administrador.
+export const avisoDelCiudadano = (reporte) => {
+  const ultimo = reporte.historial?.at(-1)
+  return ultimo?.delCiudadano === true && reporte.estado !== ESTADO_RESUELTO ? ultimo : null
+}
+

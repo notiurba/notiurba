@@ -186,6 +186,33 @@ class ListadoReportesIntegracionTest {
     }
 
     @Test
+    void elPanelMarcaLasNotasDelCiudadanoYNoLasDelAdministrador() throws Exception {
+        Reporte deAna = DatosDePrueba.reporte(jdbc, idAna, 1, idBarrio, 2);
+        jdbc.update("""
+                INSERT INTO historial_estado (id_reporte, id_estado_reporte, observacion, id_usuario_cambia)
+                SELECT id_reporte, id_estado_reporte, 'El ciudadano avisó que su reporte ya se resolvió.', ?
+                  FROM reporte WHERE codigo_seguimiento = ?""", idAna, deAna.codigo());
+        jdbc.update("""
+                INSERT INTO historial_estado (id_reporte, id_estado_reporte, observacion, id_usuario_cambia)
+                SELECT id_reporte, id_estado_reporte, 'Revisado por la entidad.', ?
+                  FROM reporte WHERE codigo_seguimiento = ?""", idLuis, deAna.codigo());
+
+        JsonNode ana = null;
+        for (JsonNode r : leer(pedir("/api/admin/reportes", tokenAdmin))) {
+            if (r.get("codigoSeguimiento").asText().equals(deAna.codigo())) {
+                ana = r;
+            }
+        }
+
+        assertThat(ana).isNotNull();
+        JsonNode historial = ana.get("historial");
+        assertThat(historial).hasSize(3);
+        assertThat(historial.get(0).get("delCiudadano").asBoolean()).isFalse();
+        assertThat(historial.get(1).get("delCiudadano").asBoolean()).isTrue();
+        assertThat(historial.get(2).get("delCiudadano").asBoolean()).isFalse();
+    }
+
+    @Test
     void elPanelFiltraPorEstadoCategoriaComunaYFechas() throws Exception {
         Reporte cat1 = DatosDePrueba.reporte(jdbc, idAna, 1, idBarrio, 10);
         Reporte cat2 = DatosDePrueba.reporte(jdbc, idLuis, 2, idBarrio, 0);

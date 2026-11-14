@@ -8,7 +8,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) |
 | Plan | [plan.md](plan.md) |
-| Estado general | **PR 1 integrado (#38). PR 2: T-07 y T-09 a T-17 hechos; faltan T-08, T-18 y el QA** |
+| Estado general | **PR 1 integrado (#38). PR 2: T-07 a T-17 y T-19 a T-22 hechos; faltan T-18, T-20 y el QA** |
 | Última actualización | 2026-11-13 |
 
 ## Cómo se usa
@@ -52,10 +52,10 @@
 | T-16 | **Correo:** espacio entre descripción, fecha y evidencia, y HTML con presentación institucional azul (sin código ni «NotiUrba»); texto plano sin cambios | Backend | CA-20 | `PlantillaReporteTest` (espaciado, sin código ni «NotiUrba», texto plano igual); vista real en Gmail | [x] |
 | T-17 | **Panel (UI):** más espacio, mejor contraste, quitar «Administrador · todas las comunas» | Frontend | CA-21 | Revisión visual a 1366 px y a 1024 px | [x] |
 | T-18 | **Webhook:** con Andrés, abrir el registro de entregas de Resend y comprobar el estado (200 / 401 / tiempo agotado); si el secreto no coincide, corregirlo; probar un rebote real (guía, paso 2) y comprobarlo en el detalle | Ops + Docs | CA-22 | Registro de Resend en 200 y detalle con «El correo no llegó»; guía ajustada con lo aprendido | [ ] |
-| T-19 | **Aviso de privacidad:** eliminar `frontend/public/aviso-privacidad.html` (la propuesta con marcadores que Netlify servía en vez de la pantalla de la app) y una prueba que impide archivos `.html` en `public/` | Frontend | CA-23 | `publico.test.mjs`; comprobar `/aviso-privacidad` en producción tras el despliegue | [ ] |
-| T-20 | **Dirección de correspondencia:** confirmar en qué pantalla se vio sin límite; hoy el registro tiene tope de 100 con contador y las demás 150 | Frontend | CA-26 | Prueba de `CamposResidencia`, si hay que cambiar algo | [ ] |
-| T-21 | **Ubicación opcional:** mensaje más claro de que no es obligatorio | Frontend | CA-24 | `ubicacionGps.test.mjs` y revisión en el celular | [ ] |
-| T-22 | **Aviso del ciudadano visible al administrador:** el historial marca qué notas son del ciudadano; el panel muestra la etiqueta «Aviso del ciudadano» y destaca el aviso en el detalle. Sin cambio automático de estado y sin notificaciones | Backend + Frontend | CA-25 | `ActualizacionReporteIntegracionTest`, `reportes.test.mjs` y revisión en el panel | [ ] |
+| T-19 | **Aviso de privacidad:** eliminar `frontend/public/aviso-privacidad.html` (la propuesta con marcadores que Netlify servía en vez de la pantalla de la app) y una prueba que impide archivos `.html` en `public/` | Frontend | CA-23 | `publico.test.mjs`; comprobar `/aviso-privacidad` en producción tras el despliegue | [x] |
+| T-20 | **Dirección de correspondencia:** confirmar en qué pantalla se vio sin límite; hoy el registro tiene tope de 100 con contador y las demás 150 | Frontend | CA-26 | Prueba de `CamposResidencia`, si hay que cambiar algo | [~] Sin cambio: el registro ya limita a 100 con contador y Completar perfil y Editar datos a 150; falta que Andrés diga en qué pantalla lo vio sin límite |
+| T-21 | **Ubicación opcional:** mensaje más claro de que no es obligatorio | Frontend | CA-24 | `ubicacionGps.test.mjs` y revisión en el celular | [x] |
+| T-22 | **Aviso del ciudadano visible al administrador:** el historial marca qué notas son del ciudadano; el panel muestra la etiqueta «Aviso del ciudadano» y destaca el aviso en el detalle. Sin cambio automático de estado y sin notificaciones | Backend + Frontend | CA-25 | `ActualizacionReporteIntegracionTest`, `reportes.test.mjs` y revisión en el panel | [x] |
 
 ## QA (obligatorio antes de cerrar NOT-131)
 
@@ -119,3 +119,4 @@
 | 2026-11-14 | Implementados T-07 y T-09 a T-17; revisión con code-reviewer (selector del panel, resumen del paso 4, simulador, mapa accesible, correo con tablas y una línea en blanco) corregida. Quedan T-08 (Google) y T-18 (webhook), que necesitan a Andrés, y el QA Q-01 a Q-20 | tasks.md |
 | 2026-11-14 | T-08: consulta de solo lectura a Neon. La cuenta de `andreslopezv1m@gmail.com` existe desde el 3 nov y Google se vinculó a ella por correo (comportamiento previsto). No hay error de vinculación | tasks.md |
 | 2026-11-14 | Segunda tanda de hallazgos: T-19 a T-22 (aviso de privacidad, dirección, ubicación opcional, aviso del ciudadano al administrador) y QA Q-16 a Q-19. Límite diario con borrador y rediseño: fuera del MVP | spec.md, tasks.md |
+| 2026-11-14 | Implementados T-19 (se elimina el HTML estático que tapaba el aviso de privacidad en Netlify), T-21 y T-22 (marca `delCiudadano` en el historial y etiqueta en el panel). T-20 sin cambios a la espera de Andrés | tasks.md |

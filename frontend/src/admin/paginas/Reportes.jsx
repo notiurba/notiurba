@@ -8,7 +8,7 @@ import Boton from '../../compartido/componentes/Boton'
 import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
 import useCargar from '../../compartido/hooks/useCargar'
 import { formatearFecha, formatearFechaHora } from '../../compartido/utilidades/fechas'
-import { ESTADOS_REPORTE, ESTADO_ENVIADO, comunasConReportes, estadoElegido, estadosConReportes, estadosSiguientes, lugarDelReporte } from '../../compartido/utilidades/reportes'
+import { ESTADOS_REPORTE, ESTADO_ENVIADO, avisoDelCiudadano, comunasConReportes, estadoElegido, estadosConReportes, estadosSiguientes, lugarDelReporte } from '../../compartido/utilidades/reportes'
 import './Reportes.css'
 
 const ESTADOS = ['Todos', ...ESTADOS_REPORTE]
@@ -43,6 +43,7 @@ export default function Reportes() {
   const visibles = estado === 'Todos' ? base : base.filter((r) => r.estado === estado)
   const cuenta = (e) => (e === 'Todos' ? base.length : base.filter((r) => r.estado === e).length)
   const atrasados = reportes.filter(sinRespuesta).length
+  const conAviso = reportes.filter((r) => avisoDelCiudadano(r)).length
   const abierto = reportes.find((r) => r.codigoSeguimiento === elegido)
 
   if (cargando && !datos) return <p className="cargando-texto">Cargando reportes…</p>
@@ -59,6 +60,7 @@ export default function Reportes() {
       <section className="adm-rep__lista">
         <div className="adm-rep__titulo">
           <h1>Reportes</h1>
+          {conAviso > 0 && <span className="adm-rep__aviso-total">{conAviso} con aviso del ciudadano</span>}
           {atrasados > 0 && (
             <span className="adm-rep__atraso">
               {atrasados} con más de {DIAS_SIN_RESPUESTA} días sin respuesta
@@ -123,6 +125,7 @@ export default function Reportes() {
                       >
                         {r.codigoSeguimiento}
                       </button>
+                      {avisoDelCiudadano(r) && <span className="adm-rep__etiqueta-aviso">Aviso del ciudadano</span>}
                     </td>
                     <td>{r.categoria}</td>
                     <td className="adm-rep__extra">{r.idComuna != null ? `Comuna ${r.idComuna}` : 'Sin comuna'}</td>
@@ -155,6 +158,7 @@ export default function Reportes() {
 
 function Detalle({ reporte, pestana, setPestana, alGuardar }) {
   const opciones = estadosSiguientes(reporte.estado)
+  const aviso = avisoDelCiudadano(reporte)
   const [elegido, setElegido] = useState('')
   const nuevo = estadoElegido(opciones, elegido)
   const [observacion, setObservacion] = useState('')
@@ -184,6 +188,11 @@ function Detalle({ reporte, pestana, setPestana, alGuardar }) {
     <div>
       <h2>{reporte.codigoSeguimiento}</h2>
       <ChipEstado estado={reporte.estado} />
+      {aviso && (
+        <Aviso variante="alerta" titulo="Aviso del ciudadano">
+          {aviso.observacion} Para confirmarlo, cambie el estado o deje una observación.
+        </Aviso>
+      )}
       <div className="adm-rep__pestanas" role="tablist">
         {['resumen', 'historial'].map((p) => (
           <button

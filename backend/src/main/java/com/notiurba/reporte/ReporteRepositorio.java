@@ -182,12 +182,15 @@ public class ReporteRepositorio {
 
     private List<ReporteDetalleResponse.CambioDeEstado> historial(long idReporte) {
         return jdbc.query("""
-                SELECT e.nombre AS estado, h.observacion, h.cambiado_en
+                SELECT e.nombre AS estado, h.observacion, h.cambiado_en,
+                       (h.id_usuario_cambia IS NOT NULL AND h.id_usuario_cambia = r.id_usuario) AS del_ciudadano
                   FROM historial_estado h JOIN estado_reporte e ON e.id_estado_reporte = h.id_estado_reporte
+                  JOIN reporte r ON r.id_reporte = h.id_reporte
                  WHERE h.id_reporte = :id ORDER BY h.cambiado_en, h.id_historial_estado""",
                 new MapSqlParameterSource("id", idReporte),
                 (rs, i) -> new ReporteDetalleResponse.CambioDeEstado(rs.getString("estado"),
-                        rs.getString("observacion"), rs.getObject("cambiado_en", OffsetDateTime.class)));
+                        rs.getString("observacion"), rs.getObject("cambiado_en", OffsetDateTime.class),
+                        rs.getBoolean("del_ciudadano")));
     }
 
     /** El último envío del reporte; null si todavía no hay ninguno. */

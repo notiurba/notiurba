@@ -20,6 +20,8 @@ La propuesta nueva tiene versión documental `propuesta 2026-11-06`; no reemplaz
 Si estás leyendo este documento mientras trabajas en la integración del registro ciudadano, debes revisar la implementación existente y realizar las siguientes acciones dentro del alcance autorizado de tu tarea:
 
 1. Leer `docs/privacidad/aviso-privacidad.md`.
+> **Nota (14/11/2026):** `frontend/public/aviso-privacidad.html` se eliminó: Netlify lo servía en `/aviso-privacidad` y tapaba la pantalla v3 de la app. El texto de esta propuesta sigue en `docs/privacidad/aviso-privacidad.md`.
+
 2. Localizar la página HTML pública: `frontend/public/aviso-privacidad.html`. Con la base actual de Vite se sirve en `/aviso-privacidad.html`; si cambia la base, ajustar el enlace al despliegue real.
 3. Identificar el formulario de registro de ciudadanos y el flujo de completar perfil con Google, si aplica.
 4. Agregar un enlace visible llamado **"Aviso de privacidad"**, reutilizando los componentes existentes.

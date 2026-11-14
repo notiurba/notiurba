@@ -146,7 +146,7 @@ Salida 200:
 - `direccionIncidente`, `matriculaCuentaServicio`, `radicadoOficial`.
 - `fotos [ { orden, url } ]` (arreglo vacío si no tiene).
 - `creadoEn`, `vigenteHasta`.
-- `historial [ { estado, observacion, cambiadoEn } ]`.
+- `historial [ { estado, observacion, cambiadoEn, delCiudadano } ]`. `delCiudadano` es `true` cuando la nota la escribió la persona dueña del reporte («Actualizar mi reporte») y `false` si es del sistema o de un administrador (NOT-131). El panel lo usa para mostrar «Aviso del ciudadano».
 - `envio { estado, motivo }`: estado del último envío del correo a la entidad (PENDIENTE, ENVIADO o FALLIDO); null si aún no se ha enviado (RF-16). Si falló, `motivo` es un texto fijo para el ciudadano («No pudimos entregar el correo a la entidad.»): el detalle técnico de la base nunca sale por la API.
 
 Errores: 400 VALIDACION, 401, 404 NO_ENCONTRADO. Un reporte que no existe y uno de otra persona dan exactamente la misma respuesta, para no revelar qué códigos existen. `comuna` hoy sale del barrio (los polígonos aún no están cargados) y es null si el reporte no tiene ni barrio ni GPS dentro de una comuna.

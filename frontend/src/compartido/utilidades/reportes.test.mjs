@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { ESTADOS_REPORTE, comunasConReportes, estadoElegido, estadosConReportes, etiquetaEstado, estadosSiguientes, identificadorEstado, lugarDelReporte, puedeActualizar, textoLugar } from './reportes.js'
+import { ESTADOS_REPORTE, avisoDelCiudadano, comunasConReportes, estadoElegido, estadosConReportes, etiquetaEstado, estadosSiguientes, identificadorEstado, lugarDelReporte, puedeActualizar, textoLugar } from './reportes.js'
 
 test('solo se puede actualizar un reporte enviado o en trámite', () => {
   assert.equal(puedeActualizar({ estado: 'Enviado' }), true)
@@ -63,5 +63,15 @@ test('el selector del panel no se queda en un estado que ya no se puede elegir',
   // Tras pasar a «En trámite» solo queda «Resuelto»: el valor viejo no se reenvía.
   assert.equal(estadoElegido(['Resuelto'], 'En trámite'), 'Resuelto')
   assert.equal(estadoElegido([], 'En trámite'), '')
+})
+
+test('el aviso del ciudadano se ve hasta que el administrador responde o el reporte se resuelve', () => {
+  const del = (delCiudadano, texto = 'nota') => ({ estado: 'Enviado', observacion: texto, delCiudadano })
+  const conAviso = { estado: 'Enviado', historial: [del(false), del(true, 'El ciudadano avisó que su reporte ya se resolvió.')] }
+  assert.equal(avisoDelCiudadano(conAviso).observacion, 'El ciudadano avisó que su reporte ya se resolvió.')
+  assert.equal(avisoDelCiudadano({ ...conAviso, historial: [...conAviso.historial, del(false)] }), null)
+  assert.equal(avisoDelCiudadano({ ...conAviso, estado: 'Resuelto' }), null)
+  assert.equal(avisoDelCiudadano({ estado: 'Recibido', historial: [] }), null)
+  assert.equal(avisoDelCiudadano({ estado: 'Recibido' }), null)
 })
 
