@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-14T15:06:20.190Z",
+  "environment": "VM local aislada; no navegador; no API de producción",
+  "file": "frontend/src/admin/servicios/reportesService.js",
+  "injectedFailure": true,
+  "returnedSyntheticFallback": true,
+  "approvedProductionTest": false
+}

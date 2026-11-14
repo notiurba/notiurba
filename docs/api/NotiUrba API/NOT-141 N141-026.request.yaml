@@ -1,0 +1,23 @@
+$kind: "http-request"
+description: "Actualizar mi reporte: caso válido QA\n\nAñade nota al historial, sin cambiar el estado oficial. Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 200. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/reportes/{{codigoReporte}}/actualizacion"
+method: "PATCH"
+order: 20250
+auth:
+  type: "bearer"
+  credentials:
+    token: "{{token}}"
+headers:
+  Content-Type: "application/json"
+body:
+  type: "json"
+  content: "{\n  \"tipo\": \"RESPUESTA\",\n  \"radicado\": \"QA-123\"\n}"
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (pm.variables.get('habilitarEscrituras') !== 'true') {\n  console.warn('OMITIDA por seguridad: active habilitarEscrituras solo en un entorno QA autorizado.');\n  pm.execution.skipRequest();\n}\nif (!pm.variables.get('codigoReporte')) { console.warn('BLOQUEADA: falta codigoReporte'); pm.execution.skipRequest(); }\nif (!pm.variables.get('token')) { console.warn('BLOQUEADA: falta token'); pm.execution.skipRequest(); }\nif (pm.variables.get('cuentaQAConfirmada') !== 'true') pm.execution.skipRequest();\nif (!pm.variables.get('estadoAntes') || pm.variables.get('historialAntes') === undefined) pm.execution.skipRequest();"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('Estado HTTP esperado: 200', function () { pm.expect([200]).to.include(pm.response.code); });\npm.test('Conserva estado oficial',()=>pm.expect(pm.response.json().estado).to.eql(pm.variables.get('estadoAntes')));\npm.test('Agrega nota al historial',()=>pm.expect(pm.response.json().historial.length).to.eql(Number(pm.variables.get('historialAntes'))+1));"
+    language: "text/javascript"

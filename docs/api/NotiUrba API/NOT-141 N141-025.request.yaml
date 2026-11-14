@@ -1,0 +1,23 @@
+$kind: "http-request"
+description: "Actualizar mi reporte: tipo inválido\n\nRequiere que codigoReporte pertenezca al usuario QA. El backend valida tipo antes de escribir. Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 400. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/reportes/{{codigoReporte}}/actualizacion"
+method: "PATCH"
+order: 20240
+auth:
+  type: "bearer"
+  credentials:
+    token: "{{token}}"
+headers:
+  Content-Type: "application/json"
+body:
+  type: "json"
+  content: "{\n  \"tipo\": \"OTRO\",\n  \"radicado\": \"\"\n}"
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (!pm.variables.get('codigoReporte')) { console.warn('BLOQUEADA: falta codigoReporte'); pm.execution.skipRequest(); }\nif (!pm.variables.get('token')) { console.warn('BLOQUEADA: falta token'); pm.execution.skipRequest(); }"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('Estado HTTP esperado: 400', function () { pm.expect([400]).to.include(pm.response.code); });\npm.test('La API muestra un error', function () { const r = pm.response.json(); pm.expect(r).to.have.property('mensaje'); });\npm.test('Código VALIDACION',()=>pm.expect(pm.response.json().codigo).to.eql('VALIDACION'));"
+    language: "text/javascript"

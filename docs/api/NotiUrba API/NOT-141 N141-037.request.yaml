@@ -1,0 +1,18 @@
+$kind: "http-request"
+description: "Admin: filtrado por comuna/estado\n\nListado que CONSUME el mapa. Validar que UI no sustituya fallos por reportes simulados. Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 200. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/admin/reportes?comuna=4&estado=Recibido"
+method: "GET"
+order: 20360
+auth:
+  type: "bearer"
+  credentials:
+    token: "{{tokenAdmin}}"
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (!pm.variables.get('tokenAdmin')) { console.warn('BLOQUEADA: falta tokenAdmin'); pm.execution.skipRequest(); }"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('Estado HTTP esperado: 200', function () { pm.expect([200]).to.include(pm.response.code); });"
+    language: "text/javascript"

@@ -1,0 +1,25 @@
+$kind: "http-request"
+description: "JWT vencido POST /api/reportes/{{codigoReporte3Fotos}}/fotos\n\nPRECONDICIÓN: reporte propio YA tiene tres fotos y archivo JPG/PNG real (<=1MB). Debe responder 409 FOTOS_MAXIMO. El test sin 3 fotos podría SUBIR una foto; no ejecutar salvo precondición. Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 401. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/reportes/{{codigoReporte3Fotos}}/fotos"
+method: "POST"
+order: 20790
+auth:
+  type: "bearer"
+  credentials:
+    token: "{{tokenVencido}}"
+body:
+  type: "formdata"
+  content:
+    -
+      key: "foto"
+      type: "file"
+      src: ["{{archivoFotoLocal}}"]
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (!pm.variables.get('codigoReporte3Fotos')) { console.warn('BLOQUEADA: falta codigoReporte3Fotos'); pm.execution.skipRequest(); }\nif (!pm.variables.get('tokenVencido')) { console.warn('BLOQUEADA: falta tokenVencido'); pm.execution.skipRequest(); }\nif (!pm.variables.get('archivoFotoLocal')) { console.warn('BLOQUEADA: falta archivoFotoLocal'); pm.execution.skipRequest(); }\ntry { const p = JSON.parse(atob(pm.variables.get('tokenVencido').split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); if (!(p.exp * 1000 < Date.now())) pm.execution.skipRequest(); } catch (_) { pm.execution.skipRequest(); }\nif (pm.variables.get('tokenVencidoVerificado') !== 'true') pm.execution.skipRequest();"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('HTTP 401',()=>pm.response.to.have.status(401));\npm.test('Código de seguridad',()=>pm.expect(pm.response.json().codigo).to.eql('NO_AUTENTICADO'));\npm.test('Código NO_AUTENTICADO',()=>pm.expect(pm.response.json().codigo).to.eql('NO_AUTENTICADO'));"
+    language: "text/javascript"

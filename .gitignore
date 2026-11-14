@@ -68,3 +68,16 @@ external-results/
 /output/pmgr-p20.png
 /output/pmgr-p21.png
 /output/pmgr-tulua-2020.pdf
+
+# Duplicados exactos revisados el 2026-11-14; copias locales preservadas
+/output/playwright/not65-desktop-08-retorno.png
+/output/playwright/not65-responsive-1366-mapa.png
+/output/playwright/not65-map03-manual-sin-gps.png
+/docs/validacion/evidencias-barrios-temporales-20261107/chrome-verificacion.js
+/docs/validacion/evidencias-barrios-temporales-20261107/generar-sql-qa.cjs
+/output/temporales-qa.sql
+/docs/validacion/evidencias-catalogo-barrios-20261107/chrome-verificacion.js
+/docs/validacion/evidencias-catalogo-barrios-20261107/vite-qa.config.referencia.mjs
+/output/playwright/not65-preparar.js
+/docs/validacion/logs/mvn-test.log
+/docs/validacion/logs/mvn-package.log

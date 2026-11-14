@@ -1,0 +1,12 @@
+$kind: "http-request"
+description: "Tipos documento: público\n\nDevuelve lista; permite el registro sin iniciar sesión. Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 200. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/catalogos/tipos-documento"
+method: "GET"
+order: 20000
+auth:
+  type: "noauth"
+scripts:
+  -
+    type: "afterResponse"
+    code: "pm.test('Estado HTTP esperado: 200', function () { pm.expect([200]).to.include(pm.response.code); });\npm.test('Lista',function(){ pm.expect(pm.response.json()).to.be.an('array'); });"
+    language: "text/javascript"

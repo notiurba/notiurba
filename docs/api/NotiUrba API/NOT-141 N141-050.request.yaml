@@ -1,0 +1,23 @@
+$kind: "http-request"
+description: "PUT vigencia válida solo entorno aislado\n\n Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 200. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/admin/configuracion/vigencia"
+method: "PUT"
+order: 20490
+auth:
+  type: "bearer"
+  credentials:
+    token: "{{tokenAdmin}}"
+headers:
+  Content-Type: "application/json"
+body:
+  type: "json"
+  content: "{\n  \"vigenciaDias\": 30\n}"
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (!pm.variables.get('tokenAdmin')) { console.warn('BLOQUEADA: falta tokenAdmin'); pm.execution.skipRequest(); }\nif (pm.variables.get('habilitarConfiguracionGlobal') !== 'true') pm.execution.skipRequest();\nif (pm.variables.get('baseUrl') === 'https://notiurba-api.onrender.com') pm.execution.skipRequest();"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('HTTP 200',()=>pm.response.to.have.status(200));\npm.test('Vigencia guardada',()=>pm.expect(pm.response.json().vigenciaDias).to.eql(30));"
+    language: "text/javascript"

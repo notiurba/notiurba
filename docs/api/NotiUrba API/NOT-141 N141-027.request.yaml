@@ -1,0 +1,25 @@
+$kind: "http-request"
+description: "Cuarta foto (con tres subidas previas)\n\nPRECONDICIÓN: reporte propio YA tiene tres fotos y archivo JPG/PNG real (<=1MB). Debe responder 409 FOTOS_MAXIMO. El test sin 3 fotos podría SUBIR una foto; no ejecutar salvo precondición. Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 409. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/reportes/{{codigoReporte3Fotos}}/fotos"
+method: "POST"
+order: 20260
+auth:
+  type: "bearer"
+  credentials:
+    token: "{{token}}"
+body:
+  type: "formdata"
+  content:
+    -
+      key: "foto"
+      type: "file"
+      src: ["{{archivoFotoLocal}}"]
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (pm.variables.get('habilitarEscrituras') !== 'true') {\n  console.warn('OMITIDA por seguridad: active habilitarEscrituras solo en un entorno QA autorizado.');\n  pm.execution.skipRequest();\n}\nif (!pm.variables.get('codigoReporte3Fotos')) { console.warn('BLOQUEADA: falta codigoReporte3Fotos'); pm.execution.skipRequest(); }\nif (!pm.variables.get('token')) { console.warn('BLOQUEADA: falta token'); pm.execution.skipRequest(); }\nif (!pm.variables.get('archivoFotoLocal')) { console.warn('BLOQUEADA: falta archivoFotoLocal'); pm.execution.skipRequest(); }\nif (pm.variables.get('cuentaQAConfirmada') !== 'true') pm.execution.skipRequest();\nif (pm.variables.get('tresFotosConfirmadas') !== 'true') pm.execution.skipRequest();"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('Estado HTTP esperado: 409', function () { pm.expect([409]).to.include(pm.response.code); });\npm.test('Código FOTOS_MAXIMO',function(){pm.expect(pm.response.json().codigo).to.eql('FOTOS_MAXIMO');});"
+    language: "text/javascript"

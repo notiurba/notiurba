@@ -1,0 +1,1 @@
+Fecha: 2026-11-14T10:05:02.4552455-05:00 Rama: fix/registro-pr20 HEAD: d8e8b2bee07a3e4e59846f9fbde803a4b044fa95 Estado al inicio: limpio (git status --short sin salida) Remoto: git@github.com:notiurba/notiurba.git Sistema: Windows; PowerShell nativo; ADB 37.0.0

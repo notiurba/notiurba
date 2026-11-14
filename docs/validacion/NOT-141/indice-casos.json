@@ -1,0 +1,914 @@
+[
+  {
+    "id": "N141-001",
+    "name": "Tipos documento: público",
+    "file": "NOT-141 N141-001.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/catalogos/tipos-documento",
+    "expected": 200
+  },
+  {
+    "id": "N141-002",
+    "name": "Barrios: público",
+    "file": "NOT-141 N141-002.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/catalogos/barrios",
+    "expected": 200
+  },
+  {
+    "id": "N141-003",
+    "name": "Verificar correo sin token de enlace",
+    "file": "NOT-141 N141-003.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/auth/verificar",
+    "expected": 400
+  },
+  {
+    "id": "N141-004",
+    "name": "Verificar correo con token válido QA",
+    "file": "NOT-141 N141-004.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/auth/verificar",
+    "expected": 200
+  },
+  {
+    "id": "N141-005",
+    "name": "Reenviar verificación con correo QA",
+    "file": "NOT-141 N141-005.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/auth/reenviar-verificacion",
+    "expected": 200
+  },
+  {
+    "id": "N141-006",
+    "name": "Recuperación sin correo",
+    "file": "NOT-141 N141-006.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/auth/recuperar",
+    "expected": 400
+  },
+  {
+    "id": "N141-007",
+    "name": "Recuperación con correo QA",
+    "file": "NOT-141 N141-007.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/auth/recuperar",
+    "expected": 200
+  },
+  {
+    "id": "N141-008",
+    "name": "Restablecer: falta token",
+    "file": "NOT-141 N141-008.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/auth/restablecer",
+    "expected": 400
+  },
+  {
+    "id": "N141-009",
+    "name": "Google: credencial ausente",
+    "file": "NOT-141 N141-009.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/auth/google",
+    "expected": 400
+  },
+  {
+    "id": "N141-010",
+    "name": "Mis reportes: listado propio",
+    "file": "NOT-141 N141-010.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes",
+    "expected": 200
+  },
+  {
+    "id": "N141-011",
+    "name": "Mis reportes: sin JWT",
+    "file": "NOT-141 N141-011.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes",
+    "expected": 401
+  },
+  {
+    "id": "N141-012",
+    "name": "Mis reportes: JWT vencido",
+    "file": "NOT-141 N141-012.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes",
+    "expected": 401
+  },
+  {
+    "id": "N141-013",
+    "name": "Mis reportes: filtro por estado",
+    "file": "NOT-141 N141-013.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes?estado=Recibido",
+    "expected": 200
+  },
+  {
+    "id": "N141-014",
+    "name": "Detalle del reporte propio",
+    "file": "NOT-141 N141-014.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}",
+    "expected": 200
+  },
+  {
+    "id": "N141-015",
+    "name": "Reporte ajeno/inexistente: 404",
+    "file": "NOT-141 N141-015.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoInexistente}}",
+    "expected": 404
+  },
+  {
+    "id": "N141-016",
+    "name": "Consultar mi perfil",
+    "file": "NOT-141 N141-016.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/usuarios/me",
+    "expected": 200
+  },
+  {
+    "id": "N141-017",
+    "name": "Consultar perfil sin sesión",
+    "file": "NOT-141 N141-017.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/usuarios/me",
+    "expected": 401
+  },
+  {
+    "id": "N141-018",
+    "name": "Editar perfil: falta nombres",
+    "file": "NOT-141 N141-018.request.yaml",
+    "method": "PUT",
+    "url": "{{baseUrl}}/api/usuarios/me",
+    "expected": 400
+  },
+  {
+    "id": "N141-019",
+    "name": "Editar perfil: caso válido QA",
+    "file": "NOT-141 N141-019.request.yaml",
+    "method": "PUT",
+    "url": "{{baseUrl}}/api/usuarios/me",
+    "expected": 200
+  },
+  {
+    "id": "N141-020",
+    "name": "Eliminar mis datos: sin sesión",
+    "file": "NOT-141 N141-020.request.yaml",
+    "method": "DELETE",
+    "url": "{{baseUrl}}/api/usuarios/me/datos",
+    "expected": 401
+  },
+  {
+    "id": "N141-021",
+    "name": "Eliminar cuenta: sin sesión",
+    "file": "NOT-141 N141-021.request.yaml",
+    "method": "DELETE",
+    "url": "{{baseUrl}}/api/usuarios/me",
+    "expected": 401
+  },
+  {
+    "id": "N141-022",
+    "name": "Eliminar MIS datos (solo QA aislada)",
+    "file": "NOT-141 N141-022.request.yaml",
+    "method": "DELETE",
+    "url": "{{baseUrl}}/api/usuarios/me/datos",
+    "expected": 204
+  },
+  {
+    "id": "N141-023",
+    "name": "Eliminar MI cuenta (solo QA aislada)",
+    "file": "NOT-141 N141-023.request.yaml",
+    "method": "DELETE",
+    "url": "{{baseUrl}}/api/usuarios/me",
+    "expected": 204
+  },
+  {
+    "id": "N141-024",
+    "name": "Actualizar mi reporte sin sesión",
+    "file": "NOT-141 N141-024.request.yaml",
+    "method": "PATCH",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/actualizacion",
+    "expected": 401
+  },
+  {
+    "id": "N141-025",
+    "name": "Actualizar mi reporte: tipo inválido",
+    "file": "NOT-141 N141-025.request.yaml",
+    "method": "PATCH",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/actualizacion",
+    "expected": 400
+  },
+  {
+    "id": "N141-026",
+    "name": "Actualizar mi reporte: caso válido QA",
+    "file": "NOT-141 N141-026.request.yaml",
+    "method": "PATCH",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/actualizacion",
+    "expected": 200
+  },
+  {
+    "id": "N141-027",
+    "name": "Cuarta foto (con tres subidas previas)",
+    "file": "NOT-141 N141-027.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte3Fotos}}/fotos",
+    "expected": 409
+  },
+  {
+    "id": "N141-028",
+    "name": "Estado del envío de correo",
+    "file": "NOT-141 N141-028.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/envio",
+    "expected": 200
+  },
+  {
+    "id": "N141-029",
+    "name": "Consultar enrutamiento por categoría",
+    "file": "NOT-141 N141-029.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/enrutamiento/categorias/{{idCategoria}}",
+    "expected": 200
+  },
+  {
+    "id": "N141-030",
+    "name": "Solicitud de envío de correo QA",
+    "file": "NOT-141 N141-030.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/enviar",
+    "expected": 202
+  },
+  {
+    "id": "N141-031",
+    "name": "Subir fotografía 1 QA",
+    "file": "NOT-141 N141-031.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/fotos",
+    "expected": 201
+  },
+  {
+    "id": "N141-032",
+    "name": "Subir fotografía 2 QA",
+    "file": "NOT-141 N141-032.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/fotos",
+    "expected": 201
+  },
+  {
+    "id": "N141-033",
+    "name": "Subir fotografía 3 QA",
+    "file": "NOT-141 N141-033.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/fotos",
+    "expected": 201
+  },
+  {
+    "id": "N141-034",
+    "name": "Admin: listado (cuenta admin)",
+    "file": "NOT-141 N141-034.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/reportes",
+    "expected": 200
+  },
+  {
+    "id": "N141-035",
+    "name": "Admin: sin sesión",
+    "file": "NOT-141 N141-035.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/reportes",
+    "expected": 401
+  },
+  {
+    "id": "N141-036",
+    "name": "Admin: rol ciudadano prohibido",
+    "file": "NOT-141 N141-036.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/reportes",
+    "expected": 403
+  },
+  {
+    "id": "N141-037",
+    "name": "Admin: filtrado por comuna/estado",
+    "file": "NOT-141 N141-037.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/reportes?comuna=4&estado=Recibido",
+    "expected": 200
+  },
+  {
+    "id": "N141-038",
+    "name": "Vigencia actual",
+    "file": "NOT-141 N141-038.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/configuracion/vigencia",
+    "expected": 200
+  },
+  {
+    "id": "N141-039",
+    "name": "Cambiar estado falta estado",
+    "file": "NOT-141 N141-039.request.yaml",
+    "method": "PATCH",
+    "url": "{{baseUrl}}/api/admin/reportes/{{codigoReporte}}/estado",
+    "expected": 400
+  },
+  {
+    "id": "N141-040",
+    "name": "Cambiar estado (QA)",
+    "file": "NOT-141 N141-040.request.yaml",
+    "method": "PATCH",
+    "url": "{{baseUrl}}/api/admin/reportes/{{codigoReporte}}/estado",
+    "expected": 200
+  },
+  {
+    "id": "N141-041",
+    "name": "Configuración vigencia: sin sesión",
+    "file": "NOT-141 N141-041.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/configuracion/vigencia",
+    "expected": 401
+  },
+  {
+    "id": "N141-042",
+    "name": "Diagnóstico espacial opcional",
+    "file": "NOT-141 N141-042.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/diagnostics/spatial",
+    "expected": 200
+  },
+  {
+    "id": "N141-043",
+    "name": "Enrutamiento completo",
+    "file": "NOT-141 N141-043.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/enrutamiento/categorias",
+    "expected": 200
+  },
+  {
+    "id": "N141-044",
+    "name": "Enrutamiento categoría inválida",
+    "file": "NOT-141 N141-044.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/enrutamiento/categorias/0",
+    "expected": 400
+  },
+  {
+    "id": "N141-045",
+    "name": "Barrios opciones reporte",
+    "file": "NOT-141 N141-045.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/opciones/barrios",
+    "expected": 200
+  },
+  {
+    "id": "N141-046",
+    "name": "Mis reportes estado inválido",
+    "file": "NOT-141 N141-046.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes?estado=OTRO",
+    "expected": 400
+  },
+  {
+    "id": "N141-047",
+    "name": "Listado admin comuna inválida",
+    "file": "NOT-141 N141-047.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/reportes?comuna=11",
+    "expected": 400
+  },
+  {
+    "id": "N141-048",
+    "name": "Listado admin fechas invertidas",
+    "file": "NOT-141 N141-048.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/reportes?desde=2026-11-14&hasta=2026-11-01",
+    "expected": 400
+  },
+  {
+    "id": "N141-049",
+    "name": "PUT vigencia inválida",
+    "file": "NOT-141 N141-049.request.yaml",
+    "method": "PUT",
+    "url": "{{baseUrl}}/api/admin/configuracion/vigencia",
+    "expected": 400
+  },
+  {
+    "id": "N141-050",
+    "name": "PUT vigencia válida solo entorno aislado",
+    "file": "NOT-141 N141-050.request.yaml",
+    "method": "PUT",
+    "url": "{{baseUrl}}/api/admin/configuracion/vigencia",
+    "expected": 200
+  },
+  {
+    "id": "N141-051",
+    "name": "Mapa real",
+    "file": "NOT-141 N141-051.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa",
+    "expected": 200
+  },
+  {
+    "id": "N141-052",
+    "name": "Mapa comuna inválida",
+    "file": "NOT-141 N141-052.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa?comuna=11",
+    "expected": 400
+  },
+  {
+    "id": "N141-053",
+    "name": "Mapa con filtros",
+    "file": "NOT-141 N141-053.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa?comuna=4&estado=Recibido&idCategoria={{idCategoria}}&desde=2026-11-01&hasta=2026-11-14",
+    "expected": 200
+  },
+  {
+    "id": "N141-054",
+    "name": "Calor real",
+    "file": "NOT-141 N141-054.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa/calor",
+    "expected": 200
+  },
+  {
+    "id": "N141-055",
+    "name": "Calor comuna inválida",
+    "file": "NOT-141 N141-055.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa/calor?comuna=11",
+    "expected": 400
+  },
+  {
+    "id": "N141-056",
+    "name": "Calor con filtros",
+    "file": "NOT-141 N141-056.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa/calor?comuna=4&estado=Recibido&idCategoria={{idCategoria}}&desde=2026-11-01&hasta=2026-11-14",
+    "expected": 200
+  },
+  {
+    "id": "N141-057",
+    "name": "Estadísticas real",
+    "file": "NOT-141 N141-057.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/estadisticas",
+    "expected": 200
+  },
+  {
+    "id": "N141-058",
+    "name": "Estadísticas comuna inválida",
+    "file": "NOT-141 N141-058.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/estadisticas?comuna=11",
+    "expected": 400
+  },
+  {
+    "id": "N141-059",
+    "name": "Estadísticas con filtros",
+    "file": "NOT-141 N141-059.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/estadisticas?comuna=4&estado=Recibido&idCategoria={{idCategoria}}&desde=2026-11-01&hasta=2026-11-14",
+    "expected": 200
+  },
+  {
+    "id": "N141-060",
+    "name": "Calor paginación inválida",
+    "file": "NOT-141 N141-060.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa/calor?pagina=0",
+    "expected": 400
+  },
+  {
+    "id": "N141-061",
+    "name": "Estadísticas vigencia inválida",
+    "file": "NOT-141 N141-061.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/estadisticas?vigencia=OTRO",
+    "expected": 400
+  },
+  {
+    "id": "N141-062",
+    "name": "Mensaje del reporte",
+    "file": "NOT-141 N141-062.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/mensaje",
+    "expected": 200
+  },
+  {
+    "id": "N141-063",
+    "name": "Vista previa sin categoría",
+    "file": "NOT-141 N141-063.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/vista-previa",
+    "expected": 400
+  },
+  {
+    "id": "N141-064",
+    "name": "Vista previa válida sin persistencia",
+    "file": "NOT-141 N141-064.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/vista-previa",
+    "expected": 200
+  },
+  {
+    "id": "N141-065",
+    "name": "Acceso otra QA GET /api/reportes/{{codigoReporte}}",
+    "file": "NOT-141 N141-065.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}",
+    "expected": 404
+  },
+  {
+    "id": "N141-066",
+    "name": "Acceso otra QA PATCH /api/reportes/{{codigoReporte}}/actualizacion",
+    "file": "NOT-141 N141-066.request.yaml",
+    "method": "PATCH",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/actualizacion",
+    "expected": 404
+  },
+  {
+    "id": "N141-067",
+    "name": "Acceso otra QA GET /api/reportes/{{codigoReporte}}/envio",
+    "file": "NOT-141 N141-067.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/envio",
+    "expected": 404
+  },
+  {
+    "id": "N141-068",
+    "name": "Acceso otra QA GET /api/reportes/{{codigoReporte}}/mensaje",
+    "file": "NOT-141 N141-068.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/mensaje",
+    "expected": 404
+  },
+  {
+    "id": "N141-069",
+    "name": "Sin sesión GET /api/reportes/{{codigoReporte}}",
+    "file": "NOT-141 N141-069.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}",
+    "expected": 401
+  },
+  {
+    "id": "N141-070",
+    "name": "JWT vencido GET /api/reportes/{{codigoReporte}}",
+    "file": "NOT-141 N141-070.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}",
+    "expected": 401
+  },
+  {
+    "id": "N141-071",
+    "name": "Sin sesión GET /api/reportes/{{codigoInexistente}}",
+    "file": "NOT-141 N141-071.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoInexistente}}",
+    "expected": 401
+  },
+  {
+    "id": "N141-072",
+    "name": "JWT vencido GET /api/reportes/{{codigoInexistente}}",
+    "file": "NOT-141 N141-072.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoInexistente}}",
+    "expected": 401
+  },
+  {
+    "id": "N141-073",
+    "name": "JWT vencido GET /api/usuarios/me",
+    "file": "NOT-141 N141-073.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/usuarios/me",
+    "expected": 401
+  },
+  {
+    "id": "N141-074",
+    "name": "Sin sesión PUT /api/usuarios/me",
+    "file": "NOT-141 N141-074.request.yaml",
+    "method": "PUT",
+    "url": "{{baseUrl}}/api/usuarios/me",
+    "expected": 401
+  },
+  {
+    "id": "N141-075",
+    "name": "JWT vencido PUT /api/usuarios/me",
+    "file": "NOT-141 N141-075.request.yaml",
+    "method": "PUT",
+    "url": "{{baseUrl}}/api/usuarios/me",
+    "expected": 401
+  },
+  {
+    "id": "N141-076",
+    "name": "JWT vencido DELETE /api/usuarios/me/datos",
+    "file": "NOT-141 N141-076.request.yaml",
+    "method": "DELETE",
+    "url": "{{baseUrl}}/api/usuarios/me/datos",
+    "expected": 401
+  },
+  {
+    "id": "N141-077",
+    "name": "JWT vencido DELETE /api/usuarios/me",
+    "file": "NOT-141 N141-077.request.yaml",
+    "method": "DELETE",
+    "url": "{{baseUrl}}/api/usuarios/me",
+    "expected": 401
+  },
+  {
+    "id": "N141-078",
+    "name": "JWT vencido PATCH /api/reportes/{{codigoReporte}}/actualizacion",
+    "file": "NOT-141 N141-078.request.yaml",
+    "method": "PATCH",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/actualizacion",
+    "expected": 401
+  },
+  {
+    "id": "N141-079",
+    "name": "Sin sesión POST /api/reportes/{{codigoReporte3Fotos}}/fotos",
+    "file": "NOT-141 N141-079.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte3Fotos}}/fotos",
+    "expected": 401
+  },
+  {
+    "id": "N141-080",
+    "name": "JWT vencido POST /api/reportes/{{codigoReporte3Fotos}}/fotos",
+    "file": "NOT-141 N141-080.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte3Fotos}}/fotos",
+    "expected": 401
+  },
+  {
+    "id": "N141-081",
+    "name": "Sin sesión GET /api/reportes/{{codigoReporte}}/envio",
+    "file": "NOT-141 N141-081.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/envio",
+    "expected": 401
+  },
+  {
+    "id": "N141-082",
+    "name": "JWT vencido GET /api/reportes/{{codigoReporte}}/envio",
+    "file": "NOT-141 N141-082.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/envio",
+    "expected": 401
+  },
+  {
+    "id": "N141-083",
+    "name": "Sin sesión GET /api/enrutamiento/categorias/{{idCategoria}}",
+    "file": "NOT-141 N141-083.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/enrutamiento/categorias/{{idCategoria}}",
+    "expected": 401
+  },
+  {
+    "id": "N141-084",
+    "name": "JWT vencido GET /api/enrutamiento/categorias/{{idCategoria}}",
+    "file": "NOT-141 N141-084.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/enrutamiento/categorias/{{idCategoria}}",
+    "expected": 401
+  },
+  {
+    "id": "N141-085",
+    "name": "Sin sesión POST /api/reportes/{{codigoReporte}}/enviar",
+    "file": "NOT-141 N141-085.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/enviar",
+    "expected": 401
+  },
+  {
+    "id": "N141-086",
+    "name": "JWT vencido POST /api/reportes/{{codigoReporte}}/enviar",
+    "file": "NOT-141 N141-086.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/enviar",
+    "expected": 401
+  },
+  {
+    "id": "N141-087",
+    "name": "JWT vencido GET /api/admin/reportes",
+    "file": "NOT-141 N141-087.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/reportes",
+    "expected": 401
+  },
+  {
+    "id": "N141-088",
+    "name": "JWT vencido GET /api/admin/configuracion/vigencia",
+    "file": "NOT-141 N141-088.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/configuracion/vigencia",
+    "expected": 401
+  },
+  {
+    "id": "N141-089",
+    "name": "Sin rol admin GET /api/admin/configuracion/vigencia",
+    "file": "NOT-141 N141-089.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/configuracion/vigencia",
+    "expected": 403
+  },
+  {
+    "id": "N141-090",
+    "name": "Sin sesión PATCH /api/admin/reportes/{{codigoReporte}}/estado",
+    "file": "NOT-141 N141-090.request.yaml",
+    "method": "PATCH",
+    "url": "{{baseUrl}}/api/admin/reportes/{{codigoReporte}}/estado",
+    "expected": 401
+  },
+  {
+    "id": "N141-091",
+    "name": "JWT vencido PATCH /api/admin/reportes/{{codigoReporte}}/estado",
+    "file": "NOT-141 N141-091.request.yaml",
+    "method": "PATCH",
+    "url": "{{baseUrl}}/api/admin/reportes/{{codigoReporte}}/estado",
+    "expected": 401
+  },
+  {
+    "id": "N141-092",
+    "name": "Sin rol admin PATCH /api/admin/reportes/{{codigoReporte}}/estado",
+    "file": "NOT-141 N141-092.request.yaml",
+    "method": "PATCH",
+    "url": "{{baseUrl}}/api/admin/reportes/{{codigoReporte}}/estado",
+    "expected": 403
+  },
+  {
+    "id": "N141-093",
+    "name": "Sin sesión GET /api/enrutamiento/categorias",
+    "file": "NOT-141 N141-093.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/enrutamiento/categorias",
+    "expected": 401
+  },
+  {
+    "id": "N141-094",
+    "name": "JWT vencido GET /api/enrutamiento/categorias",
+    "file": "NOT-141 N141-094.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/enrutamiento/categorias",
+    "expected": 401
+  },
+  {
+    "id": "N141-095",
+    "name": "Sin sesión GET /api/enrutamiento/categorias/0",
+    "file": "NOT-141 N141-095.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/enrutamiento/categorias/0",
+    "expected": 401
+  },
+  {
+    "id": "N141-096",
+    "name": "JWT vencido GET /api/enrutamiento/categorias/0",
+    "file": "NOT-141 N141-096.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/enrutamiento/categorias/0",
+    "expected": 401
+  },
+  {
+    "id": "N141-097",
+    "name": "Sin sesión GET /api/reportes/opciones/barrios",
+    "file": "NOT-141 N141-097.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/opciones/barrios",
+    "expected": 401
+  },
+  {
+    "id": "N141-098",
+    "name": "JWT vencido GET /api/reportes/opciones/barrios",
+    "file": "NOT-141 N141-098.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/opciones/barrios",
+    "expected": 401
+  },
+  {
+    "id": "N141-099",
+    "name": "Sin sesión PUT /api/admin/configuracion/vigencia",
+    "file": "NOT-141 N141-099.request.yaml",
+    "method": "PUT",
+    "url": "{{baseUrl}}/api/admin/configuracion/vigencia",
+    "expected": 401
+  },
+  {
+    "id": "N141-100",
+    "name": "JWT vencido PUT /api/admin/configuracion/vigencia",
+    "file": "NOT-141 N141-100.request.yaml",
+    "method": "PUT",
+    "url": "{{baseUrl}}/api/admin/configuracion/vigencia",
+    "expected": 401
+  },
+  {
+    "id": "N141-101",
+    "name": "Sin rol admin PUT /api/admin/configuracion/vigencia",
+    "file": "NOT-141 N141-101.request.yaml",
+    "method": "PUT",
+    "url": "{{baseUrl}}/api/admin/configuracion/vigencia",
+    "expected": 403
+  },
+  {
+    "id": "N141-102",
+    "name": "Sin sesión GET /api/admin/mapa",
+    "file": "NOT-141 N141-102.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa",
+    "expected": 401
+  },
+  {
+    "id": "N141-103",
+    "name": "JWT vencido GET /api/admin/mapa",
+    "file": "NOT-141 N141-103.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa",
+    "expected": 401
+  },
+  {
+    "id": "N141-104",
+    "name": "Sin rol admin GET /api/admin/mapa",
+    "file": "NOT-141 N141-104.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa",
+    "expected": 403
+  },
+  {
+    "id": "N141-105",
+    "name": "Sin sesión GET /api/admin/mapa/calor",
+    "file": "NOT-141 N141-105.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa/calor",
+    "expected": 401
+  },
+  {
+    "id": "N141-106",
+    "name": "JWT vencido GET /api/admin/mapa/calor",
+    "file": "NOT-141 N141-106.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa/calor",
+    "expected": 401
+  },
+  {
+    "id": "N141-107",
+    "name": "Sin rol admin GET /api/admin/mapa/calor",
+    "file": "NOT-141 N141-107.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/mapa/calor",
+    "expected": 403
+  },
+  {
+    "id": "N141-108",
+    "name": "Sin sesión GET /api/admin/estadisticas",
+    "file": "NOT-141 N141-108.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/estadisticas",
+    "expected": 401
+  },
+  {
+    "id": "N141-109",
+    "name": "JWT vencido GET /api/admin/estadisticas",
+    "file": "NOT-141 N141-109.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/estadisticas",
+    "expected": 401
+  },
+  {
+    "id": "N141-110",
+    "name": "Sin rol admin GET /api/admin/estadisticas",
+    "file": "NOT-141 N141-110.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/estadisticas",
+    "expected": 403
+  },
+  {
+    "id": "N141-111",
+    "name": "Sin sesión GET /api/reportes/{{codigoReporte}}/mensaje",
+    "file": "NOT-141 N141-111.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/mensaje",
+    "expected": 401
+  },
+  {
+    "id": "N141-112",
+    "name": "JWT vencido GET /api/reportes/{{codigoReporte}}/mensaje",
+    "file": "NOT-141 N141-112.request.yaml",
+    "method": "GET",
+    "url": "{{baseUrl}}/api/reportes/{{codigoReporte}}/mensaje",
+    "expected": 401
+  },
+  {
+    "id": "N141-113",
+    "name": "Sin sesión POST /api/reportes/vista-previa",
+    "file": "NOT-141 N141-113.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/vista-previa",
+    "expected": 401
+  },
+  {
+    "id": "N141-114",
+    "name": "JWT vencido POST /api/reportes/vista-previa",
+    "file": "NOT-141 N141-114.request.yaml",
+    "method": "POST",
+    "url": "{{baseUrl}}/api/reportes/vista-previa",
+    "expected": 401
+  }
+]

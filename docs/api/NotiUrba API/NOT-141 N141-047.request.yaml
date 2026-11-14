@@ -1,0 +1,18 @@
+$kind: "http-request"
+description: "Listado admin comuna inválida\n\n Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 400. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/admin/reportes?comuna=11"
+method: "GET"
+order: 20460
+auth:
+  type: "bearer"
+  credentials:
+    token: "{{tokenAdmin}}"
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (!pm.variables.get('tokenAdmin')) { console.warn('BLOQUEADA: falta tokenAdmin'); pm.execution.skipRequest(); }"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('HTTP 400',()=>pm.response.to.have.status(400));\npm.test('Código VALIDACION',()=>pm.expect(pm.response.json().codigo).to.eql('VALIDACION'));"
+    language: "text/javascript"

@@ -1,0 +1,142 @@
+{
+  "recordedAt": "2026-11-14T15:51:29.536Z",
+  "environment": "Producción Netlify/Render, Chrome de Windows conectado; sesión de QA sin autenticación",
+  "frontendCommit": "4868ee4650273c2c04b142c6717dddc517e4ac58",
+  "mobileTest": false,
+  "accountsCreated": 0,
+  "reportsCreated": 0,
+  "mailSent": false,
+  "credentialsEntered": false,
+  "cases": [
+    {
+      "id": "WEB-01",
+      "url": "https://notiurba.netlify.app",
+      "expected": "Mostrar inicio ciudadano",
+      "obtained": "Reporte problemas de su barrio; Comenzar; Inicie sesión",
+      "result": "APROBADO",
+      "http": null
+    },
+    {
+      "id": "WEB-02",
+      "url": "https://notiurba.netlify.app/login",
+      "expected": "Campos vacíos impiden login",
+      "obtained": [
+        "Escriba su correo",
+        "Escriba su contraseña"
+      ],
+      "result": "APROBADO",
+      "scope": "Validación UI negativa; no autenticación"
+    },
+    {
+      "id": "WEB-03",
+      "url": "https://notiurba.netlify.app/registro",
+      "expected": "Paso 1 vacío impide avanzar",
+      "obtained": [
+        "Escriba sus nombres",
+        "Escriba sus apellidos",
+        "Elija el tipo de documento",
+        "Escriba su número de documento"
+      ],
+      "result": "APROBADO"
+    },
+    {
+      "id": "WEB-04",
+      "url": "https://notiurba.netlify.app/registro",
+      "expected": "Paso 2 vacío impide alta",
+      "obtained": [
+        "Seleccione un barrio disponible en la lista.",
+        "Escriba su dirección",
+        "Escriba su correo",
+        "Cree una contraseña",
+        "Repita su contraseña",
+        "Debe confirmar que es mayor de 18 años y aceptar el tratamiento de sus datos."
+      ],
+      "result": "APROBADO",
+      "scope": "No se aceptó el aviso, no se envió una cuenta válida"
+    },
+    {
+      "id": "WEB-05",
+      "url": "https://notiurba.netlify.app/registro",
+      "expected": "Catálogo real y atributo límite de dirección",
+      "obtained": {
+        "options": 133,
+        "addressMaxlength": "100"
+      },
+      "result": "APROBADO",
+      "scope": "Se comprobó atributo HTML y opciones; no prueba completa de entrada de 101 caracteres"
+    },
+    {
+      "id": "WEB-06",
+      "url": "https://notiurba.netlify.app/registro",
+      "expected": "Conservar selección y dirección tras retroceder/avanzar",
+      "obtained": {
+        "barrio": "Centro",
+        "syntheticAddressPreserved": true
+      },
+      "result": "APROBADO",
+      "scope": "Solo borrador UI con datos sintéticos; sin persistir cuenta"
+    },
+    {
+      "id": "WEB-07",
+      "url": "https://notiurba.netlify.app/recuperar",
+      "expected": "Correo vacío impide solicitar enlace",
+      "obtained": "Escriba su correo",
+      "result": "APROBADO",
+      "scope": "No se envió correo ni se restableció contraseña"
+    },
+    {
+      "id": "API-WEB-01",
+      "url": "https://notiurba-api.onrender.com/api/catalogos/tipos-documento",
+      "http": 200,
+      "expected": 200,
+      "obtained": "Respuesta Network.responseReceived y selector CC/CE/PAS",
+      "result": "APROBADO",
+      "scope": "GET real desde Netlify; no ejecución del caso Postman"
+    },
+    {
+      "id": "API-WEB-02",
+      "url": "https://notiurba-api.onrender.com/api/catalogos/barrios",
+      "http": 200,
+      "expected": 200,
+      "obtained": "Respuesta Network.responseReceived y 133 opciones en selector",
+      "result": "APROBADO",
+      "scope": "GET real desde Netlify; no ejecución del caso Postman"
+    },
+    {
+      "id": "API-WEB-03",
+      "url": "https://notiurba-api.onrender.com/api/health",
+      "http": null,
+      "obtained": {
+        "estado": "ok",
+        "baseDeDatos": "ok"
+      },
+      "result": "APROBADO",
+      "scope": "Contenido real de /api/health visto en Chrome tras arranque de Render; código HTTP no capturado, no se infiere un 200 observado"
+    }
+  ],
+  "google": {
+    "officialButtonLoaded": true,
+    "authenticated": false,
+    "result": "BLOQUEADO",
+    "details": "Botón oficial GSI visible en iframe. Click de locator informó intercepción; captura visual no mostró obstrucción evidente. Alternativa por teclado agotó tiempo. No se abrió selector/cuenta en las pestañas observadas. No atribuir todavía a defecto funcional de NotiUrba.",
+    "userAction": "Activar botón en página dejada abierta y seleccionar cuenta QA, sin compartir credenciales"
+  },
+  "renderDashboard": {
+    "url": "https://dashboard.render.com",
+    "result": "BLOQUEADO",
+    "obtained": "Keep building on Render; formulario de inicio de sesión; sin sesión disponible",
+    "destinationQAConfirmed": false,
+    "userAction": "Iniciar sesión personalmente para permitir lectura del destino QA"
+  },
+  "capture": {
+    "toolScreenshotObserved": true,
+    "localPngExported": false,
+    "note": "Captura real del login mostrada en herramienta para diagnóstico del botón; no se simula archivo PNG ni evidencia móvil"
+  },
+  "limitations": [
+    "HTTP de salud no capturado: los eventos CDP de esa pestaña quedaron truncados/vacíos",
+    "HTTP/catálogo real aprobado solo para dos catálogos; no prueba todos los flujos ni ausencia general de mocks",
+    "No sesión ciudadana/admin ni prueba física Xiaomi",
+    "Terminal y Postman siguen con DNS ENOTFOUND, independientemente de la conexión del navegador"
+  ]
+}

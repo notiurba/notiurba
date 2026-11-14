@@ -1,0 +1,18 @@
+$kind: "http-request"
+description: "Reporte ajeno/inexistente: 404\n\nPara probar aislamiento real se necesita código de otra cuenta QA. Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 404. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/reportes/{{codigoInexistente}}"
+method: "GET"
+order: 20140
+auth:
+  type: "bearer"
+  credentials:
+    token: "{{token}}"
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (!pm.variables.get('codigoInexistente')) { console.warn('BLOQUEADA: falta codigoInexistente'); pm.execution.skipRequest(); }\nif (!pm.variables.get('token')) { console.warn('BLOQUEADA: falta token'); pm.execution.skipRequest(); }"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('Estado HTTP esperado: 404', function () { pm.expect([404]).to.include(pm.response.code); });\npm.test('Código NO_ENCONTRADO',()=>pm.expect(pm.response.json().codigo).to.eql('NO_ENCONTRADO'));"
+    language: "text/javascript"

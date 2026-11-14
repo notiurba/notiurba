@@ -1,0 +1,66 @@
+{
+  "recordedAt": "2026-11-14T15:26:06.980Z",
+  "pr": {
+    "number": 27,
+    "state": "open",
+    "draft": true,
+    "base": "main",
+    "base_sha": "5c8737813d45132bee7765fd88bd848b9aa53598",
+    "head": "fix/registro-pr20",
+    "head_sha": "d8e8b2bee07a3e4e59846f9fbde803a4b044fa95",
+    "mergeable": false,
+    "updated_at": "2026-11-14T04:51:09Z"
+  },
+  "netlifyProduction": {
+    "id": "6af7e3bc2a028d658a609c72",
+    "siteId": "0356024d-e4e2-4c3e-9a8e-2ca0dfc245ea",
+    "commit": "4868ee4650273c2c04b142c6717dddc517e4ac58",
+    "branch": "develop",
+    "state": "ready",
+    "publishedAt": "2026-11-14T04:29:57.269Z",
+    "context": "production"
+  },
+  "netlifyPreview": {
+    "id": "6af4651ae1723549d09921aa",
+    "commit": "d8e8b2bee07a3e4e59846f9fbde803a4b044fa95",
+    "branch": "fix/registro-pr20",
+    "state": "ready",
+    "context": "deploy-preview"
+  },
+  "render": {
+    "commit": null,
+    "http": null,
+    "error": "DNS ENOTFOUND / curl exit 6"
+  },
+  "gmail": {
+    "query": "(subject:NotiUrba OR subject:\"[PRUEBA]\" OR \"NU-000\") newer_than:7d -from:me",
+    "qaMatches": 0,
+    "teamMailboxConfirmed": false
+  },
+  "adb": {
+    "version": "37.0.0",
+    "state": null,
+    "error": "could not read ok from ADB Server; failed to start daemon; cannot connect to daemon"
+  },
+  "newman": {
+    "installed": false,
+    "executed": false
+  },
+  "postman": {
+    "cliVersion": "1.85.0",
+    "nativeDefinitionAccepted": false,
+    "baselineNativeDefinitionAccepted": false,
+    "v21SubsetAccepted": true,
+    "safeRequestsAttempted": 12,
+    "testScriptsExecuted": 12,
+    "assertionsEvaluated": 34,
+    "assertionsPassed": 0,
+    "assertionsFailedDueToNoResponse": 34,
+    "transportFailures": 12,
+    "qaClassification": "BLOQUEADO",
+    "httpResponses": 0,
+    "apiFunctionalFailures": 0,
+    "outputReporterBlockedByMissingLogin": true,
+    "cloudPublicationConfirmed": false
+  }
+}

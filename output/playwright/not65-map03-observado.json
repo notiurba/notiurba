@@ -21,7 +21,12 @@
   "status": "APROBADA",
   "evidence": [
     "not65-map03-denegado-real.png",
+    "not65-map02-gps-real.png"
+  ],
+  "scope": "Denegacion real comprobada antes de solicitar GPS. Alternativa manual comprobada dentro de MAP-03, sin repetir los demas casos. Captura del dialogo aislado y mapa oculto en captura de seleccion manual.",
+  "evidenceOriginal": [
+    "not65-map03-denegado-real.png",
     "not65-map03-manual-sin-gps.png"
   ],
-  "scope": "Denegacion real comprobada antes de solicitar GPS. Alternativa manual comprobada dentro de MAP-03, sin repetir los demas casos. Captura del dialogo aislado y mapa oculto en captura de seleccion manual."
+  "notaConsolidacion20261114": "La captura manual era idéntica byte a byte a MAP-02; se enlaza la copia canónica sin cambiar observaciones/ID/fecha. La imagen compartida no demuestra coordenadas ni dos capturas independientes."
 }

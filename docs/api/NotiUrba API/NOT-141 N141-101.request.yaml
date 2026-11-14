@@ -1,0 +1,23 @@
+$kind: "http-request"
+description: "Sin rol admin PUT /api/admin/configuracion/vigencia\n\n Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 403. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/admin/configuracion/vigencia"
+method: "PUT"
+order: 21000
+auth:
+  type: "bearer"
+  credentials:
+    token: "{{token}}"
+headers:
+  Content-Type: "application/json"
+body:
+  type: "json"
+  content: "{\n  \"vigenciaDias\": 0\n}"
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (!pm.variables.get('token')) { console.warn('BLOQUEADA: falta token'); pm.execution.skipRequest(); }"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('HTTP 403',()=>pm.response.to.have.status(403));\npm.test('Código de seguridad',()=>pm.expect(pm.response.json().codigo).to.eql('SIN_PERMISO'));\npm.test('Código SIN_PERMISO',()=>pm.expect(pm.response.json().codigo).to.eql('SIN_PERMISO'));"
+    language: "text/javascript"

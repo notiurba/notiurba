@@ -1,0 +1,61 @@
+{
+  "fecha": "2026-11-14",
+  "local": "d8e8b2bee07a3e4e59846f9fbde803a4b044fa95",
+  "develop": "8b8419a435a296b56ce7175bf42abeffabd64db9",
+  "branchNot141": "ibarguenluz/not-141-edt-95-probar-de-punta-a-punta-revisar",
+  "branchNot141Found": false,
+  "comparison": {
+    "status": "diverged",
+    "aheadBy": 156,
+    "behindBy": 4,
+    "baseCommit": "d8e8b2bee07a3e4e59846f9fbde803a4b044fa95",
+    "mergeBase": "e5d73c43da8331f3e6f524eda0724652471c4f83"
+  },
+  "staticFindings": {
+    "adminFallback": {
+      "content": "import { listarTodosLosReportes } from '../../compartido/api/reportes'\nimport { reportesPrueba } from '../datos/reportesPrueba'\n\n// Reportes que dibuja el mapa. Se piden a la API (`GET /api/admin/reportes`, simulada o real) y se\n// convierten a la forma que usa el mapa. Si la API todavía no tiene ese endpoint, se usan los datos de prueba.\nexport async function obtenerReportesCiudadanos() {\n  try {\n    const reportes = await listarTodosLosReportes()\n    return reportes.map((r) => ({\n      id: r.codigoSeguimiento,\n      categoria: r.categoria,\n      descripcion: r.descripcion,\n      latitud: r.latitud,\n      longitud: r.longitud,\n      fechaCreacion: r.creadoEn.slice(0, 10),\n      estado: r.estado,\n    }))\n  } catch {\n    return reportesPrueba\n  }\n}\n",
+      "encoding": "utf-8",
+      "sha": "f73e1c3db9612fc8e598c580c0e641ce89559d0d",
+      "display_url": "https://github.com/notiurba/notiurba/blob/develop/frontend/src/admin/servicios/reportesService.js",
+      "display_title": "reportesService.js"
+    }
+  },
+  "contracts": [
+    {
+      "sha": "e68563cc9012af642415b32cc7bc544aa9eac774",
+      "url": "https://github.com/notiurba/notiurba/blob/develop/backend/src/main/java/com/notiurba/admin/MapaAdminController.java"
+    },
+    {
+      "sha": "4045965f8f74b12de010a81b039e7993cce221d2",
+      "url": "https://github.com/notiurba/notiurba/blob/develop/backend/src/main/java/com/notiurba/admin/MapaResponse.java"
+    },
+    {
+      "sha": "039a321c5a0c3ee1345b9cf276f04d699147e78c",
+      "url": "https://github.com/notiurba/notiurba/blob/develop/backend/src/main/java/com/notiurba/admin/CalorResponse.java"
+    },
+    {
+      "sha": "0f6b464054e0d8e0ff110ae8475463f9cedabf94",
+      "url": "https://github.com/notiurba/notiurba/blob/develop/backend/src/main/java/com/notiurba/admin/EstadisticasResponse.java"
+    },
+    {
+      "sha": "3773b06e8136d46ec522623156bd9782d24afca5",
+      "url": "https://github.com/notiurba/notiurba/blob/develop/backend/src/main/java/com/notiurba/correo/CorreoReporteController.java"
+    },
+    {
+      "sha": "e0d978f6a5df4834e45faa997fb21606fc954cb1",
+      "url": "https://github.com/notiurba/notiurba/blob/develop/backend/src/main/java/com/notiurba/reporte/FiltroPanel.java"
+    },
+    {
+      "sha": "d756ff1672bef4a917a1a1f38ebf6097df30b784",
+      "url": "https://github.com/notiurba/notiurba/blob/develop/backend/src/main/java/com/notiurba/reporte/ReporteDetalleResponse.java"
+    },
+    {
+      "sha": "c8f93d1bbb111fba5928f99789dd3a496cc83234",
+      "url": "https://github.com/notiurba/notiurba/blob/develop/backend/src/main/java/com/notiurba/admin/CambiarEstadoRequest.java"
+    }
+  ],
+  "limitations": [
+    "No se identifica el commit efectivamente desplegado",
+    "Remotos locales no actualizados; comparación obtenida directamente de GitHub"
+  ]
+}

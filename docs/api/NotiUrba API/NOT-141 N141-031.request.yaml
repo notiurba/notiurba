@@ -1,0 +1,25 @@
+$kind: "http-request"
+description: "Subir fotografía 1 QA\n\nReporte QA inicialmente sin fotos; ejecutar en orden 1, 2, 3, comprobar persistencia tras cada carga.\n\nRespuesta esperada: HTTP 201. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/reportes/{{codigoReporte}}/fotos"
+method: "POST"
+order: 20300
+auth:
+  type: "bearer"
+  credentials:
+    token: "{{token}}"
+body:
+  type: "formdata"
+  content:
+    -
+      key: "foto"
+      type: "file"
+      src: ["{{archivoFotoLocal}}"]
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (pm.variables.get('habilitarEscrituras') !== 'true') {\n  console.warn('OMITIDA por seguridad: active habilitarEscrituras solo en un entorno QA autorizado.');\n  pm.execution.skipRequest();\n}\nif (!pm.variables.get('codigoReporte3Fotos')) { console.warn('BLOQUEADA: falta codigoReporte3Fotos'); pm.execution.skipRequest(); }\nif (!pm.variables.get('token')) { console.warn('BLOQUEADA: falta token'); pm.execution.skipRequest(); }\nif (!pm.variables.get('archivoFotoLocal')) { console.warn('BLOQUEADA: falta archivoFotoLocal'); pm.execution.skipRequest(); }\nif (pm.variables.get('cuentaQAConfirmada') !== 'true') pm.execution.skipRequest();"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('Foto 1 creada',()=>pm.response.to.have.status(201));\npm.test('Orden 1',()=>pm.expect(pm.response.json().foto.orden).to.eql(1));"
+    language: "text/javascript"

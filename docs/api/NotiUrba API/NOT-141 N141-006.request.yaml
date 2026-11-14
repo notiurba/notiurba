@@ -1,0 +1,17 @@
+$kind: "http-request"
+description: "Recuperación sin correo\n\n Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 400. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/auth/recuperar"
+method: "POST"
+order: 20050
+auth:
+  type: "noauth"
+headers:
+  Content-Type: "application/json"
+body:
+  type: "json"
+  content: "{\n  \"correo\": \"\"\n}"
+scripts:
+  -
+    type: "afterResponse"
+    code: "pm.test('Estado HTTP esperado: 400', function () { pm.expect([400]).to.include(pm.response.code); });\npm.test('La API muestra un error', function () { const r = pm.response.json(); pm.expect(r).to.have.property('mensaje'); });\npm.test('Código VALIDACION',()=>pm.expect(pm.response.json().codigo).to.eql('VALIDACION'));"
+    language: "text/javascript"

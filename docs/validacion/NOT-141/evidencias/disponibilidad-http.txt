@@ -1,0 +1,11 @@
+Fecha: 2026-11-14T10:05:03.4719527-05:00
+URL: https://notiurba.netlify.app
+curl: (6) Could not resolve host: notiurba.netlify.app
+HTTP=000
+
+ExitCode: 6
+URL: https://notiurba-api.onrender.com/api/health
+curl: (6) Could not resolve host: notiurba-api.onrender.com
+HTTP=000
+
+ExitCode: 6

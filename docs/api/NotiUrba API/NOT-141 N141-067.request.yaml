@@ -1,0 +1,18 @@
+$kind: "http-request"
+description: "Acceso otra QA GET /api/reportes/{{codigoReporte}}/envio\n\n Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 404. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/reportes/{{codigoReporte}}/envio"
+method: "GET"
+order: 20660
+auth:
+  type: "bearer"
+  credentials:
+    token: "{{tokenOtraPersona}}"
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (!pm.variables.get('codigoReporte')) { console.warn('BLOQUEADA: falta codigoReporte'); pm.execution.skipRequest(); }\nif (!pm.variables.get('tokenOtraPersona')) { console.warn('BLOQUEADA: falta tokenOtraPersona'); pm.execution.skipRequest(); }"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('HTTP 404',()=>pm.response.to.have.status(404));\npm.test('Código NO_ENCONTRADO',()=>pm.expect(pm.response.json().codigo).to.eql('NO_ENCONTRADO'));"
+    language: "text/javascript"

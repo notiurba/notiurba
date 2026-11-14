@@ -1,0 +1,5 @@
+Fecha: 14/11/2026, reanudación posterior a limpieza.
+DNS .NET: SocketException / HostNotFound para Render.
+Socket TCP ADB 127.0.0.1:5037: SocketException / AccessDenied.
+ADB version 37.0.0; get-state no conecta al daemon.
+No se modificó firewall, permisos ni configuración.

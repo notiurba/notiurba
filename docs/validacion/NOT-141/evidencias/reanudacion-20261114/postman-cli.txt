@@ -1,0 +1,39 @@
+Ejecución real del 14/11/2026, Windows; Postman CLI 1.85.0.
+Colecciones temporales generadas exclusivamente fuera del repositorio.
+No se suministraron credenciales ni se iniciaron sesiones en Postman.
+
+1. Recurso nativo NOT-141 N141-001, con --no-report-events y --output externo:
+Error: Invalid collection or folder definition in C:\notiurba\noti-urba\docs\api\NotiUrba API
+No authorization data found. Please use the `postman login` command.
+
+2. Subconjunto JSON v2.1 de 12 GET sin sesión, con --output externo:
+You must be signed in to use --output. Please run the `postman login` command.
+
+3. Aislamiento de la definición original: copia temporal de definition.yaml y
+Health.request.yaml extraídas de HEAD d8e8b2b, sin archivos nuevos NOT-141:
+Error: Invalid collection or folder definition in C:\notiurba\auditoria-not141-20261114\postman-baseline
+No authorization data found. Please use the `postman login` command.
+El problema también aparece con el material previo: causa de compatibilidad/validación
+no determinada. No se modificó la definición original por suposición.
+
+4. Subconjunto JSON v2.1 de 12 GET sin --output:
+--no-report-events --ignore-redirects --timeout 30000 --timeout-request 10000
+baseUrl=https://notiurba-api.onrender.com
+Running your collection...
+NOT-141 - solo GET seguros sin credenciales
+requests: executed 12 / failed 12
+test-scripts: executed 12 / failed 0
+assertions: executed 34 / failed 34
+total run duration: 2 s
+total data received: 0 B (approx)
+Los 12 errores de transporte: getaddrinfo ENOTFOUND notiurba-api.onrender.com
+Ejemplos de efectos derivados en aserciones:
+expected [ 200 ] to include undefined
+"undefined" is not valid JSON
+Postman credentials are required for publishing run details to Postman cloud.
+
+Interpretación QA: BLOQUEADO por DNS, sin respuesta HTTP; 0 fallos funcionales
+demostrados de la API, 0 aprobaciones. Las 34 aserciones fallidas del runner se
+conservan como tales y se atribuyen a la ausencia de respuesta, no a un JSON de Render.
+No se acredita publicación en nube. Los comandos no habilitaron escrituras, simulación,
+seguimiento de redirecciones, bypass TLS ni autenticación. Newman no fue ejecutado.

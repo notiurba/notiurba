@@ -1,5 +1,19 @@
 # Colección de Postman de NotiUrba
 
+## Ampliación NOT-141 (14/11/2026)
+
+Los recursos `NotiUrba API/NOT-141 N141-*.request.yaml` forman parte de esta misma colección oficial: 114 casos nuevos, con scripts `pm.test`, precondiciones y guardas. Se reutilizan `baseUrl`, `token`, `codigoReporte`, `tokenOtraPersona` y el entorno Render existente. No hay una segunda colección persistente.
+
+Contratos revisados: copia local `d8e8b2b` y `develop` remoto `8b8419a`. No se certifica que ninguno sea el despliegue actual. La observación del cambio administrativo es opcional en el contrato nuevo; el negativo usa estado ausente. Se agregan `/api/admin/mapa`, `/api/admin/mapa/calor`, `/api/admin/estadisticas`, vista previa y mensaje del reporte.
+
+**No ejecutar toda la colección heredada en producción:** incluye registro, recuperación y cargas que escriben o envían correo. Ejecutar primero únicamente los GET públicos y negativos sin sesión de NOT-141. Los valores de seguridad quedan en `false`; un caso omitido está bloqueado, nunca aprobado. Tokens y claves se introducen solamente en valores locales secretos de Postman, sin sincronizarlos ni guardarlos en archivos versionados.
+
+El PUT válido de vigencia afecta la configuración global: está bloqueado contra Render incluso con la guarda activada y debe probarse en un entorno aislado. Para borrados se necesita una cuenta QA identificada, confirmación de que todos sus datos son descartables y autorización específica antes de ejecutar. Para enviar correo se necesita comprobar `RESEND_PRUEBA_DESTINO` en Render; un dato en Neon no demuestra esa configuración.
+
+`node tools/not141-postman.mjs --validate` verifica sintaxis y guardas sin HTTP. `--safe-get` intenta solamente GET sin token y guarda resultados anonimizados; es un runner HTTP limitado, **no Newman ni ejecución de pm.test**. `--export RUTA_TEMPORAL.json` exporta los recursos NOT-141 a v2.1 para Newman; la fuente oficial sigue siendo YAML. La importación en Postman y la ejecución real de sus scripts permanecen pendientes.
+
+Informe y detalle por caso: [NOT-141](../validacion/NOT-141/INFORME-FINAL-NOT-141.md). No se han modificado los 24 casos históricos de NOT-45.
+
 ## Cuál es la oficial
 **`docs/api/NotiUrba API/`** es la única colección. Los dos entornos están en esta misma carpeta:
 `NotiUrba - local.environment.yaml` (`http://localhost:8080`) y `NotiUrba - Render.environment.yaml`

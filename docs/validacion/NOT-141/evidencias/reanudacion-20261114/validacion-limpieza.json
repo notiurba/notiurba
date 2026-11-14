@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-14T15:25:36.607Z",
+  "branch": "fix/registro-pr20",
+  "head": "d8e8b2bee07a3e4e59846f9fbde803a4b044fa95",
+  "removed": 11,
+  "physicalCopiesVerified": 11,
+  "protectedFilesUnchanged": 582,
+  "criticalMarkdownLinksBroken": 0,
+  "qaScreenshotReferences": "OK",
+  "sqlRegeneratedInMemory": "idéntico normalizando CRLF/LF; ninguna ejecución SQL",
+  "frontendBackendMigrations": "sin cambios",
+  "largeResources": [
+    {
+      "path": "frontend/src/data/geo/plano-p28-tulua-2015-300dpi.png",
+      "bytes": 39918499,
+      "sha256": "ff5641b437fd07ad62fca7eee0ad090b1c988286c35276d36fc1a4cbfdb2a258",
+      "refs": [
+        {
+          "ruta": "docs/contexto/08-pendientes.md",
+          "exacta": false,
+          "clase": "documentación/resultado"
+        },
+        {
+          "ruta": "docs/contexto/mapas-notiurba.md",
+          "exacta": false,
+          "clase": "documentación/resultado"
+        },
+        {
+          "ruta": "docs/decisiones/0005-estructura-frontend-app-admin.md",
+          "exacta": false,
+          "clase": "documentación/resultado"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/data/geo/plano-p28-tulua-2015.pdf",
+      "bytes": 5350857,
+      "sha256": "6fa6c48ddf6573a7c3323b6417d6c9b00ca1d08f98f7a1fa6f9e98f7897db4ab",
+      "refs": [
+        {
+          "ruta": "docs/contexto/08-pendientes.md",
+          "exacta": false,
+          "clase": "documentación/resultado"
+        },
+        {
+          "ruta": "docs/contexto/mapas-notiurba.md",
+          "exacta": false,
+          "clase": "documentación/resultado"
+        }
+      ]
+    }
+  ]
+}

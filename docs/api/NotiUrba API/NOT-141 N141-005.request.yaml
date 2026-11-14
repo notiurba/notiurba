@@ -1,0 +1,21 @@
+$kind: "http-request"
+description: "Reenviar verificación con correo QA\n\nENVÍA correo. Solo bandeja de pruebas y configuración Render verificada. Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 200. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/auth/reenviar-verificacion"
+method: "POST"
+order: 20040
+auth:
+  type: "noauth"
+headers:
+  Content-Type: "application/json"
+body:
+  type: "json"
+  content: "{\n  \"correo\": \"{{correoPrueba}}\"\n}"
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (pm.variables.get('habilitarEnvioCorreo') !== 'true') {\n  console.warn('OMITIDA por seguridad: active habilitarEnvioCorreo solo en un entorno QA autorizado.');\n  pm.execution.skipRequest();\n}\nif (!pm.variables.get('correoPrueba')) { console.warn('BLOQUEADA: falta correoPrueba'); pm.execution.skipRequest(); }\nif (pm.variables.get('destinoQAConfirmado') !== 'true' || pm.variables.get('cuentaQAConfirmada') !== 'true') pm.execution.skipRequest();"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('Estado HTTP esperado: 200', function () { pm.expect([200]).to.include(pm.response.code); });"
+    language: "text/javascript"

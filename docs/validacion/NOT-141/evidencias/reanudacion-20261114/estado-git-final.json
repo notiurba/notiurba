@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-14T15:51:37.148Z",
+  "branch": "fix/registro-pr20",
+  "head": "d8e8b2bee07a3e4e59846f9fbde803a4b044fa95",
+  "stagedDeleted": 11,
+  "modifiedTracked": 5,
+  "untrackedFiles": 141,
+  "protectedResourceChecks": "582 sin cambios",
+  "gitDiffCheck": "OK",
+  "gitCachedDiffCheck": "OK",
+  "secretScan": {
+    "files": 146,
+    "potentialCredentialPatterns": 0,
+    "scope": "patrones de JWT, claves conocidas y URL de BD con contraseña; no auditoría exhaustiva de secretos"
+  },
+  "finalCheckpoint": {
+    "path": "C:\\notiurba\\respaldos-qa\\limpieza-adicional-20261114T152220Z\\sesion-final",
+    "files": 146,
+    "hashVerified": true
+  },
+  "removed": [
+    "docs/validacion/evidencias-barrios-temporales-20261107/chrome-verificacion.js",
+    "docs/validacion/evidencias-barrios-temporales-20261107/generar-sql-qa.cjs",
+    "docs/validacion/evidencias-catalogo-barrios-20261107/chrome-verificacion.js",
+    "docs/validacion/evidencias-catalogo-barrios-20261107/vite-qa.config.referencia.mjs",
+    "docs/validacion/logs/mvn-package.log",
+    "docs/validacion/logs/mvn-test.log",
+    "output/playwright/not65-desktop-08-retorno.png",
+    "output/playwright/not65-map03-manual-sin-gps.png",
+    "output/playwright/not65-preparar.js",
+    "output/playwright/not65-responsive-1366-mapa.png",
+    "output/temporales-qa.sql"
+  ]
+}

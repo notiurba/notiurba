@@ -1,0 +1,18 @@
+$kind: "http-request"
+description: "Estado del envío de correo\n\nDevuelve PENDIENTE, ENVIADO o FALLIDO según intento de envío. Contrato inspeccionado: local d8e8b2b y develop 8b8419a (14/11/2026). Expectativa documental; no es respuesta observada. Omitida no equivale a aprobada.\n\nRespuesta esperada: HTTP 200. Las aserciones siguientes definen el cuerpo del contrato; no se ha capturado respuesta de Render. Errores: {codigo, mensaje, campo}; mensaje es texto, campo puede ser null. Sin permisos en recurso ajeno: 404 por ocultación, no 403."
+url: "{{baseUrl}}/api/reportes/{{codigoReporte}}/envio"
+method: "GET"
+order: 20270
+auth:
+  type: "bearer"
+  credentials:
+    token: "{{token}}"
+scripts:
+  -
+    type: "beforeRequest"
+    code: "if (!pm.variables.get('codigoReporte')) { console.warn('BLOQUEADA: falta codigoReporte'); pm.execution.skipRequest(); }\nif (!pm.variables.get('token')) { console.warn('BLOQUEADA: falta token'); pm.execution.skipRequest(); }"
+    language: "text/javascript"
+  -
+    type: "afterResponse"
+    code: "pm.test('Estado HTTP esperado: 200', function () { pm.expect([200]).to.include(pm.response.code); });"
+    language: "text/javascript"
