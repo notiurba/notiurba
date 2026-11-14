@@ -78,7 +78,7 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
   ocultarlo en producción.
 - Normalizar tildes en los textos de la interfaz (parte de NOT-138).
 - Colección Postman (`docs/api/`) sin los endpoints nuevos (NOT-141).
-- Rotar la clave de administrador de desarrollo (NOT-133). `MAIL_FROM` y `MAIL_TEST_TO` ya se quitaron de Render.
+- Respaldos automáticos y programados de Neon (hoy el respaldo es manual, ver la guía de despliegue). `MAIL_FROM` y `MAIL_TEST_TO` ya se quitaron de Render.
 - Pull request #27 de Amelia (`fix/registro-pr20`) quedó superada por el #30: contiene evidencias
   pesadas (`docs/validacion`, `output/`, PDF) y 11 conflictos con `develop`. Conviene cerrarla y
   rehacer solo lo útil en PR pequeños. Su prueba `CatalogoCargaBarriosIT` espera 135 barrios; son 133.

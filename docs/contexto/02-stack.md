@@ -51,7 +51,7 @@ Despliegue inicial verificado el 28/10/2026; hoy corre con las migraciones V1 a 
 | Login con Google | Google Auth Platform (cliente OAuth Web) | En estado «Prueba» con 3 usuarios de prueba; no publicado |
 
 Variables de entorno en Render (lista completa y reglas en [12-estado-actual-y-traspaso.md](12-estado-actual-y-traspaso.md)):
-`DB_*`, `JWT_SECRET`, `ADMIN_DEV_PASSWORD`, `GOOGLE_CLIENT_ID`, `CORS_ORIGINS` (con comodín para las vistas previas),
+`DB_*`, `JWT_SECRET`, `GOOGLE_CLIENT_ID`, `CORS_ORIGINS` (con comodín para las vistas previas),
 `RECUPERACION_ENLACE`, `VERIFICACION_ENLACE`, `RESEND_*` (incluida `RESEND_PRUEBA_DESTINO`, que debe seguir puesta en pruebas),
 `NOTIURBA_ENVIO_REPORTES_HABILITADO`, `CLOUDINARY_*`. Ningún secreto va en el repo.
 
@@ -60,8 +60,9 @@ Pruebas que pasan contra Render (colección Postman en `docs/api/`):
 rol ADMIN; `GET /api/categorias` con JWT → 200 y 15 categorías; `GET /api/admin/ping` con
 JWT de admin → 200. La página `/app/estado` del frontend consulta `/api/health`.
 
-El admin sembrado es `admin.dev@notiurba.local`; su contraseña es la de `ADMIN_DEV_PASSWORD`
-en el primer despliegue (V4 no se reaplica si la variable cambia después).
+V4 siembra `admin.dev@notiurba.local` con la clave de `ADMIN_DEV_PASSWORD` (opcional: sin ella la clave es aleatoria).
+V4 no se reaplica si la variable cambia después, así que el administrador real se obtiene convirtiendo esa cuenta:
+[15-guia-de-despliegue.md](15-guia-de-despliegue.md), sección 5. Respaldo, restauración y aviso periódico, en la misma guía.
 
 ## Hosting
 

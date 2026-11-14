@@ -138,3 +138,13 @@ para rebotes (R.05).
 - **RF-39**: si se repite un problema ya resuelto en ese lugar, el reporte exige al menos una foto.
 
 Fuente: pestaña «Requisitos funcionales y limitación de comunas» del Google Doc.
+
+## Agregados en NOT-133 (14/11/2026)
+
+Objetivos de la historia; cada uno se da por cumplido cuando su prueba queda anotada en `15-guia-de-despliegue.md`.
+
+- **RNF-08**: existe una guía para montar el despliegue desde cero, sin secretos (`15-guia-de-despliegue.md`).
+- **RNF-09**: la base de Neon se puede respaldar y la restauración en una base vacía se comprueba con los mismos conteos.
+- **RNF-10**: el servidor de Render Free se mantiene despierto con un aviso cada 5 minutos; el arranque en frío se mide y se documenta.
+- **RN-admin**: el administrador de producción es una cuenta real con clave propia, y el servidor arranca sin `ADMIN_DEV_PASSWORD`
+  (esto último ya está hecho y probado; lo primero se ejecuta en producción).

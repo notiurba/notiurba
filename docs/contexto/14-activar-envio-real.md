@@ -1,7 +1,7 @@
 # Activar el envío real a las entidades (y volver a pruebas)
 
 Guía para pasar de «todo sale a la bandeja de pruebas» a «el reporte llega a la entidad». Sin valores
-secretos: solo nombres de variables. La usa también NOT-133 (despliegue).
+secretos: solo nombres de variables. La enlaza la [guía de despliegue](15-guia-de-despliegue.md) (NOT-133). Activar es decisión de Andrés: ya no se espera respuesta del CAIC ni del docente.
 
 ## Cómo funciona hoy
 
@@ -39,8 +39,6 @@ secretos: solo nombres de variables. La usa también NOT-133 (despliegue).
 Antes de empezar, marcar cada punto (si falta uno, no se activa):
 
 - [ ] Andrés validó el envío real (13 nov 2026: canales oficiales y datos que la persona autoriza al enviar).
-- [ ] El docente está informado de la fecha de activación.
-- [ ] El CAIC (y Centroaguas, si se usa la categoría 11) fueron avisados y su buzón recibe correos de `reportes.notiurba.com`.
 - [ ] El webhook está registrado y el paso 2 de abajo salió bien.
 
 1. Con `RESEND_PRUEBA_DESTINO` todavía puesta, crear un reporte de prueba en la categoría 1 y comprobar que llega a la

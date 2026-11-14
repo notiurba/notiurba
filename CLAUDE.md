@@ -95,13 +95,13 @@ Reglas del flujo:
 - **Frontend:** React 19 + Vite 8 + react-router 7 (`vite-plugin-pwa` todavía no está instalado: la app aún no es instalable, NOT-134). Gestor de paquetes: **pnpm** (no usar npm; no subir `package-lock.json`).
 - **Mapas:** Leaflet 1.9 + OpenStreetMap + Leaflet.heat.
 - **Fotos:** Cloudinary (plan Free), decidido el 29/10/2026 (ADR-0006). Mega descartado. Integrado por su API HTTP detrás de la interfaz `AlmacenFotos` (paquete `foto/`); probado con una subida real el 01/11/2026.
-- **Hosting:** Netlify (frontend) + Render (backend) + Neon (PostgreSQL/PostGIS).
+- **Hosting:** Netlify (frontend) + Render (backend) + Neon (PostgreSQL/PostGIS). Guía de montaje, respaldo y administrador real: `docs/contexto/15-guia-de-despliegue.md`. `ADMIN_DEV_PASSWORD` es opcional (solo siembra el admin de una base nueva).
   - Netlify despliega desde la rama `develop` con base `frontend` y publish `dist`.
     La redirección SPA vive en `frontend/public/_redirects` (`/*  /index.html  200`);
     sin ella, las rutas directas (p. ej. `/app/nueva-contrasena`) dan 404 al recargar.
   - Variables de entorno, **sin valores en el repo**:
     - Netlify: `VITE_API_URL`.
-    - Render: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `ADMIN_DEV_PASSWORD`,
+    - Render: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`,
       `GOOGLE_CLIENT_ID`, `CORS_ORIGINS`, `RECUPERACION_ENLACE`, `RESEND_API_KEY`,
       `RESEND_REMITENTE`, `RESEND_PRUEBA_DESTINO`, `RESEND_WEBHOOK_SECRET`, `NOTIURBA_ENVIO_REPORTES_HABILITADO`, `VERIFICACION_ENLACE`, `CLOUDINARY_CLOUD_NAME`,
       `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (solo la dirección, p. ej. del subdominio `reportes.notiurba.com`).
