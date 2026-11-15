@@ -90,7 +90,6 @@ const CANALES_SIMULADOS = [
     detalle: 'Número de prueba: no pertenece a ninguna entidad' },
   { tipo: 'Teléfono', acceso: '01 8000 000 000', finalidad: 'Información', horario: 'Lunes a viernes, 8:00 a. m. a 4:00 p. m.', detalle: null },
   { tipo: 'Web', acceso: 'https://www.example.com/pqr', finalidad: 'Radicar PQR', horario: null, detalle: 'Formulario de prueba' },
-  { tipo: 'Presencial', acceso: 'Dirección de prueba, Tuluá', finalidad: 'Radicar PQR', horario: 'Lunes a viernes, 8:00 a. m. a 12:00 m.', detalle: null },
 ]
 const categoriasEnrutamiento = categorias.filter(c => c.idCategoria !== 15).map(c => ({
   ...c, categoria: c.nombre, codigo: `SIM-${c.idCategoria}`,
