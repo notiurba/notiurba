@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import Bienvenida from './compartido/paginas/Bienvenida'
 import Login from './compartido/paginas/Login'
@@ -13,11 +13,12 @@ import VerificarCorreo from './compartido/paginas/VerificarCorreo'
 import RutaProtegida from './compartido/auth/RutaProtegida'
 import SoloSinSesion from './compartido/auth/SoloSinSesion'
 import { AccesoConRetorno, RetornoDesdePerfil } from './compartido/auth/NavegacionAcceso'
-import RutasApp from './app/rutas'
+import CargaDiferida from './compartido/componentes/CargaDiferida'
 import { subirAlInicio } from './compartido/utilidades/navegacion'
 import EstadoApi from './compartido/paginas/EstadoApi'
 
-// El flujo de reportes (con el mapa) y el panel se descargan solo cuando alguien entra a esas rutas.
+// Cada zona se descarga al entrar; sus pantallas secundarias tienen límites de carga propios.
+const RutasApp = lazy(() => import('./app/rutas'))
 const RutasReportar = lazy(() => import('./app/reportar/rutas'))
 // El panel se descarga solo cuando alguien entra a /admin (el ciudadano nunca baja ese código).
 const RutasAdmin = lazy(() => import('./admin/rutas'))
@@ -45,9 +46,9 @@ function App() {
       <Route
         path="/reportar/*"
         element={
-          <Suspense fallback={<p className="app-loading">Cargando…</p>}>
+          <CargaDiferida>
             <RutasReportar />
-          </Suspense>
+          </CargaDiferida>
         }
       />
       {/* Direcciones que el backend pone en los correos y en los avisos de sesión (ver .env.example del repo):
@@ -61,7 +62,7 @@ function App() {
         path="/app/*"
         element={
           <RutaProtegida>
-            <RetornoDesdePerfil><RutasApp /></RetornoDesdePerfil>
+            <RetornoDesdePerfil><CargaDiferida><RutasApp /></CargaDiferida></RetornoDesdePerfil>
           </RutaProtegida>
         }
       />
@@ -69,9 +70,9 @@ function App() {
         path="/admin/*"
         element={
           <RutaProtegida rol="ADMIN">
-            <Suspense fallback={<p className="app-loading">Cargando…</p>}>
+            <CargaDiferida>
               <RutasAdmin />
-            </Suspense>
+            </CargaDiferida>
           </RutaProtegida>
         }
       />

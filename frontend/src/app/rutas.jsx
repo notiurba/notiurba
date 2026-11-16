@@ -1,12 +1,15 @@
+import { lazy } from 'react'
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import NoEncontrada from '../compartido/paginas/NoEncontrada'
 import AvisoAcceso from '../compartido/componentes/avisos/AvisoAcceso'
 import LayoutApp from './componentes/LayoutApp'
 import MarcoApp from './componentes/MarcoApp'
-import Ajustes from './paginas/Ajustes'
-import DetalleReporte from './paginas/DetalleReporte'
-import EditarDatos from './paginas/EditarDatos'
+import CargaDiferida from '../compartido/componentes/CargaDiferida'
 import MisReportes from './paginas/MisReportes'
+
+const Ajustes = lazy(() => import('./paginas/Ajustes'))
+const DetalleReporte = lazy(() => import('./paginas/DetalleReporte'))
+const EditarDatos = lazy(() => import('./paginas/EditarDatos'))
 
 // «/app» lleva a Mis reportes y conserva el aviso que traiga la redirección (p. ej. «Acceso no permitido»).
 function IrAReportes() {
@@ -33,11 +36,11 @@ export default function RutasApp() {
         <Route element={<LayoutApp />}>
           <Route index element={<IrAReportes />} />
           <Route path="reportes" element={<MisReportes />} />
-          <Route path="reportes/:codigo" element={<DetalleReporte />} />
-          <Route path="ajustes" element={<Ajustes />} />
+          <Route path="reportes/:codigo" element={<CargaDiferida><DetalleReporte /></CargaDiferida>} />
+          <Route path="ajustes" element={<CargaDiferida><Ajustes /></CargaDiferida>} />
         </Route>
         <Route element={<LayoutSinPestanas />}>
-          <Route path="ajustes/datos" element={<EditarDatos />} />
+          <Route path="ajustes/datos" element={<CargaDiferida><EditarDatos /></CargaDiferida>} />
         </Route>
         <Route path="*" element={<NoEncontrada />} />
       </Routes>
