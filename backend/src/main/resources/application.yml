@@ -55,5 +55,3 @@ notiurba:
   recuperacion:
     # P├ígina del frontend ┬½Nueva contrase├▒a┬╗; el backend agrega ?token=...
     enlace: ${RECUPERACION_ENLACE:http://localhost:5173/app/nueva-contrasena}
-    # Solo desarrollo: escribe el enlace en el log mientras no haya env├¡o de correo real
-    mostrar-enlace-en-log: ${RECUPERACION_MOSTRAR_ENLACE:false}
