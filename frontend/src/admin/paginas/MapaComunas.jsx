@@ -13,6 +13,7 @@ import {
 import { CENTRO_TULUA, comunasTulua, getComunaProperties } from '../../compartido/geo/comunasTulua'
 import { estiloComuna } from '../../compartido/geo/estiloComunas'
 import { identificarComunaPorCoordenadas } from '../../compartido/geo/geoUtils'
+import CargaReportesMapa from '../componentes/CargaReportesMapa'
 import { CapaDiagnostico, PanelDiagnostico } from '../componentes/DiagnosticoLimites'
 import { diagnosticoLimites } from '../datos/diagnosticoLimites'
 import { obtenerReportesCiudadanos } from '../servicios/reportesService'
@@ -168,9 +169,7 @@ function ReportePopup({ reporte, resultadoComuna }) {
   )
 }
 
-export default function MapaComunas() {
-  const [reportes, setReportes] = useState([])
-  const [cargando, setCargando] = useState(true)
+function VistaMapa({ reportes }) {
   const [mostrarComunas, setMostrarComunas] = useState(true)
   const [mostrarMarcadores, setMostrarMarcadores] = useState(true)
   const [mostrarCalor, setMostrarCalor] = useState(false)
@@ -188,12 +187,6 @@ export default function MapaComunas() {
     setIncidenciaSeleccionada(id)
     setRevisionSeleccion((value) => value + 1)
   }
-
-  useEffect(() => {
-    obtenerReportesCiudadanos()
-      .then(setReportes)
-      .finally(() => setCargando(false))
-  }, [])
 
   const reportesConComuna = useMemo(
     () =>
@@ -240,14 +233,6 @@ export default function MapaComunas() {
         event.target.setStyle(estiloComuna(feature))
       },
     })
-  }
-
-  if (cargando) {
-    return (
-      <main className="app-loading">
-        <span>Cargando mapa de comunas...</span>
-      </main>
-    )
   }
 
   return (
@@ -341,7 +326,6 @@ export default function MapaComunas() {
             <p>
               POT 2015: referencia provisional, pendiente de validación
               administrativa. No confirma la división vigente en 2026.
-              Los reportes son de demostración si el servidor no responde.
             </p>
           </div>
         </aside>
@@ -387,5 +371,13 @@ export default function MapaComunas() {
         </div>
       </div>
     </section>
+  )
+}
+
+export default function MapaComunas() {
+  return (
+    <CargaReportesMapa cargador={obtenerReportesCiudadanos}>
+      {(reportes) => <VistaMapa reportes={reportes} />}
+    </CargaReportesMapa>
   )
 }

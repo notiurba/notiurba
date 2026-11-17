@@ -4,6 +4,11 @@
   box-sizing: border-box;
 }
 
+.map-shell--estado {
+  display: grid;
+  place-items: center;
+}
+
 .map-header {
   display: flex;
   align-items: end;

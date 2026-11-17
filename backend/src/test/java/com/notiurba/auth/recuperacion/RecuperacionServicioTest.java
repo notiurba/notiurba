@@ -6,14 +6,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import java.sql.SQLTransientConnectionException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -24,12 +27,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.task.TaskRejectedException;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.notiurba.auth.IntentosLoginServicio;
+import com.notiurba.auth.registro.CorreoVerificacionPendiente;
+import com.notiurba.auth.registro.EnvioCorreoVerificacion;
+import com.notiurba.correo.CorreoNoEnviadoException;
 import com.notiurba.usuario.Rol;
 import com.notiurba.usuario.TipoToken;
 import com.notiurba.usuario.TipoTokenRepository;
@@ -38,6 +48,9 @@ import com.notiurba.usuario.TokenVerificacionRepository;
 import com.notiurba.usuario.Usuario;
 import com.notiurba.usuario.UsuarioRepository;
 import com.notiurba.usuario.UsuariosDePrueba;
+
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 
 @ExtendWith(MockitoExtension.class)
 class RecuperacionServicioTest {
@@ -53,14 +66,21 @@ class RecuperacionServicioTest {
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(4);
     private final IntentosLoginServicio intentos = mock(IntentosLoginServicio.class);
     private final TipoToken recuperacion = mock(TipoToken.class);
+    private PersistenciaRecuperacion persistencia;
+    private EnvioRecuperacionPendiente envioPendiente;
     private RecuperacionServicio servicio;
 
     @BeforeEach
     void preparar() {
-        servicio = new RecuperacionServicio(usuarioRepository, tokenRepository, tipoTokenRepository,
-                passwordEncoder, enviador, intentos, ENLACE);
+        persistencia = new PersistenciaRecuperacion(usuarioRepository, tokenRepository, tipoTokenRepository);
+        envioPendiente = new EnvioRecuperacionPendiente(enviador, persistencia);
+        servicio = new RecuperacionServicio(tokenRepository, tipoTokenRepository,
+                passwordEncoder, intentos, envioPendiente, ENLACE);
         lenient().when(tipoTokenRepository.findByNombre(TipoToken.RECUPERACION_CONTRASENA))
                 .thenReturn(Optional.of(recuperacion));
+        lenient().when(tokenRepository.confirmarPendiente(
+                any(), any(), anyString(), any(), any()))
+                .thenReturn(1);
     }
 
     private Usuario conContrasena() {
@@ -69,10 +89,40 @@ class RecuperacionServicioTest {
 
     // --- solicitar ---
 
+    /** /recuperar es público: si compartiera la cola, un abuso dejaría sin correo de verificación a los registros. */
+    @Test
+    void laRecuperacionUsaUnaColaDistintaALaDelCorreoDeVerificacion() throws Exception {
+        String colaRecuperacion = EnvioRecuperacionPendiente.class
+                .getMethod("procesar", String.class, String.class, String.class).getAnnotation(Async.class).value();
+        String colaVerificacion = EnvioCorreoVerificacion.class
+                .getMethod("enviar", CorreoVerificacionPendiente.class).getAnnotation(Async.class).value();
+
+        assertThat(colaRecuperacion).isNotBlank().isNotEqualTo(colaVerificacion);
+    }
+
+    /** Cualquier consulta en el hilo de la petición haría que una cuenta elegible tarde más en responder. */
+    @Test
+    void laPeticionSoloEncolaYNoConsultaLaBaseParaNingunCorreo() {
+        EnvioRecuperacionPendiente cola = mock(EnvioRecuperacionPendiente.class);
+        RecuperacionServicio soloEncola = new RecuperacionServicio(tokenRepository, tipoTokenRepository,
+                passwordEncoder, intentos, cola, ENLACE);
+
+        soloEncola.solicitar(CORREO);
+        soloEncola.solicitar("nadie@ejemplo.com");
+
+        verifyNoInteractions(usuarioRepository, tokenRepository, tipoTokenRepository, enviador);
+        ArgumentCaptor<String> hash = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> enlace = ArgumentCaptor.forClass(String.class);
+        verify(cola).procesar(eq(CORREO), hash.capture(), enlace.capture());
+        verify(cola).procesar(eq("nadie@ejemplo.com"), anyString(), startsWith(ENLACE + "?token="));
+        String token = enlace.getValue().substring((ENLACE + "?token=").length());
+        assertThat(hash.getValue()).isEqualTo(RecuperacionServicio.hash(token)).doesNotContain(token);
+    }
+
     @Test
     void cuentaConContrasenaRecibeEnlaceYSoloSeGuardaElHash() {
         Usuario usuario = conContrasena();
-        when(usuarioRepository.findByCorreoIgnoreCase(CORREO)).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.findByCorreoIgnoreCaseForUpdate(CORREO)).thenReturn(Optional.of(usuario));
 
         servicio.solicitar(" " + CORREO + " ");
 
@@ -82,19 +132,23 @@ class RecuperacionServicioTest {
         String token = enlace.getValue().substring((ENLACE + "?token=").length());
 
         ArgumentCaptor<TokenVerificacion> guardado = ArgumentCaptor.forClass(TokenVerificacion.class);
-        verify(tokenRepository).save(guardado.capture());
+        verify(tokenRepository).saveAndFlush(guardado.capture());
         assertThat(guardado.getValue().getTokenHash())
                 .isEqualTo(RecuperacionServicio.hash(token))
                 .hasSize(64)
                 .doesNotContain(token);
         assertThat(Duration.between(OffsetDateTime.now(), guardado.getValue().getExpiraEn()))
                 .isBetween(Duration.ofMinutes(59), Duration.ofMinutes(60));
-        verify(tokenRepository).invalidarVigentes(eq(usuario), eq(recuperacion), any());
+        assertThat(guardado.getValue().getUsadoEn()).isEqualTo(guardado.getValue().getExpiraEn());
+        verify(tokenRepository).confirmarPendiente(eq(usuario), eq(recuperacion),
+                eq(guardado.getValue().getTokenHash()), eq(guardado.getValue().getExpiraEn()), any());
+        verify(tokenRepository).invalidarVigentesExcepto(
+                eq(usuario), eq(recuperacion), eq(guardado.getValue().getTokenHash()), any());
     }
 
     @Test
     void correoInexistenteNoGeneraNada() {
-        when(usuarioRepository.findByCorreoIgnoreCase("nadie@ejemplo.com")).thenReturn(Optional.empty());
+        when(usuarioRepository.findByCorreoIgnoreCaseForUpdate("nadie@ejemplo.com")).thenReturn(Optional.empty());
 
         servicio.solicitar("nadie@ejemplo.com");
 
@@ -104,7 +158,7 @@ class RecuperacionServicioTest {
     @Test
     void cuentaSoloGoogleNoRecibeEnlace() {
         Usuario soloGoogle = UsuariosDePrueba.soloGoogle(CORREO);
-        when(usuarioRepository.findByCorreoIgnoreCase(CORREO)).thenReturn(Optional.of(soloGoogle));
+        when(usuarioRepository.findByCorreoIgnoreCaseForUpdate(CORREO)).thenReturn(Optional.of(soloGoogle));
 
         servicio.solicitar(CORREO);
 
@@ -114,23 +168,137 @@ class RecuperacionServicioTest {
     @Test
     void masDeTresSolicitudesEnUnaHoraNoGeneranOtroEnlace() {
         Usuario usuario = conContrasena();
-        when(usuarioRepository.findByCorreoIgnoreCase(CORREO)).thenReturn(Optional.of(usuario));
-        when(tokenRepository.countByUsuarioAndTipoTokenAndCreadoEnAfter(eq(usuario), eq(recuperacion), any()))
+        when(usuarioRepository.findByCorreoIgnoreCaseForUpdate(CORREO)).thenReturn(Optional.of(usuario));
+        when(tokenRepository.countByUsuarioAndTipoTokenAndCreadoEnAfter(
+                eq(usuario), eq(recuperacion), any()))
                 .thenReturn(3L);
 
         servicio.solicitar(CORREO);
 
-        verify(tokenRepository, never()).save(any());
+        verify(tokenRepository, never()).saveAndFlush(any());
         verifyNoInteractions(enviador);
     }
 
     @Test
     void unFalloDelEnvioNoCambiaLaRespuesta() {
         Usuario usuario = conContrasena();
-        when(usuarioRepository.findByCorreoIgnoreCase(CORREO)).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.findByCorreoIgnoreCaseForUpdate(CORREO)).thenReturn(Optional.of(usuario));
         doThrow(new IllegalStateException("SMTP caído")).when(enviador).enviar(anyString(), anyString());
 
         assertThatCode(() -> servicio.solicitar(CORREO)).doesNotThrowAnyException();
+
+        ArgumentCaptor<TokenVerificacion> creado = ArgumentCaptor.forClass(TokenVerificacion.class);
+        verify(tokenRepository).saveAndFlush(creado.capture());
+        verify(tokenRepository).eliminarPendiente(eq(usuario), eq(recuperacion),
+                eq(creado.getValue().getTokenHash()), eq(creado.getValue().getExpiraEn()));
+        verify(tokenRepository, never()).confirmarPendiente(
+                eq(usuario), eq(recuperacion), anyString(), any(), any());
+    }
+
+    @Test
+    void siEncolarLanzaUnErrorNoQuedaNadaGuardadoYLaRespuestaNoCambia() {
+        EnvioRecuperacionPendiente cola = mock(EnvioRecuperacionPendiente.class);
+        doThrow(new TaskRejectedException("cola llena")).when(cola).procesar(anyString(), anyString(), anyString());
+        RecuperacionServicio conColaLlena = new RecuperacionServicio(tokenRepository, tipoTokenRepository,
+                passwordEncoder, intentos, cola, ENLACE);
+
+        assertThatCode(() -> conColaLlena.solicitar(CORREO)).doesNotThrowAnyException();
+
+        verifyNoInteractions(usuarioRepository, tokenRepository, enviador);
+    }
+
+    @Test
+    void siPrepararFallaNoSeLlamaAlProveedorYSeRegistraLaCausa() {
+        when(usuarioRepository.findByCorreoIgnoreCaseForUpdate(CORREO)).thenThrow(
+                new DataAccessResourceFailureException("base caída", new SQLTransientConnectionException("sin conexión")));
+
+        String mensajes = registrar(() -> assertThatCode(() -> servicio.solicitar(CORREO)).doesNotThrowAnyException());
+
+        verifyNoInteractions(enviador);
+        verify(tokenRepository, never()).saveAndFlush(any());
+        assertThat(mensajes).contains("No se pudo preparar la recuperación (SQLTransientConnectionException)");
+    }
+
+    @Test
+    void unFalloPasajeroAlConfirmarSeReintentaYElEnlaceQuedaActivo() {
+        Usuario usuario = conContrasena();
+        when(usuarioRepository.findByCorreoIgnoreCaseForUpdate(CORREO)).thenReturn(Optional.of(usuario));
+        when(tokenRepository.invalidarVigentesExcepto(eq(usuario), eq(recuperacion), anyString(), any()))
+                .thenThrow(new IllegalStateException("bloqueo pasajero"))
+                .thenReturn(1);
+
+        String mensajes = registrar(() -> servicio.solicitar(CORREO));
+
+        verify(tokenRepository, times(2)).confirmarPendiente(eq(usuario), eq(recuperacion), anyString(), any(), any());
+        verify(tokenRepository, never()).eliminarPendiente(any(), any(), anyString(), any());
+        assertThat(mensajes).contains("Enlace de recuperación activo").doesNotContain("no quedó activo");
+    }
+
+    @Test
+    void siElPendienteYaNoExisteAlConfirmarSeAvisaQueElEnlaceNoQuedoActivo() {
+        Usuario usuario = conContrasena();
+        when(usuarioRepository.findByCorreoIgnoreCaseForUpdate(CORREO)).thenReturn(Optional.of(usuario));
+        when(tokenRepository.confirmarPendiente(any(), any(), anyString(), any(), any())).thenReturn(0);
+
+        String mensajes = registrar(() -> servicio.solicitar(CORREO));
+
+        verify(enviador).enviar(eq(CORREO), anyString());
+        verify(tokenRepository, never()).invalidarVigentesExcepto(any(), any(), anyString(), any());
+        assertThat(mensajes).contains("El correo de recuperación salió, pero su enlace no quedó activo");
+    }
+
+    @Test
+    void unRechazoDeResendRegistraSiEsReintentableYElCodigoSinElCuerpoDeLaRespuesta() {
+        Usuario usuario = conContrasena();
+        when(usuarioRepository.findByCorreoIgnoreCaseForUpdate(CORREO)).thenReturn(Optional.of(usuario));
+        doThrow(new CorreoNoEnviadoException("Resend rechazó el envío (HTTP 403): solo puede enviar a " + CORREO,
+                false, 403, null)).when(enviador).enviar(anyString(), anyString());
+
+        String mensajes = registrar(() -> servicio.solicitar(CORREO));
+
+        assertThat(mensajes).contains("CorreoNoEnviadoException, reintentable=false, http=403")
+                .doesNotContain(CORREO, "solo puede enviar");
+    }
+
+    /** Ejecuta la acción y devuelve lo que escribió el envío en segundo plano en el log. */
+    private static String registrar(Runnable accion) {
+        var logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(EnvioRecuperacionPendiente.class);
+        var registro = new ListAppender<ILoggingEvent>();
+        registro.start();
+        logger.addAppender(registro);
+        try {
+            accion.run();
+        } finally {
+            logger.detachAppender(registro);
+        }
+        return registro.list.stream().map(ILoggingEvent::getFormattedMessage).reduce("", (a, b) -> a + "\n" + b);
+    }
+
+    @Test
+    void siFallaLaInvalidacionDespuesDeAceptarElCorreoElTokenQuedaPendienteYNoSeBorra() {
+        Usuario usuario = conContrasena();
+        when(usuarioRepository.findByCorreoIgnoreCaseForUpdate(CORREO)).thenReturn(Optional.of(usuario));
+        doThrow(new IllegalStateException("base temporalmente no disponible"))
+                .when(tokenRepository).invalidarVigentesExcepto(
+                        eq(usuario), eq(recuperacion), anyString(), any());
+
+        assertThatCode(() -> servicio.solicitar(CORREO)).doesNotThrowAnyException();
+
+        verify(enviador).enviar(eq(CORREO), anyString());
+        verify(tokenRepository, never()).eliminarPendiente(any(), any(), anyString(), any());
+    }
+
+    @Test
+    void unFalloSeRegistraSinCorreoTokenNiMensajeDelProveedor() {
+        Usuario usuario = conContrasena();
+        when(usuarioRepository.findByCorreoIgnoreCaseForUpdate(CORREO)).thenReturn(Optional.of(usuario));
+        doThrow(new IllegalStateException("rechazo para " + CORREO + " ?token=secreto"))
+                .when(enviador).enviar(anyString(), anyString());
+
+        String mensajes = registrar(() -> servicio.solicitar(CORREO));
+
+        assertThat(mensajes).contains("Envío de recuperación fallido", "IllegalStateException")
+                .doesNotContain(CORREO, "?token=secreto", "rechazo para");
     }
 
     // --- restablecer ---

@@ -9,7 +9,6 @@ let identificar
 let comunas
 let reportes
 let reportesFueraCobertura
-let obtenerReportes
 
 // La capa GeoJSON del POT codifica la comuna como texto de dos dígitos ('01'); los reportes, como número
 const codigoComuna = (numero) => String(numero).padStart(2, '0')
@@ -21,7 +20,6 @@ before(async () => {
   const datos = await server.ssrLoadModule('/src/admin/datos/reportesPrueba.js')
   reportes = datos.reportesPrueba
   reportesFueraCobertura = datos.reportesFueraCobertura
-  obtenerReportes = (await server.ssrLoadModule('/src/admin/servicios/reportesService.js')).obtenerReportesCiudadanos
 })
 
 after(async () => { await server?.close() })
@@ -109,11 +107,9 @@ test('NU-000010 exterior intencional se conserva intacto y sin comuna asignada',
   }
 })
 
-test('el servicio de demostracion excluye casos fuera de cobertura', async () => {
-  const visibles = await obtenerReportes()
-  assert.deepEqual(visibles, reportes)
-  assert.equal(visibles.length, 10)
-  assert.ok(visibles.every((r) => !reportesFueraCobertura.some((e) => e.id === r.id)))
+test('el fixture geometrico separa los casos interiores del caso fuera de cobertura', () => {
+  assert.equal(reportes.length, 10)
+  assert.ok(reportes.every((r) => !reportesFueraCobertura.some((e) => e.id === r.id)))
 })
 
 test('el solapamiento real POT entre comunas 03 y 10 requiere revision', () => {

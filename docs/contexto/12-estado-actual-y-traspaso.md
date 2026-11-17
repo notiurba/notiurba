@@ -32,15 +32,20 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
   El paso 2 se muestra siempre. 14 categorías (10 de Alcaldía + 4 de empresas). Gas, energía y aseo
   no reciben correo: tras el paso 1 van a «Cómo reportar a {entidad}» con sus canales oficiales y no se
   crea reporte (NOT-130). El paso 4 muestra la vista previa del mensaje («Así llegará su mensaje»).
+  En pantallas de hasta 480 px el flujo reserva el alto del distintivo oficial de Netlify para que no
+  cubra la acción principal; si el distintivo se apaga desde Netlify, se debe revisar si esa reserva aún
+  es necesaria.
 - Asignación de comuna en PostGIS (`fn_asignar_comuna`): contiene, solape (menor número),
   hueco cercano (hasta 50 m) y `FUERA_DE_COBERTURA` (422).
 - «Mis reportes», detalle, «Actualizar mi reporte» (nota en el historial; no cambia el
   estado oficial) y consulta del estado del envío por correo.
 - Panel de administración: listado con filtros (estado, categoría, comuna, fechas, «sin
   respuesta 10 días»), cambio de estado con observación, vigencia configurable (30 días) y
-  un mapa por comunas que **todavía usa datos de prueba** en el frontend. La API real del mapa,
-  del mapa de calor (con comunas críticas) y de las estadísticas ya existe en el backend
-  (`/api/admin/mapa`, `/mapa/calor`, `/estadisticas`; contrato §5.2 a §5.4).
+  mapa por comunas. El mapa consume `GET /api/admin/reportes`; si falla muestra el error y permite
+  reintentar, sin sustituirlo por reportes ficticios. El fixture `reportesPrueba.js` queda solo en
+  pruebas geométricas. La API especializada del mapa, del mapa de calor y de las estadísticas existe
+  en el backend (`/api/admin/mapa`, `/mapa/calor`, `/estadisticas`; contrato §5.2 a §5.4), pero integrar
+  sus filtros completos sigue en NOT-135/NOT-136.
 - Envío por correo: cola persistente con reintentos y enrutamiento por categoría
   (`EnvioReporteServicio`, `EnrutamientoServicio`, `PlantillaReporte`). Está **apagado por
   defecto** y en producción todo sale a la bandeja de pruebas (ver §5). Desde NOT-130 el correo es

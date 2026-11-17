@@ -31,3 +31,11 @@
   .reportar__lista { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+/* El distintivo oficial de Netlify ocupa 64 px fijos en la esquina inferior derecha. En celular,
+   reserve ese alto en los pasos del reporte para que no cubra la acción principal. */
+@media (max-width: 480px) {
+  .reportar-marco .formulario-pantalla__acciones {
+    padding-bottom: max(76px, calc(env(safe-area-inset-bottom) + 64px));
+  }
+}
+

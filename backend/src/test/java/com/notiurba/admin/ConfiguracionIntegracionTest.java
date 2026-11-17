@@ -33,6 +33,5 @@ class ConfiguracionIntegracionTest {
         assertThat(URI.create(entorno.getRequiredProperty("notiurba.correo.resend.url")).getHost()).endsWith(".test");
         assertThat(URI.create(entorno.getRequiredProperty("notiurba.fotos.cloudinary.url")).getHost()).endsWith(".test");
         assertThat(entorno.getProperty("notiurba.correo.reportes-habilitados", Boolean.class)).isFalse();
-        assertThat(entorno.getProperty("notiurba.recuperacion.mostrar-enlace-en-log", Boolean.class)).isFalse();
     }
 }
