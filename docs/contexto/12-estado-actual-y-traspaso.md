@@ -75,7 +75,7 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
 | ~~Registro lento, error de Google en celular, límites y duplicados~~: hecho el 13/11/2026, en PR | NOT-132 |
 | **Ajustes tras la prueba de Andrés (14/11/2026):** el panel no deja cambiar el estado, ingreso con Google que mostró datos de otra cuenta, mapa que no aparece con ubicación opcional, pasos que no suben al inicio, atrás desde privacidad, lugar vacío, filtros del panel, textos del paso 3, correo HTML y UI del panel. Hechos y integrados (PR #39 y #40). **El QA lo ejecuta Amelia**: `docs/sdd/historico/NOT-131-envio-real-y-rebotes/tasks.md` (sección «QA», Q-01 a Q-19) | NOT-131 (Done en Linear) |
 | Despliegue final, respaldo de la base, administrador real. **Hecho el 14/11/2026:** guía ([15-guia-de-despliegue.md](15-guia-de-despliegue.md)), respaldo de Neon restaurado con los mismos conteos, administrador real (la cuenta de desarrollo ya no entra), `ADMIN_DEV_PASSWORD` retirada de Render, aviso periódico en `main` (ejecución a mano en verde), arranque en frío medido (155 s), `main` y `develop` protegidas contra borrado. **Falta:** verificación final a mano (Amelia) y la etiqueta nueva al finalizar el sprint | NOT-133 (en Todo por decisión de Andrés hasta cerrarla) |
-| La app no es PWA instalable (no hay manifiesto ni service worker) | NOT-134 |
+| PWA implementada y verificada localmente (17/11/2026): manifiesto, iconos, aviso sin red y actualización. Pendientes de integrar, desplegar y probar instalación física en Chrome Android; logo y colores provisionales | NOT-134 |
 | Pulido: «servidor despertando», reintento de foto, GPS 10 s, atribución OSM, tono y accesibilidad | NOT-137, NOT-138, NOT-139 |
 | Pruebas del panel, de punta a punta y colección Postman al día | NOT-140, NOT-141 |
 | Informe final y manuales | NOT-142 |
@@ -114,8 +114,17 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 
 ### Frontend (`frontend/`, React 19 + Vite 8, pnpm)
 
-- `pnpm install`, `pnpm dev`, `pnpm test` (node --test, 230 pruebas), `pnpm lint`, `pnpm build`.
+- `pnpm install`, `pnpm dev`, `pnpm test`, `pnpm lint`, `pnpm build`.
   No use npm ni suba `package-lock.json`.
+- NOT-134, verificación local del 17/11/2026: **245 pruebas aprobadas, 0 fallidas y 0 omitidas**
+  en 39 archivos; lint y build en verde. El ejecutor `node --test` de este entorno resume por
+  archivo; el conteo de casos se confirmó ejecutando cada archivo aisladamente.
+- `pnpm preview` permite comprobar el manifiesto y el worker generado en `dist/`.
+  El caché guarda solo recursos estáticos. «Sin conexión» funciona después de una primera
+  carga con red y activación del worker; el reintento y la reconexión conservan el formulario.
+  `autoUpdate` recarga al detectar una versión nueva y puede perder fotos/campos solo en memoria.
+  Chrome local pasó 8 comprobaciones; falta instalación física en Android y despliegue.
+  [Evidencia y pasos manuales](../validacion/not-134/README.md).
 - Con `VITE_USAR_MOCKS=true` en desarrollo la API se simula (`src/simulacion/`); el build de
   producción no incluye esa carpeta.
 

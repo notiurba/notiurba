@@ -16,6 +16,7 @@ import { AccesoConRetorno, RetornoDesdePerfil } from './compartido/auth/Navegaci
 import CargaDiferida from './compartido/componentes/CargaDiferida'
 import { subirAlInicio } from './compartido/utilidades/navegacion'
 import EstadoApi from './compartido/paginas/EstadoApi'
+import SinConexion from './compartido/componentes/SinConexion'
 
 // Cada zona se descarga al entrar; sus pantallas secundarias tienen límites de carga propios.
 const RutasApp = lazy(() => import('./app/rutas'))
@@ -34,6 +35,7 @@ function App() {
   return (
     <>
     <SubirAlCambiarDePantalla />
+    <SinConexion />
     <Routes>
       <Route path="/" element={<SoloSinSesion><Bienvenida /></SoloSinSesion>} />
       <Route path="/login" element={<SoloSinSesion><AccesoConRetorno><Login /></AccesoConRetorno></SoloSinSesion>} />

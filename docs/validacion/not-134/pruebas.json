@@ -1,0 +1,322 @@
+{
+  "summary": {
+    "tests": 245,
+    "pass": 245,
+    "fail": 0,
+    "skipped": 0
+  },
+  "files": [
+    {
+      "file": "src/admin/componentes/CargaReportesMapa.test.mjs",
+      "exit": 0,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/admin/componentes/EstadoCargaMapa.test.mjs",
+      "exit": 0,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/admin/paginas/Configuracion.test.mjs",
+      "exit": 0,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/admin/paginas/limites.test.mjs",
+      "exit": 0,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/admin/servicios/reportesService.test.mjs",
+      "exit": 0,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/app/componentes/ListaCanales.test.mjs",
+      "exit": 0,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/app/componentes/estadoCorreo.test.mjs",
+      "exit": 0,
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/app/reportar/borrador.test.mjs",
+      "exit": 0,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/app/reportar/catalogo.contrato.test.mjs",
+      "exit": 0,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/app/reportar/catalogo.test.mjs",
+      "exit": 0,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/app/reportar/destino.test.mjs",
+      "exit": 0,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/app/reportar/falloEnvio.test.mjs",
+      "exit": 0,
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/app/reportar/ubicacionGps.test.mjs",
+      "exit": 0,
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/app/reportar/vistaPrevia.test.mjs",
+      "exit": 0,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/app/servicios/recuperacionReporte.test.mjs",
+      "exit": 0,
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/api/cliente.test.mjs",
+      "exit": 0,
+      "tests": 19,
+      "pass": 19,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/auth/SoloSinSesion.test.mjs",
+      "exit": 0,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/auth/errorLogin.test.mjs",
+      "exit": 0,
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/auth/retornoReporte.test.mjs",
+      "exit": 0,
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/auth/sesion.test.mjs",
+      "exit": 0,
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/componentes/SinConexion.test.mjs",
+      "exit": 0,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/componentes/acceso/AvisoIngreso.test.mjs",
+      "exit": 0,
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/componentes/formulario/residenciaRegistro.test.mjs",
+      "exit": 0,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/geo/geoUtils.test.mjs",
+      "exit": 0,
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/textos/avisoPrivacidad.test.mjs",
+      "exit": 0,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/textos/reporte.test.mjs",
+      "exit": 0,
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/utilidades/fechas.test.mjs",
+      "exit": 0,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/utilidades/fotos.test.mjs",
+      "exit": 0,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/utilidades/navegacion.test.mjs",
+      "exit": 0,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/utilidades/reportes.test.mjs",
+      "exit": 0,
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/utilidades/unaVez.test.mjs",
+      "exit": 0,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/validaciones/campos.test.mjs",
+      "exit": 0,
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/validaciones/direccionRegistro.test.mjs",
+      "exit": 0,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/validaciones/registro.test.mjs",
+      "exit": 0,
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/compartido/validaciones/reporte.test.mjs",
+      "exit": 0,
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/publico.test.mjs",
+      "exit": 0,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/pwa.test.mjs",
+      "exit": 0,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/simulacion/catalogo-real.test.mjs",
+      "exit": 0,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/simulacion/simulacion.test.mjs",
+      "exit": 0,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0
+    }
+  ]
+}

@@ -19,7 +19,7 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
   duplicados (NOT-132)~~: backend y frontend hechos el 13/11/2026 en la rama
   `feature/not-132-registro-rapido-y-sin-abusos`; faltan las pruebas finales y el cierre.
 - Despliegue final (NOT-133): hecho el 14/11/2026 el respaldo comprobado, el administrador real, el aviso periódico y la protección de ramas. Faltan la verificación final a mano (Amelia) y la etiqueta nueva al finalizar el sprint.
-- App instalable (PWA): no hay manifiesto ni service worker (NOT-134).
+- App instalable (NOT-134): manifiesto, service worker y aviso sin conexión implementados y verificados localmente el 17/11/2026. Pendientes: integración/despliegue, instalación en Chrome Android, icono definitivo de Amelia y color del ciudadano con Design System. [Evidencia](../validacion/not-134/README.md).
 - Pulido de la app: servidor despertando, reintento de foto, GPS de 10 s, atribución del mapa,
   usabilidad, tono y accesibilidad (NOT-137, 138, 139).
 - Pruebas del panel, de punta a punta y colección Postman (NOT-140, 141).
