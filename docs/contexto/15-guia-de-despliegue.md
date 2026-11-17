@@ -57,6 +57,9 @@ El backend necesita 1 a 4 antes de arrancar. El frontend necesita la dirección 
 2. Variables: `VITE_API_URL` (dirección del backend en Render) y `VITE_GOOGLE_CLIENT_ID`.
 3. La redirección de la SPA vive en `frontend/public/_redirects`; no se borra.
 4. Cambiar una variable de Netlify exige **volver a desplegar** (se hornean en el build).
+5. Revisar a 360 px la opción y el distintivo «Powered by Netlify». Si la opción oficial permite
+   apagarlo, hacerlo solo con autorización. Mientras permanezca activo, el frontend reserva 64 px en
+   las acciones de los pasos del reporte para que no cubra «Continuar».
 
 ## 3. Variables de entorno
 

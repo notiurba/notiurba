@@ -92,6 +92,12 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 
 - `app/paginas/CrearReporte.jsx` y `ConsultarReporte.jsx` no tienen ruta (código viejo): borrarlos. Si alguien
   los conectara, no tienen el bloqueo de un solo clic (`useUnaVez`).
+- Desde el 17/11/2026 el enlace de recuperación nunca se escribe en el log (se retiró `RECUPERACION_MOSTRAR_ENLACE`).
+  En local sin `RESEND_API_KEY` el envío falla y el token se borra, así que no hay forma de probar «Nueva
+  contraseña» de punta a punta sin Resend. Si hiciera falta, una opción es un enviador de desarrollo que solo
+  se active con un perfil local; no se construye en el MVP.
+- `react-test-renderer` (solo desarrollo, para la prueba de «Reintentar» del mapa) está deprecado en React 19.
+  Se fijó en la misma versión que `react`; al actualizar React hay que subirlo a la par o cambiar la prueba.
 
 ## Reglas de negocio por definir
 
