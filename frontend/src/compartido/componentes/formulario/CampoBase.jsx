@@ -1,9 +1,12 @@
+import { use } from 'react'
 import './Campo.css'
+import { ResumenErroresContexto } from './resumenErroresContexto'
 
 // Lo común de cualquier campo del formulario: etiqueta arriba (con "opcional" y un espacio
 // para un enlace a la derecha), la caja con borde, y debajo el error o la ayuda.
 // Campo, CampoPassword y Selector solo ponen su "control" dentro de `children`.
 export default function CampoBase({ id, etiqueta, opcional, acciones, error, ayuda, alta = false, children }) {
+  const anunciaElResumen = use(ResumenErroresContexto)
   return (
     <div className="campo">
       <div className="campo__cabecera">
@@ -17,7 +20,7 @@ export default function CampoBase({ id, etiqueta, opcional, acciones, error, ayu
         {children}
       </div>
       {error ? (
-        <p id={`${id}-error`} className="campo__error" role="alert">
+        <p id={`${id}-error`} className="campo__error" role={anunciaElResumen ? undefined : 'alert'}>
           {error}
         </p>
       ) : (

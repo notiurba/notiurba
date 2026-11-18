@@ -27,4 +27,40 @@ public interface TokenVerificacionRepository extends JpaRepository<TokenVerifica
                and t.usadoEn is null and t.expiraEn > :ahora""")
     int invalidarVigentes(@Param("usuario") Usuario usuario, @Param("tipoToken") TipoToken tipoToken,
             @Param("ahora") OffsetDateTime ahora);
+
+    @Modifying
+    @Query("""
+            update TokenVerificacion t set t.usadoEn = null
+             where t.usuario = :usuario and t.tipoToken = :tipoToken
+               and t.tokenHash = :tokenHash and t.usadoEn = :marcaPendiente
+               and t.expiraEn > :ahora""")
+    int confirmarPendiente(@Param("usuario") Usuario usuario, @Param("tipoToken") TipoToken tipoToken,
+            @Param("tokenHash") String tokenHash, @Param("marcaPendiente") OffsetDateTime marcaPendiente,
+            @Param("ahora") OffsetDateTime ahora);
+
+    @Modifying
+    @Query("""
+            update TokenVerificacion t set t.usadoEn = :ahora
+             where t.usuario = :usuario and t.tipoToken = :tipoToken
+               and t.tokenHash <> :tokenHashActivo and t.usadoEn is null
+               and t.expiraEn > :ahora""")
+    int invalidarVigentesExcepto(@Param("usuario") Usuario usuario, @Param("tipoToken") TipoToken tipoToken,
+            @Param("tokenHashActivo") String tokenHashActivo, @Param("ahora") OffsetDateTime ahora);
+
+    @Modifying
+    @Query("""
+            delete from TokenVerificacion t
+             where t.usuario = :usuario and t.tipoToken = :tipoToken
+               and t.tokenHash = :tokenHash and t.usadoEn = :marcaPendiente""")
+    int eliminarPendiente(@Param("usuario") Usuario usuario, @Param("tipoToken") TipoToken tipoToken,
+            @Param("tokenHash") String tokenHash, @Param("marcaPendiente") OffsetDateTime marcaPendiente);
+
+    /** Reconcilia entregas que agotaron sus reintentos: pendiente se representa por usado_en = expira_en. */
+    @Modifying
+    @Query("""
+            delete from TokenVerificacion t
+             where t.usuario = :usuario and t.tipoToken = :tipoToken
+               and t.usadoEn = t.expiraEn and t.creadoEn < :limite""")
+    int eliminarPendientesAnterioresA(@Param("usuario") Usuario usuario,
+            @Param("tipoToken") TipoToken tipoToken, @Param("limite") OffsetDateTime limite);
 }

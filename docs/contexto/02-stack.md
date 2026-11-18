@@ -6,7 +6,7 @@ hosting eran «por definir» y quedan como propuesta.
 | Área | Tecnología |
 | --- | --- |
 | Backend | Java 21 + Spring Boot 3.3 (web, data-jpa, security, validation) |
-| Geolocalización | PostgreSQL 16 + PostGIS 3.4 (índice GiST), Hibernate Spatial |
+| Geolocalización | PostgreSQL + PostGIS 3.4 (índice GiST), Hibernate Spatial. Desarrollo y pruebas con la imagen 16-3.4; **Neon (producción) corre PostgreSQL 18.7** |
 | Seguridad | Spring Security + JWT (jjwt) |
 | Frontend | React 19 + Vite 8 + react-router 7 + Leaflet 1.9 + leaflet.heat. **`vite-plugin-pwa` aún no está instalado**: la app todavía no es instalable (NOT-134) |
 | Mapas | Leaflet 1.9 + OpenStreetMap + Leaflet.heat |

@@ -32,15 +32,20 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
   El paso 2 se muestra siempre. 14 categorías (10 de Alcaldía + 4 de empresas). Gas, energía y aseo
   no reciben correo: tras el paso 1 van a «Cómo reportar a {entidad}» con sus canales oficiales y no se
   crea reporte (NOT-130). El paso 4 muestra la vista previa del mensaje («Así llegará su mensaje»).
+  En pantallas de hasta 480 px el flujo reserva el alto del distintivo oficial de Netlify para que no
+  cubra la acción principal; si el distintivo se apaga desde Netlify, se debe revisar si esa reserva aún
+  es necesaria.
 - Asignación de comuna en PostGIS (`fn_asignar_comuna`): contiene, solape (menor número),
   hueco cercano (hasta 50 m) y `FUERA_DE_COBERTURA` (422).
 - «Mis reportes», detalle, «Actualizar mi reporte» (nota en el historial; no cambia el
   estado oficial) y consulta del estado del envío por correo.
 - Panel de administración: listado con filtros (estado, categoría, comuna, fechas, «sin
   respuesta 10 días»), cambio de estado con observación, vigencia configurable (30 días) y
-  un mapa por comunas que **todavía usa datos de prueba** en el frontend. La API real del mapa,
-  del mapa de calor (con comunas críticas) y de las estadísticas ya existe en el backend
-  (`/api/admin/mapa`, `/mapa/calor`, `/estadisticas`; contrato §5.2 a §5.4).
+  mapa por comunas. El mapa consume `GET /api/admin/reportes`; si falla muestra el error y permite
+  reintentar, sin sustituirlo por reportes ficticios. El fixture `reportesPrueba.js` queda solo en
+  pruebas geométricas. La API especializada del mapa, del mapa de calor y de las estadísticas existe
+  en el backend (`/api/admin/mapa`, `/mapa/calor`, `/estadisticas`; contrato §5.2 a §5.4), pero integrar
+  sus filtros completos sigue en NOT-135/NOT-136.
 - Envío por correo: cola persistente con reintentos y enrutamiento por categoría
   (`EnvioReporteServicio`, `EnrutamientoServicio`, `PlantillaReporte`). Está **apagado por
   defecto** y en producción todo sale a la bandeja de pruebas (ver §5). Desde NOT-130 el correo es
@@ -69,7 +74,7 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
 | ~~Aviso de rebotes en el detalle del reporte~~: hecho el 13/11/2026, en PR. Queda activar el envío real ([guía](14-activar-envio-real.md)) | NOT-131 |
 | ~~Registro lento, error de Google en celular, límites y duplicados~~: hecho el 13/11/2026, en PR | NOT-132 |
 | **Ajustes tras la prueba de Andrés (14/11/2026):** el panel no deja cambiar el estado, ingreso con Google que mostró datos de otra cuenta, mapa que no aparece con ubicación opcional, pasos que no suben al inicio, atrás desde privacidad, lugar vacío, filtros del panel, textos del paso 3, correo HTML y UI del panel. Hechos y integrados (PR #39 y #40). **El QA lo ejecuta Amelia**: `docs/sdd/historico/NOT-131-envio-real-y-rebotes/tasks.md` (sección «QA», Q-01 a Q-19) | NOT-131 (Done en Linear) |
-| Despliegue final, respaldo de la base, administrador real. Código y guía hechos ([15-guia-de-despliegue.md](15-guia-de-despliegue.md)); falta ejecutarlos en producción (respaldo, cambio del administrador, retirar `ADMIN_DEV_PASSWORD`, etiqueta en `main`) | NOT-133 (en Todo por decisión de Andrés) |
+| Despliegue final, respaldo de la base, administrador real. **Hecho el 14/11/2026:** guía ([15-guia-de-despliegue.md](15-guia-de-despliegue.md)), respaldo de Neon restaurado con los mismos conteos, administrador real (la cuenta de desarrollo ya no entra), `ADMIN_DEV_PASSWORD` retirada de Render, aviso periódico en `main` (ejecución a mano en verde), arranque en frío medido (155 s), `main` y `develop` protegidas contra borrado. **Falta:** verificación final a mano (Amelia) y la etiqueta nueva al finalizar el sprint | NOT-133 (en Todo por decisión de Andrés hasta cerrarla) |
 | La app no es PWA instalable (no hay manifiesto ni service worker) | NOT-134 |
 | Pulido: «servidor despertando», reintento de foto, GPS 10 s, atribución OSM, tono y accesibilidad | NOT-137, NOT-138, NOT-139 |
 | Pruebas del panel, de punta a punta y colección Postman al día | NOT-140, NOT-141 |
@@ -91,7 +96,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - `MigrationIntegrationTest` falla si las variables `DB_*` del `.env` están exportadas en el
   mismo comando: ejecútelo en un entorno limpio (`env -i ...`).
 - Una base desechable: contenedor `postgis/postgis:16-3.4`. Docker Desktop debe estar abierto.
-- Última corrida completa (14/11/2026, rama de ajustes de NOT-131, con las bases desechables y `DB_*`): 454 pruebas,
+- Última corrida completa (14/11/2026, rama de ajustes de NOT-131, con las bases desechables y `DB_*`): 458 pruebas,
   0 fallos, 2 omitidas (proveedores reales). `MigrationIntegrationTest`, `SpatialIntegrationTest` y `CloudinaryIntegrationTest`
   no corren sin credenciales reales (dan error por falta de configuración, ajeno al código). `AdminIntegracionTest` exige la
   base `notiurba_test_admin_bootstrap` en `DB_URL`. Sin `DB_*` solo corren 278: las

@@ -57,6 +57,9 @@ El backend necesita 1 a 4 antes de arrancar. El frontend necesita la dirección 
 2. Variables: `VITE_API_URL` (dirección del backend en Render) y `VITE_GOOGLE_CLIENT_ID`.
 3. La redirección de la SPA vive en `frontend/public/_redirects`; no se borra.
 4. Cambiar una variable de Netlify exige **volver a desplegar** (se hornean en el build).
+5. Revisar a 360 px la opción y el distintivo «Powered by Netlify». Si la opción oficial permite
+   apagarlo, hacerlo solo con autorización. Mientras permanezca activo, el frontend reserva 64 px en
+   las acciones de los pasos del reporte para que no cubra «Continuar».
 
 ## 3. Variables de entorno
 
@@ -224,14 +227,18 @@ Notas:
   se desactiva el flujo y se acepta el arranque en frío.
 - **Arranque en frío medido:** el 14/11/2026 una primera llamada con el servidor dormido superó los 120 s, y el arranque de un despliegue en Render tardó 124 s («Started NotiUrbaApplication in 124.397 seconds»). Con el
   servidor despierto, `/api/health` responde en menos de 0,3 s.
-  _(se completa con la medición final con y sin aviso)_
+  **Medición del 14/11/2026 con el servidor dormido (18 minutos sin tráfico): 154,8 s (2 min 35 s) para la primera respuesta;
+  la siguiente, 0,18 s.** Con el aviso periódico activo se espera que casi nadie vea esa espera. Si el aviso falla un rato, el
+  primer usuario espera ese tiempo: el aviso «servidor despertando» de la app (NOT-137) es el complemento.
 - Mientras el servidor despierta, el navegador no recibe encabezados CORS y la app muestra «No pudimos comunicarnos con
   el servidor». La app ya explica el reintento; el pulido de ese aviso es NOT-137.
 
 ## 7. Versión final y etiqueta
 
-1. Integrar `develop` en `main` por PR.
-2. Crear la etiqueta (por ejemplo `v1.0.0`) sobre `main` desde GitHub → Releases.
+1. Integrar `develop` en `main` por PR (sin borrar `develop`: está protegida).
+2. Crear la etiqueta sobre `main` desde GitHub → Releases. **Regla de Andrés (14/11/2026):** al finalizar el sprint se crea una
+   etiqueta **nueva** con el último commit del repo. Las etiquetas anteriores no se mueven ni se borran (`v1.0.0` quedó sobre el
+   commit del PR #42, anterior al despliegue final).
 3. Render y Netlify de producción deben desplegar ese mismo commit (revisar el commit mostrado en cada panel).
 
 ## 8. Verificación después de desplegar

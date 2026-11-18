@@ -4,8 +4,8 @@
   justify-content: center;
   flex: none;
   box-sizing: border-box;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: 1px solid var(--nu-borde-encabezado);
   border-radius: var(--nu-radio-pildora);
   background: var(--nu-superficie-base);

@@ -18,7 +18,7 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 - ~~Registro rápido, diagnóstico de Google en celular, límite de intentos, límite diario y
   duplicados (NOT-132)~~: backend y frontend hechos el 13/11/2026 en la rama
   `feature/not-132-registro-rapido-y-sin-abusos`; faltan las pruebas finales y el cierre.
-- Despliegue final, respaldo de la base y administrador real (NOT-133).
+- Despliegue final (NOT-133): hecho el 14/11/2026 el respaldo comprobado, el administrador real, el aviso periódico y la protección de ramas. Faltan la verificación final a mano (Amelia) y la etiqueta nueva al finalizar el sprint.
 - App instalable (PWA): no hay manifiesto ni service worker (NOT-134).
 - Pulido de la app: servidor despertando, reintento de foto, GPS de 10 s, atribución del mapa,
   usabilidad, tono y accesibilidad (NOT-137, 138, 139).
@@ -92,6 +92,12 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 
 - `app/paginas/CrearReporte.jsx` y `ConsultarReporte.jsx` no tienen ruta (código viejo): borrarlos. Si alguien
   los conectara, no tienen el bloqueo de un solo clic (`useUnaVez`).
+- Desde el 17/11/2026 el enlace de recuperación nunca se escribe en el log (se retiró `RECUPERACION_MOSTRAR_ENLACE`).
+  En local sin `RESEND_API_KEY` el envío falla y el token se borra, así que no hay forma de probar «Nueva
+  contraseña» de punta a punta sin Resend. Si hiciera falta, una opción es un enviador de desarrollo que solo
+  se active con un perfil local; no se construye en el MVP.
+- `react-test-renderer` (solo desarrollo, para la prueba de «Reintentar» del mapa) está deprecado en React 19.
+  Se fijó en la misma versión que `react`; al actualizar React hay que subirlo a la par o cambiar la prueba.
 
 ## Reglas de negocio por definir
 

@@ -63,7 +63,7 @@ public class EnviadorCorreoResend implements EnviadorCorreo {
             // 429 (límite) y 5xx pueden pasar solos; el resto (datos, clave, dominio) no
             boolean reintentable = estado == 429 || estado >= 500;
             throw new CorreoNoEnviadoException("Resend rechazó el envío (HTTP " + estado + "): "
-                    + e.getResponseBodyAsString(), reintentable, e);
+                    + e.getResponseBodyAsString(), reintentable, estado, e);
         } catch (ResourceAccessException e) {
             throw new CorreoNoEnviadoException("No se pudo contactar a Resend", true, e);
         }

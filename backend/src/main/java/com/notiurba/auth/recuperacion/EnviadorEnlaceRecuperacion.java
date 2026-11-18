@@ -1,8 +1,8 @@
 package com.notiurba.auth.recuperacion;
 
 /**
- * Envía el enlace de «Recuperar contraseña». Hoy solo existe la implementación de log:
- * el envío real usará {@link com.notiurba.correo.EnviadorCorreo} (Resend) y llega con su propia historia.
+ * Envía el enlace de «Recuperar contraseña». La implementación usa {@link com.notiurba.correo.EnviadorCorreo}
+ * (Resend); si el proveedor no acepta el correo, lanza la excepción.
  */
 public interface EnviadorEnlaceRecuperacion {
 

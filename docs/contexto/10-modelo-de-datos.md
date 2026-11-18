@@ -25,7 +25,7 @@ Un ciudadano de Tuluá crea un reporte (categoría, descripción, foto y ubicaci
 - `usuario`: `nombres` y `apellidos` (no vacíos), documento (tipo + número únicos), barrio y dirección de correspondencia (la ley exige estos datos en el correo a la entidad), correo único sin distinguir mayúsculas, `correo_verificado_en` (fuente de verdad de la verificación), aviso de privacidad aceptado y cuándo. `password_hash` es opcional desde V5: las cuentas que solo entran con Google no tienen contraseña (regla B13).
 - `identidad_externa`: la cuenta de un proveedor externo vinculada a un usuario; guarda el `sub` del ID token de Google en `identificador_externo`. Única por (proveedor, identificador) y por (usuario, proveedor): una cuenta de Google es de un solo usuario y un usuario tiene a lo sumo una de cada proveedor. Se borra en cascada con el usuario (habeas data).
 - `proveedor_identidad`: catálogo de proveedores (hoy solo GOOGLE). Es una tabla y no un texto, por la regla de diseño.
-- `token_verificacion`: tokens de un solo uso (verificar correo, recuperar contraseña); guarda el hash SHA-256, no el token. «Recuperar contraseña» lo reutiliza: vence en 1 hora y un enlace nuevo invalida los anteriores.
+- `token_verificacion`: tokens de un solo uso (verificar correo, recuperar contraseña); guarda el hash SHA-256, no el token. «Recuperar contraseña» lo reutiliza: vence en 1 hora y un enlace nuevo invalida los anteriores. Durante el envío, `usado_en = expira_en` identifica un token pendiente y todavía no utilizable; al aceptar el proveedor pasa a `NULL`, y un consumo real siempre registra un instante estrictamente anterior a `expira_en`.
 - `configuracion`: pares clave-valor editables por el admin; hoy `vigencia_dias` = 30.
 
 **Destinos (a quién llega un reporte)**

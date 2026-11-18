@@ -23,8 +23,6 @@ import com.notiurba.usuario.TipoToken;
 import com.notiurba.usuario.TipoTokenRepository;
 import com.notiurba.usuario.TokenVerificacion;
 import com.notiurba.usuario.TokenVerificacionRepository;
-import com.notiurba.usuario.Usuario;
-import com.notiurba.usuario.UsuarioRepository;
 import com.notiurba.web.error.ApiException;
 import com.notiurba.web.error.Codigos;
 
@@ -41,57 +39,36 @@ public class RecuperacionServicio {
     static final int MAXIMO_POR_HORA = 3;
     static final String ENLACE_INVALIDO = "El enlace no es válido o venció";
 
-    private final UsuarioRepository usuarioRepository;
     private final TokenVerificacionRepository tokenRepository;
     private final TipoTokenRepository tipoTokenRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EnviadorEnlaceRecuperacion enviador;
     private final IntentosLoginServicio intentos;
+    private final EnvioRecuperacionPendiente envioPendiente;
     private final String enlaceBase;
     private final SecureRandom aleatorio = new SecureRandom();
 
     public RecuperacionServicio(
-            UsuarioRepository usuarioRepository,
             TokenVerificacionRepository tokenRepository,
             TipoTokenRepository tipoTokenRepository,
             PasswordEncoder passwordEncoder,
-            EnviadorEnlaceRecuperacion enviador,
             IntentosLoginServicio intentos,
+            EnvioRecuperacionPendiente envioPendiente,
             @Value("${notiurba.recuperacion.enlace}") String enlaceBase) {
-        this.usuarioRepository = usuarioRepository;
         this.tokenRepository = tokenRepository;
         this.tipoTokenRepository = tipoTokenRepository;
         this.passwordEncoder = passwordEncoder;
-        this.enviador = enviador;
         this.intentos = intentos;
+        this.envioPendiente = envioPendiente;
         this.enlaceBase = enlaceBase;
     }
 
-    @Transactional
+    /** Solo encola: la cuenta, el límite y el envío se resuelven en segundo plano. */
     public void solicitar(String correo) {
-        // Cuentas inexistentes y solo-Google (sin contraseña) no reciben enlace
-        Usuario usuario = usuarioRepository.findByCorreoIgnoreCase(correo.trim())
-                .filter(u -> u.getPasswordHash() != null)
-                .orElse(null);
-        if (usuario == null) {
-            return;
-        }
-        TipoToken recuperacion = tipoRecuperacion();
-        OffsetDateTime ahora = OffsetDateTime.now();
-        if (tokenRepository.countByUsuarioAndTipoTokenAndCreadoEnAfter(
-                usuario, recuperacion, ahora.minusHours(1)) >= MAXIMO_POR_HORA) {
-            log.info("Límite de {} solicitudes de recuperación por hora alcanzado", MAXIMO_POR_HORA);
-            return;
-        }
-
-        tokenRepository.invalidarVigentes(usuario, recuperacion, ahora);
         String token = nuevoToken();
-        tokenRepository.save(new TokenVerificacion(usuario, recuperacion, hash(token), ahora, ahora.plus(VIGENCIA)));
         try {
-            enviador.enviar(usuario.getCorreo(), enlaceBase + "?token=" + token);
-        } catch (RuntimeException fallo) {
-            // Un error de envío no puede cambiar la respuesta: delataría que la cuenta existe
-            log.error("No se pudo enviar el enlace de recuperación", fallo);
+            envioPendiente.procesar(correo, hash(token), enlaceBase + "?token=" + token);
+        } catch (RuntimeException noEncolada) {
+            log.warn("Solicitud de recuperación no encolada ({})", noEncolada.getClass().getSimpleName());
         }
     }
 

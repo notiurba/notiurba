@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import useUnaVez from '../hooks/useUnaVez'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { estadoRetornoReporte } from '../auth/retornoReporte'
@@ -38,6 +38,8 @@ export default function Registro() {
   const { state } = useLocation()
   const retorno = estadoRetornoReporte(state?.siguiente ?? null)
   const [paso, setPaso] = useState(1)
+  const encabezadoPaso = useRef(null)
+  const pasoAnterior = useRef(paso)
   const [avisoAbierto, setAvisoAbierto] = useState(false)
   const { datos, errores, setErrores, cambiar, errorDeCampo } = useFormulario(DATOS_INICIALES)
   const [errorGeneral, setErrorGeneral] = useState('')
@@ -45,6 +47,12 @@ export default function Registro() {
   const crearCuentaUnaVez = useUnaVez(crearCuenta)
   const tipos = useCargar(obtenerTiposDocumento)
   const barrios = useCargar(obtenerBarrios)
+
+  useEffect(() => {
+    if (pasoAnterior.current === paso) return
+    pasoAnterior.current = paso
+    encabezadoPaso.current?.focus()
+  }, [paso])
 
   function continuar(evento) {
     evento.preventDefault()
@@ -135,6 +143,7 @@ export default function Registro() {
           paso={paso}
           total={2}
           etiqueta={paso === 1 ? 'Datos personales' : 'Ubicación y acceso'}
+          refEncabezado={encabezadoPaso}
         />
 
         {errorGeneral && (
