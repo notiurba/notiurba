@@ -92,7 +92,7 @@ Reglas del flujo:
 - **Backend:** Java 21 + Spring Boot 3.3 (web, data-jpa, security, validation).
 - **Geo:** PostgreSQL + PostGIS 3.4 (índice GiST), Hibernate Spatial. Pruebas con la imagen 16-3.4; Neon (producción) corre PostgreSQL 18, y para respaldar con `pg_dump` hace falta la versión 18 (guía 15).
 - **Seguridad:** Spring Security + JWT (jjwt).
-- **Frontend:** React 19 + Vite 8 + react-router 7 (`vite-plugin-pwa` todavía no está instalado: la app aún no es instalable, NOT-134). Gestor de paquetes: **pnpm** (no usar npm; no subir `package-lock.json`).
+- **Frontend:** React 19 + Vite 8 + react-router 7. NOT-134 incorpora `vite-plugin-pwa` 2 y `workbox-window` 7.4.1, manifiesto, actualización automática y aviso sin conexión; verificado localmente, pendiente de desplegar y probar instalación en Android. El worker solo guarda recursos estáticos, nunca API ni teselas. Gestor de paquetes: **pnpm** (no usar npm; no subir `package-lock.json`).
 - **Mapas:** Leaflet 1.9 + OpenStreetMap + Leaflet.heat.
 - **Fotos:** Cloudinary (plan Free), decidido el 29/10/2026 (ADR-0006). Mega descartado. Integrado por su API HTTP detrás de la interfaz `AlmacenFotos` (paquete `foto/`); probado con una subida real el 01/11/2026.
 - **Hosting:** Netlify (frontend) + Render (backend) + Neon (PostgreSQL/PostGIS). Guía de montaje, respaldo y administrador real: `docs/contexto/15-guia-de-despliegue.md`. `ADMIN_DEV_PASSWORD` es opcional (solo siembra el admin de una base nueva).

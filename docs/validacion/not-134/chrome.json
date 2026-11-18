@@ -1,0 +1,122 @@
+{
+  "checks": [
+    "Chrome acepta el manifiesto y no informa errores de instalabilidad",
+    "Sin red: modal, Escape no lo cierra, reintento conserva el formulario sin recarga",
+    "Reconectar conserva el texto y devuelve el foco al formulario",
+    "El aviso queda por encima de un diálogo que ya estaba abierto",
+    "Recargar /login sin red muestra NotiUrba; sin scroll horizontal 360/390/1366",
+    "Una ruta interna sin visitar también abre el aviso sin red",
+    "Cache Storage solo contiene estáticos, aun después de pedir API y una tesela simulada",
+    "Segunda compilación: nuevo worker, nuevo HTML y recarga automática"
+  ],
+  "pageErrors": [],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/150.0.7871.186",
+    "revision": "@0fcdce5f4fdec8d442d7df760cb541f1ca6e446d",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/150.0.0.0 Safari/537.36",
+    "jsVersion": "15.0.245.21"
+  },
+  "manifest": {
+    "name": "NotiUrba",
+    "short_name": "NotiUrba",
+    "description": "Reporte ciudadano georreferenciado en Tuluá",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f5f7f4",
+    "theme_color": "#082f6b",
+    "lang": "es",
+    "scope": "/",
+    "icons": [
+      {
+        "src": "/icono-192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/icono-512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      },
+      {
+        "src": "/icono-512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable"
+      }
+    ]
+  },
+  "installability": {
+    "installabilityErrors": []
+  },
+  "cache": [
+    {
+      "name": "workbox-precache-v2-http://127.0.0.1:4173/",
+      "urls": [
+        "http://127.0.0.1:4173/index.html?__WB_REVISION__=4bb4ed15aa752147fa6826bb41d24fb2",
+        "http://127.0.0.1:4173/icono-512.png?__WB_REVISION__=46c147003953cf0a7321d8d7eebdb2f5",
+        "http://127.0.0.1:4173/icono-192.png?__WB_REVISION__=4365107ffbf2d89fd18b37421102e70b",
+        "http://127.0.0.1:4173/favicon-32x32.png?__WB_REVISION__=e31262385cd65e6f25f487231a313607",
+        "http://127.0.0.1:4173/favicon-16x16.png?__WB_REVISION__=1d04116d66eeebd1da596e09bd1e93c6",
+        "http://127.0.0.1:4173/apple-touch-icon.png?__WB_REVISION__=39ef9388ebeb35d7d4b8c4b64844cc93",
+        "http://127.0.0.1:4173/assets/workbox-window.prod.es5-Bd17z0YL.js",
+        "http://127.0.0.1:4173/assets/usuario-BxjKnDt-.js",
+        "http://127.0.0.1:4173/assets/rutas-DZI-lDPb.js",
+        "http://127.0.0.1:4173/assets/rutas-D4wKbMKP.js",
+        "http://127.0.0.1:4173/assets/rutas-ClFZgqc_.css",
+        "http://127.0.0.1:4173/assets/rutas-C1OG_QB3.css",
+        "http://127.0.0.1:4173/assets/rutas-BI63S2F0.js",
+        "http://127.0.0.1:4173/assets/rutas-2q94DuAL.css",
+        "http://127.0.0.1:4173/assets/reporte-C6Na4R1e.js",
+        "http://127.0.0.1:4173/assets/logo-notiurba-ww0RqmB2.png",
+        "http://127.0.0.1:4173/assets/index-BogcAUPN.css",
+        "http://127.0.0.1:4173/assets/index-B-oGdb9a.js",
+        "http://127.0.0.1:4173/assets/geoUtils-vh-t_kPv.css",
+        "http://127.0.0.1:4173/assets/geoUtils-C0Z2QAcC.js",
+        "http://127.0.0.1:4173/assets/fotos-BNadCvh4.js",
+        "http://127.0.0.1:4173/assets/fechas-l0acm-wt.css",
+        "http://127.0.0.1:4173/assets/fechas-BLCt98eG.js",
+        "http://127.0.0.1:4173/assets/correoReportes-ygdV1MXo.js",
+        "http://127.0.0.1:4173/assets/correoReportes-jwwbS5Jt.css",
+        "http://127.0.0.1:4173/assets/ResumenCategoria-FVOgD4yM.js",
+        "http://127.0.0.1:4173/assets/ResumenCategoria-CMiEIUkn.css",
+        "http://127.0.0.1:4173/assets/ReporteEnviado-Dt-BAOui.js",
+        "http://127.0.0.1:4173/assets/ReporteEnviado-Dqzoj0XM.css",
+        "http://127.0.0.1:4173/assets/PasoUbicacion-IEv6E1nl.css",
+        "http://127.0.0.1:4173/assets/PasoUbicacion-CM5nW9bD.js",
+        "http://127.0.0.1:4173/assets/PasoDetalles-CpjDe1P3.js",
+        "http://127.0.0.1:4173/assets/PasoDetalles-CHFNbTyj.css",
+        "http://127.0.0.1:4173/assets/PasoConfirmacion-CG6S8Z3w.css",
+        "http://127.0.0.1:4173/assets/PasoConfirmacion-3KSwbId9.js",
+        "http://127.0.0.1:4173/assets/PasoCanales-Cvn7SEc_.js",
+        "http://127.0.0.1:4173/assets/OtrosCanales-N1FJlvxu.js",
+        "http://127.0.0.1:4173/assets/MarcoApp-yeqPlt6r.js",
+        "http://127.0.0.1:4173/assets/MarcoApp-D8LqRJtZ.css",
+        "http://127.0.0.1:4173/assets/MapaComunas-BaTxQ-9u.js",
+        "http://127.0.0.1:4173/assets/MapaComunas-BAHB1QQ0.css",
+        "http://127.0.0.1:4173/assets/ListaCanales-qtsBxmCh.js",
+        "http://127.0.0.1:4173/assets/ListaCanales-DY1JI88Y.css",
+        "http://127.0.0.1:4173/assets/HojaConfirmacion-CTBv-7_t.js",
+        "http://127.0.0.1:4173/assets/EditarDatos-BL_dJFWu.js",
+        "http://127.0.0.1:4173/assets/DetalleReporte-Dy1w0Zzu.js",
+        "http://127.0.0.1:4173/assets/DetalleReporte-BvcvzWZI.css",
+        "http://127.0.0.1:4173/assets/CorreoReportes-Wz3yEBjo.css",
+        "http://127.0.0.1:4173/assets/CorreoReportes-ClCKqXUn.js",
+        "http://127.0.0.1:4173/assets/Configuracion-iPXG_KnR.css",
+        "http://127.0.0.1:4173/assets/Configuracion-Ci6Li--8.js",
+        "http://127.0.0.1:4173/assets/ChipEstado-sWGxDUKp.js",
+        "http://127.0.0.1:4173/assets/ChipEstado-C0lV86u1.css",
+        "http://127.0.0.1:4173/assets/Boton-DsV_JDna.js",
+        "http://127.0.0.1:4173/assets/Boton-2s_FzhrR.css",
+        "http://127.0.0.1:4173/assets/Ajustes-ry_tjiwd.js",
+        "http://127.0.0.1:4173/assets/Ajustes-BxJGD9Mx.css",
+        "http://127.0.0.1:4173/manifest.webmanifest?__WB_REVISION__=8de7f76e86b26e633940d9f8ae66e9b8"
+      ]
+    }
+  ],
+  "update": {
+    "previousIndex": "http://127.0.0.1:4174/index.html?__WB_REVISION__=4bb4ed15aa752147fa6826bb41d24fb2",
+    "nextIndex": "http://127.0.0.1:4174/index.html?__WB_REVISION__=9af743c2971162626d8c1bd3da80754a",
+    "automaticReload": true
+  }
+}

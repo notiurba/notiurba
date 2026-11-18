@@ -8,7 +8,7 @@ hosting eran «por definir» y quedan como propuesta.
 | Backend | Java 21 + Spring Boot 3.3 (web, data-jpa, security, validation) |
 | Geolocalización | PostgreSQL + PostGIS 3.4 (índice GiST), Hibernate Spatial. Desarrollo y pruebas con la imagen 16-3.4; **Neon (producción) corre PostgreSQL 18.7** |
 | Seguridad | Spring Security + JWT (jjwt) |
-| Frontend | React 19 + Vite 8 + react-router 7 + Leaflet 1.9 + leaflet.heat. **`vite-plugin-pwa` aún no está instalado**: la app todavía no es instalable (NOT-134) |
+| Frontend | React 19 + Vite 8 + react-router 7 + Leaflet 1.9 + leaflet.heat. NOT-134 añade `vite-plugin-pwa` 2 y `workbox-window` 7.4.1: manifiesto, actualización automática y aviso sin conexión; verificado localmente, pendiente de despliegue y prueba en Android |
 | Mapas | Leaflet 1.9 + OpenStreetMap + Leaflet.heat |
 | Correo | Resend (decidido 29/10/2026; plan gratuito 3.000/mes y 100/día). Se envía por la API HTTP de Resend (HTTPS), implementada en `EnviadorCorreoResend`; ver abajo |
 | Contenedores | Docker (postgis/postgis) para desarrollo local |
@@ -87,7 +87,7 @@ Render: `RESEND_API_KEY` y `RESEND_REMITENTE`. Resend también acepta SMTP por 2
 ## Pendientes del stack
 
 - Hosting desplegado y fotos con Cloudinary: el almacén (`AlmacenFotos`) y el endpoint de subida (NOT-52) están hechos. Probado en producción el 01/11/2026: una foto subida desde Render con las variables `CLOUDINARY_*` ya puestas, y su URL pública cargó sin sesión.
-- Instalar `vite-plugin-pwa` y definir el manifiesto sin guardar teselas de OSM (NOT-134).
+- NOT-134: implementación y verificación local listas; falta integrar, desplegar y probar la instalación en Chrome Android. El manifiesto conserva logo y colores provisionales. El worker no guarda API ni teselas. [Evidencia](../validacion/not-134/README.md).
 - Conectar el mapa de calor (Leaflet.heat 0.2.0, ya en el panel con datos de prueba) a la API real (NOT-136).
 - Resend desde Render: probado y funcionando; en producción todo sale a la bandeja de pruebas hasta activar el envío real (ver [14-activar-envio-real.md](14-activar-envio-real.md)).
 
