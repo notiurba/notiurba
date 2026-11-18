@@ -52,7 +52,7 @@ export function CamposIdentidad({ datos, errores, cambiar, tiposDocumento, corre
         <Selector
           id="idTipoDocumento"
           etiqueta="Tipo de documento"
-          opciones={tiposDocumento.map((t) => ({ valor: t.idTipoDocumento, texto: t.codigo }))}
+          opciones={tiposDocumento.map((t) => ({ valor: t.idTipoDocumento, texto: `${t.codigo} — ${t.nombre}` }))}
           value={datos.idTipoDocumento}
           onChange={cambiarTipoDocumento}
           error={errores.idTipoDocumento}

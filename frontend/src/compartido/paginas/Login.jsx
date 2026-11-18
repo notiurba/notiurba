@@ -18,6 +18,7 @@ import { IconoCorreo } from '../componentes/Iconos'
 import LayoutAuth from '../componentes/acceso/LayoutAuth'
 import PieAuth from '../componentes/acceso/PieAuth'
 import Separador from '../componentes/Separador'
+import ResumenErrores from '../componentes/formulario/ResumenErrores'
 import enfocarPrimerError from '../componentes/formulario/enfocarPrimerError'
 import '../estilos/marca.css'
 import { finDelBloqueo } from '../textos/ingreso'
@@ -93,33 +94,35 @@ export default function Login() {
         {contrasenaRestablecida && <Aviso variante="exito">{MENSAJE_RESTABLECIDA}</Aviso>}
         <AvisoIngreso aviso={aviso} correo={correo.trim()} retorno={retorno} />
 
-        <Campo
-          id="correo"
-          etiqueta="Correo electrónico"
-          icono={<IconoCorreo />}
-          type="email"
-          autoComplete="email"
-          maxLength={LIMITES.correo}
-          placeholder="nombre@correo.com"
-          value={correo}
-          onChange={cambiarCorreo}
-          error={errores.correo}
-        />
+        <ResumenErrores errores={errores}>
+          <Campo
+            id="correo"
+            etiqueta="Correo electrónico"
+            icono={<IconoCorreo />}
+            type="email"
+            autoComplete="email"
+            maxLength={LIMITES.correo}
+            placeholder="nombre@correo.com"
+            value={correo}
+            onChange={cambiarCorreo}
+            error={errores.correo}
+          />
 
-        <CampoPassword
-          id="password"
-          etiqueta="Contraseña"
-          autoComplete="current-password"
-          placeholder="Ingrese su contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          error={errores.password}
-          acciones={
-            <Link to="/recuperar" className="enlace-campo">
-              ¿Olvidó su contraseña?
-            </Link>
-          }
-        />
+          <CampoPassword
+            id="password"
+            etiqueta="Contraseña"
+            autoComplete="current-password"
+            placeholder="Ingrese su contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={errores.password}
+            acciones={
+              <Link to="/recuperar" className="enlace-campo">
+                ¿Olvidó su contraseña?
+              </Link>
+            }
+          />
+        </ResumenErrores>
 
         {bloqueoHasta ? (
           <BotonEsperando key={bloqueoHasta} fin={bloqueoHasta} alTerminar={terminarBloqueo} />
