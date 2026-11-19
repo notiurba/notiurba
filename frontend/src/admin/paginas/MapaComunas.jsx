@@ -13,10 +13,11 @@ import {
 import { CENTRO_TULUA, comunasTulua, getComunaProperties } from '../../compartido/geo/comunasTulua'
 import { estiloComuna } from '../../compartido/geo/estiloComunas'
 import { identificarComunaPorCoordenadas } from '../../compartido/geo/geoUtils'
+import AvisoSinUbicacion from '../componentes/AvisoSinUbicacion'
 import CargaReportesMapa from '../componentes/CargaReportesMapa'
 import { CapaDiagnostico, PanelDiagnostico } from '../componentes/DiagnosticoLimites'
 import { diagnosticoLimites } from '../datos/diagnosticoLimites'
-import { obtenerReportesCiudadanos } from '../servicios/reportesService'
+import { obtenerReportesCiudadanos, separarPorUbicacion } from '../servicios/reportesService'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
@@ -169,7 +170,8 @@ function ReportePopup({ reporte, resultadoComuna }) {
   )
 }
 
-function VistaMapa({ reportes }) {
+function VistaMapa({ reportes: listado }) {
+  const { conUbicacion: reportes, sinUbicacion } = useMemo(() => separarPorUbicacion(listado), [listado])
   const [mostrarComunas, setMostrarComunas] = useState(true)
   const [mostrarMarcadores, setMostrarMarcadores] = useState(true)
   const [mostrarCalor, setMostrarCalor] = useState(false)
@@ -253,6 +255,8 @@ function VistaMapa({ reportes }) {
           <small>{conteoPendientes} pendientes de revisión geográfica</small>
         </div>
       </div>
+
+      <AvisoSinUbicacion cantidad={sinUbicacion.length} />
 
       <div className="map-layout">
         <aside className="map-panel" aria-label="Controles del mapa">

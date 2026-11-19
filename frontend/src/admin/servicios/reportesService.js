@@ -1,5 +1,15 @@
 import { listarTodosLosReportes } from '../../compartido/api/reportes'
 
+const tieneUbicacion = (r) => Number.isFinite(r.latitud) && Number.isFinite(r.longitud)
+
+// La ubicación es opcional según la categoría: el mapa solo puede dibujar los que la traen.
+export function separarPorUbicacion(reportes) {
+  return {
+    conUbicacion: reportes.filter(tieneUbicacion),
+    sinUbicacion: reportes.filter((r) => !tieneUbicacion(r)),
+  }
+}
+
 // Reportes que dibuja el mapa. Se piden a la API (`GET /api/admin/reportes`, simulada o real) y se
 // convierten a la forma que usa el mapa. Los fallos se propagan para que la pantalla pueda mostrarlos.
 export async function obtenerReportesCiudadanos() {

@@ -1,11 +1,13 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { cerrarSesion } from '../../compartido/auth/sesion'
 import Boton from '../../compartido/componentes/Boton'
+import LimiteErrores from '../../compartido/componentes/LimiteErrores'
 import './LayoutAdmin.css'
 
 // Marco del panel: cabecera con las secciones (Reportes, Mapa de calor y Configuración) y «Cerrar sesión».
 export default function LayoutAdmin() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
 
   function salir() {
     cerrarSesion()
@@ -27,7 +29,9 @@ export default function LayoutAdmin() {
         <Boton variante="secundario" onClick={salir}>Cerrar sesión</Boton>
       </header>
       <main className="admin__contenido">
-        <Outlet />
+        <LimiteErrores key={pathname}>
+          <Outlet />
+        </LimiteErrores>
       </main>
     </div>
   )

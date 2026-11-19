@@ -26,7 +26,7 @@ Contexto general: `docs/contexto/12-estado-actual-y-traspaso.md`. Trabaje en una
 
 ## Frontend (React 19 + Vite, pnpm)
 
-`cd frontend && pnpm install && pnpm test && pnpm lint && pnpm build` (230 pruebas con `node --test`).
+`cd frontend && pnpm install && pnpm test && pnpm lint && pnpm build` (273 pruebas con `node --test`).
 Nunca npm ni `package-lock.json`. `VITE_USAR_MOCKS=true` simula la API solo en desarrollo.
 
 ## Migraciones (Flyway)

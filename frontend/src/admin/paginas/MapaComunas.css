@@ -9,6 +9,10 @@
   place-items: center;
 }
 
+.map-shell > .aviso {
+  margin-bottom: 20px;
+}
+
 .map-header {
   display: flex;
   align-items: end;
