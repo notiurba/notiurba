@@ -42,7 +42,10 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
 - Panel de administración: listado con filtros (estado, categoría, comuna, fechas, «sin
   respuesta 10 días»), cambio de estado con observación, vigencia configurable (30 días) y
   mapa por comunas. El mapa consume `GET /api/admin/reportes`; si falla muestra el error y permite
-  reintentar, sin sustituirlo por reportes ficticios. El fixture `reportesPrueba.js` queda solo en
+  reintentar, sin sustituirlo por reportes ficticios. Dibuja solo los reportes con ubicación y
+  avisa cuántos quedan fuera (la ubicación es opcional según la categoría); si falla el dibujo de
+  cualquier pantalla del panel, se ve «No pudimos mostrar esta pantalla» con «Reintentar» y no una
+  pantalla en blanco. El fixture `reportesPrueba.js` queda solo en
   pruebas geométricas. La API especializada del mapa, del mapa de calor y de las estadísticas existe
   en el backend (`/api/admin/mapa`, `/mapa/calor`, `/estadisticas`; contrato §5.2 a §5.4), pero integrar
   sus filtros completos sigue en NOT-135/NOT-136.
@@ -119,6 +122,8 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - NOT-134, verificación local del 17/11/2026: **245 pruebas aprobadas, 0 fallidas y 0 omitidas**
   en 39 archivos; lint y build en verde. El ejecutor `node --test` de este entorno resume por
   archivo; el conteo de casos se confirmó ejecutando cada archivo aisladamente.
+- Mapa del panel sin pantalla en blanco, verificación local del 19/11/2026: **273 pruebas aprobadas, 0 fallidas y
+  0 omitidas** (antes del cambio, 254); lint y build en verde.
 - `pnpm preview` permite comprobar el manifiesto y el worker generado en `dist/`.
   El caché guarda solo recursos estáticos. «Sin conexión» funciona después de una primera
   carga con red y activación del worker; el reintento y la reconexión conservan el formulario.
@@ -158,6 +163,13 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 - Barrios: 133 del PMGR 2020 (V17), provisionales. Capa de comunas: sintética (V14).
 
 ## 7. Problemas conocidos y lo que se averiguó
+
+- **Pantalla en blanco en «Mapa de calor» (19/11/2026, producción):** 4 de los 5 reportes no tenían ubicación y el
+  marcador de Leaflet falla con posición nula (`Cannot read properties of null (reading 'lat')`); sin límite de
+  errores, React desmontaba toda la pantalla. Corregido en el frontend (el mapa filtra los reportes sin ubicación y el
+  panel tiene un límite de errores). Límite conocido: si falla la carga diferida de una pantalla (por ejemplo tras un
+  despliegue nuevo), «Reintentar» no vuelve a pedirla; hay que recargar la página. Con los datos actuales el mapa
+  muestra un solo punto (`NU-000009`).
 
 - «No pudimos comunicarnos con el servidor» sale **solo** cuando el navegador no recibe
   respuesta (`fetch` falla): Render dormido, mala red o CORS. No es un error de lógica. El ingreso
