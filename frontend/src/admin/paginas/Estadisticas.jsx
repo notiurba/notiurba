@@ -1,0 +1,22 @@
+import { useCallback, useState } from 'react'
+import useCargar from '../../compartido/hooks/useCargar'
+import { ESTADOS_REPORTE, identificadorEstado } from '../../compartido/utilidades/reportes'
+import { obtenerEstadisticasAdministrativas, rangoFechasInvalido } from '../servicios/mapaAdminService'
+import { obtenerCategorias } from '../../compartido/api/reportes'
+import './Estadisticas.css'
+
+const VACIO = { total: 0, atendidos: 0, porcentajeAtendidos: 0, sinComuna: 0, porEstado: [], porCategoria: [], porComuna: [] }
+const Lista = ({ titulo, elementos, etiqueta = 'nombre' }) => <section className="estadisticas__tabla"><h2>{titulo}</h2>{elementos?.length ? <table><thead><tr><th scope="col">{etiqueta}</th><th scope="col">Reportes</th></tr></thead><tbody>{elementos.map((item) => <tr key={item[etiqueta] ?? item.idCategoria ?? item.comuna}><td>{item[etiqueta] ?? item.nombre ?? item.comuna}</td><td>{item.total}</td></tr>)}</tbody></table> : <p>Sin resultados para estos filtros.</p>}</section>
+
+export default function Estadisticas() {
+  const [filtros, setFiltros] = useState({ categoria: '', estado: '', comuna: '', desde: '', hasta: '', vigencia: 'todos' })
+  const invalido = rangoFechasInvalido(filtros.desde, filtros.hasta)
+  const cargar = useCallback(() => invalido ? Promise.resolve(VACIO) : obtenerEstadisticasAdministrativas(filtros), [filtros, invalido])
+  const { datos, cargando, error, recargar } = useCargar(cargar)
+  const categorias = useCargar(obtenerCategorias)
+  const cambiar = (campo) => (e) => setFiltros((actual) => ({ ...actual, [campo]: e.target.value }))
+  if (cargando) return <div className="app-loading" role="status">Cargando estadísticas…</div>
+  if (error) return <section className="estadisticas"><p role="alert">No fue posible cargar las estadísticas. <button type="button" onClick={recargar}>Reintentar</button></p></section>
+  const resultado = datos ?? VACIO
+  return <section className="estadisticas" aria-labelledby="estadisticas-title"><h1 id="estadisticas-title">Estadísticas administrativas</h1><p>Indicadores calculados por la API según los filtros seleccionados.</p><form className="estadisticas__filtros" onSubmit={(e) => e.preventDefault()}><label>Categoría<select value={filtros.categoria} onChange={cambiar('categoria')}><option value="">Todas</option>{(categorias.datos ?? []).map((categoria) => <option key={categoria.idCategoria} value={categoria.idCategoria}>{categoria.nombre}</option>)}</select></label><label>Estado<select value={filtros.estado} onChange={cambiar('estado')}><option value="">Todos</option>{ESTADOS_REPORTE.map((estado) => <option key={estado} value={identificadorEstado(estado)}>{estado}</option>)}</select></label><label>Comuna<select value={filtros.comuna} onChange={cambiar('comuna')}><option value="">Todas</option>{Array.from({ length: 10 }, (_, i) => i + 1).map((n) => <option key={n} value={n}>Comuna {n}</option>)}</select></label><label>Vigencia<select value={filtros.vigencia} onChange={cambiar('vigencia')}><option value="todos">Todos</option><option value="vigentes">Vigentes</option><option value="fuera_de_plazo">Fuera de plazo</option></select></label><label>Fecha inicial<input type="date" value={filtros.desde} max={filtros.hasta || undefined} onChange={cambiar('desde')} /></label><label>Fecha final<input type="date" value={filtros.hasta} min={filtros.desde || undefined} onChange={cambiar('hasta')} /></label><button type="button" onClick={() => setFiltros({ categoria: '', estado: '', comuna: '', desde: '', hasta: '', vigencia: 'todos' })}>Limpiar filtros</button></form>{invalido && <p className="estadisticas__error" role="alert">La fecha inicial no puede ser posterior a la fecha final.</p>}<div className="estadisticas__resumen"><article><span>Total de reportes</span><strong>{resultado.total}</strong></article><article><span>Reportes atendidos</span><strong>{resultado.atendidos}</strong></article><article><span>Porcentaje de atención</span><strong>{Number(resultado.porcentajeAtendidos ?? 0).toFixed(1)}%</strong></article><article><span>Sin comuna</span><strong>{resultado.sinComuna}</strong></article></div><div className="estadisticas__tablas"><Lista titulo="Por estado" elementos={resultado.porEstado} etiqueta="estado" /><Lista titulo="Por categoría" elementos={resultado.porCategoria} etiqueta="categoria" /><Lista titulo="Por comuna" elementos={resultado.porComuna} etiqueta="comuna" /></div></section>
+}

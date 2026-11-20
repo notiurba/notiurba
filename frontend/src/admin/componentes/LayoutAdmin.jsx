@@ -24,6 +24,8 @@ export default function LayoutAdmin() {
         <nav className="admin__pestanas" aria-label="Secciones del panel">
           <NavLink to="/admin" end>Reportes</NavLink>
           <NavLink to="/admin/mapa">Mapa de calor</NavLink>
+          <NavLink to="/admin/puntos-criticos">Puntos críticos</NavLink>
+          <NavLink to="/admin/estadisticas">Estadísticas</NavLink>
           <NavLink to="/admin/configuracion">Configuración</NavLink>
         </nav>
         <Boton variante="secundario" onClick={salir}>Cerrar sesión</Boton>

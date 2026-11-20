@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import useUnaVez from '../../compartido/hooks/useUnaVez'
 import { cambiarEstadoReporte, listarTodosLosReportes } from '../../compartido/api/reportes'
 import ChipEstado from '../../compartido/componentes/ChipEstado'
@@ -21,13 +21,22 @@ const sinRespuesta = (r) =>
 
 // Panel de reportes: búsqueda, filtros, tabla y detalle con cambio de estado.
 export default function Reportes() {
-  const { datos, cargando, error, recargar } = useCargar(listarTodosLosReportes)
   const [codigo, setCodigo] = useState('')
   const [comuna, setComuna] = useState('Todas')
   const [categoria, setCategoria] = useState('Todos')
   const [estado, setEstado] = useState('Todos')
+  const [desde, setDesde] = useState('')
+  const [hasta, setHasta] = useState('')
   const [elegido, setElegido] = useState(null) // código del reporte abierto
   const [pestana, setPestana] = useState('resumen')
+  const rangoInvalido = Boolean(desde && hasta && desde > hasta)
+  // Las fechas se filtran en el servidor: el contrato las interpreta en hora de Colombia e inclusivas.
+  // Comuna, tipo y estado se mantienen locales para conservar sus contadores y el detalle ya cargado.
+  const cargar = useCallback(
+    () => rangoInvalido ? Promise.resolve([]) : listarTodosLosReportes({ desde, hasta }),
+    [desde, hasta, rangoInvalido],
+  )
+  const { datos, cargando, error, recargar } = useCargar(cargar)
 
   const reportes = useMemo(() => datos ?? [], [datos])
   const comunas = comunasConReportes(reportes)
@@ -89,7 +98,22 @@ export default function Reportes() {
               ))}
             </select>
           </label>
+          <label>
+            Fecha inicial
+            <input type="date" value={desde} max={hasta || undefined} onChange={(e) => setDesde(e.target.value)} />
+          </label>
+          <label>
+            Fecha final
+            <input type="date" value={hasta} min={desde || undefined} onChange={(e) => setHasta(e.target.value)} />
+          </label>
+          {(desde || hasta) && (
+            <button type="button" className="adm-rep__limpiar-fechas" onClick={() => { setDesde(''); setHasta('') }}>
+              Limpiar fechas
+            </button>
+          )}
         </div>
+
+        {rangoInvalido && <Aviso variante="error">La fecha inicial no puede ser posterior a la fecha final.</Aviso>}
 
         <div className="adm-rep__estados">
           {estadosConReportes(ESTADOS, cuenta, estado).map((e) => (
