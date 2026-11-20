@@ -75,7 +75,7 @@ export const listarTodosLosReportes = async (filtros = {}) => {
   for (const [clave, valor] of Object.entries(filtros)) {
     if (valor !== undefined && valor !== null && valor !== '') parametros.set(clave, valor)
   }
-  const consulta = parametros.size ? `?${parametros}` : ''
+  const consulta = parametros.toString() ? `?${parametros}` : ''
   return (await peticion(`/api/admin/reportes${consulta}`)).map(normalizarReporte)
 }
 

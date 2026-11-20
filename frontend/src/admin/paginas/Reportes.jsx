@@ -9,12 +9,12 @@ import EstadoVacio from '../../compartido/componentes/avisos/EstadoVacio'
 import useCargar from '../../compartido/hooks/useCargar'
 import { formatearFecha, formatearFechaHora } from '../../compartido/utilidades/fechas'
 import { ESTADOS_REPORTE, ESTADO_ENVIADO, avisoDelCiudadano, comunasConReportes, estadoElegido, estadosConReportes, estadosSiguientes, lugarDelReporte } from '../../compartido/utilidades/reportes'
+import { opcionesConSeleccion } from './opcionesFiltros'
 import './Reportes.css'
 
 const ESTADOS = ['Todos', ...ESTADOS_REPORTE]
 const DIAS_SIN_RESPUESTA = 15
 const DIA_MS = 24 * 60 * 60 * 1000
-
 // Un reporte lleva demasiado tiempo si sigue «Enviado» (sin respuesta) más de 15 días.
 const sinRespuesta = (r) =>
   r.estado === ESTADO_ENVIADO && Date.now() - new Date(r.creadoEn).getTime() > DIAS_SIN_RESPUESTA * DIA_MS
@@ -39,8 +39,8 @@ export default function Reportes() {
   const { datos, cargando, error, recargar } = useCargar(cargar)
 
   const reportes = useMemo(() => datos ?? [], [datos])
-  const comunas = comunasConReportes(reportes)
-  const categorias = [...new Set(reportes.map((r) => r.categoria))]
+  const comunas = opcionesConSeleccion(comunasConReportes(reportes), comuna, 'Todas')
+  const categorias = opcionesConSeleccion([...new Set(reportes.map((r) => r.categoria))], categoria, 'Todos')
 
   // Los filtros de arriba (sin el de estado) deciden los números de las pestañas de estado.
   const base = reportes.filter(

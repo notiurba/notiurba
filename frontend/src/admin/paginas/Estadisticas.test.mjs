@@ -32,4 +32,7 @@ test('presenta totales, porcentaje y desgloses entregados por estadísticas', as
   assert.match(salida, /Reportes atendidos 1/)
   assert.match(salida, /Porcentaje de atención 25.0\s+%/)
   assert.match(salida, /Vías 4/)
+  assert.match(salida, /Estado\s+Reportes/)
+  assert.match(salida, /Categoría\s+Reportes/)
+  assert.match(salida, /Comuna\s+Reportes/)
 })

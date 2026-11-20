@@ -5,6 +5,10 @@ import { createServer } from 'vite'
 let servidor
 let listarTodosLosReportes
 let ultimaRuta
+const rutaSolicitada = () => {
+  const url = new URL(ultimaRuta)
+  return url.pathname + url.search
+}
 
 beforeEach(async () => {
   globalThis.localStorage = { getItem: () => null, setItem() {}, removeItem() {} }
@@ -20,13 +24,13 @@ beforeEach(async () => {
   }
 })
 
-test('envía límites de fecha de forma independiente y combinada', async () => {
+test('construye la URL exacta con ambos límites de fecha', async () => {
   await listarTodosLosReportes({ desde: '2026-11-01' })
   assert.match(ultimaRuta, /desde=2026-11-01/)
   await listarTodosLosReportes({ hasta: '2026-11-19' })
   assert.match(ultimaRuta, /hasta=2026-11-19/)
   await listarTodosLosReportes({ desde: '2026-11-01', hasta: '2026-11-19' })
-  assert.match(ultimaRuta, /desde=2026-11-01&hasta=2026-11-19/)
+  assert.equal(rutaSolicitada(), '/api/admin/reportes?desde=2026-11-01&hasta=2026-11-19')
 })
 
 test('combina fechas con comuna, categoría y estado sin descartar filtros', async () => {
@@ -40,7 +44,7 @@ test('combina fechas con comuna, categoría y estado sin descartar filtros', asy
 
 test('omite filtros vacíos al limpiar las fechas', async () => {
   await listarTodosLosReportes({ desde: '', hasta: '' })
-  assert.match(ultimaRuta, /\/api\/admin\/reportes$/)
+  assert.equal(rutaSolicitada(), '/api/admin/reportes')
 })
 
 after(async () => { await servidor?.close() })

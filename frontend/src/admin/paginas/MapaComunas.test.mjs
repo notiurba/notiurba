@@ -10,6 +10,8 @@ const soporte = (archivo) => new URL(`./soporte-pruebas/${archivo}`, import.meta
 
 let servidor
 let MapaComunas
+let paginaCriticosAnterior
+let paginaCriticosSiguiente
 
 before(async () => {
   const almacen = new Map()
@@ -32,6 +34,7 @@ before(async () => {
     },
   })
   ;({ default: MapaComunas } = await servidor.ssrLoadModule('/src/admin/paginas/MapaComunas.jsx'))
+  ;({ paginaCriticosAnterior, paginaCriticosSiguiente } = await servidor.ssrLoadModule('/src/admin/paginas/mapaPaginacion.js'))
 })
 
 after(async () => { await servidor?.close() })
@@ -97,6 +100,12 @@ test('carga calor y puntos críticos desde el endpoint especializado', async () 
   await act(async () => { await new Promise((resolver) => setTimeout(resolver, 30)) })
   assert.ok(solicitudes.some((url) => url.includes('/api/admin/mapa/calor?pagina=1&tamano=5')))
   assert.match(texto(vista.toJSON()), /Puntos críticos por comuna/)
+})
+
+test('limita la paginación del ranking ante clics consecutivos', () => {
+  assert.equal(paginaCriticosAnterior(1, 2), 1)
+  assert.equal(paginaCriticosSiguiente(1, 2), 2)
+  assert.equal(paginaCriticosSiguiente(paginaCriticosSiguiente(1, 2), 2), 2)
 })
 
 test('expone una lista accesible cuando dos reportes comparten coordenadas', async () => {

@@ -12,6 +12,7 @@ import CargaReportesMapa from '../componentes/CargaReportesMapa'
 import { CapaDiagnostico, PanelDiagnostico } from '../componentes/DiagnosticoLimites'
 import { diagnosticoLimites } from '../datos/diagnosticoLimites'
 import { obtenerCalorAdministrativo, obtenerMapaAdministrativo, rangoFechasInvalido } from '../servicios/mapaAdminService'
+import { paginaCriticosAnterior, paginaCriticosSiguiente } from './mapaPaginacion'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
@@ -70,8 +71,9 @@ function Filtros({ filtros, setFiltros, categorias }) {
 
 function Criticos({ calor, setFiltros }) {
   const criticos = calor?.comunasCriticas
-  if (!criticos?.items?.length) return <p>No hay puntos críticos para estos filtros.</p>
-  return <div className="map-criticos"><h2>Puntos críticos por comuna</h2><table><caption>Ranking calculado por la API administrativa</caption><thead><tr><th>#</th><th>Comuna</th><th>Reportes</th><th>Categoría principal</th></tr></thead><tbody>{criticos.items.map((item) => <tr key={`${item.comuna}-${item.posicion}`}><td>{item.posicion}</td><td>{item.comuna}</td><td>{item.total}</td><td>{item.categoriaPrincipal?.nombre ?? 'Sin categoría'}</td></tr>)}</tbody></table>{criticos.totalPaginas > 1 && <div className="map-paginacion"><button type="button" disabled={criticos.pagina <= 1} onClick={() => setFiltros((f) => ({ ...f, pagina: f.pagina - 1 }))}>Anterior</button><span>Página {criticos.pagina} de {criticos.totalPaginas}</span><button type="button" disabled={criticos.pagina >= criticos.totalPaginas} onClick={() => setFiltros((f) => ({ ...f, pagina: f.pagina + 1 }))}>Siguiente</button></div>}</div>
+  if (!criticos) return <p>No hay puntos críticos para estos filtros.</p>
+  const { items = [], pagina = 1, totalPaginas = 1 } = criticos
+  return <div className="map-criticos"><h2>Puntos críticos por comuna</h2>{items.length ? <table><caption>Ranking calculado por la API administrativa</caption><thead><tr><th>#</th><th>Comuna</th><th>Reportes</th><th>Categoría principal</th></tr></thead><tbody>{items.map((item) => <tr key={`${item.comuna}-${item.posicion}`}><td>{item.posicion}</td><td>{item.comuna}</td><td>{item.total}</td><td>{item.categoriaPrincipal?.nombre ?? 'Sin categoría'}</td></tr>)}</tbody></table> : <p>No hay puntos críticos para esta página.</p>}{totalPaginas > 1 && <div className="map-paginacion"><button type="button" disabled={pagina <= 1} onClick={() => setFiltros((f) => ({ ...f, pagina: paginaCriticosAnterior(f.pagina, totalPaginas) }))}>Anterior</button><span>Página {pagina} de {totalPaginas}</span><button type="button" disabled={pagina >= totalPaginas} onClick={() => setFiltros((f) => ({ ...f, pagina: paginaCriticosSiguiente(f.pagina, totalPaginas) }))}>Siguiente</button></div>}</div>
 }
 
 function Mapa({ respuesta, filtros, setFiltros }) {
