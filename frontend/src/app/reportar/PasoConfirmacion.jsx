@@ -20,6 +20,7 @@ import { TEXTOS_FOTO_NECESARIA, textoDuplicado, textoLimiteDiario } from '../../
 import { reducirFoto } from '../../compartido/utilidades/fotos'
 import { esEmergencia } from './catalogo'
 import { decidirFalloEnvio } from './falloEnvio'
+import { textoAccionConfirmacion } from './estadoEnvio'
 import { useReporte } from './useReporte'
 import useVistaPrevia from './useVistaPrevia'
 import './Reportar.css'
@@ -177,13 +178,13 @@ export default function PasoConfirmacion() {
   const barrio = barrios.find(b => String(b.idBarrio) === borrador.idBarrio)
   const lugar = [borrador.direccion, barrio?.nombre, borrador.latitud != null && 'Punto marcado en el mapa'].filter(Boolean).join(' · ')
     || (categoria?.requiereUbicacion === false ? 'Sin ubicación' : '')
-  const accion = guardado ? 'Reintentar' : ruta?.permiteCorreo ? 'Guardar y enviar' : 'Guardar reporte'
+  const accion = textoAccionConfirmacion({ guardado, enviando, permiteCorreo: ruta?.permiteCorreo })
   const avisoParecido = parecido && textoDuplicado(parecido)
   const avisoLimite = limite && textoLimiteDiario(limite)
 
   return <>
     <EncabezadoPantalla titulo="Nuevo reporte" atras={guardado ? '/app/reportes' : '/reportar/detalles'} />
-    <FormularioPantalla alEnviar={pedirEnvio} acciones={<Boton type="submit" disabled={!ruta || !autorizaEnvio || !archivosListos || faltaFoto || preparando || (!guardado && (consulta.cargando || Boolean(consulta.error)))} cargando={enviando} textoCargando="Guardando…"><IconoCorreo tamano={20} />{accion}</Boton>}>
+    <FormularioPantalla alEnviar={pedirEnvio} acciones={<Boton type="submit" disabled={!ruta || !autorizaEnvio || !archivosListos || faltaFoto || preparando || (!guardado && (consulta.cargando || Boolean(consulta.error)))} cargando={enviando} textoCargando="Guardando y enviando…"><IconoCorreo tamano={20} />{accion}</Boton>}>
       <PasosBarra paso={4} total={4} etiqueta="Revisar y confirmar" />
       <h2 className="reportar__titulo">{guardado ? 'Su reporte está guardado' : 'Revise su reporte'}</h2>
       {guardado ? <>
@@ -210,7 +211,7 @@ export default function PasoConfirmacion() {
       </Casilla>
       <p className="reportar__mensaje">Este código es de NotiUrba para su seguimiento. El radicado oficial lo asigna la entidad.</p>
     </FormularioPantalla>
-    <HojaConfirmacion abierta={hoja} alCancelar={() => !ocupado.current && setHoja(false)} alConfirmar={() => enviar()} icono={<IconoCorreo tamano={30} />} tono="info" titulo={accion} texto={ruta?.permiteCorreo ? 'Guardaremos su reporte y lo enviaremos a ' + ruta.entidad + '. Verá el resultado en la siguiente pantalla.' : 'Guardaremos su reporte. Esta entidad atiende por otro canal; en la siguiente pantalla verá cuál.'} textoConfirmar="Confirmar" textoCancelar="Volver" cargando={enviando} textoCargando="Guardando…" />
+    <HojaConfirmacion abierta={hoja} alCancelar={() => !ocupado.current && setHoja(false)} alConfirmar={() => enviar()} icono={<IconoCorreo tamano={30} />} tono="info" titulo={accion} texto={ruta?.permiteCorreo ? 'Guardaremos su reporte y lo enviaremos a ' + ruta.entidad + '. Verá el resultado en la siguiente pantalla.' : 'Guardaremos su reporte. Esta entidad atiende por otro canal; en la siguiente pantalla verá cuál.'} textoConfirmar="Confirmar" textoCancelar="Volver" cargando={enviando} textoCargando="Guardando y enviando…" />
     {/* Tocar fuera solo cierra la hoja: el borrador se descarta únicamente con «Cancelar reporte». */}
     <HojaInferior abierta={Boolean(avisoParecido)} alCerrar={() => !ocupado.current && setParecido(null)}
       icono={<IconoAlerta tamano={30} />} tono="alerta" titulo={avisoParecido?.titulo}
