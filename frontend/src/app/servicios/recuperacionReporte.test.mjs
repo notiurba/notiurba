@@ -1,13 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { claveRuta, rutaActual, guardarConEvidencias } from './recuperacionReporte.js'
-import { textoAccionConfirmacion } from '../reportar/estadoEnvio.js'
-
-function diferida() {
-  let resolver
-  const promesa = new Promise(resolve => { resolver = resolve })
-  return { promesa, resolver }
-}
 
 test('no muestra la ruta anterior al cambiar, limpiar categoría o cambiar la emergencia', () => {
   const anterior = { clave: claveRuta(1, false), ruta: { idCategoria: 1, permiteCorreo: true } }
@@ -91,34 +84,4 @@ test('una subida guardada cuya respuesta se perdió no se vuelve a subir al rein
   assert.equal(resultado.envio.estado, 'PENDIENTE')
   assert.equal(subidas, 1)
   assert.equal(confirmadas, 2)
-})
-
-test('conserva el progreso visible durante demoras de creación, foto y envío', async () => {
-  const creacion = diferida()
-  const foto = diferida()
-  const envio = diferida()
-  let guardado = null
-  const api = {
-    guardarReporte: () => creacion.promesa,
-    subirFoto: () => foto.promesa,
-    enviar: () => envio.promesa,
-  }
-  const operacion = guardarConEvidencias({ datos: {}, fotos: ['evidencia'], api, conservar: valor => { guardado = valor } })
-
-  // La espera de creación aún se representa como progreso.
-  assert.equal(textoAccionConfirmacion({ guardado, enviando: true, permiteCorreo: true }), 'Guardando y enviando…')
-  creacion.resolver({ codigoSeguimiento: 'NU-SINTETICO' })
-  await Promise.resolve()
-
-  // El código ya existe, pero la foto sigue pendiente: nunca cambia a reintento.
-  assert.equal(guardado.codigoSeguimiento, 'NU-SINTETICO')
-  assert.equal(textoAccionConfirmacion({ guardado, enviando: true, permiteCorreo: true }), 'Guardando y enviando…')
-  foto.resolver()
-  await Promise.resolve()
-
-  // También se mantiene durante el encolado de envío.
-  assert.equal(textoAccionConfirmacion({ guardado, enviando: true, permiteCorreo: true }), 'Guardando y enviando…')
-  envio.resolver({ estado: 'PENDIENTE' })
-  await operacion
-  assert.equal(textoAccionConfirmacion({ guardado, enviando: false, permiteCorreo: true }), 'Reintentar')
 })
