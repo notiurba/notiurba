@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { after, before, test } from 'node:test'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -82,9 +83,9 @@ function archivos(dir) {
 }
 
 test('todas las pantallas con campos están clasificadas respecto del resumen', () => {
-  const raiz = new URL('../../../', import.meta.url).pathname
+  const raiz = fileURLToPath(new URL('../../../', import.meta.url))
   const pantallas = archivos(raiz)
-    .map((ruta) => ruta.slice(raiz.length))
+    .map((ruta) => ruta.slice(raiz.length).split('\\').join('/'))
     .filter((ruta) => !ruta.startsWith('compartido/componentes/formulario/'))
     .filter((ruta) => CON_CAMPOS.test(readFileSync(join(raiz, ruta), 'utf8')))
   const clasificadas = [...CON_RESUMEN, ...CONSERVA_ROLE].sort()
