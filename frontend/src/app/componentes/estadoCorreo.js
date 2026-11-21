@@ -1,6 +1,7 @@
 // Textos que ve la persona después de enviar el reporte. Se habla de «usted», sin nombres de proveedor ni códigos técnicos.
 export function presentacionCorreo(envio) {
   if (envio?.rebote) return { clase: 'rebote', titulo: 'El correo no llegó', etiqueta: 'No entregado', subtitulo: 'El correo no llegó a la entidad', mensaje: 'Su reporte sigue guardado y conserva su seguimiento. El correo no pudo entregarse a la entidad.' }
+  if (envio?.estado === 'ENVIADO' && envio?.simulado) return { clase: 'enviado', titulo: 'Envío simulado exitoso', etiqueta: 'Envío simulado', subtitulo: 'Reporte registrado correctamente', mensaje: 'Su reporte de demostración se guardó y el envío se simuló correctamente. No se envió ningún correo a una entidad.' }
   if (envio?.estado === 'ENVIADO') return { clase: 'enviado', titulo: 'Reporte enviado', etiqueta: 'Enviado', subtitulo: 'Su reporte ya salió hacia la entidad', mensaje: 'Enviamos su reporte a la entidad. Puede seguir el avance desde Mis reportes.' }
   if (envio?.estado === 'FALLIDO') return { clase: 'fallido', titulo: 'Reporte guardado', etiqueta: 'No enviado', subtitulo: 'No pudimos enviar el correo', mensaje: 'Su reporte quedó guardado, pero el correo no salió. Puede intentarlo de nuevo.' }
   if (envio?.estado === 'NO_ENVIADO_CORREO') return { clase: 'externo', titulo: 'Reporte guardado', etiqueta: 'Otro canal', subtitulo: 'Siga por el canal oficial', mensaje: envio.ruta?.mensaje ?? 'Su reporte quedó guardado. Esta entidad atiende por otro canal: use el que se indica abajo.' }
@@ -56,7 +57,7 @@ export function resumenCorreoDetalle(envio) {
   const reintentar = envio.estado === 'SIN_SOLICITAR' || (envio.estado === 'FALLIDO' && Boolean(envio.reintentable) && !envio.rebote)
   const otrosCanales = porOtroCanal || (ofrecerOtrosCanales(envio) && !reintentar)
   let texto = mensaje
-  if (envio.estado === 'ENVIADO') texto = 'Enviamos su reporte a la entidad.'
+  if (envio.estado === 'ENVIADO' && !envio.simulado) texto = 'Enviamos su reporte a la entidad.'
   else if (otrosCanales && !envio.rebote && !porOtroCanal) texto = 'Su reporte quedó guardado, pero el correo no salió a la entidad.'
   return { clase, etiqueta, subtitulo, otrosCanales, reintentar, mensaje: texto,
     titulo: porOtroCanal ? 'Canal de atención' : 'Correo a la entidad' }
