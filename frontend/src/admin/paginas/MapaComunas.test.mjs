@@ -108,6 +108,32 @@ test('limita la paginación del ranking ante clics consecutivos', () => {
   assert.equal(paginaCriticosSiguiente(paginaCriticosSiguiente(1, 2), 2), 2)
 })
 
+test('la vista limita clics rápidos y conserva controles ante una respuesta de menos páginas', async () => {
+  globalThis.window.location.pathname = '/admin/puntos-criticos'
+  const solicitudes = []
+  globalThis.fetch = async (url) => {
+    const textoUrl = String(url); solicitudes.push(textoUrl)
+    if (textoUrl.includes('/api/categorias')) return new Response(JSON.stringify([]), { status: 200 })
+    if (textoUrl.includes('/api/admin/mapa/calor')) {
+      const pagina = new URL(textoUrl).searchParams.get('pagina')
+      return new Response(JSON.stringify({ totalReportes: 3, totalPuntos: 1, truncado: false, sinComuna: 0, puntos: [], comunasCriticas: { pagina: Number(pagina), tamano: 5, totalComunas: pagina === '2' ? 1 : 2, totalPaginas: pagina === '2' ? 1 : 2, items: pagina === '2' ? [] : [{ posicion: 1, comuna: 3, total: 3, categoriaPrincipal: { nombre: 'Vías' } }] } }), { status: 200 })
+    }
+    return new Response(JSON.stringify({ total: 0, sinComuna: 0, truncado: false, reportes: [] }), { status: 200 })
+  }
+  let vista
+  await act(async () => { vista = TestRenderer.create(React.createElement(MapaComunas)) })
+  await act(async () => { await new Promise((r) => setTimeout(r, 30)) })
+  const siguiente = vista.root.findAllByType('button').find((n) => texto(n.props.children) === 'Siguiente')
+  await act(async () => { siguiente.props.onClick(); siguiente.props.onClick(); await new Promise((r) => setTimeout(r, 30)) })
+  const calor = solicitudes.filter((url) => url.includes('/api/admin/mapa/calor'))
+  assert.ok(calor.some((url) => url.includes('pagina=2')))
+  assert.ok(!calor.some((url) => url.includes('pagina=3')))
+  assert.equal(solicitudes.filter((url) => /\/api\/admin\/mapa(?:\?|$)/.test(url)).length, 1)
+  assert.match(texto(vista.toJSON()), /Página\s+2\s+de\s+1/)
+  assert.ok(vista.root.findAllByType('button').some((n) => texto(n.props.children) === 'Anterior' && !n.props.disabled))
+  globalThis.window.location.pathname = '/admin/mapa'
+})
+
 test('expone una lista accesible cuando dos reportes comparten coordenadas', async () => {
   const { vista } = await abrirMapa([reporte('A', 4.08, -76.19), reporte('B', 4.08, -76.19)])
   const salida = texto(vista.toJSON())

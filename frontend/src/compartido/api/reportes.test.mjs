@@ -1,14 +1,11 @@
 import assert from 'node:assert/strict'
-import { after, beforeEach, test } from 'node:test'
+import { after, afterEach, beforeEach, test } from 'node:test'
 import { createServer } from 'vite'
 
 let servidor
 let listarTodosLosReportes
 let ultimaRuta
-const rutaSolicitada = () => {
-  const url = new URL(ultimaRuta)
-  return url.pathname + url.search
-}
+let descriptorSize
 
 beforeEach(async () => {
   globalThis.localStorage = { getItem: () => null, setItem() {}, removeItem() {} }
@@ -25,12 +22,14 @@ beforeEach(async () => {
 })
 
 test('construye la URL exacta con ambos límites de fecha', async () => {
+  descriptorSize = Object.getOwnPropertyDescriptor(URLSearchParams.prototype, 'size')
+  Object.defineProperty(URLSearchParams.prototype, 'size', { get: () => undefined, configurable: true })
   await listarTodosLosReportes({ desde: '2026-11-01' })
   assert.match(ultimaRuta, /desde=2026-11-01/)
   await listarTodosLosReportes({ hasta: '2026-11-19' })
   assert.match(ultimaRuta, /hasta=2026-11-19/)
   await listarTodosLosReportes({ desde: '2026-11-01', hasta: '2026-11-19' })
-  assert.equal(rutaSolicitada(), '/api/admin/reportes?desde=2026-11-01&hasta=2026-11-19')
+  assert.ok(ultimaRuta.endsWith('/api/admin/reportes?desde=2026-11-01&hasta=2026-11-19'))
 })
 
 test('combina fechas con comuna, categoría y estado sin descartar filtros', async () => {
@@ -44,7 +43,14 @@ test('combina fechas con comuna, categoría y estado sin descartar filtros', asy
 
 test('omite filtros vacíos al limpiar las fechas', async () => {
   await listarTodosLosReportes({ desde: '', hasta: '' })
-  assert.equal(rutaSolicitada(), '/api/admin/reportes')
+  assert.ok(ultimaRuta.endsWith('/api/admin/reportes'))
+  assert.ok(!ultimaRuta.endsWith('?'))
+})
+
+afterEach(() => {
+  if (descriptorSize) Object.defineProperty(URLSearchParams.prototype, 'size', descriptorSize)
+  else delete URLSearchParams.prototype.size
+  descriptorSize = undefined
 })
 
 after(async () => { await servidor?.close() })

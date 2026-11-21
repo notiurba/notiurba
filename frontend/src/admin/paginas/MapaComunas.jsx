@@ -73,7 +73,8 @@ function Criticos({ calor, setFiltros }) {
   const criticos = calor?.comunasCriticas
   if (!criticos) return <p>No hay puntos críticos para estos filtros.</p>
   const { items = [], pagina = 1, totalPaginas = 1 } = criticos
-  return <div className="map-criticos"><h2>Puntos críticos por comuna</h2>{items.length ? <table><caption>Ranking calculado por la API administrativa</caption><thead><tr><th>#</th><th>Comuna</th><th>Reportes</th><th>Categoría principal</th></tr></thead><tbody>{items.map((item) => <tr key={`${item.comuna}-${item.posicion}`}><td>{item.posicion}</td><td>{item.comuna}</td><td>{item.total}</td><td>{item.categoriaPrincipal?.nombre ?? 'Sin categoría'}</td></tr>)}</tbody></table> : <p>No hay puntos críticos para esta página.</p>}{totalPaginas > 1 && <div className="map-paginacion"><button type="button" disabled={pagina <= 1} onClick={() => setFiltros((f) => ({ ...f, pagina: paginaCriticosAnterior(f.pagina, totalPaginas) }))}>Anterior</button><span>Página {pagina} de {totalPaginas}</span><button type="button" disabled={pagina >= totalPaginas} onClick={() => setFiltros((f) => ({ ...f, pagina: paginaCriticosSiguiente(f.pagina, totalPaginas) }))}>Siguiente</button></div>}</div>
+  const cambiarPagina = (siguiente) => setFiltros((f) => siguiente === f.pagina ? f : { ...f, pagina: siguiente })
+  return <div className="map-criticos"><h2>Puntos críticos por comuna</h2>{items.length ? <table><caption>Ranking calculado por la API administrativa</caption><thead><tr><th>#</th><th>Comuna</th><th>Reportes</th><th>Categoría principal</th></tr></thead><tbody>{items.map((item) => <tr key={`${item.comuna}-${item.posicion}`}><td>{item.posicion}</td><td>{item.comuna}</td><td>{item.total}</td><td>{item.categoriaPrincipal?.nombre ?? 'Sin categoría'}</td></tr>)}</tbody></table> : <p>{pagina > 1 ? 'No hay puntos críticos para esta página.' : 'No hay puntos críticos para estos filtros.'}</p>}{(totalPaginas > 1 || pagina > 1) && <div className="map-paginacion"><button type="button" disabled={pagina <= 1} onClick={() => cambiarPagina(paginaCriticosAnterior(pagina, totalPaginas))}>Anterior</button><span>Página {pagina} de {totalPaginas}</span><button type="button" disabled={pagina >= totalPaginas} onClick={() => cambiarPagina(paginaCriticosSiguiente(pagina, totalPaginas))}>Siguiente</button></div>}</div>
 }
 
 function Mapa({ respuesta, filtros, setFiltros }) {
@@ -99,6 +100,6 @@ export default function MapaComunas() {
   const invalido = rangoFechasInvalido(filtros.desde, filtros.hasta)
   const cargarMapa = useCallback(() => {
     return invalido ? Promise.resolve(VACIO) : obtenerMapaAdministrativo({ categoria: filtros.categoria, estado: filtros.estado, comuna: filtros.comuna, desde: filtros.desde, hasta: filtros.hasta })
-  }, [filtros, invalido])
+  }, [filtros.categoria, filtros.estado, filtros.comuna, filtros.desde, filtros.hasta, invalido])
   return <CargaReportesMapa cargador={cargarMapa}>{(respuesta) => <Mapa respuesta={respuesta || VACIO} filtros={filtros} setFiltros={setFiltros} />}</CargaReportesMapa>
 }
