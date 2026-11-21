@@ -112,6 +112,45 @@
   font: inherit;
 }
 
+.control-group input[type='date'] {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 10px;
+  color: var(--text-h);
+  background: var(--input-bg);
+  font: inherit;
+}
+
+.map-limpiar, .map-paginacion button, .map-error button {
+  min-height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  background: var(--input-bg);
+  color: var(--text-h);
+  cursor: pointer;
+  font: inherit;
+}
+
+.map-aviso { margin: 0 0 16px; color: var(--muted); }
+.map-error { color: #b42318; font-weight: 700; }
+.map-criticos { overflow-x: auto; }
+.map-criticos table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.map-criticos th, .map-criticos td { padding: 7px 4px; text-align: left; border-bottom: 1px solid var(--border); }
+.map-criticos caption { text-align: left; margin-bottom: 6px; color: var(--muted); }
+.map-paginacion { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; font-size: 13px; }
+.map-coincidentes { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); }
+.map-coincidentes h2 { margin-bottom: 6px; font-size: 18px; }
+.map-coincidentes p { margin: 0 0 8px; font-size: 13px; }
+.map-coincidentes ul { margin: 0; padding-left: 18px; }
+.map-coincidentes li + li { margin-top: 6px; }
+.map-coincidentes strong, .map-coincidentes span, .map-coincidentes small { display: block; }
+.map-coincidentes span { color: var(--text-h); font-size: 13px; }
+.map-coincidentes small { color: var(--muted); }
+
 .control-group label:has(select) {
   display: block;
 }
@@ -149,7 +188,9 @@
 }
 
 .map-popup {
-  min-width: 210px;
+  min-width: 0;
+  max-width: min(260px, calc(100vw - 96px));
+  overflow-wrap: anywhere;
   color: #1f2937;
 }
 
@@ -186,6 +227,10 @@
 .map-popup dd {
   margin: 0;
 }
+
+/* El popup se mantiene por encima de los controles y el autoPan reserva su huella (44 px + margen). */
+.map-frame .leaflet-control-container { position: relative; z-index: 600; }
+.map-frame .leaflet-popup-pane { z-index: 700; }
 
 .diagnostico-swatch { width: 12px; height: 12px; flex: 0 0 12px; border: 1px solid #555; }
 .diagnostico-swatch.rojo { background: #dc2626; }
@@ -261,4 +306,7 @@
     min-height: 430px;
     height: 62svh;
   }
+
+  .map-frame .leaflet-popup-content { margin: 13px 16px; }
+  .map-frame .leaflet-popup-close-button { min-width: 32px; min-height: 32px; font-size: 22px; }
 }

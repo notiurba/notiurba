@@ -1,387 +1,105 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.heat'
-import {
-  GeoJSON,
-  MapContainer,
-  Marker,
-  Popup,
-  TileLayer,
-  useMap,
-} from 'react-leaflet'
+import { GeoJSON, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import { CENTRO_TULUA, comunasTulua, getComunaProperties } from '../../compartido/geo/comunasTulua'
 import { estiloComuna } from '../../compartido/geo/estiloComunas'
-import { identificarComunaPorCoordenadas } from '../../compartido/geo/geoUtils'
-import AvisoSinUbicacion from '../componentes/AvisoSinUbicacion'
+import useCargar from '../../compartido/hooks/useCargar'
+import { obtenerCategorias } from '../../compartido/api/reportes'
+import { ESTADOS_REPORTE, identificadorEstado } from '../../compartido/utilidades/reportes'
 import CargaReportesMapa from '../componentes/CargaReportesMapa'
 import { CapaDiagnostico, PanelDiagnostico } from '../componentes/DiagnosticoLimites'
 import { diagnosticoLimites } from '../datos/diagnosticoLimites'
-import { obtenerReportesCiudadanos, separarPorUbicacion } from '../servicios/reportesService'
+import { obtenerCalorAdministrativo, obtenerMapaAdministrativo, rangoFechasInvalido } from '../servicios/mapaAdminService'
+import { paginaCriticosAnterior, paginaCriticosSiguiente } from './mapaPaginacion'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 import './MapaComunas.css'
 
 delete L.Icon.Default.prototype._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-})
+L.Icon.Default.mergeOptions({ iconRetinaUrl: markerIcon2x, iconUrl: markerIcon, shadowUrl: markerShadow })
+const VACIO = { total: 0, sinComuna: 0, truncado: false, reportes: [] }
 
-
-function VistaTulua({ geoJson }) {
-  const map = useMap()
-  const fittedRef = useRef(false)
-  const bounds = useMemo(() => L.geoJSON(geoJson).getBounds(), [geoJson])
-
+function VistaTulua() {
+  const map = useMap(); const yaAjustado = useRef(false)
+  const limites = useMemo(() => L.geoJSON(comunasTulua).getBounds(), [])
   useEffect(() => {
-    if (!bounds.isValid()) return undefined
+    if (!limites.isValid()) return undefined
+    if (!yaAjustado.current) { map.fitBounds(limites, { padding: [28, 28], maxZoom: 14, animate: false }); yaAjustado.current = true }
+    const control = L.control({ position: 'topleft' }); let boton
+    control.onAdd = () => { const caja = L.DomUtil.create('div', 'leaflet-bar leaflet-control-centrar'); boton = L.DomUtil.create('button', '', caja); boton.type = 'button'; boton.title = 'Centrar en Tuluá'; boton.setAttribute('aria-label', 'Centrar en Tuluá'); boton.textContent = '⌖'; Object.assign(boton.style, { width: '44px', height: '44px', border: '0', background: '#fff', fontSize: '28px' }); L.DomEvent.disableClickPropagation(caja); L.DomEvent.on(boton, 'click', () => { map.closePopup(); map.fitBounds(limites, { padding: [28, 28], maxZoom: 14 }) }); return caja }
+    control.addTo(map); return () => { if (boton) L.DomEvent.off(boton, 'click'); control.remove() }
+  }, [limites, map])
+  return null
+}
 
-    if (!fittedRef.current) {
-      map.fitBounds(bounds, { padding: [28, 28], maxZoom: 14, animate: false })
-      fittedRef.current = true
-    }
+function HeatmapLayer({ puntos, visible }) {
+  const map = useMap(); const capa = useRef(null); const puntosActuales = useRef(puntos)
+  useEffect(() => {
+    if (!visible) { if (capa.current) { map.removeLayer(capa.current); capa.current = null }; return undefined }
+    const datos = puntosActuales.current.map(({ latitud, longitud, peso }) => [latitud, longitud, peso])
+    capa.current = L.heatLayer(datos, { radius: 28, blur: 22, maxZoom: 16, minOpacity: 0.28, gradient: { 0.25: '#2f80ed', 0.45: '#27ae60', 0.7: '#f2c94c', 1: '#eb5757' } }).addTo(map)
+    return () => { if (capa.current) { map.removeLayer(capa.current); capa.current = null } }
+  }, [map, visible])
+  useEffect(() => { puntosActuales.current = puntos; if (visible && capa.current) capa.current.setLatLngs(puntos.map(({ latitud, longitud, peso }) => [latitud, longitud, peso])) }, [puntos, visible])
+  return null
+}
 
-    const control = L.control({ position: 'topleft' })
-    const ajustar = () => map.fitBounds(bounds, {
-      padding: [28, 28], maxZoom: 14, animate: false,
+function PopupReporte({ reporte }) {
+  return <div className="map-popup"><strong>{reporte.codigoSeguimiento}</strong><span>{reporte.categoria?.nombre}</span><dl><dt>Estado</dt><dd>{reporte.estado}</dd><dt>Fecha</dt><dd>{reporte.creadoEn?.slice(0, 10)}</dd><dt>Comuna</dt><dd>{reporte.comuna ?? 'Sin asignar'}</dd><dt>Barrio</dt><dd>{reporte.barrio?.nombre ?? 'Sin asignar'}</dd></dl></div>
+}
+
+function ReportesCoincidentes({ reportes }) {
+  const grupos = useMemo(() => {
+    const porPunto = new Map()
+    reportes.forEach((reporte) => {
+      const clave = `${reporte.latitud},${reporte.longitud}`
+      porPunto.set(clave, [...(porPunto.get(clave) ?? []), reporte])
     })
-    const centrar = (event) => {
-      L.DomEvent.stop(event)
-      map.off('moveend', ajustar)
-      map.stop()
-      map.closePopup()
-      // flyToBounds animates long trips; fitBounds confirms the final framing.
-      map.once('moveend', ajustar)
-      map.flyToBounds(bounds, {
-        padding: [28, 28],
-        maxZoom: 14,
-        animate: true,
-        duration: 0.8,
-      })
-    }
-    let button
-    control.onAdd = () => {
-      const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-centrar')
-      button = L.DomUtil.create('button', '', container)
-      button.type = 'button'
-      button.title = 'Centrar en Tuluá'
-      button.setAttribute('aria-label', 'Centrar en Tuluá')
-      button.textContent = '\u2316'
-      Object.assign(button.style, {
-        width: '44px', height: '44px', padding: '0', border: '0',
-        background: '#fff', color: '#1f2937', fontSize: '28px',
-        lineHeight: '44px', cursor: 'pointer', display: 'block',
-      })
-      L.DomEvent.disableClickPropagation(container)
-      L.DomEvent.disableScrollPropagation(container)
-      L.DomEvent.on(button, 'click', centrar)
-      return container
-    }
-    control.addTo(map)
-    return () => {
-      map.off('moveend', ajustar)
-      if (button) L.DomEvent.off(button, 'click', centrar)
-      control.remove()
-    }
-  }, [bounds, map])
-
-  return null
+    return [...porPunto.values()].filter((grupo) => grupo.length > 1)
+  }, [reportes])
+  if (!grupos.length) return null
+  return <section className="map-coincidentes" aria-labelledby="reportes-coincidentes-title"><h2 id="reportes-coincidentes-title">Reportes en la misma ubicación</h2><p>Estos marcadores se superponen en el mapa; consulte cada reporte desde esta lista accesible.</p>{grupos.map((grupo) => <ul key={`${grupo[0].latitud},${grupo[0].longitud}`}>{grupo.map((reporte) => <li key={reporte.codigoSeguimiento}><strong>{reporte.codigoSeguimiento}</strong><span>{reporte.categoria?.nombre}</span><small>{reporte.estado}</small></li>)}</ul>)}</section>
 }
 
-function HeatmapLayer({ reportes, visible }) {
-  const map = useMap()
-  const layerRef = useRef(null)
-
-  useEffect(() => {
-    if (!visible) {
-      if (layerRef.current) {
-        map.removeLayer(layerRef.current)
-        layerRef.current = null
-      }
-      return undefined
-    }
-
-    const points = reportes.map((reporte) => [
-      reporte.latitud,
-      reporte.longitud,
-      0.75,
-    ])
-
-    if (!layerRef.current) {
-      layerRef.current = L.heatLayer(points, {
-        radius: 28,
-        blur: 22,
-        maxZoom: 16,
-        minOpacity: 0.28,
-        gradient: {
-          0.25: '#2f80ed',
-          0.45: '#27ae60',
-          0.7: '#f2c94c',
-          1: '#eb5757',
-        },
-      }).addTo(map)
-    } else {
-      layerRef.current.setLatLngs(points)
-    }
-
-    return () => {
-      if (layerRef.current) {
-        map.removeLayer(layerRef.current)
-        layerRef.current = null
-      }
-    }
-  }, [map, reportes, visible])
-
-  return null
+function Filtros({ filtros, setFiltros, categorias }) {
+  const cambiar = (campo) => (evento) => setFiltros((actual) => ({ ...actual, pagina: 1, [campo]: evento.target.value }))
+  return <div className="control-group"><h2>Filtros</h2><label>Categoría<select value={filtros.categoria} onChange={cambiar('categoria')}><option value="">Todas</option>{categorias.map((c) => <option key={c.idCategoria} value={c.idCategoria}>{c.nombre}</option>)}</select></label><label>Estado<select value={filtros.estado} onChange={cambiar('estado')}><option value="">Todos</option>{ESTADOS_REPORTE.map((e) => <option key={e} value={identificadorEstado(e)}>{e}</option>)}</select></label><label>Comuna<select value={filtros.comuna} onChange={cambiar('comuna')}><option value="">Todas</option>{Array.from({ length: 10 }, (_, i) => i + 1).map((n) => <option key={n} value={n}>Comuna {n}</option>)}</select></label><label>Fecha inicial<input type="date" value={filtros.desde} max={filtros.hasta || undefined} onChange={cambiar('desde')} /></label><label>Fecha final<input type="date" value={filtros.hasta} min={filtros.desde || undefined} onChange={cambiar('hasta')} /></label><button className="map-limpiar" type="button" onClick={() => setFiltros({ categoria: '', estado: '', comuna: '', desde: '', hasta: '', pagina: 1 })}>Limpiar filtros</button></div>
 }
 
-function ReportePopup({ reporte, resultadoComuna }) {
-  return (
-    <div className="map-popup">
-      <strong>{reporte.id}</strong>
-      <span>{reporte.categoria}</span>
-      <p>{reporte.descripcion}</p>
-      <dl>
-        <dt>Estado</dt>
-        <dd>{reporte.estado}</dd>
-        <dt>Fecha</dt>
-        <dd>{reporte.fechaCreacion}</dd>
-        <dt>Comuna</dt>
-        <dd>
-          {resultadoComuna.status === 'pendiente_revision'
-            ? 'Pendiente de revisión'
-            : resultadoComuna.comuna
-            ? `${resultadoComuna.comuna.nombre} (${resultadoComuna.status})`
-            : 'Comuna sin determinar'}
-        </dd>
-        {resultadoComuna.status === 'pendiente_revision' && (
-          <>
-            <dt>Comunas candidatas</dt>
-            <dd>
-              {resultadoComuna.comunasCandidatas.map((comuna) => comuna.nombre).join(', ')}
-            </dd>
-          </>
-        )}
-      </dl>
-    </div>
-  )
+function Criticos({ calor, setFiltros }) {
+  const criticos = calor?.comunasCriticas
+  if (!criticos) return <p>No hay puntos críticos para estos filtros.</p>
+  const { items = [], pagina = 1, totalPaginas = 1 } = criticos
+  const cambiarPagina = (siguiente) => setFiltros((f) => siguiente === f.pagina ? f : { ...f, pagina: siguiente })
+  return <div className="map-criticos"><h2>Puntos críticos por comuna</h2>{items.length ? <table><caption>Ranking calculado por la API administrativa</caption><thead><tr><th>#</th><th>Comuna</th><th>Reportes</th><th>Categoría principal</th></tr></thead><tbody>{items.map((item) => <tr key={`${item.comuna}-${item.posicion}`}><td>{item.posicion}</td><td>{item.comuna}</td><td>{item.total}</td><td>{item.categoriaPrincipal?.nombre ?? 'Sin categoría'}</td></tr>)}</tbody></table> : <p>{pagina > 1 ? 'No hay puntos críticos para esta página.' : 'No hay puntos críticos para estos filtros.'}</p>}{(totalPaginas > 1 || pagina > 1) && <div className="map-paginacion"><button type="button" disabled={pagina <= 1} onClick={() => cambiarPagina(paginaCriticosAnterior(pagina, totalPaginas))}>Anterior</button><span>Página {pagina} de {totalPaginas}</span><button type="button" disabled={pagina >= totalPaginas} onClick={() => cambiarPagina(paginaCriticosSiguiente(pagina, totalPaginas))}>Siguiente</button></div>}</div>
 }
 
-function VistaMapa({ reportes: listado }) {
-  const { conUbicacion: reportes, sinUbicacion } = useMemo(() => separarPorUbicacion(listado), [listado])
-  const [mostrarComunas, setMostrarComunas] = useState(true)
-  const [mostrarMarcadores, setMostrarMarcadores] = useState(true)
-  const [mostrarCalor, setMostrarCalor] = useState(false)
-  const [categoria, setCategoria] = useState('Todas')
-  const [estado, setEstado] = useState('Todos')
+function Mapa({ respuesta, filtros, setFiltros }) {
+  const [marcadores, setMarcadores] = useState(true); const [calorVisible, setCalorVisible] = useState(() => typeof window !== 'undefined' && window.location.pathname.endsWith('/puntos-criticos')); const [comunas, setComunas] = useState(true)
   const [diagnostico, setDiagnostico] = useState(false)
   const [mostrarHuecos, setMostrarHuecos] = useState(true)
   const [mostrarSolapamientos, setMostrarSolapamientos] = useState(true)
   const [incidenciaSeleccionada, setIncidenciaSeleccionada] = useState(null)
   const [revisionSeleccion, setRevisionSeleccion] = useState(0)
-  const seleccionarIncidencia = (id) => {
-    const incidencia = diagnosticoLimites.features.find((f) => f.properties.id === id)
-    if (incidencia.properties.tipo === 'hueco') setMostrarHuecos(true)
-    else setMostrarSolapamientos(true)
-    setIncidenciaSeleccionada(id)
-    setRevisionSeleccion((value) => value + 1)
-  }
-
-  const reportesConComuna = useMemo(
-    () =>
-      reportes.map((reporte) => ({
-        ...reporte,
-        resultadoComuna: identificarComunaPorCoordenadas(reporte, comunasTulua),
-      })),
-    [reportes],
-  )
-
-  // Las opciones de los filtros salen de los reportes cargados (no de una lista fija).
-  const categoriasReporte = useMemo(() => [...new Set(reportes.map((r) => r.categoria))].sort(), [reportes])
-  const estadosReporte = useMemo(() => [...new Set(reportes.map((r) => r.estado))], [reportes])
-
-  const reportesFiltrados = useMemo(
-    () =>
-      reportesConComuna.filter((reporte) => {
-        const categoriaOk = categoria === 'Todas' || reporte.categoria === categoria
-        const estadoOk = estado === 'Todos' || reporte.estado === estado
-        return categoriaOk && estadoOk
-      }),
-    [categoria, estado, reportesConComuna],
-  )
-
-  const conteoFueraZona = reportesFiltrados.filter(
-    (reporte) => reporte.resultadoComuna.status === 'sin_determinar',
-  ).length
-  const conteoPendientes = reportesFiltrados.filter(
-    (reporte) => reporte.resultadoComuna.status === 'pendiente_revision',
-  ).length
-
-  const onEachComuna = (feature, layer) => {
-    const comuna = getComunaProperties(feature)
-    layer.bindPopup(`<strong>${comuna.nombre}</strong><br/>Código: ${comuna.id}`)
-    layer.on({
-      mouseover: (event) => {
-        event.target.setStyle({
-          fillOpacity: 0.36,
-          weight: 4,
-        })
-        event.target.bringToFront()
-      },
-      mouseout: (event) => {
-        event.target.setStyle(estiloComuna(feature))
-      },
-    })
-  }
-
-  return (
-    <section className="map-shell" aria-labelledby="map-title">
-      <div className="map-header">
-        <div>
-          <p className="eyebrow">Prototipo georreferenciado</p>
-          <h1 id="map-title">NOTIURBA Tuluá</h1>
-          <p>
-            Visualización inicial de reportes ciudadanos, comunas urbanas y
-            concentración espacial sobre OpenStreetMap.
-          </p>
-        </div>
-        <div className="map-summary" aria-label="Resumen de reportes visibles">
-          <strong>{reportesFiltrados.length}</strong>
-          <span>reportes visibles</span>
-          <small>{conteoFueraZona} con comuna sin determinar</small>
-          <small>{conteoPendientes} pendientes de revisión geográfica</small>
-        </div>
-      </div>
-
-      <AvisoSinUbicacion cantidad={sinUbicacion.length} />
-
-      <div className="map-layout">
-        <aside className="map-panel" aria-label="Controles del mapa">
-          <div className="control-group">
-            <h2>Capas</h2>
-            <label>
-              <input
-                type="checkbox"
-                checked={mostrarComunas}
-                onChange={(event) => setMostrarComunas(event.target.checked)}
-              />
-              Comunas POT 2015 (provisional)
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={mostrarMarcadores}
-                onChange={(event) => setMostrarMarcadores(event.target.checked)}
-              />
-              Marcadores de reportes
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={mostrarCalor}
-                onChange={(event) => setMostrarCalor(event.target.checked)}
-              />
-              Mapa de calor
-            </label>
-          </div>
-
-          <div className="control-group">
-            <h2>Filtros</h2>
-            <label>
-              Categoría
-              <select
-                value={categoria}
-                onChange={(event) => setCategoria(event.target.value)}
-              >
-                <option>Todas</option>
-                {categoriasReporte.map((item) => (
-                  <option key={item}>{item}</option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Estado
-              <select
-                value={estado}
-                onChange={(event) => setEstado(event.target.value)}
-              >
-                <option>Todos</option>
-                {estadosReporte.map((item) => (
-                  <option key={item}>{item}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="control-group">
-            <label><input type="checkbox" checked={diagnostico}
-              onChange={(e) => { setDiagnostico(e.target.checked); setIncidenciaSeleccionada(null) }} />
-              Diagnóstico de límites</label>
-            {diagnostico && <PanelDiagnostico huecos={mostrarHuecos} solapamientos={mostrarSolapamientos}
-              onHuecos={setMostrarHuecos} onSolapamientos={setMostrarSolapamientos}
-              seleccion={incidenciaSeleccionada} onSeleccion={seleccionarIncidencia} />}
-          </div>
-
-          <div className="control-group">
-            <h2>Validación</h2>
-            <p>
-              POT 2015: referencia provisional, pendiente de validación
-              administrativa. No confirma la división vigente en 2026.
-            </p>
-          </div>
-        </aside>
-
-        <div className="map-frame">
-          <MapContainer
-            center={CENTRO_TULUA}
-            zoom={13}
-            scrollWheelZoom
-            className="leaflet-map"
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <VistaTulua geoJson={comunasTulua} />
-            {(mostrarComunas || diagnostico) && (
-              <GeoJSON
-                key="comunas-tulua-pot2015"
-                data={comunasTulua}
-                style={estiloComuna}
-                onEachFeature={onEachComuna}
-              />
-            )}
-            {diagnostico && <CapaDiagnostico huecos={mostrarHuecos} solapamientos={mostrarSolapamientos}
-              seleccion={incidenciaSeleccionada} revision={revisionSeleccion} onSeleccion={seleccionarIncidencia} />}
-            <HeatmapLayer reportes={reportesFiltrados} visible={mostrarCalor} />
-            {mostrarMarcadores &&
-              reportesFiltrados.map((reporte) => (
-                <Marker
-                  key={reporte.id}
-                  position={[reporte.latitud, reporte.longitud]}
-                >
-                  <Popup>
-                    <ReportePopup
-                      reporte={reporte}
-                      resultadoComuna={reporte.resultadoComuna}
-                    />
-                  </Popup>
-                </Marker>
-              ))}
-          </MapContainer>
-        </div>
-      </div>
-    </section>
-  )
+  const invalido = rangoFechasInvalido(filtros.desde, filtros.hasta)
+  const cargarCalor = useCallback(() => calorVisible && !invalido ? obtenerCalorAdministrativo({ ...filtros, tamano: 5 }) : Promise.resolve(null), [calorVisible, filtros, invalido])
+  const capaCalor = useCargar(cargarCalor)
+  const categoriasCatalogo = useCargar(obtenerCategorias)
+  const reportes = useMemo(() => respuesta.reportes ?? [], [respuesta.reportes])
+  const categorias = useMemo(() => (categoriasCatalogo.datos ?? [...new Map(reportes.filter((r) => r.categoria).map((r) => [r.categoria.idCategoria, r.categoria])).values()]).sort((a, b) => a.nombre.localeCompare(b.nombre)), [categoriasCatalogo.datos, reportes])
+  const seleccionarIncidencia = (id) => { const incidencia = diagnosticoLimites.features.find((item) => item.properties.id === id); if (incidencia?.properties.tipo === 'hueco') setMostrarHuecos(true); else setMostrarSolapamientos(true); setIncidenciaSeleccionada(id); setRevisionSeleccion((valor) => valor + 1) }
+  const cadaComuna = (feature, layer) => { const comuna = getComunaProperties(feature); layer.bindPopup(`<strong>${comuna.nombre}</strong><br/>Código: ${comuna.id}`); layer.on({ mouseover: (evento) => { evento.target.setStyle({ fillOpacity: 0.36, weight: 4 }); evento.target.bringToFront() }, mouseout: (evento) => evento.target.setStyle(estiloComuna(feature)) }) }
+  return <section className="map-shell" aria-labelledby="map-title"><div className="map-header"><div><p className="eyebrow">Panel administrativo</p><h1 id="map-title">Mapa de reportes vigentes</h1><p>La API administrativa excluye reportes vencidos y sin ubicación válida.</p></div><div className="map-summary"><strong>{respuesta.total ?? reportes.length}</strong><span>reportes visibles</span><small>{respuesta.sinComuna ?? 0} sin comuna asignada</small></div></div><p className="map-aviso" role="status">El mapa solo muestra reportes vigentes con ubicación válida; el listado conserva el historial completo.</p><div className="map-layout"><aside className="map-panel" aria-label="Controles del mapa"><div className="control-group"><h2>Capas</h2><label><input type="checkbox" checked={comunas} onChange={(e) => setComunas(e.target.checked)} />Comunas POT 2015 (provisional)</label><label><input type="checkbox" checked={marcadores} onChange={(e) => setMarcadores(e.target.checked)} />Marcadores de reportes</label><label><input type="checkbox" checked={calorVisible} onChange={(e) => setCalorVisible(e.target.checked)} />Mapa de calor</label></div><Filtros filtros={filtros} setFiltros={setFiltros} categorias={categorias} />{invalido && <p className="map-error" role="alert">La fecha inicial no puede ser posterior a la fecha final.</p>}{calorVisible && capaCalor.cargando && <p role="status">Cargando mapa de calor…</p>}{calorVisible && capaCalor.error && <p className="map-error" role="alert">No fue posible cargar el mapa de calor. <button type="button" onClick={capaCalor.recargar}>Reintentar</button></p>}{calorVisible && !capaCalor.cargando && !capaCalor.error && <Criticos calor={capaCalor.datos} setFiltros={setFiltros} />}<ReportesCoincidentes reportes={reportes} /><div className="control-group"><label><input type="checkbox" checked={diagnostico} onChange={(e) => { setDiagnostico(e.target.checked); setIncidenciaSeleccionada(null) }} />Diagnóstico de límites</label>{diagnostico && <PanelDiagnostico huecos={mostrarHuecos} solapamientos={mostrarSolapamientos} onHuecos={setMostrarHuecos} onSolapamientos={setMostrarSolapamientos} seleccion={incidenciaSeleccionada} onSeleccion={seleccionarIncidencia} />}</div></aside><div className="map-frame"><MapContainer center={CENTRO_TULUA} zoom={13} scrollWheelZoom className="leaflet-map"><TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" /><VistaTulua />{(comunas || diagnostico) && <GeoJSON data={comunasTulua} style={estiloComuna} onEachFeature={cadaComuna} />}{diagnostico && <CapaDiagnostico huecos={mostrarHuecos} solapamientos={mostrarSolapamientos} seleccion={incidenciaSeleccionada} revision={revisionSeleccion} onSeleccion={seleccionarIncidencia} />}<HeatmapLayer puntos={capaCalor.datos?.puntos ?? []} visible={calorVisible && !capaCalor.error} />{marcadores && reportes.map((reporte) => <Marker key={reporte.codigoSeguimiento} position={[reporte.latitud, reporte.longitud]}><Popup autoPan keepInView autoPanPaddingTopLeft={[72, 96]} autoPanPaddingBottomRight={[24, 24]} maxWidth={280}><PopupReporte reporte={reporte} /></Popup></Marker>)}</MapContainer></div></div></section>
 }
 
 export default function MapaComunas() {
-  return (
-    <CargaReportesMapa cargador={obtenerReportesCiudadanos}>
-      {(reportes) => <VistaMapa reportes={reportes} />}
-    </CargaReportesMapa>
-  )
+  const [filtros, setFiltros] = useState({ categoria: '', estado: '', comuna: '', desde: '', hasta: '', pagina: 1 })
+  const invalido = rangoFechasInvalido(filtros.desde, filtros.hasta)
+  const cargarMapa = useCallback(() => {
+    return invalido ? Promise.resolve(VACIO) : obtenerMapaAdministrativo({ categoria: filtros.categoria, estado: filtros.estado, comuna: filtros.comuna, desde: filtros.desde, hasta: filtros.hasta })
+  }, [filtros.categoria, filtros.estado, filtros.comuna, filtros.desde, filtros.hasta, invalido])
+  return <CargaReportesMapa cargador={cargarMapa}>{(respuesta) => <Mapa respuesta={respuesta || VACIO} filtros={filtros} setFiltros={setFiltros} />}</CargaReportesMapa>
 }
