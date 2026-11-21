@@ -13,6 +13,14 @@ test('solo cuando el correo salió se muestra «enviado» y no se promete lectur
   assert.match(e.mensaje, /Enviamos su reporte/)
   assert.doesNotMatch(e.mensaje, /Alcaldía recibió|leyó|radicado/)
 })
+test('el éxito del simulador no afirma que se contactó a una entidad', () => {
+  const e = presentacionCorreo({ estado: 'ENVIADO', simulado: true })
+  assert.equal(e.titulo, 'Envío simulado exitoso')
+  assert.equal(e.etiqueta, 'Envío simulado')
+  assert.equal(e.subtitulo, 'Reporte registrado correctamente')
+  assert.equal(e.mensaje, 'Su reporte de demostración se guardó y el envío se simuló correctamente. No se envió ningún correo a una entidad.')
+  assert.doesNotMatch(e.mensaje, /entidad.*(recibió|contactó)|enviamos/i)
+})
 test('fallo inicial conserva el reporte; rebote tiene aviso propio sin retroceso', () => {
   assert.match(presentacionCorreo({ estado: 'FALLIDO' }).mensaje, /quedó guardado/)
   assert.equal(presentacionCorreo({ estado: 'FALLIDO', rebote: true }).clase, 'rebote')
@@ -94,6 +102,11 @@ test('el detalle con el correo en camino o enviado no ofrece otros canales ni ha
     assert.doesNotMatch(r.mensaje, /no (llegó|salió|pudo)/i)
   }
   assert.equal(resumenCorreoDetalle({ estado: 'ENVIADO' }).etiqueta, 'Enviado')
+})
+test('el detalle del éxito simulado conserva el aviso de demostración', () => {
+  const r = resumenCorreoDetalle({ estado: 'ENVIADO', simulado: true })
+  assert.equal(r.etiqueta, 'Envío simulado')
+  assert.equal(r.mensaje, 'Su reporte de demostración se guardó y el envío se simuló correctamente. No se envió ningún correo a una entidad.')
 })
 test('el detalle con rebote dice que no llegó y ofrece otros canales', () => {
   const r = resumenCorreoDetalle({ estado: 'FALLIDO', rebote: true, reintentable: false })
