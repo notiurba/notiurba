@@ -20,6 +20,7 @@ import { TEXTOS_FOTO_NECESARIA, textoDuplicado, textoLimiteDiario } from '../../
 import { reducirFoto } from '../../compartido/utilidades/fotos'
 import { esEmergencia } from './catalogo'
 import { decidirFalloEnvio } from './falloEnvio'
+import { textoAccionConfirmacion, textoProgresoEnvio } from './estadoEnvio'
 import { useReporte } from './useReporte'
 import useVistaPrevia from './useVistaPrevia'
 import './Reportar.css'
@@ -50,7 +51,7 @@ export default function PasoConfirmacion() {
     : null
   const previa = useVistaPrevia(datosPrevia)
   const [aceptacion, setAceptacion] = useState(null)
-  const [hoja, setHoja] = useState(false)
+  const [hoja, setHoja] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
   const [errorAutorizacion, setErrorAutorizacion] = useState('')
@@ -108,7 +109,7 @@ export default function PasoConfirmacion() {
     evento.preventDefault()
     if (ocupado.current || preparando) return
     setError('')
-    if (comprobar()) setHoja(true)
+    if (comprobar()) setHoja(accion)
   }
 
   async function recuperarFotos(evento) {
@@ -140,7 +141,7 @@ export default function PasoConfirmacion() {
     if (ocupado.current || preparando) return
     if (!comprobar()) {
       // Si la hoja tapa el motivo (por ejemplo, hace falta una foto), se cierra para que se vea.
-      setHoja(false)
+      setHoja('')
       setParecido(null)
       return
     }
@@ -165,25 +166,29 @@ export default function PasoConfirmacion() {
       })
       navigate('/reportar/enviado/' + resultado.codigoSeguimiento, { replace: true, state: { envio: resultado.envio } })
     } catch (e) {
+      // Solo se libera al fallar: tras el éxito la pantalla sigue visible hasta que carga la siguiente.
+      ocupado.current = false
+      setEnviando(false)
       const decision = decidirFalloEnvio(e, avance)
-      setHoja(false)
+      setHoja('')
       setParecido(decision.parecido)
       setLimite(decision.limite)
       if (decision.fotoObligatoria) cambiar({ fotoObligatoria: true })
       setError(decision.error)
-    } finally { ocupado.current = false; setEnviando(false) }
+    }
   }
 
   const barrio = barrios.find(b => String(b.idBarrio) === borrador.idBarrio)
   const lugar = [borrador.direccion, barrio?.nombre, borrador.latitud != null && 'Punto marcado en el mapa'].filter(Boolean).join(' · ')
     || (categoria?.requiereUbicacion === false ? 'Sin ubicación' : '')
-  const accion = guardado ? 'Reintentar' : ruta?.permiteCorreo ? 'Guardar y enviar' : 'Guardar reporte'
+  const accion = textoAccionConfirmacion({ guardado, permiteCorreo: ruta?.permiteCorreo })
+  const textoProgreso = textoProgresoEnvio(ruta?.permiteCorreo)
   const avisoParecido = parecido && textoDuplicado(parecido)
   const avisoLimite = limite && textoLimiteDiario(limite)
 
   return <>
     <EncabezadoPantalla titulo="Nuevo reporte" atras={guardado ? '/app/reportes' : '/reportar/detalles'} />
-    <FormularioPantalla alEnviar={pedirEnvio} acciones={<Boton type="submit" disabled={!ruta || !autorizaEnvio || !archivosListos || faltaFoto || preparando || (!guardado && (consulta.cargando || Boolean(consulta.error)))} cargando={enviando} textoCargando="Guardando…"><IconoCorreo tamano={20} />{accion}</Boton>}>
+    <FormularioPantalla alEnviar={pedirEnvio} acciones={<Boton type="submit" disabled={!ruta || !autorizaEnvio || !archivosListos || faltaFoto || preparando || (!guardado && (consulta.cargando || Boolean(consulta.error)))} cargando={enviando} textoCargando={textoProgreso}><IconoCorreo tamano={20} />{accion}</Boton>}>
       <PasosBarra paso={4} total={4} etiqueta="Revisar y confirmar" />
       <h2 className="reportar__titulo">{guardado ? 'Su reporte está guardado' : 'Revise su reporte'}</h2>
       {guardado ? <>
@@ -210,13 +215,13 @@ export default function PasoConfirmacion() {
       </Casilla>
       <p className="reportar__mensaje">Este código es de NotiUrba para su seguimiento. El radicado oficial lo asigna la entidad.</p>
     </FormularioPantalla>
-    <HojaConfirmacion abierta={hoja} alCancelar={() => !ocupado.current && setHoja(false)} alConfirmar={() => enviar()} icono={<IconoCorreo tamano={30} />} tono="info" titulo={accion} texto={ruta?.permiteCorreo ? 'Guardaremos su reporte y lo enviaremos a ' + ruta.entidad + '. Verá el resultado en la siguiente pantalla.' : 'Guardaremos su reporte. Esta entidad atiende por otro canal; en la siguiente pantalla verá cuál.'} textoConfirmar="Confirmar" textoCancelar="Volver" cargando={enviando} textoCargando="Guardando…" />
+    <HojaConfirmacion abierta={Boolean(hoja)} alCancelar={() => !ocupado.current && setHoja('')} alConfirmar={() => enviar()} icono={<IconoCorreo tamano={30} />} tono="info" titulo={hoja} texto={ruta?.permiteCorreo ? 'Guardaremos su reporte y lo enviaremos a ' + ruta.entidad + '. Verá el resultado en la siguiente pantalla.' : 'Guardaremos su reporte. Esta entidad atiende por otro canal; en la siguiente pantalla verá cuál.'} textoConfirmar="Confirmar" textoCancelar="Volver" cargando={enviando} textoCargando={textoProgreso} />
     {/* Tocar fuera solo cierra la hoja: el borrador se descarta únicamente con «Cancelar reporte». */}
     <HojaInferior abierta={Boolean(avisoParecido)} alCerrar={() => !ocupado.current && setParecido(null)}
       icono={<IconoAlerta tamano={30} />} tono="alerta" titulo={avisoParecido?.titulo}
       texto={avisoParecido && <>{avisoParecido.texto}{avisoParecido.codigo && <>{' '}
         <Link to={'/app/reportes/' + avisoParecido.codigo}>Ver el reporte {avisoParecido.codigo}</Link></>}</>}>
-      <Boton onClick={() => enviar(true)} cargando={enviando} textoCargando="Guardando…">Enviar de todas maneras</Boton>
+      <Boton onClick={() => enviar(true)} cargando={enviando} textoCargando={textoProgreso}>Enviar de todas maneras</Boton>
       <Boton variante="texto" onClick={cancelarReporte} disabled={enviando}>Cancelar reporte</Boton>
     </HojaInferior>
     <HojaInferior abierta={Boolean(avisoLimite)} alCerrar={() => setLimite(null)} icono={<IconoAlerta tamano={30} />}

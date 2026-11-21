@@ -83,6 +83,11 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
   ocultarlo en producción.
 - Normalizar tildes en los textos de la interfaz (parte de NOT-138).
 - Colección Postman (`docs/api/`) sin los endpoints nuevos (NOT-141).
+- `PasoConfirmacion.enviar()` no tiene prueba automática: haría falta una dependencia de pruebas con DOM
+  (jsdom) o un render, y agregarla la decide Andrés. Hoy se prueba a mano.
+- No hay límite de errores en la app (solo en el panel) ni tiempo máximo si «Reporte enviado» nunca carga.
+- En el envío, el texto de progreso no está en una región `aria-live`, el botón de celular (≤ 480 px) tiene
+  altura fija con letra muy grande y, detrás de la hoja, la pantalla ya dice «Su reporte está guardado».
 - Respaldos automáticos y programados de Neon (hoy el respaldo es manual, ver la guía de despliegue). `MAIL_FROM` y `MAIL_TEST_TO` ya se quitaron de Render.
 - Pull request #27 de Amelia (`fix/registro-pr20`) quedó superada por el #30: contiene evidencias
   pesadas (`docs/validacion`, `output/`, PDF) y 11 conflictos con `develop`. Conviene cerrarla y
