@@ -7,6 +7,7 @@ import { guardarToken } from '../auth/sesion'
 import { destinoTrasAutenticacion, estadoRetornoReporte } from '../auth/retornoReporte'
 import Aviso from '../componentes/avisos/Aviso'
 import Boton from '../componentes/Boton'
+import IndicadorCarga from '../componentes/IndicadorCarga'
 import CabeceraAuth from '../componentes/acceso/CabeceraAuth'
 import Campo from '../componentes/formulario/Campo'
 import CampoPassword from '../componentes/formulario/CampoPassword'
@@ -127,10 +128,11 @@ export default function Login() {
         {bloqueoHasta ? (
           <BotonEsperando key={bloqueoHasta} fin={bloqueoHasta} alTerminar={terminarBloqueo} />
         ) : (
-          <Boton type="submit" cargando={enviando} textoCargando="Ingresando…">
+          <Boton type="submit" cargando={enviando} textoCargando="Iniciando sesión…">
             Iniciar sesión
           </Boton>
         )}
+        {enviando && <IndicadorCarga texto="Iniciando sesión…" />}
 
         <Separador texto="O ingrese con" />
 

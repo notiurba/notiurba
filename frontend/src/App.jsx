@@ -64,7 +64,7 @@ function App() {
         path="/app/*"
         element={
           <RutaProtegida>
-            <RetornoDesdePerfil><CargaDiferida><RutasApp /></CargaDiferida></RetornoDesdePerfil>
+            <RetornoDesdePerfil><CargaDiferida mensaje="Cargando su información…"><RutasApp /></CargaDiferida></RetornoDesdePerfil>
           </RutaProtegida>
         }
       />

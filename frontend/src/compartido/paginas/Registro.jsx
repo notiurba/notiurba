@@ -7,6 +7,7 @@ import { obtenerBarrios, obtenerTiposDocumento } from '../api/catalogos'
 import Aviso from '../componentes/avisos/Aviso'
 import EstadoCarga from '../componentes/avisos/EstadoCarga'
 import Boton from '../componentes/Boton'
+import IndicadorCarga from '../componentes/IndicadorCarga'
 import EncabezadoPantalla from '../componentes/EncabezadoPantalla'
 import FormularioPantalla from '../componentes/formulario/FormularioPantalla'
 import LayoutAuth from '../componentes/acceso/LayoutAuth'
@@ -151,6 +152,7 @@ export default function Registro() {
             {errorGeneral}
           </Aviso>
         )}
+        {enviando && <IndicadorCarga texto="Creando su cuenta…" />}
 
         <EstadoCarga cargando={tipos.cargando} fallo={tipos.error} />
         {tipos.datos?.length === 0 && <Aviso variante="alerta">No hay tipos de documento disponibles para continuar.</Aviso>}
