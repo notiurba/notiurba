@@ -3,7 +3,7 @@ import 'leaflet/dist/leaflet.css'
 import { useEffect, useRef } from 'react'
 import { CENTRO_TULUA, comunasTulua } from '../../compartido/geo/comunasTulua'
 import { estiloComuna } from '../../compartido/geo/estiloComunas'
-import { identificarComunaPorCoordenadas } from '../../compartido/geo/geoUtils'
+import { identificarComunaPorCoordenadas, puntoEstaEnCobertura } from '../../compartido/geo/geoUtils'
 import { TEXTOS_UBICACION } from './ubicacionGps'
 import './MapaUbicacion.css'
 
@@ -18,15 +18,17 @@ const ICONO = L.divIcon({
 // Mapa (Leaflet + OpenStreetMap) donde la persona toca para marcar el lugar del problema.
 //  - latitud, longitud: números del punto marcado (o null).   - alElegir(latitud, longitud): se llama al tocar el mapa.
 // Se reciben como números (no como objeto) para que el mapa solo se recentre cuando el punto cambia de verdad.
-export default function MapaUbicacion({ latitud, longitud, alElegir, error }) {
+export default function MapaUbicacion({ latitud, longitud, alElegir, alRechazar, error }) {
   const contenedor = useRef(null)
   const mapa = useRef(null)
   const marcador = useRef(null)
   const capaComunas = useRef(null)
   const alElegirActual = useRef(alElegir)
+  const alRechazarActual = useRef(alRechazar)
 
   useEffect(() => {
     alElegirActual.current = alElegir
+    alRechazarActual.current = alRechazar
   })
 
   // El mapa se crea una sola vez y se destruye al salir de la pantalla.
@@ -54,8 +56,33 @@ export default function MapaUbicacion({ latitud, longitud, alElegir, error }) {
       contenedor.current?.classList.toggle('mapa-ubicacion--sin-etiquetas', mapa.current.getZoom() < 14)
     mapa.current.on('zoomend', mostrarEtiquetas)
     mostrarEtiquetas()
-    mapa.current.on('click', (evento) => alElegirActual.current(evento.latlng.lat, evento.latlng.lng))
+    const elegirPunto = ({ lat, lng }) => {
+      if (!puntoEstaEnCobertura({ latitud: lat, longitud: lng }, comunasTulua).valido) {
+        alRechazarActual.current?.()
+        return
+      }
+      alElegirActual.current(lat, lng)
+    }
+    mapa.current.on('click', (evento) => elegirPunto(evento.latlng))
+
+    const limites = L.geoJSON(comunasTulua).getBounds()
+    const control = L.control({ position: 'topleft' })
+    let botonCentrar
+    control.onAdd = () => {
+      const caja = L.DomUtil.create('div', 'leaflet-bar leaflet-control-centrar')
+      botonCentrar = L.DomUtil.create('button', '', caja)
+      botonCentrar.type = 'button'
+      botonCentrar.title = 'Centrar en Tuluá'
+      botonCentrar.setAttribute('aria-label', 'Centrar en Tuluá')
+      botonCentrar.textContent = '⌖'
+      L.DomEvent.disableClickPropagation(caja)
+      L.DomEvent.on(botonCentrar, 'click', () => mapa.current?.fitBounds(limites, { padding: [28, 28], maxZoom: 14, animate: false }))
+      return caja
+    }
+    control.addTo(mapa.current)
     return () => {
+      if (botonCentrar) L.DomEvent.off(botonCentrar, 'click')
+      control.remove()
       mapa.current.off()
       mapa.current.remove()
       mapa.current = null
@@ -90,7 +117,12 @@ export default function MapaUbicacion({ latitud, longitud, alElegir, error }) {
     if (evento.target !== contenedor.current || !['Enter', ' '].includes(evento.key)) return
     evento.preventDefault()
     const centro = mapa.current?.getCenter()
-    if (centro) alElegirActual.current(centro.lat, centro.lng)
+    if (!centro) return
+    if (!puntoEstaEnCobertura({ latitud: centro.lat, longitud: centro.lng }, comunasTulua).valido) {
+      alRechazarActual.current?.()
+      return
+    }
+    alElegirActual.current(centro.lat, centro.lng)
   }
 
   return (
