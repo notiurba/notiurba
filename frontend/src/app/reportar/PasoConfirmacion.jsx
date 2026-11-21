@@ -166,21 +166,22 @@ export default function PasoConfirmacion() {
       })
       navigate('/reportar/enviado/' + resultado.codigoSeguimiento, { replace: true, state: { envio: resultado.envio } })
     } catch (e) {
+      // Solo se libera al fallar: tras el éxito la pantalla sigue visible hasta que carga la siguiente.
+      ocupado.current = false
+      setEnviando(false)
       const decision = decidirFalloEnvio(e, avance)
       setHoja('')
       setParecido(decision.parecido)
       setLimite(decision.limite)
       if (decision.fotoObligatoria) cambiar({ fotoObligatoria: true })
       setError(decision.error)
-      ocupado.current = false
-      setEnviando(false)
-  }
+    }
   }
 
   const barrio = barrios.find(b => String(b.idBarrio) === borrador.idBarrio)
   const lugar = [borrador.direccion, barrio?.nombre, borrador.latitud != null && 'Punto marcado en el mapa'].filter(Boolean).join(' · ')
     || (categoria?.requiereUbicacion === false ? 'Sin ubicación' : '')
-  const accion = textoAccionConfirmacion({ guardado, enviando, permiteCorreo: ruta?.permiteCorreo })
+  const accion = textoAccionConfirmacion({ guardado, permiteCorreo: ruta?.permiteCorreo })
   const textoProgreso = textoProgresoEnvio(ruta?.permiteCorreo)
   const avisoParecido = parecido && textoDuplicado(parecido)
   const avisoLimite = limite && textoLimiteDiario(limite)
