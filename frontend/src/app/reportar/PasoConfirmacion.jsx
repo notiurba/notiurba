@@ -143,7 +143,7 @@ export default function PasoConfirmacion() {
     if (ocupado.current || preparando) return
     if (!comprobar()) {
       // Si la hoja tapa el motivo (por ejemplo, hace falta una foto), se cierra para que se vea.
-      setHoja(false)
+      setHoja('')
       setParecido(null)
       return
     }
