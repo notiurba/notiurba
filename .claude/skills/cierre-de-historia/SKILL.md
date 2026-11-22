@@ -63,7 +63,7 @@ despliegue `1DZ8XC3TJaDDj9_BVyyOcUbN4zdmCk4GX`; Figma `qRLcQ7jjC71F52CI6S9m1j`.
 
 - **Linear:** actualiza la descripción de la historia (decisiones, resultado, rama o PR) y deja un
   comentario en las historias que dependen de ella, empezando con «Actualización:», sin saludo y como si
-  ya estuviera en `develop`. La historia pasa a Done cuando el PR se integra, no antes. No se crean
+  ya estuviera en `main`. La historia pasa a Done cuando el PR se integra, no antes. No se crean
   historias nuevas sin el visto bueno de Andrés.
 - **Figma:** si cambió una pantalla, dilo y espera su visto bueno antes de editar. Si toca pantallas de
   Katherine, señálalo expresamente en el PR y en Linear.
@@ -79,7 +79,7 @@ despliegue `1DZ8XC3TJaDDj9_BVyyOcUbN4zdmCk4GX`; Figma `qRLcQ7jjC71F52CI6S9m1j`.
 ## 7. Commits y PR
 
 - Commits atómicos y sin líneas de coautoría de Claude. La documentación va en commits propios.
-- PR pequeño hacia `develop`, con: qué trae, antes/después, pruebas, qué se debe revisar con cuidado
+- PR hacia `main`, con: qué trae, antes/después, pruebas, qué se debe revisar con cuidado
   y qué no se verificó. No se mezcla nada que cambie datos de producción sin su aprobación.
 
 ## 8. Cierre

@@ -45,7 +45,7 @@ Reglas del flujo:
 - Los tres archivos de `docs/sdd/` describen **una** funcionalidad a la vez. Al
   terminarla, se archivan en `docs/sdd/historico/<NOT-nn>-<nombre>/` y se parte de
   las plantillas para la siguiente.
-- **Un solo PR por historia** (rama `feature/…` desde `develop`), con commits atómicos por tarea. Decidido por Andrés el 12 nov 2026: no quiere integrar muchos PR.
+- **Un solo PR por historia** (rama `feature/…` desde `main`), con commits atómicos por tarea. Decidido por Andrés el 12 nov 2026: no quiere integrar muchos PR.
 
 ## Revisión de código al terminar (obligatoria)
 
@@ -92,11 +92,12 @@ Reglas del flujo:
 - **Backend:** Java 21 + Spring Boot 3.3 (web, data-jpa, security, validation).
 - **Geo:** PostgreSQL + PostGIS 3.4 (índice GiST), Hibernate Spatial. Pruebas con la imagen 16-3.4; Neon (producción) corre PostgreSQL 18, y para respaldar con `pg_dump` hace falta la versión 18 (guía 15).
 - **Seguridad:** Spring Security + JWT (jjwt).
-- **Frontend:** React 19 + Vite 8 + react-router 7. NOT-134 incorpora `vite-plugin-pwa` 2 y `workbox-window` 7.4.1, manifiesto, actualización automática y aviso sin conexión; verificado localmente, pendiente de desplegar y probar instalación en Android. El worker solo guarda recursos estáticos, nunca API ni teselas. Gestor de paquetes: **pnpm** (no usar npm; no subir `package-lock.json`).
+- **Frontend:** React 19 + Vite 8 + react-router 7. NOT-134 incorpora `vite-plugin-pwa` 2 y `workbox-window` 7.4.1, manifiesto, actualización automática y aviso sin conexión; integrada y desplegada en `main` (PR #50, 18/11/2026); la instalación física en Android no tiene registro de prueba. El worker solo guarda recursos estáticos, nunca API ni teselas. Gestor de paquetes: **pnpm** (no usar npm; no subir `package-lock.json`).
 - **Mapas:** Leaflet 1.9 + OpenStreetMap + Leaflet.heat.
 - **Fotos:** Cloudinary (plan Free), decidido el 29/10/2026 (ADR-0006). Mega descartado. Integrado por su API HTTP detrás de la interfaz `AlmacenFotos` (paquete `foto/`); probado con una subida real el 01/11/2026.
 - **Hosting:** Netlify (frontend) + Render (backend) + Neon (PostgreSQL/PostGIS). Guía de montaje, respaldo y administrador real: `docs/contexto/15-guia-de-despliegue.md`. `ADMIN_DEV_PASSWORD` es opcional (solo siembra el admin de una base nueva).
-  - Netlify despliega desde la rama `develop` con base `frontend` y publish `dist`.
+  - Netlify y Render despliegan desde la rama `main` (desde el 18-19/11/2026; `develop` quedó sin uso y sigue protegida).
+    Netlify usa base `frontend` y publish `dist`.
     La redirección SPA vive en `frontend/public/_redirects` (`/*  /index.html  200`);
     sin ella, las rutas directas (p. ej. `/app/nueva-contrasena`) dan 404 al recargar.
   - Variables de entorno, **sin valores en el repo**:
@@ -117,7 +118,7 @@ Reglas del flujo:
 ## Reglas de colaboración (aprendidas con Andrés)
 
 - Español claro y frases cortas, también en las preguntas.
-- Ramas `feature/*` o `docs/*` y PR hacia `develop`; **sin líneas de coautoría de Claude** en commits ni PR.
+- Ramas `feature/*` o `docs/*` y PR hacia `main`; **sin líneas de coautoría de Claude** en commits ni PR.
   Un PR por historia, con commits atómicos. No mezcle nada que cambie datos de producción sin su aprobación.
 - Lo que toca pantallas de Katherine se señala expresamente para su revisión.
 - Nunca imprima secretos. No cree historias en Linear sin su visto bueno (formato en `docs/contexto/13-sprint-3.md`;
