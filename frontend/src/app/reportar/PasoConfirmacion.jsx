@@ -6,6 +6,7 @@ import { CanalOficial } from '../componentes/ResultadoCorreo'
 import VistaPreviaMensaje from '../componentes/VistaPreviaMensaje'
 import Aviso from '../../compartido/componentes/avisos/Aviso'
 import Boton from '../../compartido/componentes/Boton'
+import IndicadorCarga from '../../compartido/componentes/IndicadorCarga'
 import Casilla from '../../compartido/componentes/formulario/Casilla'
 import EncabezadoPantalla from '../../compartido/componentes/EncabezadoPantalla'
 import FormularioPantalla from '../../compartido/componentes/formulario/FormularioPantalla'
@@ -53,6 +54,7 @@ export default function PasoConfirmacion() {
   const [aceptacion, setAceptacion] = useState(null)
   const [hoja, setHoja] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const [progreso, setProgreso] = useState('')
   const [error, setError] = useState('')
   const [errorAutorizacion, setErrorAutorizacion] = useState('')
   const [preparando, setPreparando] = useState(false)
@@ -147,6 +149,7 @@ export default function PasoConfirmacion() {
     }
     ocupado.current = true
     setEnviando(true)
+    setProgreso('Guardando su reporte…')
     setError('')
     let avance = guardado
     try {
@@ -157,18 +160,22 @@ export default function PasoConfirmacion() {
         conservar: creado => {
           avance = avance ?? { ...creado, totalFotos: fotos.length, fotosSubidas: 0, ruta }
           conservarGuardado(avance)
+          setProgreso(fotos.length ? 'Subiendo fotografías…' : ruta?.permiteCorreo ? 'Procesando el envío…' : 'Finalizando…')
         },
         alSubirFoto: () => {
           avance = { ...avance, fotosSubidas: avance.fotosSubidas + 1 }
           conservarGuardado(avance)
           setFotos(pendientes => pendientes.slice(1))
         },
+        alProcesarEnvio: () => setProgreso(ruta?.permiteCorreo ? 'Procesando el envío…' : 'Finalizando…'),
       })
+      setProgreso('Finalizando…')
       navigate('/reportar/enviado/' + resultado.codigoSeguimiento, { replace: true, state: { envio: resultado.envio } })
     } catch (e) {
-      // Solo se libera al fallar: tras el éxito la pantalla sigue visible hasta que carga la siguiente.
+      // La transición de éxito mantiene el bloqueo; solo un error recuperable libera el envío.
       ocupado.current = false
       setEnviando(false)
+      setProgreso('')
       const decision = decidirFalloEnvio(e, avance)
       setHoja('')
       setParecido(decision.parecido)
@@ -182,7 +189,7 @@ export default function PasoConfirmacion() {
   const lugar = [borrador.direccion, barrio?.nombre, borrador.latitud != null && 'Punto marcado en el mapa'].filter(Boolean).join(' · ')
     || (categoria?.requiereUbicacion === false ? 'Sin ubicación' : '')
   const accion = textoAccionConfirmacion({ guardado, permiteCorreo: ruta?.permiteCorreo })
-  const textoProgreso = textoProgresoEnvio(ruta?.permiteCorreo)
+  const textoProgreso = progreso || textoProgresoEnvio(ruta?.permiteCorreo)
   const avisoParecido = parecido && textoDuplicado(parecido)
   const avisoLimite = limite && textoLimiteDiario(limite)
 
@@ -201,21 +208,26 @@ export default function PasoConfirmacion() {
         <FilaResumen etiqueta="Descripción" a="/reportar/detalles">{borrador.descripcion.trim()}</FilaResumen>
         <FilaResumen etiqueta="Fotos" a="/reportar/detalles">{fotos.length ? fotos.length + ' fotos adjuntas' : 'Sin fotos'}</FilaResumen>
       </div>}
-      {datosPrevia && <VistaPreviaMensaje previa={previa} entidad={ruta.entidad} />}
+      {datosPrevia && <VistaPreviaMensaje previa={previa} entidad={ruta.entidad} simulada={ruta.simulada === true} />}
       {!guardado && consulta.cargando && <p role="status">Buscando a qué entidad va su reporte…</p>}
       {!guardado && consulta.error && <Aviso variante="error" titulo="No pudimos confirmar la entidad"><button type="button" className="enlace-boton" onClick={consulta.recargar}>Reintentar</button></Aviso>}
       <CanalOficial ruta={ruta} />
       {ruta?.competenciaConfirmada === false && <Aviso variante="alerta">Todavía estamos confirmando qué entidad atiende este tipo de reportes. Si es urgente, no espere: llame a la línea de emergencias.</Aviso>}
-      {ruta && <Aviso>{ruta.permiteCorreo ? 'Enviaremos su reporte por correo a la entidad indicada. Eso no asegura que lo lean de inmediato.' : 'Guardaremos su reporte. Esta entidad atiende por otro canal: el que ve arriba.'}</Aviso>}
+      {ruta && <Aviso>{ruta.simulada
+        ? 'Modo demostración: guardaremos un reporte ficticio y simularemos el envío. No se contactará a ninguna entidad.'
+        : ruta.permiteCorreo ? 'Enviaremos su reporte por correo a la entidad indicada. Eso no asegura que lo lean de inmediato.' : 'Guardaremos su reporte. Esta entidad atiende por otro canal: el que ve arriba.'}</Aviso>}
       {faltaFoto && <Aviso variante="alerta" titulo={TEXTOS_FOTO_NECESARIA.titulo}>{TEXTOS_FOTO_NECESARIA.texto}{' '}
         <button type="button" className="enlace-boton" onClick={agregarFoto}>{TEXTOS_FOTO_NECESARIA.accion}</button></Aviso>}
       {error && <Aviso variante="error" titulo={guardado ? 'Su reporte quedó guardado; falta terminar' : 'No pudimos guardar el reporte'}>{error}</Aviso>}
+      {enviando && <IndicadorCarga texto={textoProgreso} />}
       <Casilla id="autorizaEnvio" checked={autorizaEnvio} disabled={enviando} error={errorAutorizacion} onChange={e => { setAceptacion(e.target.checked ? claveAceptacion : null); setErrorAutorizacion('') }}>
-        Autorizo a NotiUrba a enviar este reporte a la entidad, a mi nombre y con mis datos, la ubicación y las fotos (las fotos van como enlace público). La entidad podrá responderme a mi correo. <EnlacePrivacidad nuevaPestana />
+        {ruta?.simulada
+          ? <>Autorizo a NotiUrba a guardar este reporte ficticio para la demostración. No se enviará a ninguna entidad. <EnlacePrivacidad nuevaPestana /></>
+          : <>Autorizo a NotiUrba a enviar este reporte a la entidad, a mi nombre y con mis datos, la ubicación y las fotos (las fotos van como enlace público). La entidad podrá responderme a mi correo. <EnlacePrivacidad nuevaPestana /></>}
       </Casilla>
       <p className="reportar__mensaje">Este código es de NotiUrba para su seguimiento. El radicado oficial lo asigna la entidad.</p>
     </FormularioPantalla>
-    <HojaConfirmacion abierta={Boolean(hoja)} alCancelar={() => !ocupado.current && setHoja('')} alConfirmar={() => enviar()} icono={<IconoCorreo tamano={30} />} tono="info" titulo={hoja} texto={ruta?.permiteCorreo ? 'Guardaremos su reporte y lo enviaremos a ' + ruta.entidad + '. Verá el resultado en la siguiente pantalla.' : 'Guardaremos su reporte. Esta entidad atiende por otro canal; en la siguiente pantalla verá cuál.'} textoConfirmar="Confirmar" textoCancelar="Volver" cargando={enviando} textoCargando={textoProgreso} />
+    <HojaConfirmacion abierta={Boolean(hoja)} alCancelar={() => !ocupado.current && setHoja('')} alConfirmar={() => enviar()} icono={<IconoCorreo tamano={30} />} tono="info" titulo={hoja} texto={ruta?.simulada ? 'Guardaremos un reporte ficticio y simularemos el envío. No se contactará a ninguna entidad.' : ruta?.permiteCorreo ? 'Guardaremos su reporte y lo enviaremos a ' + ruta.entidad + '. Verá el resultado en la siguiente pantalla.' : 'Guardaremos su reporte. Esta entidad atiende por otro canal; en la siguiente pantalla verá cuál.'} textoConfirmar="Confirmar" textoCancelar="Volver" cargando={enviando} textoCargando={textoProgreso} />
     {/* Tocar fuera solo cierra la hoja: el borrador se descarta únicamente con «Cancelar reporte». */}
     <HojaInferior abierta={Boolean(avisoParecido)} alCerrar={() => !ocupado.current && setParecido(null)}
       icono={<IconoAlerta tamano={30} />} tono="alerta" titulo={avisoParecido?.titulo}

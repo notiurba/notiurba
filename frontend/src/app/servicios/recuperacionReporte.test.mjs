@@ -57,6 +57,7 @@ test('fallar el encolado conserva el mismo reporte y sus fotografías', async ()
 test('expone el estado real de solicitud y comunica cada foto confirmada antes de un fallo', async () => {
   let guardado
   const confirmadas = []
+  const fases = []
   const api = {
     async guardarReporte() { return { codigoSeguimiento: 'NU-000044' } },
     async subirFoto(codigo, foto) { if (foto === 'segunda') throw new Error('Fallo foto'); assert.equal(codigo, 'NU-000044') },
@@ -66,10 +67,11 @@ test('expone el estado real de solicitud y comunica cada foto confirmada antes d
   assert.deepEqual(confirmadas, ['primera'])
   api.subirFoto = async () => {}
   api.guardarReporte = async () => { throw new Error('No debe crear de nuevo') }
-  const resultado = await guardarConEvidencias({ datos: {}, fotos: ['segunda'], guardado, api, conservar() {}, alSubirFoto: f => confirmadas.push(f) })
+  const resultado = await guardarConEvidencias({ datos: {}, fotos: ['segunda'], guardado, api, conservar() {}, alSubirFoto: f => confirmadas.push(f), alProcesarEnvio: () => fases.push('envio') })
   assert.equal(resultado.codigoSeguimiento, 'NU-000044')
   assert.equal(resultado.envio.estado, 'NO_ENVIADO_CORREO')
   assert.deepEqual(confirmadas, ['primera', 'segunda'])
+  assert.deepEqual(fases, ['envio'])
 })
 
 test('una subida guardada cuya respuesta se perdió no se vuelve a subir al reintentar', async () => {

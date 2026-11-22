@@ -18,6 +18,7 @@ import java.util.concurrent.TimeoutException;
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,6 +73,11 @@ class ComunaGuardadaIntegracionTest {
                 DatosDePrueba.CIUDADANO);
     }
 
+    @AfterEach
+    void restaurarMargenExacto() {
+        jdbc.update("UPDATE configuracion SET valor = '0' WHERE clave = 'comuna_distancia_maxima_m'");
+    }
+
     private long reporte(String ubicacion, Integer barrio) {
         return jdbc.queryForObject("""
                 INSERT INTO reporte (id_usuario, id_categoria, id_barrio, descripcion, ubicacion,
@@ -110,6 +116,12 @@ class ComunaGuardadaIntegracionTest {
                          FROM caja, generate_series(0, 80) i, generate_series(0, 80) j)
                 SELECT ST_AsEWKT(p) FROM puntos, LATERAL fn_asignar_comuna(p) a
                  WHERE a.regla = 'cercana' LIMIT 1""", String.class);
+    }
+
+    /** Estos casos prueban el recálculo cuando un administrador habilita el margen temporalmente. */
+    private String puntoEnHuecoConMargen() {
+        jdbc.update("UPDATE configuracion SET valor = '50' WHERE clave = 'comuna_distancia_maxima_m'");
+        return puntoEnHueco();
     }
 
     /** Cambia cada vez que la fila se reescribe. */
@@ -180,7 +192,7 @@ class ComunaGuardadaIntegracionTest {
 
     @Test
     void borrarCrearORenombrarLaDistanciaMaximaTambienRecalcula() {
-        long enHueco = reporte(ewkt(puntoEnHueco()), null);
+        long enHueco = reporte(ewkt(puntoEnHuecoConMargen()), null);
         try {
             jdbc.update("DELETE FROM configuracion WHERE clave = 'comuna_distancia_maxima_m'");
             assertThat(guardada(enHueco).get("id_comuna")).isNull();
@@ -192,9 +204,9 @@ class ComunaGuardadaIntegracionTest {
             assertThat(guardada(enHueco).get("id_comuna")).isNull();
         } finally {
             jdbc.update("DELETE FROM configuracion WHERE clave IN ('comuna_distancia_maxima_m', 'distancia_renombrada')");
-            jdbc.update("INSERT INTO configuracion (clave, valor) VALUES ('comuna_distancia_maxima_m', '50')");
+            jdbc.update("INSERT INTO configuracion (clave, valor) VALUES ('comuna_distancia_maxima_m', '0')");
         }
-        assertThat(guardada(enHueco).get("id_comuna")).isNotNull();
+        assertThat(guardada(enHueco).get("id_comuna")).isNull();
     }
 
     @Test
@@ -261,26 +273,27 @@ class ComunaGuardadaIntegracionTest {
 
     @Test
     void alCambiarLaDistanciaMaximaSeRecalculanLosReportesEnHuecos() {
-        long enHueco = reporte(ewkt(puntoEnHueco()), null);
+        long enHueco = reporte(ewkt(puntoEnHuecoConMargen()), null);
         assertThat(guardada(enHueco).get("id_comuna")).isNotNull();
         try {
             jdbc.update("UPDATE configuracion SET valor = '0' WHERE clave = 'comuna_distancia_maxima_m'");
 
             assertThat(guardada(enHueco).get("id_comuna")).isNull();
         } finally {
-            jdbc.update("UPDATE configuracion SET valor = '50' WHERE clave = 'comuna_distancia_maxima_m'");
+            jdbc.update("UPDATE configuracion SET valor = '0' WHERE clave = 'comuna_distancia_maxima_m'");
         }
-        assertThat(guardada(enHueco).get("id_comuna")).isNotNull();
+        assertThat(guardada(enHueco).get("id_comuna")).isNull();
     }
 
     @Test
     void laVistaLeeLoGuardadoYCoincideConElCalculoEnVivo() {
         reporte(ewkt(puntoEnComuna(3)), idBarrio);
-        reporte(ewkt(puntoEnHueco()), idBarrio);
-        reporte("NULL", idBarrio);
-        reporte(PUNTO_LEJANO, null);
+        try {
+            reporte(ewkt(puntoEnHuecoConMargen()), idBarrio);
+            reporte("NULL", idBarrio);
+            reporte(PUNTO_LEJANO, null);
 
-        int distintos = jdbc.queryForObject("""
+            int distintos = jdbc.queryForObject("""
                 SELECT count(*) FROM reporte r JOIN v_reporte_comuna vc USING (id_reporte)
                   LEFT JOIN barrio b ON b.id_barrio = r.id_barrio
                  WHERE vc.id_comuna IS DISTINCT FROM r.id_comuna
@@ -289,8 +302,11 @@ class ComunaGuardadaIntegracionTest {
                          (SELECT a.id_comuna FROM fn_asignar_comuna(r.ubicacion) a WHERE r.ubicacion IS NOT NULL),
                          b.id_comuna)""", Integer.class);
 
-        assertThat(distintos).isZero();
-        assertThat(jdbc.queryForObject("SELECT indexdef FROM pg_indexes WHERE indexname = 'ix_reporte_comuna'",
-                String.class)).contains("id_comuna");
+            assertThat(distintos).isZero();
+            assertThat(jdbc.queryForObject("SELECT indexdef FROM pg_indexes WHERE indexname = 'ix_reporte_comuna'",
+                    String.class)).contains("id_comuna");
+        } finally {
+            jdbc.update("UPDATE configuracion SET valor = '0' WHERE clave = 'comuna_distancia_maxima_m'");
+        }
     }
 }

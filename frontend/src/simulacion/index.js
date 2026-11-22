@@ -116,6 +116,7 @@ function resolverRuta(id, emergencia = false) {
   if (!categoria) throw crearErrorApi(400, { codigo: 'VALIDACION', mensaje: 'Categoría sin ruta disponible', campo: 'idCategoria' })
   return { ...categoria, idCanal: categoria.idCategoria, entidad: 'Entidad de prueba (simulación local)',
     dependencia: 'Sin conexión con entidades reales', canal: 'Simulación', acceso: '',
+    simulada: true,
     permiteCorreo: categoria.permiteCorreo && !emergencia, revisionClasificacion: categoria.idCategoria === 10,
     mensaje: 'Prueba simulada: no se enviarán correos ni se generará un radicado oficial.' }
 }
@@ -123,7 +124,7 @@ function resolverRuta(id, emergencia = false) {
 function estadoEnvio(codigo) {
   const reporte = almacen.buscarReporte(codigo)
   if (!reporte) throw crearErrorApi(404, { mensaje: 'No se encontró ese reporte' })
-  return { estado: reporte.envioSimulado ?? 'SIN_SOLICITAR', reintentable: false,
+  return { estado: reporte.envioSimulado ?? 'SIN_SOLICITAR', reintentable: false, simulado: true,
     ruta: resolverRuta(reporte.idCategoria, reporte.emergencia === true) }
 }
 
@@ -235,8 +236,9 @@ const RUTAS = [
   // Propuesto en el contrato (sección 4): envía el reporte a la entidad; responde 202 sin cuerpo útil.
   ['POST', '/api/reportes/:codigo/enviar', (_c, { codigo }) => {
     const envio = estadoEnvio(codigo)
-    // No se contacta un proveedor: PENDIENTE solo representa la pantalla de prueba.
-    almacen.guardarEnvio(codigo, envio.ruta.permiteCorreo ? 'PENDIENTE' : 'NO_ENVIADO_CORREO')
+    // En esta simulación no se usa un proveedor ni se contacta una entidad.
+    if (envio.ruta.permiteCorreo) almacen.marcarEnviado(codigo)
+    almacen.guardarEnvio(codigo, envio.ruta.permiteCorreo ? 'ENVIADO' : 'NO_ENVIADO_CORREO')
     return estadoEnvio(codigo)
   }],
   ['GET', '/api/reportes/:codigo/envio', (_c, { codigo }) => estadoEnvio(codigo)],

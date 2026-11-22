@@ -70,8 +70,14 @@ export const actualizarMiReporte = (codigo, tipo, radicado) =>
 export const obtenerCategorias = () => peticion('/api/categorias')
 
 // Panel de administración
-export const listarTodosLosReportes = async () =>
-  (await peticion('/api/admin/reportes')).map(normalizarReporte)
+export const listarTodosLosReportes = async (filtros = {}) => {
+  const parametros = new URLSearchParams()
+  for (const [clave, valor] of Object.entries(filtros)) {
+    if (valor !== undefined && valor !== null && valor !== '') parametros.set(clave, valor)
+  }
+  const consulta = parametros.toString() ? `?${parametros}` : ''
+  return (await peticion(`/api/admin/reportes${consulta}`)).map(normalizarReporte)
+}
 
 export const cambiarEstadoReporte = (codigo, estado, observacion) =>
   peticion(`/api/admin/reportes/${encodeURIComponent(codigo)}/estado`, {

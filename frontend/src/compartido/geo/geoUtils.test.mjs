@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto'
 
 let server
 let identificar
+let enCobertura
 let comunas
 let reportes
 let reportesFueraCobertura
@@ -15,7 +16,9 @@ const codigoComuna = (numero) => String(numero).padStart(2, '0')
 
 before(async () => {
   server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
-  identificar = (await server.ssrLoadModule('/src/compartido/geo/geoUtils.js')).identificarComunaPorCoordenadas
+  const modulo = await server.ssrLoadModule('/src/compartido/geo/geoUtils.js')
+  identificar = modulo.identificarComunaPorCoordenadas
+  enCobertura = modulo.puntoEstaEnCobertura
   comunas = (await server.ssrLoadModule('/src/compartido/geo/comunasTulua.js')).comunasTulua
   const datos = await server.ssrLoadModule('/src/admin/datos/reportesPrueba.js')
   reportes = datos.reportesPrueba
@@ -37,6 +40,17 @@ test('un interior unico recibe comuna; un punto exterior no recibe comuna', () =
   assert.equal(identificar({ latitud: 1, longitud: 1 }, capa).comuna.id, '01')
   assert.equal(identificar({ latitud: 3, longitud: 3 }, capa).comuna, null)
   assert.equal(identificar({ latitud: 3, longitud: 3 }, capa).status, 'sin_determinar')
+})
+
+test('la cobertura acepta interiores y bordes, pero rechaza exteriores y huecos', () => {
+  const capa = collection(polygon('01', [
+    [[0, 0], [4, 0], [4, 4], [0, 4], [0, 0]],
+    [[1, 1], [3, 1], [3, 3], [1, 3], [1, 1]],
+  ]))
+  assert.equal(enCobertura({ latitud: 0.5, longitud: 0.5 }, capa).valido, true)
+  assert.equal(enCobertura({ latitud: 0, longitud: 0.5 }, capa).valido, true)
+  assert.equal(enCobertura({ latitud: 2, longitud: 2 }, capa).valido, false)
+  assert.equal(enCobertura({ latitud: 5, longitud: 5 }, capa).valido, false)
 })
 
 test('un limite compartido queda pendiente sin elegir la primera comuna', () => {

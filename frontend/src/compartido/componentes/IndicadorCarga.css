@@ -1,0 +1,26 @@
+.indicador-carga {
+  display: flex;
+  align-items: center;
+  gap: var(--nu-esp-10);
+  margin: 0;
+  color: var(--nu-texto-secundario);
+  font-weight: 700;
+}
+
+.indicador-carga__giro {
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: 3px solid var(--nu-borde-divisor);
+  border-top-color: var(--nu-marca-primario);
+  border-radius: 50%;
+  animation: indicador-carga-girar 800ms linear infinite;
+}
+
+@keyframes indicador-carga-girar {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicador-carga__giro { animation: none; }
+}

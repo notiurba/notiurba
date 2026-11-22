@@ -75,6 +75,8 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 
 ## Deuda técnica conocida
 
+- Panel administrativo (PR #53): revisar sin cambiar alcance los avisos de reportes sin ubicación y resultados truncados, indicador de carga al cambiar filtros, reutilización de `/api/admin/mapa`, parámetro `max` del calor, componentes con líneas extensas, endpoints del simulador, documentación y referencias de `AvisoSinUbicacion` y `separarPorUbicacion`. No se borrarán archivos sin comprobar sus usos.
+
 - `RutaProtegida` ya envuelve `/app` y `/admin`; el panel muestra datos de prueba en el mapa por
   comunas hasta conectar la API real (NOT-135).
 - Mover o sacar del historial los archivos pesados del prototipo

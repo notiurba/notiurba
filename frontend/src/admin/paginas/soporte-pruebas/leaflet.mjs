@@ -3,4 +3,5 @@ export default {
   Icon: { Default: { prototype: { _getIconUrl: 1 }, mergeOptions() {} } },
   geoJSON: () => ({ getBounds: () => ({ isValid: () => false }) }),
   heatLayer: () => ({ addTo() { return this }, setLatLngs() {} }),
+  latLng: (latitud, longitud) => ({ latitud, longitud }),
 }

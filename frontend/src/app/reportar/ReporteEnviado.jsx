@@ -26,6 +26,7 @@ export default function ReporteEnviado() {
   const consultaEnvio = useCargar(cargarEnvio)
   const envio = consultaEnvio.datos ?? state?.envio
   const presentacion = presentacionCorreo(envio)
+  const envioSimulado = envio?.estado === 'ENVIADO' && envio?.simulado === true
   const [copiado, setCopiado] = useState(false)
 
   async function copiar() {
@@ -52,7 +53,9 @@ export default function ReporteEnviado() {
       <p className="enviado__texto">
         {presentacion.mensaje}
       </p>
-      <Aviso titulo={presentacion.subtitulo}>Enviar el reporte no asegura que la entidad lo lea de inmediato. Si le responden, lo harán a su correo.</Aviso>
+      {envioSimulado
+        ? <Aviso variante="info" titulo={presentacion.subtitulo}>Modo demostración: envío simulado. No se contactó a ninguna entidad.</Aviso>
+        : <Aviso titulo={presentacion.subtitulo}>Enviar el reporte no asegura que la entidad lo lea de inmediato. Si le responden, lo harán a su correo.</Aviso>}
       {consultaEnvio.error && <Aviso variante="error" titulo="No pudimos actualizar el estado del correo">El reporte sigue guardado. Inténtelo de nuevo.</Aviso>}
       <Boton variante="secundario" onClick={consultaEnvio.recargar} cargando={consultaEnvio.cargando} textoCargando="Consultando…">Actualizar estado del correo</Boton>
       {ofrecerOtrosCanales(envio)

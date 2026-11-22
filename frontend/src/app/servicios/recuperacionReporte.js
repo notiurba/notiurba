@@ -1,5 +1,5 @@
 /** Se conserva el código ANTES de las fotos. Un fallo posterior nunca vuelve a crear el reporte. */
-export async function guardarConEvidencias({ datos, fotos, guardado, api, conservar, alSubirFoto = () => {} }) {
+export async function guardarConEvidencias({ datos, fotos, guardado, api, conservar, alSubirFoto = () => {}, alProcesarEnvio = () => {} }) {
   const creado = guardado || await api.guardarReporte(datos)
   conservar(creado)
   let pendientes = fotos
@@ -15,6 +15,7 @@ export async function guardarConEvidencias({ datos, fotos, guardado, api, conser
     await api.subirFoto(creado.codigoSeguimiento, foto)
     alSubirFoto(foto)
   }
+  alProcesarEnvio()
   const envio = await api.enviar(creado.codigoSeguimiento)
   return { ...creado, envio }
 }

@@ -10,6 +10,8 @@ import { IconoSinUbicacion, IconoUbicacion } from '../../compartido/componentes/
 import PasosBarra from '../../compartido/componentes/PasosBarra'
 import Selector from '../../compartido/componentes/formulario/Selector'
 import { validarUbicacion } from '../../compartido/validaciones/reporte'
+import { puntoEstaEnCobertura } from '../../compartido/geo/geoUtils'
+import { comunasTulua } from '../../compartido/geo/comunasTulua'
 import MapaUbicacion from './MapaUbicacion'
 import ResumenCategoria from './ResumenCategoria'
 import { useReporte } from './useReporte'
@@ -17,8 +19,9 @@ import { etiquetaContinuarUbicacion, obtenerPosicionGps, TEXTOS_UBICACION } from
 import './Reportar.css'
 import './PasoUbicacion.css'
 
+const MENSAJE_FUERA_COBERTURA = 'Esta ubicación está fuera de la zona de cobertura de NotiUrba. Seleccione un punto dentro de las comunas delimitadas de Tuluá.'
+
 // Paso 2 de 4: ¿dónde ocurrió? Punto en el mapa (o GPS), dirección y barrio.
-// El backend asigna la comuna; una capa de referencia del mapa no decide el rechazo.
 export default function PasoUbicacion() {
   const navigate = useNavigate()
   const { borrador, cambiar, categorias, barrios, cargandoBarrios = false, errorBarrios, recargarCatalogos } = useReporte()
@@ -44,8 +47,13 @@ export default function PasoUbicacion() {
     solicitudGps.current += 1
     setBuscandoGps(false)
     setGpsFallo(null)
+    if (latitud != null && longitud != null && !puntoEstaEnCobertura({ latitud, longitud }, comunasTulua).valido) {
+      setErrores((anteriores) => ({ ...anteriores, punto: MENSAJE_FUERA_COBERTURA }))
+      return false
+    }
     cambiar({ latitud, longitud })
     setErrores((anteriores) => ({ ...anteriores, punto: '' }))
+    return true
   }
 
   async function usarGps() {
@@ -65,9 +73,16 @@ export default function PasoUbicacion() {
     }
   }
 
+  function rechazarPunto() {
+    setErrores((anteriores) => ({ ...anteriores, punto: MENSAJE_FUERA_COBERTURA }))
+  }
+
   function continuar(evento) {
     evento.preventDefault()
     const encontrados = validarUbicacion(borrador, categoria)
+    if (borrador.latitud != null && borrador.longitud != null && !puntoEstaEnCobertura(borrador, comunasTulua).valido) {
+      encontrados.punto = MENSAJE_FUERA_COBERTURA
+    }
     if (encontrados.punto && borrador.latitud == null && borrador.longitud == null && !borrador.idBarrio) {
       encontrados.punto = barrios.length ? TEXTOS_UBICACION.puntoOBarrio : TEXTOS_UBICACION.puntoRequerido
     }
@@ -105,7 +120,7 @@ export default function PasoUbicacion() {
         <p id="ubicacion-instruccion" className="reportar__mensaje">{TEXTOS_UBICACION.instruccionMapa}</p>
         <p id="ubicacion-teclado" className="solo-lector">{TEXTOS_UBICACION.ayudaTeclado}</p>
 
-        <MapaUbicacion latitud={borrador.latitud} longitud={borrador.longitud} alElegir={elegirPunto} error={errores.punto} />
+        <MapaUbicacion latitud={borrador.latitud} longitud={borrador.longitud} alElegir={elegirPunto} alRechazar={rechazarPunto} error={errores.punto} />
         {errores.punto && (
           <p id="ubicacion-error" className="campo__error" role="alert">
             {errores.punto}
@@ -127,7 +142,7 @@ export default function PasoUbicacion() {
         {(hayPunto || barrio) && (
           <Aviso titulo="Ubicación seleccionada">
             {hayPunto ? 'Punto marcado en el mapa. ' : `Barrio ${barrio.nombre}. `}
-            Comprobaremos la cobertura y asignaremos la comuna al guardar.
+            El punto está dentro de la zona de cobertura. El servidor asignará la comuna al guardar.
           </Aviso>
         )}
         {hayPunto && <Boton variante="texto" onClick={() => elegirPunto(null, null)}>Quitar punto y elegir barrio</Boton>}

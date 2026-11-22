@@ -12,4 +12,5 @@ export const MapContainer = ({ children }) => h('div', null, children)
 export const Popup = ({ children }) => h('div', null, children)
 export const TileLayer = () => null
 export const GeoJSON = () => null
-export const useMap = () => ({ removeLayer() {}, addLayer() {} })
+export const Pane = ({ children }) => h('div', null, children)
+export const useMap = () => ({ removeLayer() {}, addLayer() {}, fitBounds() {}, getContainer: () => ({ scrollIntoView() {} }) })

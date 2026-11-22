@@ -111,7 +111,8 @@ class ComunaGeografiaIntegracionTest {
         assertThat(((Number) r.get("puntos")).intValue()).isEqualTo(900);
         assertThat(((Number) r.get("diferencias")).intValue()).isZero();
         assertThat(((Number) r.get("dentro")).intValue()).isPositive();
-        assertThat(((Number) r.get("en_hueco")).intValue()).isPositive();
+        // V23 dejó la cobertura en los polígonos exactos: un hueco no se aproxima.
+        assertThat(((Number) r.get("en_hueco")).intValue()).isZero();
         assertThat(((Number) r.get("fuera")).intValue()).isPositive();
     }
 

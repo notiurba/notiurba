@@ -104,3 +104,13 @@ export function identificarComunaPorCoordenadas({ latitud, longitud }, comunasGe
     mensaje: 'El punto esta dentro de una comuna de la capa provisional.',
   }
 }
+
+// La zona de cobertura ciudadana es la unión de las diez comunas. Un borde o
+// solapamiento también cuenta: PostGIS usa ST_Covers y elige la comuna menor.
+export function puntoEstaEnCobertura(coordenadas, comunasGeoJson) {
+  const resultado = identificarComunaPorCoordenadas(coordenadas, comunasGeoJson)
+  return {
+    ...resultado,
+    valido: resultado.status === 'dentro' || resultado.status === 'pendiente_revision',
+  }
+}

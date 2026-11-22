@@ -4,7 +4,7 @@ import { explicarErrorVistaPrevia } from '../reportar/vistaPrevia'
 import './VistaPreviaMensaje.css'
 
 // «Así llegará su mensaje»: solo lectura. Cada dato se cambia en su paso con «Cambiar» del resumen.
-export default function VistaPreviaMensaje({ previa, entidad }) {
+export default function VistaPreviaMensaje({ previa, entidad, simulada = false }) {
   const [completo, setCompleto] = useState(false)
   const error = previa.error && explicarErrorVistaPrevia(previa.error)
   return (
@@ -30,7 +30,9 @@ export default function VistaPreviaMensaje({ previa, entidad }) {
           onClick={() => setCompleto((v) => !v)}>
           {completo ? 'Ver menos' : 'Ver completo'}
         </button>
-        <Aviso variante="nota">{entidad} recibe este mensaje a su nombre y le responde a su correo.</Aviso>
+        <Aviso variante="nota">{simulada
+          ? 'Modo demostración: este mensaje no se enviará a ninguna entidad.'
+          : `${entidad} recibe este mensaje a su nombre y le responde a su correo.`}</Aviso>
       </>}
     </section>
   )

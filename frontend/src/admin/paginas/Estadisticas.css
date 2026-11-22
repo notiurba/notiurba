@@ -1,0 +1,10 @@
+.estadisticas { padding: 28px; color: var(--text-h); }
+.estadisticas__filtros { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 22px 0; align-items: end; }
+.estadisticas__filtros label { display: grid; gap: 5px; font-weight: 600; }
+.estadisticas select, .estadisticas input, .estadisticas button { min-height: 40px; border: 1px solid var(--border); border-radius: 6px; background: var(--input-bg); color: var(--text-h); font: inherit; padding: 7px 9px; }
+.estadisticas__resumen { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+.estadisticas__resumen article, .estadisticas__tabla { padding: 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-bg); box-shadow: var(--shadow); }
+.estadisticas__resumen span, .estadisticas__resumen strong { display: block; }.estadisticas__resumen strong { font-size: 28px; margin-top: 8px; }
+.estadisticas__tablas { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 18px; }
+.estadisticas__tabla table { width: 100%; border-collapse: collapse; }.estadisticas__tabla th, .estadisticas__tabla td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); }.estadisticas__error { color: #b42318; font-weight: 700; }
+@media (max-width: 620px) { .estadisticas { padding: 14px; } .estadisticas__tabla { overflow-x: auto; } }
