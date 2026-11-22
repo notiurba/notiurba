@@ -1,22 +1,23 @@
-# Estado actual y traspaso (13 de noviembre de 2026)
+# Estado actual y traspaso (22 de noviembre de 2026)
 
 > Para quien llegue nuevo (persona o IA): lea este archivo primero. Resume qué funciona, qué
 > falta, cómo se corre y se prueba todo, y qué se aprendió trabajando con Andrés. El detalle
 > técnico sigue en los demás archivos de `docs/contexto/`. Si algo de aquí contradice al código,
 > manda el código: corrija este archivo.
 
-Foto tomada con `develop` en el commit `2c39a3b` (PR #31 mezclado). El Sprint 2 está cerrado
-y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. Ver
-[13-sprint-3.md](13-sprint-3.md).
+Foto tomada con `main` en el commit `37db4bf` (PR #53 integrado el 22/11/2026). Los tres sprints
+están cerrados: en Linear las 14 historias del Sprint 3 están en Done (65 de 65 puntos). La
+presentación al docente es el 23/11/2026. Ver [13-sprint-3.md](13-sprint-3.md).
 
 ## 1. Qué es y dónde vive
 
 - PWA de reporte ciudadano georreferenciado de Tuluá. Repo: `notiurba/notiurba` (GitHub).
 - Frontend: https://notiurba.netlify.app (Netlify; vistas previas en
-  `deploy-preview-N--notiurba.netlify.app`). Despliega desde `develop`.
-- Backend: https://notiurba-api.onrender.com (Render Free: se duerme y tarda 60 a 90 s en
-  despertar; despliega solo con cada commit a la rama enlazada).
-- Base de datos: Neon (PostgreSQL 16 + PostGIS). Fotos: Cloudinary. Correo: Resend con el
+  `deploy-preview-N--notiurba.netlify.app`). Despliega desde `main` (desde el 18-19/11/2026;
+  `develop` quedó sin uso y sigue protegida).
+- Backend: https://notiurba-api.onrender.com (Render Free: se duerme y tarda de 60 a 155 s en
+  despertar, 149 s medidos el 22/11/2026; despliega solo con cada commit a la rama enlazada, `main`).
+- Base de datos: Neon (PostgreSQL 18 + PostGIS). Fotos: Cloudinary. Correo: Resend con el
   dominio `reportes.notiurba.com`. Ingreso con Google: Google Identity Services.
 - Gestión: Linear (equipo «NotiUrba», proyecto «NotiUrba - mvp», claves `NOT-n`). Documento
   formal: Google Doc de planeación. Resumen de contexto para humanos: vault de Obsidian de
@@ -35,20 +36,25 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
   En pantallas de hasta 480 px el flujo reserva el alto del distintivo oficial de Netlify para que no
   cubra la acción principal; si el distintivo se apaga desde Netlify, se debe revisar si esa reserva aún
   es necesaria.
-- Asignación de comuna en PostGIS (`fn_asignar_comuna`): contiene, solape (menor número),
-  hueco cercano (hasta 50 m) y `FUERA_DE_COBERTURA` (422).
+- Asignación de comuna en PostGIS (`fn_asignar_comuna`): contiene (el borde cuenta), solape (menor número)
+  y `FUERA_DE_COBERTURA` (422) para un hueco o un punto externo. Desde V23 (21/11/2026, llegó con el PR #53 y
+  Andrés la dio por buena el 22/11/2026) `comuna_distancia_maxima_m` vale 0: ya no se aproxima a la comuna
+  más cercana (antes, hasta 50 m). El frontend también valida la cobertura al elegir la ubicación.
 - «Mis reportes», detalle, «Actualizar mi reporte» (nota en el historial; no cambia el
   estado oficial) y consulta del estado del envío por correo.
-- Panel de administración: listado con filtros (estado, categoría, comuna, fechas, «sin
-  respuesta 10 días»), cambio de estado con observación, vigencia configurable (30 días) y
-  mapa por comunas. El mapa consume `GET /api/admin/reportes`; si falla muestra el error y permite
-  reintentar, sin sustituirlo por reportes ficticios. Dibuja solo los reportes con ubicación y
-  avisa cuántos quedan fuera (la ubicación es opcional según la categoría); si falla el dibujo de
-  cualquier pantalla del panel, se ve «No pudimos mostrar esta pantalla» con «Reintentar» y no una
-  pantalla en blanco. El fixture `reportesPrueba.js` queda solo en
-  pruebas geométricas. La API especializada del mapa, del mapa de calor y de las estadísticas existe
-  en el backend (`/api/admin/mapa`, `/mapa/calor`, `/estadisticas`; contrato §5.2 a §5.4), pero integrar
-  sus filtros completos sigue en NOT-135/NOT-136.
+- Panel de administración (pestañas «Reportes», «Mapa de calor», «Puntos críticos», «Estadísticas» y
+  «Configuración», PR #53): listado con filtros (estado, tipo, comuna, rango de fechas, «sin respuesta 10 días»),
+  cambio de estado con observación, vigencia configurable (30 días), **mapa con datos reales**
+  (`GET /api/admin/mapa`: solo reportes vigentes y con ubicación), **mapa de calor y puntos críticos**
+  (`/api/admin/mapa/calor`, ranking de comunas de 5 en 5), **estadísticas** (`/api/admin/estadisticas`) y
+  «Diagnóstico de límites». Contrato: §5.2 a §5.4 de [11-contrato-api.md](11-contrato-api.md). Si el mapa
+  falla muestra el error y permite reintentar, sin reportes ficticios; si falla el dibujo de cualquier pantalla
+  del panel, se ve «No pudimos mostrar esta pantalla» con «Reintentar» y no una pantalla en blanco. Con los
+  datos de producción de hoy (5 reportes, 1 con ubicación) el mapa puede salir sin marcadores.
+- PWA (NOT-134, PR #50) y correcciones de accesibilidad y tono (NOT-137, PR #51), integradas en `main` el
+  18/11/2026. Reintento del envío sin parpadeo de «Reintentar» (PR #54, 20/11/2026): tras un envío exitoso la
+  hoja sigue bloqueada hasta que carga «Reporte enviado»; un error libera el botón. La instalación física en
+  Android no tiene registro de prueba.
 - Envío por correo: cola persistente con reintentos y enrutamiento por categoría
   (`EnvioReporteServicio`, `EnrutamientoServicio`, `PlantillaReporte`). Está **apagado por
   defecto** y en producción todo sale a la bandeja de pruebas (ver §5). Desde NOT-130 el correo es
@@ -67,21 +73,18 @@ y presentado al docente; el Sprint 3 (10 al 29 de noviembre) es el **último**. 
   problema resuelto; el administrador ajusta todo en «Configuración» (V22). Los botones que envían datos
   se bloquean al primer clic (`useUnaVez`). Probado contra el backend local (15 de 15 comprobaciones).
 
-## 3. Qué falta (lo que cubre el Sprint 3)
+## 3. Qué falta
 
-| Falta | Historia en Linear |
+Las 14 historias del Sprint 3 están en Done en Linear (65 de 65 puntos, 22/11/2026). Lo que queda no es
+una historia:
+
+| Pendiente | Quién |
 | --- | --- |
-| ~~Rutas del mapa, del mapa de calor y de estadísticas~~ hechas en la rama `feature/not-129-api-mapa-calor-estadisticas` (falta mezclar en `develop`) | NOT-129 |
-| Mapa de reportes y mapa de calor del panel con datos reales | NOT-135, NOT-136 |
-| Correo a la entidad confuso (matrícula siempre, fecha cruda, coordenadas largas, filas vacías, fotos solo como enlaces) | NOT-130 |
-| ~~Aviso de rebotes en el detalle del reporte~~: hecho el 13/11/2026, en PR. Queda activar el envío real ([guía](14-activar-envio-real.md)) | NOT-131 |
-| ~~Registro lento, error de Google en celular, límites y duplicados~~: hecho el 13/11/2026, en PR | NOT-132 |
-| **Ajustes tras la prueba de Andrés (14/11/2026):** el panel no deja cambiar el estado, ingreso con Google que mostró datos de otra cuenta, mapa que no aparece con ubicación opcional, pasos que no suben al inicio, atrás desde privacidad, lugar vacío, filtros del panel, textos del paso 3, correo HTML y UI del panel. Hechos y integrados (PR #39 y #40). **El QA lo ejecuta Amelia**: `docs/sdd/historico/NOT-131-envio-real-y-rebotes/tasks.md` (sección «QA», Q-01 a Q-19) | NOT-131 (Done en Linear) |
-| Despliegue final, respaldo de la base, administrador real. **Hecho el 14/11/2026:** guía ([15-guia-de-despliegue.md](15-guia-de-despliegue.md)), respaldo de Neon restaurado con los mismos conteos, administrador real (la cuenta de desarrollo ya no entra), `ADMIN_DEV_PASSWORD` retirada de Render, aviso periódico en `main` (ejecución a mano en verde), arranque en frío medido (155 s), `main` y `develop` protegidas contra borrado. **Falta:** verificación final a mano (Amelia) y la etiqueta nueva al finalizar el sprint | NOT-133 (en Todo por decisión de Andrés hasta cerrarla) |
-| PWA implementada y verificada localmente (17/11/2026): manifiesto, iconos, aviso sin red y actualización. Pendientes de integrar, desplegar y probar instalación física en Chrome Android; logo y colores provisionales | NOT-134 |
-| Pulido: «servidor despertando», reintento de foto, GPS 10 s, atribución OSM, tono y accesibilidad | NOT-137, NOT-138, NOT-139 |
-| Pruebas del panel, de punta a punta y colección Postman al día | NOT-140, NOT-141 |
-| Informe final y manuales | NOT-142 |
+| Etiqueta nueva de fin de sprint sobre el último commit de `main`: `v1.0.0` no se mueve ([15-guia-de-despliegue.md](15-guia-de-despliegue.md) §7) | Andrés |
+| Confirmar en Render que despliega `main` y si el despliegue es automático | Andrés |
+| Activar el envío real quitando `RESEND_PRUEBA_DESTINO` ([14-activar-envio-real.md](14-activar-envio-real.md)); sigue sin comprobarse un rebote real (QA Q-13) | Andrés |
+| Decisiones abiertas: categoría 15 sin ruta de envío, WhatsApp de Gases de Occidente y validación jurídica del aviso de privacidad v3 | Equipo |
+| Deuda técnica y mejoras fuera del MVP | [08-pendientes.md](08-pendientes.md) |
 
 Fuera del equipo: validación jurídica del aviso de privacidad. Barrios y comunas son
 provisionales y **el docente aceptó esa limitación** (no se espera validación de Planeación).
@@ -107,6 +110,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   Enrutamiento sin base `notiurba_test*`: Las 9 de enrutamiento y la de migración de enrutamiento solo corren con
   `NOTIURBA_TEST_DB_URL` apuntando a una base `notiurba_test*` (con `postgis` y `pgcrypto`); sin ella
   se omiten y no cuentan como pasadas.
+- Después de V23 no se repitió la corrida local completa (sin Docker el 22/11/2026): la referencia es el CI.
 - QA de punta a punta del panel contra el jar real: `tools/qa-panel-admin/qa-panel.sh` (44 verificaciones).
 - QA de punta a punta del mensaje a la entidad: `tools/qa-correo-reporte/qa-correo.sh` (40 verificaciones;
   no envía correos).
@@ -124,13 +128,17 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   archivo; el conteo de casos se confirmó ejecutando cada archivo aisladamente.
 - Mapa del panel sin pantalla en blanco, verificación local del 19/11/2026: **273 pruebas aprobadas, 0 fallidas y
   0 omitidas** (antes del cambio, 254); lint y build en verde.
+- `main` el 22/11/2026 (con los PR #53 y #54): **291 pruebas aprobadas, 0 fallidas**; lint y build en verde.
+  CI del backend en el PR #53 (22/11/2026): 301 pruebas, 0 fallos y 39 omitidas, con Flyway aplicando 23
+  migraciones sobre PostgreSQL 18.6. Son 13 corridas en verde desde el 10/11/2026.
 - `pnpm preview` permite comprobar el manifiesto y el worker generado en `dist/`.
   El caché guarda solo recursos estáticos. «Sin conexión» funciona después de una primera
   carga con red y activación del worker; el reintento y la reconexión conservan el formulario.
   `autoUpdate` recarga al detectar una versión nueva y puede perder fotos/campos solo en memoria.
   Chrome local pasó 8 comprobaciones; falta instalación física en Android y despliegue.
   [Evidencia y pasos manuales](../validacion/not-134/README.md).
-- Con `VITE_USAR_MOCKS=true` en desarrollo la API se simula (`src/simulacion/`); el build de
+- Con `VITE_USAR_MOCKS=true` en desarrollo la API se simula (`src/simulacion/`); el envío del reporte
+  queda como «Envío simulado» («Modo demostración») y no contacta a ninguna entidad. El build de
   producción no incluye esa carpeta.
 
 ## 5. Producción: variables y reglas de oro
@@ -145,7 +153,7 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   la entidad real. Para quitarla y volver a ponerla, sigue [14-activar-envio-real.md](14-activar-envio-real.md).
 - Netlify: `VITE_API_URL` y `VITE_GOOGLE_CLIENT_ID`.
 - Las migraciones aplicadas **no se editan**: se corrige con una migración nueva. Hoy van
-  V1 a V22 en `develop` (la siguiente es V23).
+  V1 a V23 en `main` (la siguiente es V24).
 
 ## 6. Datos de negocio que se confunden fácil
 
@@ -158,8 +166,8 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   de servicios públicos. No debe aparecer en un reporte a la Alcaldía.
 - Tope de **3 fotos** por reporte (backend `FotoServicio.MAXIMO_FOTOS` y frontend `MAX_FOTOS`).
 - Categorías 8 (riesgo de desastres) y 9 (vivienda) y la consulta de la Ley 1581 ya están
-  validadas por el equipo. Las diapositivas y algunos textos todavía dicen 15 categorías y
-  «sin validar»: se corrigen en NOT-142.
+  validadas por el equipo. Un texto que todavía diga 15 categorías o «sin
+  validar» es un error: la app ofrece 14 y esas validaciones están hechas (NOT-142).
 - Barrios: 133 del PMGR 2020 (V17), provisionales. Capa de comunas: sintética (V14).
 
 ## 7. Problemas conocidos y lo que se averiguó
@@ -168,8 +176,13 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
   marcador de Leaflet falla con posición nula (`Cannot read properties of null (reading 'lat')`); sin límite de
   errores, React desmontaba toda la pantalla. Corregido en el frontend (el mapa filtra los reportes sin ubicación y el
   panel tiene un límite de errores). Límite conocido: si falla la carga diferida de una pantalla (por ejemplo tras un
-  despliegue nuevo), «Reintentar» no vuelve a pedirla; hay que recargar la página. Con los datos actuales el mapa
-  muestra un solo punto (`NU-000009`).
+  despliegue nuevo), «Reintentar» no vuelve a pedirla; hay que recargar la página. Desde el PR #53 el mapa usa
+  `/api/admin/mapa`, que solo trae reportes vigentes con ubicación: con los datos del 20/11/2026 (5 reportes,
+  1 con ubicación) puede salir sin marcadores.
+- **Arranque en frío (22/11/2026):** `tools/verificar-despliegue.sh` tardó 149 s en la primera llamada a
+  `/api/health` (200 con la base en ok); CORS y sitio en orden.
+- **V23 llegó dentro de un PR de frontend (#53):** cambia un dato de producción (`comuna_distancia_maxima_m`
+  de 50 a 0). Un PR que toque datos de producción debe avisarlo desde su descripción.
 
 - «No pudimos comunicarnos con el servidor» sale **solo** cuando el navegador no recibe
   respuesta (`fetch` falla): Render dormido, mala red o CORS. No es un error de lógica. El ingreso
@@ -212,9 +225,9 @@ provisionales y **el docente aceptó esa limitación** (no se espera validación
 ## 8. Cómo se trabaja con Andrés (aprendido)
 
 - Todo en **español claro**, frases cortas, también en las preguntas.
-- Trabajo en ramas `feature/*` o `docs/*`, PR hacia `develop`, **sin líneas de coautoría de
-  Claude** en commits ni PR. Prefiera PR pequeños y separados. No mezcle nada que cambie datos
-  de producción sin que Andrés lo apruebe.
+- Trabajo en ramas `feature/*` o `docs/*`, PR hacia `main` (`develop` quedó sin uso desde el
+  18/11/2026), **sin líneas de coautoría de Claude** en commits ni PR. Un PR por historia (decisión del
+  12/11/2026). No mezcle nada que cambie datos de producción sin que Andrés lo apruebe.
 - Lo que toca pantallas de Katherine (frontend) se señala expresamente para su revisión.
 - No cierre decisiones abiertas por su cuenta: pregunte o déjelas marcadas «por decidir».
 - Nunca imprima secretos. No cree historias en Linear sin su visto bueno.

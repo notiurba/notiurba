@@ -19,9 +19,9 @@ NOT-137.
 | Linear | Historia | Pts |
 | --- | --- | --- |
 | NOT-129 | [EDT 8.3] API del mapa de reportes, del mapa de calor y de las estadísticas (Urgente) | 5 |
-| NOT-130 | [Mejora] Correo claro y completo en la entidad (hecho 12 nov; en PR) | 5 |
-| NOT-131 | [Mejora] Envío real a las entidades y marcar rebotes (PR #38 integrado 14 nov; abierta: ajustes y QA) | 3 |
-| NOT-132 | [Mejora] Registro e ingreso rápidos y sin abusos (hecho 13 nov; en PR) | 5 |
+| NOT-130 | [Mejora] Correo claro y completo en la entidad (Done) | 5 |
+| NOT-131 | [Mejora] Envío real a las entidades y marcar rebotes (Done; PR #38 integrado el 14 nov) | 3 |
+| NOT-132 | [Mejora] Registro e ingreso rápidos y sin abusos (Done) | 5 |
 | NOT-133 | [EDT 10.3] Versión final desplegada y respaldo de datos (~90 % el 14 nov; falta la verificación final a mano y la etiqueta del fin del sprint) | 3 |
 
 ### Katherine — frontend (21)
@@ -42,6 +42,11 @@ NOT-137.
 | NOT-140 | [EDT 9.3] Probar el mapa y el panel | 3 |
 | NOT-141 | [EDT 9.5] Pruebas de punta a punta, revisión del correo y Postman | 5 |
 | NOT-142 | [EDT 10.4] Informe final y manuales | 5 |
+
+**Estado final (22/11/2026):** las 14 historias están en Done en Linear (65 de 65 puntos). Las pantallas
+del mapa, del mapa de calor, de los puntos críticos y de las estadísticas del panel llegaron a `main` con el PR #53
+(de Amelia); en Linear, NOT-135 y NOT-136 están en Done sin PR enlazado. La PWA (NOT-134) y la accesibilidad
+(NOT-137) llegaron con los PR #50 y #51.
 
 ## Dependencias (ya cargadas en Linear como «bloquea»)
 
