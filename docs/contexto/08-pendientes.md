@@ -46,7 +46,7 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
   sobreviva al cierre del navegador o viva en el servidor es trabajo de un día, con decisiones de privacidad (Andrés, 14/11/2026).
 - **Rediseño completo del panel del administrador** (identidad visual, tablas y filtros más cuidados). En NOT-131 solo
   se ajusta espaciado, contraste y etiquetas (Andrés, 14/11/2026).
-- **Mapa de calor del panel** ya existe en el backend; falta la pantalla (NOT-136).
+- ~~Mapa de calor del panel~~: la pantalla se hizo en el PR #53 (NOT-136).
 
 ## Fuera del equipo (no bloquean el MVP)
 
@@ -77,8 +77,7 @@ Detalle y dueños en [13-sprint-3.md](13-sprint-3.md).
 
 - Panel administrativo (PR #53): revisar sin cambiar alcance los avisos de reportes sin ubicación y resultados truncados, indicador de carga al cambiar filtros, reutilización de `/api/admin/mapa`, parámetro `max` del calor, componentes con líneas extensas, endpoints del simulador, documentación y referencias de `AvisoSinUbicacion` y `separarPorUbicacion`. No se borrarán archivos sin comprobar sus usos.
 
-- `RutaProtegida` ya envuelve `/app` y `/admin`; el panel muestra datos de prueba en el mapa por
-  comunas hasta conectar la API real (NOT-135).
+- `RutaProtegida` ya envuelve `/app` y `/admin`.
 - Mover o sacar del historial los archivos pesados del prototipo
   (`plano-p28-tulua-2015-300dpi.png`, ~39 MB, y el PDF, ~5 MB). Decisión aparte: reescribir historial.
 - El panel «Diagnóstico de límites» (`admin/componentes/DiagnosticoLimites.jsx`) es interno:

@@ -8,7 +8,7 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) (aprobada) |
 | Plan | [plan.md](plan.md) (aprobado) |
-| Estado general | **Parte A y casi toda la Parte B hechas (14 nov); faltan T-13 (etiqueta al fin del sprint) y T-14 (verificación a mano)** (NOT-133 sigue en «Todo» en Linear por decisión de Andrés) |
+| Estado general | **Parte A y casi toda la Parte B hechas (14 nov); faltan T-13 (etiqueta al fin del sprint) y T-14 (verificación a mano)** (NOT-133 está en Done en Linear desde el 22/11/2026; estas dos tareas siguen abiertas y las cierra Andrés) |
 | Última actualización | 2026-11-14 |
 
 ## Cómo se usa
@@ -72,3 +72,4 @@
 | 2026-11-14 | Tareas escritas con spec y plan aprobados | tasks.md |
 | 2026-11-14 | Parte B ejecutada: respaldo restaurado (6/6/10/133, migración 22), administrador real, variable retirada, arranque en frío 155 s, `develop` en `main` (#42, #45), ramas protegidas; la etiqueta pasa al fin del sprint | tasks.md, spec.md |
 | 2026-11-14 | Revisión de código: el aviso usa `/api/admin/ping` cada 5 min (no gasta Neon), el script de admin valida los datos, el script de verificación no da falsos positivos, pruebas sin base se ejecutan siempre | tasks.md, plan.md |
+- 2026-11-22 (T-14, parte automática): `tools/verificar-despliegue.sh` en verde: `/api/health` 200 con la base en ok (149 s, arranque en frío), CORS acepta el sitio y las vistas previas y rechaza un sitio ajeno (403), y `/app/estado` carga. Netlify publica `main@37db4bf` con publicación automática. **Falta** la lista manual (registro, reporte con foto, panel con la cuenta real) y T-13: crear la etiqueta nueva sobre el último commit de `main` **después** de integrar el PR de documentación de cierre, y comprobar que Render y Netlify muestren ese commit. Al terminar, archivar este expediente en `docs/sdd/historico/NOT-133-despliegue-final/`.

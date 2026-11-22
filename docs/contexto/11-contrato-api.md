@@ -49,7 +49,7 @@ Toda respuesta de error tiene el mismo cuerpo:
 | 409 | FOTOS_MAXIMO | foto | El reporte ya tiene 3 fotos |
 | 413 | ARCHIVO_MUY_GRANDE | foto | La foto pasa de 1 MB |
 | 415 | FORMATO_NO_SOPORTADO | foto | No es JPG ni PNG |
-| 422 | FUERA_DE_COBERTURA | latitud | El punto no cae en ninguna de las 10 comunas ni a menos de la distancia máxima (50 m por defecto) de una |
+| 422 | FUERA_DE_COBERTURA | latitud | El punto no cae en ninguna de las 10 comunas ni a menos de la distancia máxima de una (50 m hasta V22; 0 desde V23) |
 | 502 | ALMACEN_FOTOS_NO_DISPONIBLE | null | Cloudinary no respondió |
 | 500 | ERROR_INTERNO | null | Error no previsto; sin detalles |
 
@@ -115,7 +115,7 @@ Salida: 201 con `Location: /api/reportes/NU-000123` y un cuerpo mínimo `{ codig
 La comuna sale del GPS (PostGIS) o, sin GPS, del barrio (RF-08, RN-02). Se guarda en el reporte (`reporte.id_comuna`, V20) con un trigger que usa `fn_asignar_comuna`, la misma función que decide el rechazo; la base la recalcula si cambian la capa de comunas, la comuna de un barrio o la distancia máxima. Reglas con GPS (NOT-55):
 - El punto cae dentro de una comuna (el borde cuenta como dentro): esa comuna.
 - Cae dentro de dos o más (solape): la de menor número.
-- Cae en un hueco: la comuna más cercana, si está a una distancia menor o igual a `configuracion.comuna_distancia_maxima_m` (50 m por defecto, valor propuesto; `0` desactiva la regla).
+- Cae en un hueco: la comuna más cercana, si está a una distancia menor o igual a `configuracion.comuna_distancia_maxima_m` (50 m hasta V22, valor propuesto; **0 desde V23, 21/11/2026**, que desactiva la regla).
 - Más lejos que eso de toda comuna: 422 FUERA_DE_COBERTURA y no se guarda nada.
 - Las comunas sin polígono no participan. Si **ninguna** tiene polígono, no se puede decidir: no se rechaza y la comuna sale del barrio.
 Detalle técnico: la base exige `autorizacion_envio_en <= creado_en`, así que el servidor debe fijar ambas fechas con el mismo instante.
@@ -548,3 +548,7 @@ Aditiva: no borra ni cambia datos existentes.
 | Índice `ix_reporte_usuario_creado` | sobre `reporte (id_usuario, creado_en)`, para contar los reportes de una cuenta en el día |
 
 Nota: `categoria.requiere_evidencia` (la decisión 8, foto siempre opcional) **no cambia**. La obligación de foto de NOT-132 es otra cosa: depende del lugar y de si se repite un problema resuelto, no de la categoría, y vive en `reporte.requiere_evidencia`.
+
+### 8.2 Migración V23: cobertura exacta de comunas
+
+No cambia tablas ni columnas. Es un cambio de datos: `configuracion.comuna_distancia_maxima_m` pasa de `50` a `0`. Con 0, `fn_asignar_comuna` solo asigna una comuna si el punto cae dentro de su polígono (el borde cuenta, `ST_Covers`); un hueco o un punto externo responde 422 `FUERA_DE_COBERTURA`. El trigger de V20 recalcula `reporte.id_comuna` al cambiar la clave, por lo que los reportes guardados fuera de un polígono quedan sin comuna. Llegó con el PR #53 (21/11/2026) y Andrés la dio por buena el 22/11/2026. Para volver a una aproximación por distancia haría falta otra migración (V24) que cambie ese valor.

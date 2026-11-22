@@ -17,8 +17,9 @@ idea inicial de «pendiente de revisión»):
 - Punto dentro de una comuna (el borde cuenta como dentro): esa comuna.
 - Punto dentro de dos o más (solape): la de menor número.
 - Punto en un hueco: la comuna más cercana, si está a menos de la distancia máxima
-  (`comuna_distancia_maxima_m`, 50 m por defecto, valor propuesto).
-- Más lejos que eso de toda comuna: el reporte se rechaza como «fuera de cobertura»
+  (`comuna_distancia_maxima_m`). Valía 50 m (V13, valor propuesto); **desde V23 (21/11/2026) vale 0**, así
+  que un hueco ya no se aproxima a ninguna comuna.
+- Más lejos que eso de toda comuna (con 0, todo punto que no esté dentro de una): el reporte se rechaza como «fuera de cobertura»
   (RN-03). No implica estar fuera de Tuluá, solo fuera de la capa.
 
 Capa instalada hoy (V14): la **experimental y no oficial de NOT-31**, aceptada por el docente como

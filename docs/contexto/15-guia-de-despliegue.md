@@ -47,13 +47,13 @@ El backend necesita 1 a 4 antes de arrancar. El frontend necesita la dirección 
 4. Mientras la app esté en estado «Prueba», solo entran los usuarios de prueba que se agreguen en Google.
 
 ### Render (backend)
-1. New → Web Service → conectar el repositorio, rama `develop` (o `main` para la versión final), **Docker**, plan Free.
+1. New → Web Service → conectar el repositorio, rama `main`, **Docker**, plan Free.
    Directorio raíz `backend`. Auto-Deploy «On Commit».
 2. Cargar las variables de la sección 3.
 3. Al desplegar, el servicio corre las migraciones y responde en `/api/health`.
 
 ### Netlify (frontend)
-1. Importar el repositorio. Rama de producción `develop` (o `main`), base `frontend`, comando `pnpm build`, publish `dist`.
+1. Importar el repositorio. Rama de producción `main`, base `frontend`, comando `pnpm build`, publish `dist`.
 2. Variables: `VITE_API_URL` (dirección del backend en Render) y `VITE_GOOGLE_CLIENT_ID`.
 3. La redirección de la SPA vive en `frontend/public/_redirects`; no se borra.
 4. Cambiar una variable de Netlify exige **volver a desplegar** (se hornean en el build).
@@ -235,7 +235,7 @@ Notas:
 
 ## 7. Versión final y etiqueta
 
-1. Integrar `develop` en `main` por PR (sin borrar `develop`: está protegida).
+1. `main` es la rama de producción (Netlify y Render despliegan de ella desde el 18-19/11/2026). `develop` quedó sin uso y sigue protegida: no se borra.
 2. Crear la etiqueta sobre `main` desde GitHub → Releases. **Regla de Andrés (14/11/2026):** al finalizar el sprint se crea una
    etiqueta **nueva** con el último commit del repo. Las etiquetas anteriores no se mueven ni se borran (`v1.0.0` quedó sobre el
    commit del PR #42, anterior al despliegue final).

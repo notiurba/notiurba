@@ -7,8 +7,8 @@
 | --- | --- |
 | Especificación | [spec.md](spec.md) |
 | Plan | [plan.md](plan.md) |
-| Estado general | **En curso** (T-01 a T-09 hechas; faltan la prueba en la vista previa, el commit y PR, y el archivo) |
-| Última actualización | 2026-11-20 |
+| Estado general | **Cerrado con una tarea sin registro** (T-01 a T-09 y T-11 hechas; integrado en `main` con el PR #54 el 20/11/2026; T-10 sin registro) |
+| Última actualización | 2026-11-22 |
 
 ## Cómo se usa
 
@@ -35,7 +35,7 @@
 | T-08 | Subagente `code-reviewer` sobre la rama; corregir los hallazgos con pruebas | — | todos | Informe en el registro | [x] |
 | T-09 | Texto de la descripción del PR con los 5 pasos de prueba manual (éxito con el archivo de «Reporte enviado» bloqueado, error 500, fallo de foto, entidad sin correo, «Enviar de todas maneras») | Docs | CA-09 | Entregado a Andrés | [x] |
 | T-10 | Prueba manual en la vista previa de Netlify tras abrir el PR (crea un reporte real: el correo sale a la bandeja de pruebas) | — | CA-01, CA-02 | La hace Andrés | [ ] |
-| T-11 | Cierre: archivar este expediente en `docs/sdd/historico/` tras integrar el PR | Docs | — | Skill `cierre-de-historia`; carpeta `historico/ajustes-reintentar-envio/` (sin NOT-nn, no hay historia en Linear) | [ ] |
+| T-11 | Cierre: archivar este expediente en `docs/sdd/historico/` tras integrar el PR | Docs | — | Skill `cierre-de-historia`; carpeta `historico/ajustes-reintentar-envio/` (sin NOT-nn, no hay historia en Linear) | [x] |
 
 ## Fuera de las tareas (decisión de Andrés)
 
@@ -64,3 +64,4 @@ Trazabilidad criterio → tarea → resultado. Se rellena al cerrar.
 - 2026-11-20: spec y plan aprobados por Andrés; se crea este desglose.
 - 2026-11-20: implementación T-01 a T-07. Medido: pruebas 232 → 232 en la rama (se reemplazaron 2 por 2) y 275 en la fusión de prueba con `main`; lint y build en verde. Mutaciones: 5 sobre el helper (todas hacen fallar la prueba) y 1 con `finally` sobre `enviar` (hace fallar el arnés). Cambio frente al plan: la viñeta de `08-pendientes.md` va a mitad de la lista y no al final, porque `main` agregó viñetas al final y chocaban; `CrearReporte.jsx` ya estaba anotado. El arnés de `react-test-renderer` con `fetch` falso se usó solo en un worktree temporal y no se sube.
 - 2026-11-20: revisión de `code-reviewer` (T-08). Sin bugs en el código. Corregido: la tabla de pruebas pasaba `guardado` como booleano y un helper endurecido a `=== true` seguía en verde (ahora usa `null` y un objeto; esa mutación y otras 4 hacen fallar la prueba); el comentario pasó junto a la liberación y dice el motivo real; la viñeta de pendientes se dividió en 3, con «en celular» y «lo decide Andrés»; CA-02 de la spec se redactó por caso (reporte parecido, límite y foto no muestran mensaje de error); el plan ya no atribuye la ausencia de doble envío al agrupamiento de React sino a que el `catch` es síncrono y `ocupado` es un `ref`; T-05 y T-11 reflejan el método real y el nombre de la carpeta histórica. Dejado sin cambio: el `catch` protege un caso que hoy no puede ocurrir (`decidirFalloEnvio` no lanza), por decisión del plan.
+- 2026-11-22: T-11. Los 3 commits llegaron a `main` dentro del PR #54 (integrado el 20/11/2026). La prueba manual en la vista previa (T-10) no quedó registrada y **no se marca como hecha**; Amelia amplió después el envío (estados de carga y modo demostración) en el PR #53. Se archiva el expediente.

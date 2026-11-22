@@ -6,7 +6,7 @@ description: Cómo correr las pruebas del backend y del frontend de NotiUrba, le
 # Pruebas y despliegue de NotiUrba
 
 Contexto general: `docs/contexto/12-estado-actual-y-traspaso.md`. Trabaje en una rama `feature/*` o `docs/*`
-(nunca directo en `develop`) y sin líneas de coautoría de Claude en commits ni PR.
+(nunca directo en `main`) y sin líneas de coautoría de Claude en commits ni PR.
 
 ## Backend (Java 21, Maven)
 
@@ -26,12 +26,12 @@ Contexto general: `docs/contexto/12-estado-actual-y-traspaso.md`. Trabaje en una
 
 ## Frontend (React 19 + Vite, pnpm)
 
-`cd frontend && pnpm install && pnpm test && pnpm lint && pnpm build` (273 pruebas con `node --test`).
+`cd frontend && pnpm install && pnpm test && pnpm lint && pnpm build` (291 pruebas con `node --test` el 22/11/2026).
 Nunca npm ni `package-lock.json`. `VITE_USAR_MOCKS=true` simula la API solo en desarrollo.
 
 ## Migraciones (Flyway)
 
-- Las aplicadas **no se editan**; se corrige con una nueva (hoy la siguiente es V23).
+- Las aplicadas **no se editan**; se corrige con una nueva (hoy la siguiente es V24).
 - En un `.sql` con GeoJSON, `${` choca con los marcadores de Flyway: deje un espacio tras `$geo$`.
 - Una migración destructiva pide antes un branch de respaldo en Neon.
 - Los scripts `backend/scripts/generar-*.py` convierten un CSV/GeoJSON en una migración.

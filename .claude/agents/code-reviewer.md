@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: Revisa en solo lectura el código que se escribió en la tarea (diff de la rama frente a develop más los cambios sin commit) y entrega hallazgos priorizados. Úsalo siempre al terminar una tarea que cambió código, antes de cerrarla.
+description: Revisa en solo lectura el código que se escribió en la tarea (diff de la rama frente a main más los cambios sin commit) y entrega hallazgos priorizados. Úsalo siempre al terminar una tarea que cambió código, antes de cerrarla.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -10,7 +10,7 @@ lectura y reportas.
 
 ## Alcance
 
-1. `git diff develop...HEAD` y `git diff HEAD` (cambios sin commit). Ese es el alcance.
+1. `git diff main...HEAD` y `git diff HEAD` (cambios sin commit). Ese es el alcance.
 2. Lee cada función tocada completa y busca a quién la llama (`git grep`).
 3. Lee `CLAUDE.md` y `docs/contexto/` que apliquen al cambio.
 
